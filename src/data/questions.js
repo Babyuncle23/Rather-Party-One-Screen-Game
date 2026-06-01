@@ -4,6 +4,7 @@ export const questionsDatabase = [
     category: "people",
     difficulty: "hard",
     text: "Would you rather be stranded on a desert island until the end of your life with ___ or with ___?",
+    resultTemplate: "{name} would rather be stranded on a desert island until the end of life with {winner} than with {loser}.",
     hints: [
       "Name the two worst people in history",
       "Name two characters from any book or movie you remember",
@@ -16,6 +17,7 @@ export const questionsDatabase = [
     category: "colors",
     difficulty: "easy",
     text: "Would you rather wear only ___ socks or ___ socks for the rest of your life?",
+    resultTemplate: "{name} would rather wear only {winner} socks than {loser} socks for the rest of life.",
     hints: [
       "Name two colors that are very bright",
       "Name two colors that look terrible together",
@@ -29,6 +31,7 @@ export const questionsDatabase = [
     category: "gaming",
     difficulty: "medium",
     text: "Would you rather spend 1000 hours playing ___ or playing ___?",
+    resultTemplate: "{name} would rather spend 1000 hours playing {winner} than playing {loser}.",
     hints: [
       "Name two popular games (board games, sports, or digital) you dislike",
       "Name two games of any kind you recently played or saw",
@@ -41,6 +44,7 @@ export const questionsDatabase = [
     category: "food",
     difficulty: "easy",
     text: "Would you rather eat nothing but ___ or nothing but ___ for an entire month?",
+    resultTemplate: "{name} would rather eat nothing but {winner} than nothing but {loser} for an entire month.",
     hints: [
       "Name two of your favorite fast-food or snack items",
       "Name two things you would eat for breakfast on a perfect morning",
@@ -52,12 +56,13 @@ export const questionsDatabase = [
     category: "superpowers",
     difficulty: "hard",
     text: "Would you rather have the ability to instantly transform into ___ or into ___?",
+    resultTemplate: "{name} would rather have the ability to instantly transform into a {winner} than into a {loser}.",
     hints: [
       "Name two wild animals that are known to be large and heavy",
       "Name two well-known comic book or movie superheroes",
       "Name two random everyday objects in this room",
       "Name two mythical creatures from classic stories or fairy tales",
-      "Name two of the cutest animals in your opinion" // Добавлено вместо овощей!
+      "Name two of the cutest animals in your opinion"
     ]
   },
   {
@@ -65,6 +70,7 @@ export const questionsDatabase = [
     category: "pop-culture",
     difficulty: "medium",
     text: "Would you rather go to a private live concert of ___ or of ___?",
+    resultTemplate: "{name} would rather go to a private live concert of {winner} than of {loser}.",
     hints: [
       "Name two music artists, bands, or composers you know",
       "Name two famous singers or performers that have massive global hit songs",
@@ -76,6 +82,7 @@ export const questionsDatabase = [
     category: "lifestyle",
     difficulty: "easy",
     text: "Would you rather live in a house completely made of ___ or made of ___?",
+    resultTemplate: "{name} would rather live in a house completely made of {winner} than made of {loser}.",
     hints: [
       "Name two delicious sweet treats or candies", 
       "Name two building materials or metals",
@@ -83,23 +90,24 @@ export const questionsDatabase = [
       "Name two substances or textures that for some reason feel unpleasant to you"
     ]
   },
-
-    {
+  {
     id: 8,
     category: "lifestyle",
     difficulty: "medium",
     text: "Would you rather have your bedroom completely filled with ___ or with ___?",
+    resultTemplate: "{name} would rather have a bedroom completely filled with {winner} than with {loser}.",
     hints: [
-      "Name two things that make an extremely unpleasant or annoying sound", // Добавлено по вашей идее!
+      "Name two things that make an extremely unpleasant or annoying sound",
       "Name two soft things that you love to touch",
       "Name two tech gadgets or electronic devices"
     ]
   },
-    {
+  {
     id: 9,
-    category: "finance", // Новая категория про деньги без цифр!
+    category: "finance",
     difficulty: "hard",
     text: "Would you rather receive a lifetime endless supply of ___ or of ___?",
+    resultTemplate: "{name} would rather receive a lifetime endless supply of {winner} than of {loser}.",
     hints: [
       "Name two expensive items or luxury goods you wish you owned",
       "Name two daily services or subscriptions that you use often",

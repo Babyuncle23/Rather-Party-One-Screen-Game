@@ -57,7 +57,11 @@ function setupInitialEventListeners() {
       return;
     }
     game = new Match(temporaryPlayersList, roundsInput);
-    initRound();
+    screens.showPassScreen(
+      game.players[game.pickerIndex],
+      initRound,
+      "This is your turn only. Read the question and choose a prompt."
+    );
   };
 }
 
@@ -128,7 +132,11 @@ function selectHint(hint) {
   try {
     currentHint = hint;
     const responder = game.players[game.getResponderIndex()];
-    screens.showPassScreen(responder, startResponderPhase);
+    screens.showPassScreen(
+      responder,
+      startResponderPhase,
+      "Only the next player should look at the phone. Keep it hidden from others."
+    );
   } catch (err) {
     alert("Error inside selectHint: " + err.message);
   }
@@ -180,7 +188,23 @@ function startResponderPhase() {
 function confirmResponderChoice(w1, w2, choice) {
   try {
     responderChoice = choice;
+    const responder = game.players[game.getResponderIndex()];
+    
+    // Определяем проигравшее слово (loser)
+    const loserWord = (choice === w1) ? w2 : w1;
+    
+    // Генерируем красивую грамматическую строку по шаблону
+    const formattedResultString = currentQuestion.resultTemplate
+      .replace("{name}", `<strong>${responder.name}</strong>`)
+      .replace("{winner}", `<span style="color: #00ffb3; font-weight: bold;">${choice}</span>`)
+      .replace("{loser}", `<span style="color: #ff4a4a; font-weight: bold;">${loserWord}</span>`);
+
+    // Сохраняем это предложение в историю раунда
     game.saveRoundToHistory(currentQuestion.text, currentHint, w1, w2, choice);
+    
+    // Дописываем сгенерированную строку прямо в объект последнего раунда истории
+    game.history[game.history.length - 1].resultSentence = formattedResultString;
+    
     remainingGuessers = [game.pickerIndex, ...game.getOtherGuessersIndices()];
     setupNextGuesser();
   } catch (err) {
@@ -205,34 +229,26 @@ function setupNextGuesser() {
     currentPotentialScore = 100;
     abilitiesUsed = 0;
     
-    screens.showPassScreen(game.players[currentGuesserIndex], startGuesserPhase);
+    screens.showPassScreen(
+      game.players[currentGuesserIndex],
+      startGuesserPhase,
+      "Only this player should look. Do not show it to anyone else."
+    );
   } catch (err) {
     alert("Error inside setupNextGuesser: " + err.message);
   }
 }
 
+// 1. Обновляем старт фазы угадывания
 function startGuesserPhase() {
   try {
     screens.switchScreen('guesser');
     document.getElementById('guesser-name').innerText = game.players[currentGuesserIndex].name;
-
-        // ЛОГИКА РАСКРЫТИЯ СПРАВКИ
-    const toggleRulesBtn = document.getElementById('toggle-rules-btn');
-    const rulesBox = document.getElementById('rules-details-box');
-    
-    // По умолчанию при переходе к новому игроку скрываем справку
-    rulesBox.style.display = 'none'; 
-    
-    toggleRulesBtn.onclick = () => {
-      if (rulesBox.style.display === 'none') {
-        rulesBox.style.display = 'block';
-      } else {
-        rulesBox.style.display = 'none';
-      }
-    };
     
     updateGuesserUI();
-    buildVirtualKeyboard();
+    
+    // Включаем обработчик ручного ввода буквы
+    setupManualLetterInput();
     
     document.getElementById('ability-rand-btn').onclick = () => useAbility('rand', 20);
     document.getElementById('ability-first-btn').onclick = () => useAbility('first', 40);
@@ -244,32 +260,34 @@ function startGuesserPhase() {
   }
 }
 
-function buildVirtualKeyboard() {
-  const keyboardContainer = document.getElementById('virtual-keyboard');
-  keyboardContainer.innerHTML = "";
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  
-  // Находим аудиоэлемент клика
+function setupManualLetterInput() {
+  const customLetterInput = document.getElementById('custom-letter-input');
+  const checkBtn = document.getElementById('ability-letter-btn');
   const clickSound = document.getElementById('sound-click');
+  
+  customLetterInput.value = ""; // Очищаем поле при входе
 
-  alphabet.forEach(letter => {
-    const btn = document.createElement('button');
-    btn.className = "key-btn";
-    btn.innerHTML = `<span class="key-letter">${letter}</span><span class="key-cost">(-30 pts)</span>`;
+  checkBtn.onclick = () => {
+    const letter = customLetterInput.value.trim().toUpperCase();
     
-    btn.onclick = () => {
-      btn.disabled = true; 
-      
-      // ВОСПРОИЗВЕДЕНИЕ КЛИКА: сбрасываем время в 0, чтобы звук успевал играть при быстрых тапах
-      if (clickSound) {
-        clickSound.currentTime = 0;
-        clickSound.play().catch(e => console.log("Audio play blocked by browser:", e));
-      }
+    // Валидация: проверяем, что введена ровно одна английская буква
+    if (letter.length !== 1 || !/[A-Z]/.test(letter)) {
+      alert("Please enter a single letter (A-Z)!");
+      return;
+    }
+    
+    // Звук клика
+    if (clickSound) {
+      clickSound.currentTime = 0;
+      clickSound.play().catch(e => {});
+    }
 
-      useAbility('letter', 30, letter);
-    };
-    keyboardContainer.appendChild(btn);
-  });
+    // Запускаем стандартную способность проверки буквы за 30 баллов
+    useAbility('letter', 30, letter);
+    
+    // Очищаем инпут для следующей проверки
+    customLetterInput.value = "";
+  };
 }
 
 function useAbility(type, cost, param = null) {
@@ -289,9 +307,10 @@ function updateGuesserUI() {
   const masks = shifter.getMaskedWords();
   const displayQ = currentQuestion.text.replace("___", masks.w1).replace("___", masks.w2);
   
+  // ВОТ ЭТА СТРОКА: Записываем промпт раунда на экран угадывания капсом
+  document.getElementById('guesser-displayed-hint').innerText = currentHint.toUpperCase();
+
   document.getElementById('guesser-question-display').innerText = displayQ;
-  
-  // ИСПРАВЛЕНО: Теперь везде выводится лаконичное "pts"
   document.getElementById('potential-score').innerText = `Reward: +${currentPotentialScore} pts`;
   document.getElementById('abilities-count').innerText = `Abilities used: ${abilitiesUsed} / ${shifter.getAbilitiesLimit()}`;
   
@@ -300,46 +319,81 @@ function updateGuesserUI() {
 }
 
 function makeGuess(word) {
-  const guesser = game.players[currentGuesserIndex];
-  
-  // Находим элементы звуков выигрыша и проигрыша
-  const winSound = document.getElementById('sound-win');
-  const loseSound = document.getElementById('sound-lose');
+  try {
+    const guesser = game.players[currentGuesserIndex];
+    
+    const winSound = document.getElementById('sound-win');
+    const loseSound = document.getElementById('sound-lose');
 
-  if (word === responderChoice) {
-    guesser.score += currentPotentialScore;
+    const isCorrect = (word === responderChoice);
     
-    // ВКЛЮЧАЕМ ЗВУК ПОБЕДЫ
-    if (winSound) {
-      winSound.currentTime = 0;
-      winSound.play().catch(e => console.log(e));
-    }
-    
-    alert(`🎉 CORRECT!\nYou scored ${currentPotentialScore} points.`);
-  } else {
-    // ВКЛЮЧАЕМ ЗВУК ПРОИГРЫША
-    if (loseSound) {
-      loseSound.currentTime = 0;
-      loseSound.play().catch(e => console.log(e));
+    if (isCorrect) {
+      guesser.score += currentPotentialScore;
+      if (winSound) {
+        winSound.currentTime = 0;
+        winSound.play().catch(e => console.log(e));
+      }
+    } else {
+      if (loseSound) {
+        loseSound.currentTime = 0;
+        loseSound.play().catch(e => console.log(e));
+      }
     }
 
-    alert(`❌ WRONG!\nThe answer was: ${responderChoice}`);
+    // 1. Получаем последнее сохраненное предложение из истории
+    const lastRoundData = game.history[game.history.length - 1];
+    let cleanSentence = lastRoundData.resultSentence;
+
+    // 2. Очищаем предложение от HTML-тегов (strong, span, style), так как alert их не поддерживает
+    cleanSentence = cleanSentence.replace(/<\/?[^>]+(>|$)/g, "");
+
+    // 3. Формируем текст для всплывающего окна
+    const statusIcon = isCorrect ? "🎉 CORRECT!" : "❌ WRONG!";
+    const pointsEarned = isCorrect ? `${currentPotentialScore} pts` : "0 pts";
+
+    const alertMessage = 
+      `${statusIcon}\n` +
+      `You earned: ${pointsEarned}\n\n` +
+      `--- CHOICE SCHEME ---\n` +
+      `${cleanSentence}\n\n` +
+      `• Your guess was: "${word}"`;
+
+    alert(alertMessage);
+
+    // Переходим дальше
+    setupNextGuesser();
+
+  } catch (err) {
+    alert("Error inside makeGuess: " + err.message);
+    console.error(err);
   }
-  setupNextGuesser();
 }
 
-function renderCarouselCard() {
-  const cardData = game.history[currentCardIndex];
-  const container = document.getElementById('carousel-card');
-  const indexIndicator = document.getElementById('carousel-index');
-  
-  indexIndicator.innerText = `${currentCardIndex + 1} / ${game.history.length}`;
-  
-  container.innerHTML = `
-    <h4 style="margin:0; color:#6246ea;">ROUND ${cardData.round}</h4>
-    <p><strong>Context Picker:</strong> ${cardData.picker}</p>
-    <p><strong>Prompt:</strong> "<em>${cardData.hint}</em>"</p>
-    <p><strong>Words from ${cardData.responder}:</strong> ${cardData.words[0]} vs ${cardData.words[1]}</p>
-    <p><strong>Decision:</strong> <span style="color:#00ffb3; font-weight:bold;">${cardData.chosenByResponder}</span></p>
-  `;
+function showFinalScores() {
+  try {
+    screens.switchScreen('final');
+    
+    // 1. Рендерим таблицу лидеров
+    const leaderboard = [...game.players].sort((a, b) => b.score - a.score);
+    document.getElementById('final-scores-list').innerHTML = leaderboard
+      .map(p => `<li><strong>${p.name}</strong>: ${p.score} pts</li>`).join('');
+    
+    // 2. Рендерим историю в виде чистого вертикального списка карточек
+    const historyContainer = document.getElementById('final-history-list');
+    historyContainer.innerHTML = game.history.map(h => `
+      <div class="history-card" style="margin-bottom: 15px;">
+        <h4 style="margin: 0 0 8px 0; color: #6246ea; font-size: 14px;">ROUND ${h.round}</h4>
+        <p style="margin: 4px 0; font-size: 14px; color: #a0a0b2;">
+          Context set by ${h.picker} via prompt: <em>"${h.hint.toUpperCase()}"</em>
+        </p>
+        <p style="margin: 10px 0 0 0; font-size: 16px; line-height: 1.4; border-top: 1px dashed #3e3e4a; padding-top: 10px;">
+          ${h.resultSentence}
+        </p>
+      </div>
+    `).join('');
+
+  } catch (err) {
+    alert("Error inside showFinalScores: " + err.message);
+    console.error(err);
+  }
 }
