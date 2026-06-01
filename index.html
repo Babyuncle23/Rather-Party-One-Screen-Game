@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Rather Party — One Screen Game</title>
+</head>
+<body>
+
+  <!-- КРАСИВОЕ МОДАЛЬНОЕ ОКНО ПЕРЕДАЧИ ТЕЛЕФОНА -->
+  <div id="pass-screen" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+      <h1 id="pass-message">PASS PHONE</h1>
+      <button id="pass-confirm-btn" class="btn btn-primary">I AM READY</button>
+    </div>
+  </div>
+
+  <div class="game-container">
+    <!-- НАСТРОЙКА ИГРЫ (ОБНОВЛЕНА) -->
+    <div id="setup-screen">
+      <h2>Game Setup</h2>
+      
+      <div class="add-player-block">
+        <input id="single-player-input" type="text" placeholder="Enter player name" class="input-field" style="margin-bottom: 5px;">
+        <button id="add-player-btn" class="btn btn-accent" style="margin-top: 0;">+ Add Player</button>
+      </div>
+
+      <!-- Контейнер для "коробочек" игроков -->
+      <div id="players-boxes-container" class="boxes-container"></div>
+
+      <div style="margin-top: 20px;">
+        <label for="rounds-input" style="display:block; margin-bottom: 5px; color:#a0a0b2;">Number of rounds:</label>
+        <input id="rounds-input" type="number" value="3" class="input-field">
+      </div>
+      
+      <button id="start-game-btn" class="btn btn-primary" style="margin-top: 15px;">Start Game</button>
+    </div>
+
+    <!-- ХОД ИГРОКА 1 (ВЫБОР ПОДСКАЗКИ) -->
+    <div id="picker-screen" style="display:none;">
+      <h2><span id="picker-name"></span>'s Turn</h2>
+      <div class="card-question">
+        <p>Secret Question:</p>
+        <p id="secret-question-text" class="highlight-text"></p>
+      </div>
+      <p>Choose a prompt for <span id="responder-target-name"></span>:</p>
+      <button id="hint-btn-1" class="btn btn-secondary"></button>
+      <button id="hint-btn-2" class="btn btn-secondary"></button>
+      
+      <div class="custom-hint-block">
+        <p>Or write your own prompt:</p>
+        <input id="custom-hint-input" type="text" placeholder="Write something ..." class="input-field">
+        <button id="custom-hint-btn" class="btn btn-accent">Use Custom Hint</button>
+      </div>
+    </div>
+
+    <!-- ХОД ИГРОКА 2 (ВВОД СЛОВ И ВЫБОР) -->
+    <div id="responder-screen" style="display:none;">
+      <h2><span id="responder-name"></span>'s Turn</h2>
+      <p>Your prompt is: <strong id="displayed-hint" class="prompt-badge"></strong></p>
+      <input id="word-input-1" type="text" placeholder="Word 1" class="input-field"><br>
+      <input id="word-input-2" type="text" placeholder="Word 2" class="input-field"><br>
+      <button id="submit-words-btn" class="btn btn-primary">Submit Words</button>
+
+      <div id="responder-choice-block" style="display:none; margin-top: 20px;">
+        <h3>Now make your choice:</h3>
+        <p id="responder-final-question" class="card-question highlight-text"></p>
+        <div class="choice-buttons-grid">
+          <button id="opt-btn-1" class="btn btn-choice"></button>
+          <button id="opt-btn-2" class="btn btn-choice"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ЭКРАН УГАДЫВАНИЯ -->
+    <div id="guesser-screen" style="display:none;">
+      <h2><span id="guesser-name"></span>, Guess!</h2>
+      <p id="guesser-question-display" class="card-question highlight-text"></p>
+      
+      <div class="stats-bar">
+        <span id="potential-score"></span>
+        <span id="abilities-count"></span>
+      </div>
+
+      <div class="rules-help-container">
+        <button id="toggle-rules-btn" class="btn-info-circle">How are points calculated? ❓</button>
+        <div id="rules-details-box" class="rules-dropdown-box" style="display: none;">
+            <p>🎯 <strong>Base Score:</strong> 100 points if you guess correctly.</p>
+            <p>🛠️ <strong>Using Abilities</strong> reduces your final reward:</p>
+            <ul>
+            <li>🎲 Random Letter costs <strong>-20 points</strong></li>
+            <li>🔤 Check Custom Letter costs <strong>-30 points</strong></li>
+            <li>👁️ Open First Letter costs <strong>-40 points</strong></li>
+            </ul>
+            <p>⚠️ <em>If you guess the WRONG word, you get <strong>0 points</strong> regardless of abilities used.</em></p>
+        </div>
+        </div>
+      
+      <div class="abilities-grid">
+        <button id="ability-rand-btn" class="btn btn-small">🎲 Random Letter (-20 pts)</button>
+        <button id="ability-first-btn" class="btn btn-small">🔤 First Letter (-40 pts)</button>
+      </div>
+
+      <p id="keyboard-hint" style="text-align: center; color: #a0a0b2; font-size: 13px; margin: 15px 0 5px 0;">
+  ℹ️ Tap a letter below to check if it exists <strong>(-30 pts)</strong>
+</p>
+
+      <div id="virtual-keyboard" class="keyboard-grid"></div>
+      
+      <div class="final-guess-block">
+        <p>Tap your final guess:</p>
+        <button id="guess-word-1" class="btn btn-choice"></button>
+        <button id="guess-word-2" class="btn btn-choice"></button>
+      </div>
+    </div>
+
+    <!-- ФИНАЛЬНЫЙ ЭКРАН -->
+    <div id="final-screen" style="display:none;">
+      <h2>Game Over!</h2>
+      <h3>Leaderboard</h3>
+      <ol id="final-scores-list" class="leaderboard-list"></ol>
+      
+      <h3>Match History</h3>
+      <div class="carousel-container">
+        <div id="carousel-card" class="history-card"></div>
+        <div class="carousel-controls">
+          <button id="prev-card-btn" class="btn btn-small">◀ Back</button>
+          <span id="carousel-index">1 / 1</span>
+          <button id="next-card-btn" class="btn btn-small">Next ▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="sound-click" src="./src/audio/click.mp3" preload="auto"></audio>
+  <audio id="sound-win" src="./src/audio/win.mp3" preload="auto"></audio>
+  <audio id="sound-lose" src="./src/audio/lose.ogg" preload="auto"></audio>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
