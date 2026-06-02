@@ -5,10 +5,6 @@ A local multiplayer party game built with modern **Vanilla JavaScript**. This is
 ## ✨ Features
 - **True Hotseat Mechanics:** Hidden screens and blur overlays protect players' choices from being spied on.
 - **Inclusive Prompts:** Completely custom, 12+ appropriate question database that focuses on general knowledge and broad pop-culture.
-- **Virtual Mobile Keyboard:** Eliminates the annoying bouncing OS keyboard on touchscreen devices.
-- **Smart Points System:** Players start with 100 potential points, which decrease when using hints (Random letter, First letter, custom letters).
-- **Audio Feedback:** Immersive sound effects for clicking keys, winning guesses, and comical losing screens.
-- **End-Game Carousel:** Review all answers and choices after the match to laugh over the results.
 
 ## 🛠️ Project Structure
 - `src/core/` - Contains core game mechanics, the Fisher-Yates randomizer, and word masking engines.
