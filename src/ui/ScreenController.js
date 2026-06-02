@@ -210,6 +210,29 @@ export class ScreenController {
         gap: 12px;
         margin-top: 18px;
       }
+      .help-section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+      .help-toggle-row {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .tip-visual {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.04);
+        color: var(--text);
+      }
+      .tip-note {
+        margin-top: 12px;
+        color: var(--muted);
+      }
       .player-box {
         background: rgba(255,255,255,0.03);
         border: 1px solid rgba(140,108,255,0.18);
@@ -255,7 +278,19 @@ export class ScreenController {
         box-shadow: 0 18px 45px rgba(97,70,234,0.12);
       }
 
-      .stats-bar { display: flex; justify-content: space-between; gap: 10px; margin: 10px 0; color: var(--muted); font-weight: 700; }
+      .stats-bar { display: flex; justify-content: space-between; gap: 10px; margin: 10px 0; color: var(--muted); font-weight: 700; flex-wrap: wrap; align-items: center; }
+      .stats-bar span { flex: 0 1 auto; }
+      .gold-balance { color: #ffd56b; font-weight: 900; transition: transform 0.25s ease, text-shadow 0.25s ease; }
+      .gold-add { transform: translateY(-6px); text-shadow: 0 8px 30px rgba(125, 255, 170, 0.18); }
+      .gold-spend { transform: translateY(-2px) scale(0.98); text-shadow: 0 6px 20px rgba(255, 120, 120, 0.08); color: #ffb2a8; }
+
+      @media (max-width: 420px) {
+        .ability-row { flex-direction: column; align-items: stretch; gap: 8px; }
+        .ability-desc { margin-left: 0; margin-top: 6px; font-size: 0.9rem; }
+        .btn-action { min-width: 100%; }
+        .input-check-group { width: 100%; }
+        .single-letter-box { width: 56px; }
+      }
       .final-guess-block { border-top: 1px dashed rgba(255,255,255,0.08); margin-top: 22px; padding-top: 18px; }
       .leaderboard-list {
         list-style: none;
@@ -273,6 +308,55 @@ export class ScreenController {
         border: 1px solid rgba(255,255,255,0.05);
         min-height: 140px;
         margin: 16px 0;
+      }
+      .history-card-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 10px;
+        color: var(--accent);
+        font-size: 0.95rem;
+      }
+      .history-card-meta {
+        margin: 0 0 12px 0;
+        color: #a0a0b2;
+        font-size: 0.95rem;
+      }
+      .history-card-text {
+        margin: 0;
+        color: var(--text);
+        line-height: 1.6;
+      }
+      .history-player-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 18px;
+        justify-content: center;
+      }
+      .history-player-btn {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        color: var(--text);
+        padding: 12px 16px;
+        border-radius: 16px;
+        min-width: 120px;
+        cursor: pointer;
+      }
+      .history-player-btn.active {
+        background: linear-gradient(135deg, #7f65ff, #4d5dff);
+        color: white;
+        border-color: rgba(140,108,255,0.42);
+      }
+      .history-window {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 22px;
+        padding: 18px;
+      }
+      .history-window-container {
+        margin-bottom: 8px;
       }
       .carousel-controls {
         display: flex;
@@ -371,7 +455,167 @@ export class ScreenController {
       .rules-dropdown-box p { margin: 6px 0; }
       .rules-dropdown-box ul { margin: 8px 0; padding-left: 22px; }
       .rules-dropdown-box li { margin: 4px 0; }
+      
+      .audio-control-panel {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(20, 19, 29, 0.95);
+        border: 1px solid rgba(140, 108, 255, 0.3);
+        border-radius: 999px;
+        padding: 12px 16px;
+        z-index: 100;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        transition: width 0.3s ease, padding 0.3s ease, gap 0.3s ease, border-radius 0.3s ease;
+      }
+      
+      .audio-control-panel.collapsed {
+        width: 46px;
+        padding: 10px;
+        gap: 0;
+        border-radius: 50%;
+        justify-content: center;
+        overflow: hidden;
+      }
+      
+      .audio-control-panel.collapsed .volume-slider,
+      .audio-control-panel.collapsed .volume-label {
+        display: none;
+      }
+      
+      .audio-control-panel button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        color: var(--accent);
+      }
+      
+      .audio-control-panel button:hover {
+        opacity: 0.7;
+        transform: scale(1.05);
+      }
+      
+      .audio-control-panel:hover,
+      .audio-control-panel:focus-within {
+        width: auto;
+        padding: 12px 16px;
+        gap: 12px;
+        border-radius: 999px;
+      }
+      
+      .volume-slider {
+        width: 120px;
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.1);
+        outline: none;
+        -webkit-appearance: none;
+        appearance: none;
+        cursor: pointer;
+      }
+      
+      .volume-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(140, 108, 255, 0.3);
+      }
+      
+      .volume-slider::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 6px rgba(140, 108, 255, 0.3);
+      }
+      
+      .volume-label {
+        font-size: 12px;
+        color: var(--muted);
+        min-width: 24px;
+        text-align: right;
+      }
+      
+      @media (max-width: 480px) {
+        .audio-control-panel {
+          bottom: 10px;
+          right: 10px;
+          gap: 8px;
+          padding: 8px 12px;
+        }
+        .volume-slider {
+          width: 80px;
+        }
+      }
     `;
     document.head.appendChild(style);
+  }
+
+  setupAudioControl(audioManager) {
+    // Create audio control panel HTML
+    const panel = document.createElement('div');
+    panel.className = 'audio-control-panel collapsed';
+    panel.id = 'audio-control-panel';
+    panel.innerHTML = `
+      <button id="audio-toggle-btn" title="Toggle sound" aria-label="Toggle sound">🔊</button>
+      <input 
+        id="volume-slider" 
+        class="volume-slider" 
+        type="range" 
+        min="0" 
+        max="100" 
+        value="${Math.round(audioManager.getVolume() * 100)}"
+        title="Volume control"
+        aria-label="Volume control"
+      >
+      <span class="volume-label" id="volume-label">${Math.round(audioManager.getVolume() * 100)}%</span>
+    `;
+    document.body.appendChild(panel);
+
+    panel.addEventListener('mouseenter', () => panel.classList.remove('collapsed'));
+    panel.addEventListener('mouseleave', () => panel.classList.add('collapsed'));
+    panel.addEventListener('focusin', () => panel.classList.remove('collapsed'));
+    panel.addEventListener('focusout', (event) => {
+      if (!panel.contains(event.relatedTarget)) {
+        panel.classList.add('collapsed');
+      }
+    });
+
+    // Setup event listeners
+    const toggleBtn = document.getElementById('audio-toggle-btn');
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeLabel = document.getElementById('volume-label');
+
+    toggleBtn.onclick = (e) => {
+      e.stopPropagation(); // Prevent global button click handler
+      const enabled = audioManager.toggleEnabled();
+      toggleBtn.textContent = enabled ? '🔊' : '🔇';
+      toggleBtn.style.opacity = enabled ? '1' : '0.5';
+      audioManager.play('click'); // Play sound when toggling ON
+    };
+
+    volumeSlider.oninput = (e) => {
+      const volume = parseInt(e.target.value) / 100;
+      audioManager.setVolume(volume);
+      volumeLabel.textContent = `${Math.round(volume * 100)}%`;
+    };
+
+    // Set initial toggle button state
+    const enabled = audioManager.isEnabled();
+    toggleBtn.textContent = enabled ? '🔊' : '🔇';
+    toggleBtn.style.opacity = enabled ? '1' : '0.5';
   }
 }

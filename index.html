@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Rather Party — One Screen Game</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
 <body>
 
@@ -16,12 +17,31 @@
   </div>
 
   <div class="game-container">
+    <div class="help-section">
+      <div class="help-toggle-row">
+        <button id="help-toggle-btn" class="btn btn-small">Show compact gameplay tips</button>
+      </div>
+      <div id="help-panel" class="rules-dropdown-box" style="display:none;">
+        <p><strong>Quick game flow</strong></p>
+        <p>1. The active player reads the secret question and picks a prompt for the next player.</p>
+        <p>2. The next player sees only the prompt, types two different answers, then chooses which answer fits.</p>
+        <p>3. Other players take turns guessing the chosen answer after letters are revealed.</p>
+        <div class="tip-visual">
+          <div><strong>Prompt:</strong> “Pick one option”</div>
+          <div><strong>Answer A:</strong> “Ride a dragon”</div>
+          <div><strong>Answer B:</strong> “Swim with dolphins”</div>
+          <div><strong>Then:</strong> secret question with one answer hidden</div>
+        </div>
+        <p class="tip-note">If only two players are in the game, the prompt goes to the other player. With more players, the prompt goes to the next player in order.</p>
+      </div>
+    </div>
+
     <!-- НАСТРОЙКА ИГРЫ (ОБНОВЛЕНА) -->
     <div id="setup-screen">
       <h2>Game Setup</h2>
       <p style="color:#c0bfe2; line-height:1.6; margin-bottom: 16px;">
-        Add at least two players. Pick how many rounds you want, then press Start.
-        The game will tell each player when to look at the phone.
+        Add at least two players and choose how many rounds to play.
+        The game will prompt each player when it is their turn.
       </p>
       <div class="add-player-block">
         <input id="single-player-input" type="text" placeholder="Enter player name" class="input-field" style="margin-bottom: 5px;">
@@ -43,9 +63,8 @@
     <div id="picker-screen" style="display:none;">
       <h2><span id="picker-name"></span>'s Turn</h2>
       <p style="color:#c0bfe2; line-height:1.6; margin-top:0;">
-        Read the secret question. Pick one of the two prompts for the next player,
-        or type your own. First, they will see only the prompt. After they enter answers,
-        they will then see the secret question with their answers hidden.
+        Read the secret question and choose one prompt for <span id="responder-target-name"></span>.
+        The next player sees only the prompt first, then enters two answers before the question is revealed.
       </p>
       <div class="card-question">
         <p>Your secret question:</p>
@@ -56,7 +75,7 @@
       <button id="hint-btn-2" class="btn btn-secondary"></button>
       
       <div class="custom-hint-block">
-        <p>Or type a new prompt for them:</p>
+        <p>Or type a new prompt for the next player:</p>
         <input id="custom-hint-input" type="text" placeholder="Write something ..." class="input-field">
         <button id="custom-hint-btn" class="btn btn-accent">Use Custom Hint</button>
       </div>
@@ -88,10 +107,6 @@
 <div id="guesser-screen" style="display:none;">
   <h2><span id="guesser-name"></span>, Guess!</h2>
   
-  <p style="color:#c0bfe2; line-height:1.6; margin-top:0; text-align:center;">
-    You will see the hidden question with both answers hidden as stars.
-    Use abilities to reveal letters, then tap the answer you think the other player chose.
-  </p>
   <p style="text-align: center; margin-bottom: 5px; color: #a0a0b2;">
     The prompt was: <strong id="guesser-displayed-hint" class="prompt-badge"></strong>
   </p>
@@ -99,32 +114,31 @@
   <p id="guesser-question-display" class="card-question highlight-text"></p>
   
   <div class="stats-bar">
-    <span id="potential-score"></span>
-    <span id="abilities-count"></span>
+    <span id="potential-score">Win: +50 points</span>
+    <span id="gold-balance" class="gold-balance">Points: 50</span>
   </div>
+  
+  <p style="color:#c0bfe2; line-height:1.6; margin-top:16px; margin-bottom:16px; text-align:center;">
+    Choose one or two reveals (second costs 15 points), then tap the choice you think the player picked.
+  </p>
   
   <!-- СПИСОК СПОСОБНОСТЕЙ В СТОЛБИК С ОБЪЯСНЕНИЕМ -->
   <div class="abilities-list-vertical">
     <div class="ability-row">
-      <button id="ability-rand-btn" class="btn-action">🎲 Random</button>
-      <span class="ability-desc">Opens one random hidden letter in both words <strong style="color:#ff4a4a;">(-20 pts)</strong></span>
+      <button id="ability-pos-btn" class="btn-action">📍 Positions</button>
+      <span class="ability-desc" id="pos-desc">Reveal key letters <strong style="color:#7dffaa;">(FREE)</strong></span>
     </div>
     
     <div class="ability-row">
-      <button id="ability-first-btn" class="btn-action">🔤 First</button>
-      <span class="ability-desc">Reveals the very first letter of both words <strong style="color:#ff4a4a;">(-40 pts)</strong></span>
+      <button id="ability-rand-btn" class="btn-action">🎲 Random</button>
+      <span class="ability-desc" id="rand-desc">Reveal random letters <strong style="color:#7dffaa;">(FREE)</strong></span>
     </div>
 
-    <!-- ВВОД БУКВЫ ВРУЧНУЮ ВМЕСТО КЛАВИАТУРЫ -->
-    <div class="ability-row" style="border-bottom: none;">
-      <div class="input-check-group">
-        <input id="custom-letter-input" type="text" maxlength="1" placeholder="A" class="single-letter-box">
-        <button id="ability-letter-btn" class="btn-action">👁️ Check</button>
-      </div>
-      <span class="ability-desc">Type any letter to see if it exists in the words <strong style="color:#ff4a4a;">(-30 pts)</strong></span>
+    <div class="ability-row">
+      <button id="ability-type-btn" class="btn-action">🔤 Letters</button>
+      <span class="ability-desc" id="type-desc">Reveal vowels or consonants <strong style="color:#7dffaa;">(FREE)</strong></span>
     </div>
   </div>
-  
   <div class="final-guess-block">
     <p style="text-align: center; color: #a0a0b2;">Tap your final guess:</p>
     <button id="guess-word-1" class="btn btn-choice"></button>
@@ -139,8 +153,8 @@
     <ol id="final-scores-list" class="leaderboard-list"></ol>
     
     <h3>Match History</h3>
-    <!-- Вместо карусели теперь просто плоский список карточек -->
-    <div id="final-history-list" class="history-list-container"></div>
+    <div id="history-player-list" class="history-player-list"></div>
+    <div id="final-history-window" class="history-window-container"></div>
   </div>
 
   <audio id="sound-click" src="./src/audio/click.mp3" preload="auto"></audio>

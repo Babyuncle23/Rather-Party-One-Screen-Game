@@ -2,7 +2,8 @@ import { questionsDatabase } from '../data/questions.js';
 
 export class Match {
   constructor(playerNames, totalRounds) {
-    this.players = playerNames.map((name, index) => ({ id: index + 1, name: name.toUpperCase(), score: 0 }));
+    // Each player starts with 50 points instead of 0
+    this.players = playerNames.map((name, index) => ({ id: index + 1, name: name.toUpperCase(), gold: 50 }));
     this.totalRounds = totalRounds;
     this.currentRound = 1;
     this.pickerIndex = 0; 

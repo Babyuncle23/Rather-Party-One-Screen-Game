@@ -1,9 +1,12 @@
 import { Match } from './core/Match.js';
 import { WordShifter } from './core/WordShifter.js';
 import { ScreenController } from './ui/ScreenController.js';
+import { AudioManager } from './audio/AudioManager.js';
+import { AUTOCOMPLETE_WORDS } from './data/autocompleteWords.js';
 
 let game = null;
 let screens = null;
+let audioManager = null;
 
 let currentQuestion = null;
 let currentHint = "";
@@ -12,21 +15,203 @@ let responderChoice = "";
 
 let remainingGuessers = []; 
 let currentGuesserIndex = null;
-let currentPotentialScore = 100;
-let abilitiesUsed = 0;
+const FIXED_REWARD = 50; // Each correct answer is worth 50 points
+let revealCount = 0; // Track: 0 = no reveals, 1 = one reveal used, 2 = two reveals used
 let currentCardIndex = 0;
 
 let temporaryPlayersList = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   try {
+    audioManager = new AudioManager();
     screens = new ScreenController();
+    screens.setupAudioControl(audioManager);
     setupInitialEventListeners();
+    setupHelpPanel();
+    setupGlobalButtonSounds();
+    setupCustomHintAutocomplete();
   } catch (error) {
     console.error("Initialization error:", error);
     alert("UI Style Injection failed: " + error.message);
   }
 });
+
+function setupCustomHintAutocomplete() {
+  try {
+    const customInput = document.getElementById('custom-hint-input');
+    if (!customInput) return;
+
+    // Create a wrapper for proper positioning
+    const wrapper = document.createElement('div');
+    wrapper.className = 'autocomplete-wrapper';
+    wrapper.style.position = 'relative';
+    wrapper.style.width = '100%';
+    wrapper.style.marginBottom = '14px';
+
+    // Insert wrapper right after input
+    customInput.parentNode.insertBefore(wrapper, customInput.nextSibling);
+    
+    // Move input into wrapper
+    wrapper.appendChild(customInput);
+
+    // Create suggestion container (positioned absolutely below input)
+    const suggestions = document.createElement('div');
+    suggestions.className = 'autocomplete-suggestions';
+    suggestions.style.position = 'absolute';
+    suggestions.style.top = '100%';
+    suggestions.style.left = '0';
+    suggestions.style.right = '0';
+    suggestions.style.marginTop = '4px';
+    suggestions.style.display = 'none';
+    suggestions.style.background = 'rgba(20, 19, 29, 0.96)';
+    suggestions.style.border = '1px solid rgba(140, 108, 255, 0.24)';
+    suggestions.style.borderRadius = '14px';
+    suggestions.style.padding = '8px 0';
+    suggestions.style.maxHeight = '200px';
+    suggestions.style.overflowY = 'auto';
+    suggestions.style.zIndex = '1000';
+    suggestions.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.5)';
+
+    wrapper.appendChild(suggestions);
+
+    // Inject comprehensive styles for suggestion items
+    const style = document.createElement('style');
+    style.textContent = `
+      .autocomplete-item {
+        padding: 10px 14px;
+        cursor: pointer;
+        color: var(--muted);
+        font-size: 14px;
+        transition: background 0.15s ease, color 0.15s ease;
+        display: flex;
+        align-items: center;
+      }
+      .autocomplete-item:hover {
+        background: rgba(140, 108, 255, 0.18);
+        color: var(--text);
+      }
+      .autocomplete-item.selected {
+        background: rgba(140, 108, 255, 0.28);
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .autocomplete-item-icon {
+        font-size: 12px;
+        margin-right: 8px;
+        opacity: 0.5;
+      }
+      .autocomplete-item.selected .autocomplete-item-icon {
+        opacity: 1;
+      }
+    `;
+    document.head.appendChild(style);
+
+    let selectedIndex = -1;
+
+    function insertSuggestion(word) {
+      const val = customInput.value;
+      const parts = val.split(/\s+/);
+      if (parts.length === 0) {
+        customInput.value = word + ' ';
+      } else {
+        parts.pop();
+        const newVal = (parts.concat([word])).filter(Boolean).join(' ') + ' ';
+        customInput.value = newVal;
+      }
+      customInput.focus();
+      showSuggestionsFor('');
+    }
+
+    function showSuggestionsFor(prefix) {
+      const p = (prefix || '').toLowerCase().trim();
+      if (!p) {
+        suggestions.style.display = 'none';
+        suggestions.innerHTML = '';
+        selectedIndex = -1;
+        return;
+      }
+
+      const matches = AUTOCOMPLETE_WORDS.filter(w => w.toLowerCase().startsWith(p)).slice(0, 10);
+      if (matches.length === 0) {
+        suggestions.style.display = 'none';
+        suggestions.innerHTML = '';
+        selectedIndex = -1;
+        return;
+      }
+
+      suggestions.innerHTML = '';
+      selectedIndex = -1;
+
+      matches.forEach((m, idx) => {
+        const it = document.createElement('div');
+        it.className = 'autocomplete-item';
+        it.dataset.index = idx;
+        it.innerHTML = `<span class="autocomplete-item-icon">✓</span>${m}`;
+        it.onclick = () => {
+          insertSuggestion(m);
+        };
+        suggestions.appendChild(it);
+      });
+      suggestions.style.display = 'block';
+    }
+
+    function updateSelectedClass() {
+      const items = suggestions.querySelectorAll('.autocomplete-item');
+      items.forEach((item, idx) => {
+        if (idx === selectedIndex) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      });
+    }
+
+    customInput.addEventListener('input', (e) => {
+      const val = e.target.value;
+      const lastToken = (val.split(/\s+/).pop() || '').replace(/[^\w-]/g, '');
+      showSuggestionsFor(lastToken);
+      selectedIndex = -1;
+    });
+
+    customInput.addEventListener('keydown', (e) => {
+      const items = suggestions.querySelectorAll('.autocomplete-item');
+      if (items.length === 0) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+        updateSelectedClass();
+        items[selectedIndex].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, -1);
+        if (selectedIndex >= 0) {
+          updateSelectedClass();
+          items[selectedIndex].scrollIntoView({ block: 'nearest' });
+        } else {
+          suggestions.querySelectorAll('.autocomplete-item').forEach(it => it.classList.remove('selected'));
+        }
+      } else if (e.key === 'Enter' && selectedIndex >= 0) {
+        e.preventDefault();
+        const word = items[selectedIndex].textContent.replace('✓', '').trim();
+        insertSuggestion(word);
+      } else if (e.key === 'Escape') {
+        suggestions.style.display = 'none';
+        selectedIndex = -1;
+      }
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!wrapper.contains(e.target)) {
+        suggestions.style.display = 'none';
+        selectedIndex = -1;
+      }
+    });
+  } catch (err) {
+    console.warn('Autocomplete init failed', err);
+  }
+}
 
 function setupInitialEventListeners() {
   const addPlayerBtn = document.getElementById('add-player-btn');
@@ -78,6 +263,52 @@ function renderPlayerBoxes() {
     };
     container.appendChild(box);
   });
+  updateHelpTargetText();
+}
+
+function setupHelpPanel() {
+  const helpToggle = document.getElementById('help-toggle-btn');
+  const helpPanel = document.getElementById('help-panel');
+
+  if (!helpToggle || !helpPanel) return;
+
+  helpToggle.onclick = () => {
+    const isOpen = helpPanel.style.display === 'block';
+    helpPanel.style.display = isOpen ? 'none' : 'block';
+    helpToggle.innerText = isOpen ? 'Show compact gameplay tips' : 'Hide gameplay tips';
+    audioManager.play('click');
+  };
+
+  helpPanel.style.display = 'none';
+  helpToggle.innerText = 'Show compact gameplay tips';
+  updateHelpTargetText();
+}
+
+/**
+ * Add click sound to all buttons globally
+ */
+function setupGlobalButtonSounds() {
+  document.addEventListener('click', (e) => {
+    const button = e.target.closest('button');
+    if (button) {
+      audioManager.play('click');
+    }
+  }, true);
+}
+
+function updateHelpTargetText() {
+  const helpResponderName = document.getElementById('help-responder-name');
+  if (!helpResponderName) return;
+
+  if (game && game.players.length === 2) {
+    helpResponderName.innerText = game.players[game.getResponderIndex()].name;
+  } else if (game && game.players.length > 2) {
+    helpResponderName.innerText = 'the next player in order';
+  } else if (temporaryPlayersList.length === 2) {
+    helpResponderName.innerText = temporaryPlayersList[1] || 'the other player';
+  } else {
+    helpResponderName.innerText = 'the next player';
+  }
 }
 
 function initRound() {
@@ -93,6 +324,7 @@ function initRound() {
     document.getElementById('picker-name').innerText = picker.name;
     document.getElementById('responder-target-name').innerText = game.players[game.getResponderIndex()].name;
     document.getElementById('secret-question-text').innerText = currentQuestion.text;
+    updateHelpTargetText();
     
     const btn1 = document.getElementById('hint-btn-1');
     const btn2 = document.getElementById('hint-btn-2');
@@ -225,9 +457,8 @@ function setupNextGuesser() {
     }
     
     currentGuesserIndex = remainingGuessers.shift();
-    shifter = new WordShifter(shifter.orig1, shifter.orig2); 
-    currentPotentialScore = 100;
-    abilitiesUsed = 0;
+    shifter = new WordShifter(shifter.orig1, shifter.orig2);
+    revealCount = 0;
     
     screens.showPassScreen(
       game.players[currentGuesserIndex],
@@ -239,19 +470,13 @@ function setupNextGuesser() {
   }
 }
 
-// 1. Обновляем старт фазы угадывания
 function startGuesserPhase() {
   try {
     screens.switchScreen('guesser');
     document.getElementById('guesser-name').innerText = game.players[currentGuesserIndex].name;
     
     updateGuesserUI();
-    
-    // Включаем обработчик ручного ввода буквы
-    setupManualLetterInput();
-    
-    document.getElementById('ability-rand-btn').onclick = () => useAbility('rand', 20);
-    document.getElementById('ability-first-btn').onclick = () => useAbility('first', 40);
+    setupRevealButtons();
     
     document.getElementById('guess-word-1').onclick = () => makeGuess(shifter.orig1);
     document.getElementById('guess-word-2').onclick = () => makeGuess(shifter.orig2);
@@ -260,84 +485,99 @@ function startGuesserPhase() {
   }
 }
 
-function setupManualLetterInput() {
-  const customLetterInput = document.getElementById('custom-letter-input');
-  const checkBtn = document.getElementById('ability-letter-btn');
-  const clickSound = document.getElementById('sound-click');
+function setupRevealButtons() {
+  const posBtn = document.getElementById('ability-pos-btn');
+  const randBtn = document.getElementById('ability-rand-btn');
+  const typeBtn = document.getElementById('ability-type-btn');
   
-  customLetterInput.value = ""; // Очищаем поле при входе
-
-  checkBtn.onclick = () => {
-    const letter = customLetterInput.value.trim().toUpperCase();
-    
-    // Валидация: проверяем, что введена ровно одна английская буква
-    if (letter.length !== 1 || !/[A-Z]/.test(letter)) {
-      alert("Please enter a single letter (A-Z)!");
-      return;
-    }
-    
-    // Звук клика
-    if (clickSound) {
-      clickSound.currentTime = 0;
-      clickSound.play().catch(e => {});
-    }
-
-    // Запускаем стандартную способность проверки буквы за 30 баллов
-    useAbility('letter', 30, letter);
-    
-    // Очищаем инпут для следующей проверки
-    customLetterInput.value = "";
+  const getButtonState = () => {
+    if (revealCount === 0) return { disabled: false, cost: 0, label: '(FREE)' };
+    if (revealCount === 1) return { disabled: false, cost: 15, label: '(15 pts)' };
+    return { disabled: true, cost: 0, label: '(Used)' };
   };
+  
+  const state = getButtonState();
+  
+  posBtn.disabled = state.disabled;
+  randBtn.disabled = state.disabled;
+  typeBtn.disabled = state.disabled;
+  
+  posBtn.onclick = () => useReveal('positional', state.cost);
+  randBtn.onclick = () => useReveal('random', state.cost);
+  typeBtn.onclick = () => useReveal('type', state.cost);
 }
 
-function useAbility(type, cost, param = null) {
-  if (abilitiesUsed >= shifter.getAbilitiesLimit()) {
-    alert("Abilities limit reached!");
+function useReveal(revealType, cost) {
+  const guesser = game.players[currentGuesserIndex];
+  
+  if (cost > 0 && guesser.gold < cost) {
+    alert('Not enough points for this reveal!');
     return;
   }
-  if (type === 'rand') shifter.openRandomLetter();
-  if (type === 'first') shifter.openFirstLetter();
-  if (type === 'letter') shifter.guessLetter(param);
-  abilitiesUsed++;
-  currentPotentialScore = Math.max(0, currentPotentialScore - cost);
+  
+  if (cost > 0) {
+    guesser.gold -= cost;
+    animateGoldChange(-cost);
+  }
+  
+  const intensity = revealCount + 1;
+  if (revealType === 'positional') shifter.revealPositional(intensity);
+  else if (revealType === 'random') shifter.revealRandom(intensity);
+  else if (revealType === 'type') shifter.revealLetterType(intensity);
+  
+  revealCount++;
   updateGuesserUI();
+  setupRevealButtons();
 }
 
 function updateGuesserUI() {
   const masks = shifter.getMaskedWords();
   const displayQ = currentQuestion.text.replace("___", masks.w1).replace("___", masks.w2);
   
-  // ВОТ ЭТА СТРОКА: Записываем промпт раунда на экран угадывания капсом
+  // Записываем промпт раунда на экран угадывания капсом
   document.getElementById('guesser-displayed-hint').innerText = currentHint.toUpperCase();
 
   document.getElementById('guesser-question-display').innerText = displayQ;
-  document.getElementById('potential-score').innerText = `Reward: +${currentPotentialScore} pts`;
-  document.getElementById('abilities-count').innerText = `Abilities used: ${abilitiesUsed} / ${shifter.getAbilitiesLimit()}`;
+  document.getElementById('potential-score').innerText = `Win: +${FIXED_REWARD} points`;
+  document.getElementById('gold-balance').innerText = `Points: ${game.players[currentGuesserIndex].gold}`;
   
   document.getElementById('guess-word-1').innerText = masks.w1;
   document.getElementById('guess-word-2').innerText = masks.w2;
+  
+  // Update dynamic descriptions for each reveal type
+  const intensity = revealCount + 1;
+  const posDesc = shifter.getPositionalDescription(intensity);
+  const randDesc = shifter.getRandomDescription(intensity);
+  const typeDesc = shifter.getLetterTypeDescription(intensity);
+  
+  const getCostLabel = () => {
+    if (revealCount === 0) return '(FREE)';
+    if (revealCount === 1) return '(15 pts)';
+    return '(Used)';
+  };
+  const costLabel = getCostLabel();
+  
+  const descPos = document.getElementById('pos-desc');
+  const descRand = document.getElementById('rand-desc');
+  const descType = document.getElementById('type-desc');
+  
+  if (descPos) descPos.innerHTML = `${posDesc} <strong style="color:#7dffaa;">${costLabel}</strong>`;
+  if (descRand) descRand.innerHTML = `${randDesc} <strong style="color:#7dffaa;">${costLabel}</strong>`;
+  if (descType) descType.innerHTML = `${typeDesc} <strong style="color:#7dffaa;">${costLabel}</strong>`;
 }
 
 function makeGuess(word) {
   try {
     const guesser = game.players[currentGuesserIndex];
-    
-    const winSound = document.getElementById('sound-win');
-    const loseSound = document.getElementById('sound-lose');
-
     const isCorrect = (word === responderChoice);
+    const goldBefore = guesser.gold; // Track balance before update
     
     if (isCorrect) {
-      guesser.score += currentPotentialScore;
-      if (winSound) {
-        winSound.currentTime = 0;
-        winSound.play().catch(e => console.log(e));
-      }
+      guesser.gold += FIXED_REWARD;
+      animateGoldChange(FIXED_REWARD, true);
+      audioManager.play('win');
     } else {
-      if (loseSound) {
-        loseSound.currentTime = 0;
-        loseSound.play().catch(e => console.log(e));
-      }
+      audioManager.play('lose');
     }
 
     // 1. Получаем последнее сохраненное предложение из истории
@@ -349,11 +589,14 @@ function makeGuess(word) {
 
     // 3. Формируем текст для всплывающего окна
     const statusIcon = isCorrect ? "🎉 CORRECT!" : "❌ WRONG!";
-    const pointsEarned = isCorrect ? `${currentPotentialScore} pts` : "0 pts";
+    const pointsEarned = isCorrect ? `${FIXED_REWARD} points` : "0 points";
+    const goldChange = isCorrect ? `+${FIXED_REWARD}` : "0";
+    const finalWallet = guesser.gold;
 
     const alertMessage = 
       `${statusIcon}\n` +
-      `You earned: ${pointsEarned}\n\n` +
+      `You earned: ${pointsEarned}\n` +
+      `Score: ${goldBefore} → ${finalWallet} points (${goldChange})\n\n` +
       `--- CHOICE SCHEME ---\n` +
       `${cleanSentence}\n\n` +
       `• Your guess was: "${word}"`;
@@ -374,26 +617,76 @@ function showFinalScores() {
     screens.switchScreen('final');
     
     // 1. Рендерим таблицу лидеров
-    const leaderboard = [...game.players].sort((a, b) => b.score - a.score);
+    const leaderboard = [...game.players].sort((a, b) => (b.gold || 0) - (a.gold || 0));
     document.getElementById('final-scores-list').innerHTML = leaderboard
-      .map(p => `<li><strong>${p.name}</strong>: ${p.score} pts</li>`).join('');
-    
-    // 2. Рендерим историю в виде чистого вертикального списка карточек
-    const historyContainer = document.getElementById('final-history-list');
-    historyContainer.innerHTML = game.history.map(h => `
-      <div class="history-card" style="margin-bottom: 15px;">
-        <h4 style="margin: 0 0 8px 0; color: #6246ea; font-size: 14px;">ROUND ${h.round}</h4>
-        <p style="margin: 4px 0; font-size: 14px; color: #a0a0b2;">
-          Context set by ${h.picker} via prompt: <em>"${h.hint.toUpperCase()}"</em>
-        </p>
-        <p style="margin: 10px 0 0 0; font-size: 16px; line-height: 1.4; border-top: 1px dashed #3e3e4a; padding-top: 10px;">
-          ${h.resultSentence}
-        </p>
-      </div>
+      .map(p => `<li><strong>${p.name}</strong>: ${p.gold || 0} points</li>`).join('');
+
+    // 2. Рендерим кнопки выбора игрока и одно окно истории
+    const playerList = document.getElementById('history-player-list');
+    const selectedFrame = document.getElementById('final-history-window');
+
+    playerList.innerHTML = game.players.map((player, index) => `
+      <button class="btn btn-small history-player-btn" data-player="${player.name}" data-index="${index}">
+        ${player.name}
+      </button>
     `).join('');
+
+    const renderHistoryForPlayer = (playerName) => {
+      const rows = game.history
+        .filter((h) => h.responder === playerName)
+        .map((h) => `
+          <div class="history-card">
+            <div class="history-card-header">
+              <strong>Round ${h.round}</strong>
+            </div>
+            <p class="history-card-text">${h.resultSentence}</p>
+          </div>
+        `)
+        .join('');
+
+      selectedFrame.innerHTML = `
+        <div class="history-window">
+          <h4 style="margin: 0 0 12px 0; font-size: 1rem; color: var(--text);">
+            Choices by ${playerName}
+          </h4>
+          ${rows || '<p style="color: var(--muted);">No choices were made by this player.</p>'}
+        </div>
+      `;
+    };
+
+    const buttons = playerList.querySelectorAll('.history-player-btn');
+    buttons.forEach((button, index) => {
+      button.onclick = () => {
+        buttons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        renderHistoryForPlayer(button.dataset.player);
+      };
+    });
+
+    if (buttons.length > 0) {
+      buttons[0].classList.add('active');
+      renderHistoryForPlayer(buttons[0].dataset.player);
+    }
 
   } catch (err) {
     alert("Error inside showFinalScores: " + err.message);
     console.error(err);
+  }
+}
+
+// Simple visual feedback for gold spending/replenishment
+function animateGoldChange(amount, positive = false) {
+  try {
+    const el = document.getElementById('gold-balance');
+    if (!el) return;
+    // update text
+    if (game && typeof currentGuesserIndex === 'number' && game.players[currentGuesserIndex]) {
+      el.innerText = `Points: ${game.players[currentGuesserIndex].gold}`;
+    }
+    const cls = positive ? 'gold-add' : 'gold-spend';
+    el.classList.add(cls);
+    setTimeout(() => el.classList.remove(cls), 900);
+  } catch (e) {
+    // ignore animation errors
   }
 }
