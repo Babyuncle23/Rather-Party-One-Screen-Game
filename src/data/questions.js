@@ -113,5 +113,71 @@ export const questionsDatabase = [
       "Name two daily services or subscriptions that you use often",
       "Name two necessary everyday goods or products that you always buy"
     ]
+  },
+  {
+    id: 10,
+    category: "travel",
+    difficulty: "medium",
+    text: "Would you rather spend a year traveling around ___ or around ___?",
+    resultTemplate: "{name} would rather spend a year traveling around {winner} than around {loser}.",
+    hints: [
+      "Name two countries, cities, or regions that you personally find beautiful or fascinating",
+      "Name two distinct types of natural terrain or geographic ecosystems",
+      "Name two areas known for extreme weather, intense pollution, or very difficult terrain"
+    ]
+  },
+  {
+    id: 11,
+    category: "skills",
+    difficulty: "hard",
+    text: "Would you rather instantly become a world-class expert in ___ or in ___?",
+    resultTemplate: "{name} would rather instantly become a world-class expert in {winner} than in {loser}.",
+    hints: [
+      "Name two complex academic subjects, scientific disciplines, or professional industries",
+      "Name two creative arts, styles of performance, crafts, or musical instruments",
+      "Name two activities that you find incredibly boring, repetitive, or tedious to do",
+      "Name two fields that are notoriously stressful, high-pressure, or exhausting",
+      "Name two highly specific, unusual, or absurd hobbies"
+    ]
+  },
+  {
+    id: 12,
+    category: "animals",
+    difficulty: "easy",
+    text: "Would you rather have a pet ___ or a pet ___ for the next ten years?",
+    resultTemplate: "{name} would rather have a pet {winner} than a pet {loser} for the next ten years.",
+    hints: [
+      "Name two animals that you think are affectionate, gentle, or great companions",
+      "Name two wild, rare, or majestic animals that you usually only see in nature documentaries",
+      "Name two creatures that terrify you, give you the creeps, or possess toxic defenses",
+      "Name two animals known for being extremely noisy, destructive, or bad-smelling",
+      "Name two massive prehistoric beasts, mythological creatures, or bizarre monsters"
+    ]
+  },
+  {
+    id: 13,
+    category: "fashion",
+    difficulty: "easy",
+    text: "Would you rather attend a formal gala wearing a suit made of ___ or made of ___?",
+    resultTemplate: "{name} would rather attend a formal gala wearing a suit made of {winner} than made of {loser}.",
+    hints: [
+      "Name two high-quality fabrics, textures, or materials used to make fine clothing",
+      "Name two shiny, rigid, or reflective elements found in nature or manufacturing",
+      "Name two sticky, wet, or crumbly foods that would easily stain or fall apart",
+      "Name two random objects you would find in a recycling bin, tool shed, or hardware store"
+    ]
+  },
+  {
+    id: 14,
+    category: "history",
+    difficulty: "hard",
+    text: "Would you rather travel back in time to experience the era of ___ or the era of ___?",
+    resultTemplate: "{name} would rather travel back in time to experience the era of {winner} than the era of {loser}.",
+    hints: [
+      "Name two historical time periods known for significant artistic, architectural, or cultural growth",
+      "Name two specific decades from the past century",
+      "Name two historical events marked by severe hardships",
+      "Name two time periods that lacked modern conveniences like indoor plumbing or electricity"
+    ]
   }
 ];
