@@ -5,7 +5,8 @@ const ADJECTIVES_AND_DESCRIPTORS = [
   "expensive", "cheap", "famous", "popular", "rare", "boring", "exciting", "fun", "dangerous",
   "silly", "loud", "quiet", "talented", "clumsy", "smart", "lazy", "generous", "rude", "awkward",
   "guilty", "secret", "creepy", "stylish", "fashionable", "athletic", "artistic", "adventurous",
-  "honest", "dishonest", "married", "single", "your", "you", "dislike", "like", "love", "two"
+  "honest", "dishonest", "married", "single", "your", "you", "dislike", "like", "love", "two",
+  "is", "of", "the" , "what", "prefer", "do", "stinky", "unpleasant", "pleasant"
 ];
 
 // Nouns with both singular and plural forms
@@ -26,7 +27,26 @@ const NOUNS_WITH_PLURALS = [
   { singular: "emoji", plural: "emojis" },
   { singular: "holiday", plural: "holidays" },
   { singular: "rapper", plural: "rappers" },
-  { singular: "snack", plural: "snacks" }
+  { singular: "snack", plural: "snacks" },
+  { singular: "artist", plural: "artists" },
+  { singular: "youtuber", plural: "youtubers" },
+  { singular: "vlogger", plural: "vloggers" },
+  { singular: "influencer", plural: "influencers" },
+  { singular: "book", plural: "books" },
+  { singular: "character", plural: "characters" },
+  { singular: "musician", plural: "musicians" },
+  { singular: "genre", plural: "genres" },
+  { singular: "color", plural: "colors" },
+  { singular: "place", plural: "places" },
+  { singular: "city", plural: "cities" },
+  { singular: "cartoon", plural: "cartoons" },
+  { singular: "game", plural: "games" },
+  { singular: "activity", plural: "activities" },
+  { singular: "country", plural: "countries" },
+  { singular: "type", plural: "types" },
+  { singular: "smell", plural: "smells" },
+  { singular: "sound", plural: "sounds" },
+  { singular: "mood", plural: "moods" }
 ];
 
 // Flattened autocomplete word list combining both lists
