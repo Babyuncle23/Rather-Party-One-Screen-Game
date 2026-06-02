@@ -6,7 +6,7 @@ const ADJECTIVES_AND_DESCRIPTORS = [
   "silly", "loud", "quiet", "talented", "clumsy", "smart", "lazy", "generous", "rude", "awkward",
   "guilty", "secret", "creepy", "stylish", "fashionable", "athletic", "artistic", "adventurous",
   "honest", "dishonest", "married", "single", "your", "you", "dislike", "like", "love", "two",
-  "is", "of", "the" , "what", "prefer", "do", "stinky", "unpleasant", "pleasant"
+  "is", "of", "the" , "what", "prefer", "do", "stinky", "unpleasant", "pleasant", "good"
 ];
 
 // Nouns with both singular and plural forms

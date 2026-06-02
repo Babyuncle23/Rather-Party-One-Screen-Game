@@ -111,7 +111,9 @@ export const questionsDatabase = [
     hints: [
       "Name two expensive items or luxury goods you wish you owned",
       "Name two daily services or subscriptions that you use often",
-      "Name two necessary everyday goods or products that you always buy"
+      "Name two necessary everyday goods or products that you always buy",
+      "Name two good moods",
+      "Name two bad moods"
     ]
   },
   {
