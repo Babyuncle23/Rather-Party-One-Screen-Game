@@ -15,6 +15,12 @@ export class AudioManager {
     
     // Restore saved volume preference
     this.loadSettings();
+    
+    // Инициализируем Web Audio Context и буферы для моментального воспроизведения
+    this.audioCtx = null;
+    this.typewriterBuffer = null;
+    this.flapBuffer = null;
+    this.isPreloaded = false;
   }
 
   /**
@@ -139,6 +145,86 @@ export class AudioManager {
     }
     if (savedEnabled !== null) {
       this.enabled = savedEnabled === 'true';
+    }
+  }
+
+  /**
+   * Предзагрузка аудиофайлов в память, чтобы они играли мгновенно без сетевых задержек
+   */
+  async preloadRevealSounds() {
+    if (this.isPreloaded || !this.enabled) return;
+    
+    try {
+      if (!this.audioCtx) {
+        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      const loadBuffer = async (url) => {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        return await this.audioCtx.decodeAudioData(arrayBuffer);
+      };
+
+      // Скачиваем и декодируем файлы в оперативную память один раз
+      const [typewriter, flap] = await Promise.all([
+        loadBuffer('src/audio/typewriter.mp3'),
+        loadBuffer('src/audio/flap.mp3')
+      ]);
+
+      this.typewriterBuffer = typewriter;
+      this.flapBuffer = flap;
+      this.isPreloaded = true;
+    } catch (err) {
+      console.debug("Preloading reveal sounds failed:", err.message);
+    }
+  }
+
+  /**
+   * Мгновенное воспроизведение комбинации звуков из памяти
+   */
+  async playRevealCombo() {
+    if (!this.enabled) return;
+
+    try {
+      if (!this.audioCtx) {
+        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      if (this.audioCtx.state === 'suspended') {
+        await this.audioCtx.resume();
+      }
+
+      // Если игроки играют очень быстро и файлы еще не загрузились, загружаем на лету
+      if (!this.isPreloaded) {
+        await this.preloadRevealSounds();
+      }
+
+      if (!this.typewriterBuffer || !this.flapBuffer) return;
+
+      const now = this.audioCtx.currentTime;
+
+      // 1. ВОСПРОИЗВЕДЕНИЕ FLAP (моментально из памяти)
+      const flapSource = this.audioCtx.createBufferSource();
+      flapSource.buffer = this.flapBuffer;
+      const flapGain = this.audioCtx.createGain();
+      flapGain.gain.value = this.volume;
+      flapSource.connect(flapGain);
+      flapGain.connect(this.audioCtx.destination);
+      flapSource.start(now);
+
+      // 2. ВОСПРОИЗВЕДЕНИЕ TYPEWRITER (громче, строго с 1-й по 3-ю секунду)
+      const typewriterSource = this.audioCtx.createBufferSource();
+      typewriterSource.buffer = this.typewriterBuffer;
+      const typewriterGain = this.audioCtx.createGain();
+      typewriterGain.gain.value = Math.min(1.0, this.volume * 1.6);
+      typewriterSource.connect(typewriterGain);
+      typewriterGain.connect(this.audioCtx.destination);
+      
+      // Начинаем с 1-й секунды файла, играем 2 секунды
+      typewriterSource.start(now, 1.0, 2.0);
+
+    } catch (err) {
+      console.debug("Instant audio combo failed:", err.message);
     }
   }
 }

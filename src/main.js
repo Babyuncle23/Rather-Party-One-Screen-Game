@@ -3,6 +3,7 @@ import { WordShifter } from './core/WordShifter.js';
 import { ScreenController } from './ui/ScreenController.js';
 import { AudioManager } from './audio/AudioManager.js';
 import { AUTOCOMPLETE_WORDS } from './data/autocompleteWords.js';
+import { SIMPLE_COLORS, SIMPLE_MATERIALS, SIMPLE_MOODS } from './data/nerfWords.js';
 
 let game = null;
 let screens = null;
@@ -30,6 +31,16 @@ document.addEventListener("DOMContentLoaded", () => {
     setupHelpPanel();
     setupGlobalButtonSounds();
     setupCustomHintAutocomplete();
+
+    // Запускаем предзагрузку тяжелых звуков при первом клике или тапе по экрану
+    const initAudioPreload = () => {
+      audioManager.preloadRevealSounds();
+      document.removeEventListener('click', initAudioPreload);
+      document.removeEventListener('touchstart', initAudioPreload);
+    };
+    document.addEventListener('click', initAudioPreload);
+    document.addEventListener('touchstart', initAudioPreload);
+
   } catch (error) {
     console.error("Initialization error:", error);
     alert("UI Style Injection failed: " + error.message);
@@ -242,6 +253,7 @@ function setupInitialEventListeners() {
       return;
     }
     game = new Match(temporaryPlayersList, roundsInput);
+    window.game = game; // Делаем доступным для экрана передачи телефона
     screens.showPassScreen(
       game.players[game.pickerIndex],
       initRound,
@@ -269,15 +281,61 @@ function renderPlayerBoxes() {
 function setupHelpPanel() {
   const helpToggle = document.getElementById('help-toggle-btn');
   const helpPanel = document.getElementById('help-panel');
+  const prevBtn = document.getElementById('help-prev-btn');
+  const nextBtn = document.getElementById('help-next-btn');
+  const indexDisplay = document.getElementById('carousel-index');
 
   if (!helpToggle || !helpPanel) return;
 
+  let currentHelpStep = 1;
+
+  function determineCurrentStep() {
+    // Проверяем, какой игровой экран сейчас отображается пользователю
+    if (document.getElementById('picker-screen').style.display === 'block') return 1;
+    if (document.getElementById('responder-screen').style.display === 'block') return 2;
+    if (document.getElementById('guesser-screen').style.display === 'block') return 3;
+    return 1; // По умолчанию (экран настроек или финала)
+  }
+
+  function renderHelpCarousel() {
+    const steps = helpPanel.querySelectorAll('.help-step');
+    steps.forEach(step => {
+      const stepNum = parseInt(step.dataset.step);
+      step.style.display = stepNum === currentHelpStep ? 'block' : 'none';
+    });
+    if (indexDisplay) {
+      indexDisplay.innerText = `Step ${currentHelpStep} / 3`;
+    }
+  }
+
   helpToggle.onclick = () => {
     const isOpen = helpPanel.style.display === 'block';
-    helpPanel.style.display = isOpen ? 'none' : 'block';
-    helpToggle.innerText = isOpen ? 'Show compact gameplay tips' : 'Hide gameplay tips';
+    if (!isOpen) {
+      // Если инструкцию ОТКРЫВАЮТ, фиксируем карусель на шаге текущего экрана игры
+      currentHelpStep = determineCurrentStep();
+      renderHelpCarousel();
+      helpPanel.style.display = 'block';
+      helpToggle.innerText = 'Hide gameplay tips';
+    } else {
+      helpPanel.style.display = 'none';
+      helpToggle.innerText = 'Show compact gameplay tips';
+    }
     audioManager.play('click');
   };
+
+  if (prevBtn && nextBtn) {
+    prevBtn.onclick = (e) => {
+      e.stopPropagation();
+      currentHelpStep = currentHelpStep > 1 ? currentHelpStep - 1 : 3;
+      renderHelpCarousel();
+    };
+
+    nextBtn.onclick = (e) => {
+      e.stopPropagation();
+      currentHelpStep = currentHelpStep < 3 ? currentHelpStep + 1 : 1;
+      renderHelpCarousel();
+    };
+  }
 
   helpPanel.style.display = 'none';
   helpToggle.innerText = 'Show compact gameplay tips';
@@ -398,9 +456,20 @@ function startResponderPhase() {
         alert("Enter 2 different words!");
         return;
       }
+
+      // Проверка на ослабление способностей (nerf)
+
+      // Проверка на ослабление способностей (nerf)
+      const hasSimpleColor = SIMPLE_COLORS.includes(w1) || SIMPLE_COLORS.includes(w2);
       
-      shifter = new WordShifter(w1, w2);
+      const hasSimpleMaterialBoth = SIMPLE_MATERIALS.includes(w1) && SIMPLE_MATERIALS.includes(w2);
+      const hasSimpleMoodBoth = SIMPLE_MOODS.includes(w1) && SIMPLE_MOODS.includes(w2);
+
+      const shouldNerf = hasSimpleColor || hasSimpleMaterialBoth || hasSimpleMoodBoth;
+      
+      shifter = new WordShifter(w1, w2, shouldNerf);
       choiceBlock.style.display = 'block';
+
       
       const finalQ = currentQuestion.text.replace("___", w1).replace("___", w2);
       document.getElementById('responder-final-question').innerText = finalQ;
@@ -457,13 +526,17 @@ function setupNextGuesser() {
     }
     
     currentGuesserIndex = remainingGuessers.shift();
-    shifter = new WordShifter(shifter.orig1, shifter.orig2);
+    // Пересоздаем WordShifter для следующего угадывающего игрока, сохраняя флаг ослабления
+    shifter = new WordShifter(shifter.orig1, shifter.orig2, shifter.isNerfed);
     revealCount = 0;
     
+    // Получаем имя игрока, который придумывал слова
+    const responderName = game.players[game.getResponderIndex()].name;
+
     screens.showPassScreen(
       game.players[currentGuesserIndex],
       startGuesserPhase,
-      "Only this player should look. Do not show it to anyone else."
+      `Only this player should hold the phone, but ${responderName} can watch the guessing process!`
     );
   } catch (err) {
     alert("Error inside setupNextGuesser: " + err.message);
@@ -502,9 +575,18 @@ function setupRevealButtons() {
   randBtn.disabled = state.disabled;
   typeBtn.disabled = state.disabled;
   
-  posBtn.onclick = () => useReveal('positional', state.cost);
-  randBtn.onclick = () => useReveal('random', state.cost);
-  typeBtn.onclick = () => useReveal('type', state.cost);
+  posBtn.onclick = (e) => {
+    e.stopPropagation(); // Глушим обычный клик
+    useReveal('positional', state.cost);
+  };
+  randBtn.onclick = (e) => {
+    e.stopPropagation(); // Глушим обычный клик
+    useReveal('random', state.cost);
+  };
+  typeBtn.onclick = (e) => {
+    e.stopPropagation(); // Глушим обычный клик
+    useReveal('type', state.cost);
+  };
 }
 
 function useReveal(revealType, cost) {
@@ -525,6 +607,7 @@ function useReveal(revealType, cost) {
   else if (revealType === 'random') shifter.revealRandom(intensity);
   else if (revealType === 'type') shifter.revealLetterType(intensity);
   
+  audioManager.playRevealCombo(); // Запускаем одновременное воспроизведение двух звуков
   revealCount++;
   updateGuesserUI();
   setupRevealButtons();
@@ -532,17 +615,37 @@ function useReveal(revealType, cost) {
 
 function updateGuesserUI() {
   const masks = shifter.getMaskedWords();
-  const displayQ = currentQuestion.text.replace("___", masks.w1).replace("___", masks.w2);
   
-  // Записываем промпт раунда на экран угадывания капсом
-  document.getElementById('guesser-displayed-hint').innerText = currentHint.toUpperCase();
+  // Функция превращает строку с точками в набор анимированных тегов span с задержкой
+  const createAnimatedWordHTML = (maskedWord) => {
+    let globalDelayIndex = 0;
+    return maskedWord
+      .split("")
+      .map((char) => {
+        // Пробелы и точки-заполнители открываются сразу, новые раскрытые буквы идут «волной»
+        const delay = char === "•" || char === " " ? 0 : globalDelayIndex * 0.04;
+        if (char !== "•" && char !== " ") {
+          globalDelayIndex++; // Увеличиваем задержку только для реальных открывшихся букв
+        }
+        return `<span class="animated-letter" style="animation-delay: ${delay}s">${char}</span>`;
+      })
+      .join("");
+  };
 
-  document.getElementById('guesser-question-display').innerText = displayQ;
+  const htmlW1 = createAnimatedWordHTML(masks.w1);
+  const htmlW2 = createAnimatedWordHTML(masks.w2);
+
+  // Собираем текст секретного вопроса с анимированными вставками слов
+  const displayQHTML = currentQuestion.text.replace("___", htmlW1).replace("___", htmlW2);
+  
+  document.getElementById('guesser-displayed-hint').innerText = currentHint.toUpperCase();
+  document.getElementById('guesser-question-display').innerHTML = displayQHTML;
   document.getElementById('potential-score').innerText = `Win: +${FIXED_REWARD} points`;
   document.getElementById('gold-balance').innerText = `Points: ${game.players[currentGuesserIndex].gold}`;
   
-  document.getElementById('guess-word-1').innerText = masks.w1;
-  document.getElementById('guess-word-2').innerText = masks.w2;
+  // Обновляем также и финальные кнопки выбора
+  document.getElementById('guess-word-1').innerHTML = htmlW1;
+  document.getElementById('guess-word-2').innerHTML = htmlW2;
   
   // Update dynamic descriptions for each reveal type
   const intensity = revealCount + 1;
@@ -666,6 +769,28 @@ function showFinalScores() {
     if (buttons.length > 0) {
       buttons[0].classList.add('active');
       renderHistoryForPlayer(buttons[0].dataset.player);
+    }
+
+    // Логика кнопки возврата к настройкам без перезагрузки
+    const backBtn = document.getElementById('back-to-setup-btn');
+    if (backBtn) {
+      backBtn.onclick = () => {
+        // Полностью обнуляем состояние прошлой игры
+        game = null;
+        currentQuestion = null;
+        currentHint = "";
+        shifter = null;
+        responderChoice = "";
+        remainingGuessers = [];
+        currentGuesserIndex = null;
+        revealCount = 0;
+
+        // Перерисовываем коробочки с игроками (они остались в temporaryPlayersList)
+        renderPlayerBoxes();
+
+        // Возвращаем пользователя на экран настройки
+        screens.switchScreen('setup');
+      };
     }
 
   } catch (err) {

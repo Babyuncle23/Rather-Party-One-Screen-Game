@@ -181,5 +181,17 @@ export const questionsDatabase = [
       "Name two historical events marked by severe hardships",
       "Name two time periods that lacked modern conveniences like indoor plumbing or electricity"
     ]
+  },
+  {
+    id: 15,
+    category: "lifestyle",
+    difficulty: "hard",
+    text: "Would you rather be forced to experience ___ or experience ___ for the next 5 years of your life?",
+    resultTemplate: "{name} would rather be forced to experience {winner} than {loser} for the next 5 years of life.",
+    hints: [
+      "Name two crazy or absurd situations that make no sense",
+      "Name two mildly annoying, awkward, or ironic everyday accidents",
+      "Name two unexpectedly pleasant or surprisingly satisfying feelings"
+    ]
   }
 ];

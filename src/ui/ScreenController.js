@@ -28,7 +28,19 @@ export class ScreenController {
     const message = document.getElementById('pass-message');
     const btn = document.getElementById('pass-confirm-btn');
     
-    message.innerText = `PASS THE PHONE TO:\n${player.name.toUpperCase()}\n\n${note}`;
+    // Подсвечиваем имя главного получателя телефона классом для экрана передачи
+    const highlightedTargetName = `<span class="player-name-pass-fade">${player.name.toUpperCase()}</span>`;
+    
+    // Если в тексте записки note встречается имя отвечающего, подсвечиваем и его тоже
+    let cleanNote = note;
+    if (window.game) {
+      const responderName = window.game.players[window.game.getResponderIndex()].name.toUpperCase();
+      if (cleanNote.includes(responderName)) {
+        cleanNote = cleanNote.replace(responderName, `<span class="player-name-pass-fade">${responderName}</span>`);
+      }
+    }
+
+    message.innerHTML = `PASS THE PHONE TO:<br>${highlightedTargetName}<br><br><span style="font-size: 1.2rem; font-weight: 400; color: var(--muted);">${cleanNote}</span>`;
     
     btn.onclick = null;
     btn.onclick = () => {
@@ -36,6 +48,7 @@ export class ScreenController {
       onConfirm();
     };
   }
+
 
   injectMobileStyles() {
     const style = document.createElement('style');
@@ -266,6 +279,64 @@ export class ScreenController {
         font-size: 1rem;
       }
       .highlight-text { color: #f7f7ff; font-weight: 600; line-height: 1.6; }
+      
+      /* Базовые общие свойства для подсвеченных имён */
+      .player-name-game-slow,
+      .player-name-pass-fade {
+        background: linear-gradient(135deg, #a5a1c8 0%, #8c6cff 40%, #ff6c8d 70%, #a5a1c8 100%);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+        font-family: inherit;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      /* Статичный текст: без фиолетового, низкий контраст, высокая яркость */
+      .player-name-game-slow {
+        color: var(--text);
+        -webkit-text-fill-color: initial;
+        background: none;
+      }
+
+      /* Комфортная скорость для экрана передачи телефона (12 секунд) */
+      .player-name-pass-fade {
+        animation: superSlowGradient 12s ease infinite;
+      }
+
+      @keyframes superSlowGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      /* Эффект поочередного проявления букв */
+      /* Эффект поочередного проявления букв */
+      .animated-letter {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(2px) scale(0.95);
+        animation: letterReveal 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        margin-right: 0.18em; /* Дополнительный отступ между буквами */
+      }
+      
+      /* Стилизация скрытых точек для максимальной читаемости */
+      .animated-letter:has(text) {
+         letter-spacing: 0.15em;
+      }
+
+      /* Применяем разреженный шрифт ко всему блоку вопроса и кнопкам угадывания */
+      #guesser-question-display, 
+      .btn-choice {
+        letter-spacing: 0.04em;
+      }
+
+      @keyframes letterReveal {
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
       .prompt-badge {
         display: inline-block;
         background: linear-gradient(135deg, rgba(255,111,152,0.15), rgba(140,108,255,0.22));

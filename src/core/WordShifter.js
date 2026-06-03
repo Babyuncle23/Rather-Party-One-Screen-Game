@@ -1,9 +1,10 @@
 export class WordShifter {
-  constructor(word1, word2) {
+  constructor(word1, word2, isNerfed = false) {
     this.orig1 = word1.trim();
     this.orig2 = word2.trim();
     this.openedIndices1 = new Set();
     this.openedIndices2 = new Set();
+    this.isNerfed = isNerfed; // Флаг ослабления способностей
   }
 
   getTotalLength() {
@@ -14,7 +15,7 @@ export class WordShifter {
     const mask = (word, openedSet) => {
       return word
         .split("")
-        .map((char, index) => (openedSet.has(index) || char === " " ? char : "*"))
+        .map((char, index) => (openedSet.has(index) || char === " " ? char : "•"))
         .join("");
     };
     return {
@@ -23,75 +24,64 @@ export class WordShifter {
     };
   }
 
-  // Reveal Type 1: Positional (first, middle, last)
+  // Reveal Type 1: Positional (теперь слабее и учитывает штраф nerf)
   revealPositional(intensity = 1) {
-    const totalLen = this.getTotalLength();
     const revealPositions = (word, openedSet) => {
       const len = word.length;
       if (len === 0) return;
-      const positions = new Set();
-
-      // New reveal rules:
-      // - Initial reveal (intensity === 1): start+middle for medium words,
-      //   end+middle for very short words (<=4), and first+middle+last for very long words (>=10).
-      // - Second reveal (intensity >= 2): reveal first and last, include middle and extra
-      //   positions for longer words.
 
       const firstIdx = 0;
       const lastIdx = len - 1;
       const middleIdx = Math.floor((len - 1) / 2);
 
-      if (intensity === 1) {
-        // Tuned thresholds:
-        // - very short words (<=3): reveal end + middle
-        // - medium words (4-8): reveal start + middle
-        // - long words (>=9): reveal start + middle + end
-        if (len <= 3) {
-          positions.add(lastIdx);
-          positions.add(middleIdx);
-        } else if (len >= 9) {
-          positions.add(firstIdx);
-          positions.add(middleIdx);
-          positions.add(lastIdx);
-        } else {
-          positions.add(firstIdx);
-          positions.add(middleIdx);
+      if (this.isNerfed) {
+        // Ослабленный режим: всегда открывает строго 1 букву во всем слове
+        if (!openedSet.has(firstIdx) && word[firstIdx] !== " ") {
+          openedSet.add(firstIdx);
+        } else if (!openedSet.has(middleIdx) && word[middleIdx] !== " ") {
+          openedSet.add(middleIdx);
         }
-      } else {
-        // intensity >=2: reveal more aggressively with tuned extra cutoffs
-        positions.add(firstIdx);
-        if (len > 1) positions.add(lastIdx);
-        if (len > 2) positions.add(middleIdx);
-        if (len > 6) positions.add(Math.floor((len - 1) / 3));
-        if (len > 9) positions.add(Math.ceil(2 * (len - 1) / 3));
+        return;
       }
 
-      Array.from(positions).forEach(idx => {
-        if (idx >= 0 && idx < len && word[idx] !== " ") openedSet.add(idx);
-      });
+      if (intensity === 1) {
+        // Ослабили первую попытку: для коротких (<=4) только первую, для остальных первую и среднюю
+        openedSet.add(firstIdx);
+        if (len > 4) {
+          openedSet.add(middleIdx);
+        }
+      } else {
+        // Вторая попытка: открываем первую, среднюю и последнюю
+        openedSet.add(firstIdx);
+        if (len > 1) openedSet.add(lastIdx);
+        if (len > 2) openedSet.add(middleIdx);
+      }
     };
 
     revealPositions(this.orig1, this.openedIndices1);
     revealPositions(this.orig2, this.openedIndices2);
   }
 
-  // Reveal Type 2: Random percentage (scales with length)
+  // Reveal Type 2: Random percentage (урезается в 2 раза при штрафе)
   revealRandom(intensity = 1) {
     const totalLen = this.getTotalLength();
     
-    // Calculate percentage based on intensity and total length
     let percentage = 0;
     if (intensity === 1) {
-      if (totalLen <= 6) percentage = 0.5;
-      else if (totalLen <= 10) percentage = 0.4;
-      else percentage = 0.3;
+      if (totalLen <= 6) percentage = 0.4;
+      else if (totalLen <= 10) percentage = 0.3;
+      else percentage = 0.2;
     } else if (intensity >= 2) {
-      if (totalLen <= 6) percentage = 1.0;
-      else if (totalLen <= 10) percentage = 0.7;
-      else percentage = 0.5;
+      if (totalLen <= 6) percentage = 0.8;
+      else if (totalLen <= 10) percentage = 0.6;
+      else percentage = 0.4;
     }
 
-    // Collect closed (hidden) indices for both words
+    // Если активирован штраф — урезаем процент открываемых букв ровно в 2 раза
+    if (this.isNerfed) {
+      percentage = percentage / 2;
+    }
+
     const collectClosed = (word, openedSet) => {
       const arr = [];
       for (let i = 0; i < word.length; i++) {
@@ -107,7 +97,6 @@ export class WordShifter {
 
     const totalToReveal = Math.max(1, Math.ceil(totalClosed * percentage));
 
-    // Distribute reveals proportionally between the two words
     let toReveal1 = Math.round(totalToReveal * (closed1.length / totalClosed));
     let toReveal2 = totalToReveal - toReveal1;
     if (closed1.length === 0) { toReveal1 = 0; toReveal2 = totalToReveal; }
@@ -126,121 +115,147 @@ export class WordShifter {
     pickRandomFrom(closed2, toReveal2, this.openedIndices2);
   }
 
-  // Reveal Type 3: Vowels or Consonants (whichever is fewer)
+  // Reveal Type 3: Vowels & Consonants (по новым правилам с гласными в 1-й раз и согласными во 2-й)
   revealLetterType(intensity = 1) {
-    const countVowels = (word) => {
-      let count = 0;
-      const vowels = 'aeiouAEIOU';
-      for (const char of word) {
-        if (vowels.includes(char)) count++;
+    const vowelsList = 'aeiouAEIOU';
+    const consonantsList = 'bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
+
+    const collectClosedByList = (word, openedSet, listStr) => {
+      const arr = [];
+      for (let i = 0; i < word.length; i++) {
+        if (!openedSet.has(i) && listStr.includes(word[i])) {
+          arr.push(i);
+        }
       }
-      return count;
+      return arr;
     };
 
-    const totalVowels = countVowels(this.orig1) + countVowels(this.orig2);
-    const totalConsonants = this.getTotalLength() - totalVowels;
-    const revealVowels = totalVowels <= totalConsonants;
-
-    let numberToReveal = 0;
-    if (intensity === 1) {
-      numberToReveal = Math.max(2, Math.ceil((revealVowels ? totalVowels : totalConsonants) * 0.4));
-    } else if (intensity >= 2) {
-      numberToReveal = Math.max(3, Math.ceil((revealVowels ? totalVowels : totalConsonants) * 0.7));
-    }
-
-    // If there are no target letters, fall back to revealing randomly
-    const totalTarget = revealVowels ? totalVowels : totalConsonants;
-    if (totalTarget === 0) {
-      this.revealRandom(intensity);
+    if (this.isNerfed) {
+      // При штрафе открываем строго по 1 букве (гласной в 1-й раз, согласной во 2-й) во всем пуле закрытых букв
+      const targetList = (intensity === 1) ? vowelsList : consonantsList;
+      const pool1 = collectClosedByList(this.orig1, this.openedIndices1, targetList);
+      const pool2 = collectClosedByList(this.orig2, this.openedIndices2, targetList);
+      
+      if (pool1.length > 0) this.openedIndices1.add(pool1[Math.floor(Math.random() * pool1.length)]);
+      else if (pool2.length > 0) this.openedIndices2.add(pool2[Math.floor(Math.random() * pool2.length)]);
       return;
     }
 
-    // Distribute numberToReveal across the two words proportionally to how many
-    // target letters each word contains, ensuring at least 0 and not exceeding
-    // available targets.
-    const countTargetIn = (word) => {
-      const vowels = 'aeiouAEIOU';
-      let c = 0;
-      for (const ch of word) {
-        if (ch === ' ') continue;
-        const isV = vowels.includes(ch);
-        if ((revealVowels && isV) || (!revealVowels && !isV)) c++;
-      }
-      return c;
-    };
-
-    const t1 = countTargetIn(this.orig1);
-    const t2 = countTargetIn(this.orig2);
-    let toReveal1 = Math.round(numberToReveal * (t1 / (t1 + t2 || 1)));
-    let toReveal2 = numberToReveal - toReveal1;
-    if (t1 === 0) { toReveal1 = 0; toReveal2 = numberToReveal; }
-    if (t2 === 0) { toReveal2 = 0; toReveal1 = numberToReveal; }
-
-    const revealTargetsIn = (word, openedSet, count) => {
-      const vowels = 'aeiouAEIOU';
-      const pool = [];
-      for (let i = 0; i < word.length; i++) {
-        if (!openedSet.has(i) && word[i] !== "") {
-          const isV = vowels.includes(word[i]);
-          if ((revealVowels && isV) || (!revealVowels && !isV)) pool.push(i);
-        }
-      }
-      for (let i = 0; i < count && pool.length > 0; i++) {
-        const rand = Math.floor(Math.random() * pool.length);
-        openedSet.add(pool[rand]);
-        pool.splice(rand, 1);
-      }
-    };
-
-    revealTargetsIn(this.orig1, this.openedIndices1, toReveal1);
-    revealTargetsIn(this.orig2, this.openedIndices2, toReveal2);
-  }
-
-  // Helper to get dynamic description for a reveal type based on length
-  getPositionalDescription(intensity = 1) {
-    const totalLen = this.getTotalLength();
     if (intensity === 1) {
-      return `Reveal start and middle letters`;
+      // Первое раскрытие: часть гласных с прогрессией на уменьшение для коротких слов
+      const openVowelsForWord = (word, openedSet) => {
+        const closedVowels = collectClosedByList(word, openedSet, vowelsList);
+        if (closedVowels.length === 0) return;
+        
+        let countToOpen = 1;
+        if (word.length > 7) countToOpen = 3;
+        else if (word.length > 4) countToOpen = 2;
+
+        countToOpen = Math.min(countToOpen, closedVowels.length);
+
+        for (let i = 0; i < countToOpen; i++) {
+          const randIdx = Math.floor(Math.random() * closedVowels.length);
+          openedSet.add(closedVowels[randIdx]);
+          closedVowels.splice(randIdx, 1);
+        }
+      };
+
+      openVowelsForWord(this.orig1, this.openedIndices1);
+      openVowelsForWord(this.orig2, this.openedIndices2);
     } else {
-      if (totalLen <= 6) return `Reveal first, middle, and last letters`;
-      else if (totalLen <= 10) return `Reveal first, middle, last + one`;
-      else return `Reveal first, middle, last + more`;
+      // Второе раскрытие: должна показаться часть согласных
+      const openConsonantsForWord = (word, openedSet) => {
+        const closedConsonants = collectClosedByList(word, openedSet, consonantsList);
+        if (closedConsonants.length === 0) return;
+
+        let countToOpen = Math.max(1, Math.ceil(closedConsonants.length * 0.5));
+        
+        for (let i = 0; i < countToOpen; i++) {
+          const randIdx = Math.floor(Math.random() * closedConsonants.length);
+          openedSet.add(closedConsonants[randIdx]);
+          closedConsonants.splice(randIdx, 1);
+        }
+      };
+
+      openConsonantsForWord(this.orig1, this.openedIndices1);
+      openConsonantsForWord(this.orig2, this.openedIndices2);
     }
   }
 
+  // Динамические описания для интерфейса игрока (с четким указанием распределения на оба поля)
+  getPositionalDescription(intensity = 1) {
+    const getWordDesc = (word) => {
+      const len = word.length;
+      if (this.isNerfed) {
+        return intensity === 1 ? "only start" : "only middle";
+      }
+      if (intensity === 1) {
+        return len > 4 ? "start & mid" : "start";
+      } else {
+        return "start, mid & end";
+      }
+    };
+
+    return `Applied to both: [W1: ${getWordDesc(this.orig1)}] & [W2: ${getWordDesc(this.orig2)}]`;
+  }
+
   getRandomDescription(intensity = 1) {
-    const totalLen = this.getTotalLength();
+    const suffix = " (split randomly between words)";
+    if (this.isNerfed) {
+      return (intensity === 1 ? "~15% random letters" : "~30% random letters") + suffix;
+    }
     if (intensity === 1) {
-      if (totalLen <= 6) return `50% of letters`;
-      else if (totalLen <= 10) return `40% of letters`;
-      else return `30% of letters`;
+      return "30%–40% random letters" + suffix;
     } else {
-      if (totalLen <= 6) return `All letters`;
-      else if (totalLen <= 10) return `70% of letters`;
-      else return `50% of letters`;
+      return "50%–80% random letters" + suffix;
     }
   }
 
   getLetterTypeDescription(intensity = 1) {
-    const countVowels = (word) => {
+    if (this.isNerfed) {
+      return intensity === 1 
+        ? "Opens 1 vowel in total (where available)" 
+        : "Opens 1 consonant in total (where available)";
+    }
+
+    const vowelsList = 'aeiouAEIOU';
+    const consonantsList = 'bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
+
+    // Функция считает, сколько закрытых букв нужного типа ОСТАЛОСЬ в слове
+    const countRemaining = (word, openedSet, listStr) => {
       let count = 0;
-      const vowels = 'aeiouAEIOU';
-      for (const char of word) {
-        if (vowels.includes(char)) count++;
+      for (let i = 0; i < word.length; i++) {
+        if (!openedSet.has(i) && listStr.includes(word[i])) count++;
       }
       return count;
     };
 
-    const totalVowels = countVowels(this.orig1) + countVowels(this.orig2);
-    const totalConsonants = this.getTotalLength() - totalVowels;
-    const revealVowels = totalVowels <= totalConsonants;
-
-    const type = revealVowels ? 'vowels' : 'consonants';
-    
     if (intensity === 1) {
-      return `${Math.max(2, Math.ceil((revealVowels ? totalVowels : totalConsonants) * 0.4))} ${type}`;
+      // Считаем точное количество гласных, которое откроет алгоритм из revealLetterType
+      const getVowelsToOpen = (word, openedSet) => {
+        const available = countRemaining(word, openedSet, vowelsList);
+        if (available === 0) return 0;
+        let target = 1;
+        if (word.length > 7) target = 3;
+        else if (word.length > 4) target = 2;
+        return Math.min(target, available);
+      };
+
+      const count1 = getVowelsToOpen(this.orig1, this.openedIndices1);
+      const count2 = getVowelsToOpen(this.orig2, this.openedIndices2);
+
+      return `Reveals vowels: [W1: +${count1} letters] & [W2: +${count2} letters]`;
     } else {
-      return `Most ${type}`;
+      // Считаем точное количество согласных для второй попытки
+      const getConsonantsToOpen = (word, openedSet) => {
+        const available = countRemaining(word, openedSet, consonantsList);
+        return Math.max(0, Math.ceil(available * 0.5));
+      };
+
+      const count1 = getConsonantsToOpen(this.orig1, this.openedIndices1);
+      const count2 = getConsonantsToOpen(this.orig2, this.openedIndices2);
+
+      return `Reveals consonants: [W1: +${count1} letters] & [W2: +${count2} letters]`;
     }
   }
 }
