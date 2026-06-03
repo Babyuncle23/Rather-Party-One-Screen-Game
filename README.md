@@ -80,6 +80,15 @@ Since the game is pure client-side web software, you don't need any complex inst
 
 ---
 
+## 🎨 Vibe Coding & Collaboration Credits
+
+This project is pure **Vibe Coding**! ⚡ 
+The mechanics, logic pipelines, and system configurations were shaped through a fluid, interactive dialogue with an AI assistant. 
+
+As the creator, my primary focus was **game design, gameplay aesthetics, and meticulous tuning of the user experience**. I collaborated closely with AI to map out visual solutions, refine the micro-animations, and test out experimental UX variations to ensure the game feels incredibly smooth, comfortable for the eyes, and fun to play.
+
+---
+
 ## 📄 License
 
 This project is open-source software licensed under the **MIT License**. Sound effects utilized inside the assets system are registered under **CC0 (Creative Commons Zero)** licenses.
