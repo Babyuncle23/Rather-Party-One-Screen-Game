@@ -1,10 +1,11 @@
 export class WordShifter {
-  constructor(word1, word2, isNerfed = false) {
+  constructor(word1, word2, isNerfed = false, isMultiWord = false) {
     this.orig1 = word1.trim();
     this.orig2 = word2.trim();
     this.openedIndices1 = new Set();
     this.openedIndices2 = new Set();
     this.isNerfed = isNerfed; // Флаг ослабления способностей
+    this.isMultiWord = isMultiWord; // Флаг фраз из нескольких слов
   }
 
   getTotalLength() {
@@ -62,8 +63,14 @@ export class WordShifter {
     revealPositions(this.orig2, this.openedIndices2);
   }
 
-  // Reveal Type 2: Random percentage (урезается в 2 раза при штрафе)
+  // Reveal Type 2: Random percentage (с особым правилом для многословных фраз на 2-й попытке)
   revealRandom(intensity = 1) {
+    // Особое правило: на второй попытке для многословных фраз принудительно открываем первые буквы
+    if (this.isMultiWord && intensity >= 2) {
+      if (this.orig1.length > 0 && this.orig1[0] !== " ") this.openedIndices1.add(0);
+      if (this.orig2.length > 0 && this.orig2[0] !== " ") this.openedIndices2.add(0);
+    }
+
     const totalLen = this.getTotalLength();
     
     let percentage = 0;
@@ -184,6 +191,7 @@ export class WordShifter {
 
   // Динамические описания для интерфейса игрока (с четким указанием распределения на оба поля)
   getPositionalDescription(intensity = 1) {
+    if (this.isMultiWord) return "Not available for multi-word phrases";
     const getWordDesc = (word) => {
       const len = word.length;
       if (this.isNerfed) {
@@ -200,6 +208,9 @@ export class WordShifter {
   }
 
   getRandomDescription(intensity = 1) {
+    if (this.isMultiWord && intensity >= 2) {
+      return "Guaranteed first letter of each word + random letters";
+    }
     const suffix = " (split randomly between words)";
     if (this.isNerfed) {
       return (intensity === 1 ? "~15% random letters" : "~30% random letters") + suffix;
@@ -212,6 +223,7 @@ export class WordShifter {
   }
 
   getLetterTypeDescription(intensity = 1) {
+    if (this.isMultiWord) return "Not available for multi-word phrases";
     if (this.isNerfed) {
       return intensity === 1 
         ? "Opens 1 vowel in total (where available)" 

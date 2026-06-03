@@ -140,8 +140,10 @@ export class ScreenController {
       }
       .btn-secondary {
         background: rgba(255, 255, 255, 0.04);
-        color: var(--text);
-        text-align: left;
+        color: #f7f7ff; /* Приятный мягкий белый оттенок в едином стиле игры */
+        font-weight: 600; /* Идеальная читаемость без излишней грубой жирности */
+        text-align: center; /* Центрируем текст подсказки для более аккуратного вида */
+        line-height: 1.45;
         border: 1px solid rgba(255,255,255,0.08);
         box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
       }
@@ -271,12 +273,12 @@ export class ScreenController {
 
       .card-question {
         background: rgba(255,255,255,0.04);
-        padding: 22px;
-        border-radius: 24px;
+        padding: 14px 16px; /* Ужали внутреннюю высоту карточки */
+        border-radius: 20px;
         border: 1px solid rgba(255,255,255,0.06);
         box-shadow: inset 0 0 0 1px rgba(255,255,255,0.01);
-        margin: 18px 0;
-        font-size: 1rem;
+        margin: 10px 0; /* Ужали внешние отступы между блоками */
+        font-size: 0.95rem;
       }
       .highlight-text { color: #f7f7ff; font-weight: 600; line-height: 1.6; }
       
@@ -310,22 +312,22 @@ export class ScreenController {
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
       }
-      /* Эффект поочередного проявления букв */
-      /* Эффект поочередного проявления букв */
+
+      /* Kirjainten vuorotellen ilmestymisen efekti */
       .animated-letter {
         display: inline-block;
         opacity: 0;
         transform: translateY(2px) scale(0.95);
         animation: letterReveal 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        margin-right: 0.18em; /* Дополнительный отступ между буквами */
+        margin-right: 0.35em; /* Selkeä väli piilotettujen pisteiden välillä */
       }
       
-      /* Стилизация скрытых точек для максимальной читаемости */
+      /* Piilotettujen pisteiden tyylittely parasta luettavuutta varten */
       .animated-letter:has(text) {
          letter-spacing: 0.15em;
       }
 
-      /* Применяем разреженный шрифт ко всему блоку вопроса и кнопкам угадывания */
+      /* Harvennettu fontti kysymysloholle ja arvauspainikkeille */
       #guesser-question-display, 
       .btn-choice {
         letter-spacing: 0.04em;
@@ -336,17 +338,6 @@ export class ScreenController {
           opacity: 1;
           transform: translateY(0) scale(1);
         }
-      }
-      .prompt-badge {
-        display: inline-block;
-        background: linear-gradient(135deg, rgba(255,111,152,0.15), rgba(140,108,255,0.22));
-        padding: 14px 18px;
-        border-radius: 16px;
-        color: var(--text);
-        margin-top: 10px;
-        font-size: 1rem;
-        text-align: center;
-        box-shadow: 0 18px 45px rgba(97,70,234,0.12);
       }
 
       .stats-bar { display: flex; justify-content: space-between; gap: 10px; margin: 10px 0; color: var(--muted); font-weight: 700; flex-wrap: wrap; align-items: center; }
@@ -433,51 +424,126 @@ export class ScreenController {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 10px;
         margin-top: 16px;
-        background: rgba(255,255,255,0.03);
-        padding: 12px;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 10px 14px;
         border-radius: 16px;
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        width: 100%;
+        box-sizing: border-box;
       }
-      .carousel-controls .btn-small { width: 34%; margin: 0; padding: 12px; }
+      .carousel-btn {
+        flex: 0 0 auto;
+        margin: 0;
+        padding: 6px 10px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        cursor: pointer;
+        white-space: nowrap;
+        width: auto;
+        height: auto;
+        transition: background 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .carousel-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .carousel-btn:active {
+        transform: scale(0.96);
+      }
       #carousel-index {
-        font-size: 0.96rem;
+        font-size: 0.9rem;
         font-weight: 700;
         color: var(--accent);
         text-align: center;
-        width: 32%;
+        flex: 1;
+        white-space: nowrap;
       }
+
 
       #responder-screen p { color: var(--muted); font-size: 1rem; margin-bottom: 12px; }
 
       .abilities-list-vertical {
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.05);
-        border-radius: 22px;
-        padding: 16px 18px;
-        margin: 18px 0;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 18px;
+        padding: 12px !important;
+        margin: 12px 0;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
       }
+
       .ability-row {
-        display: flex;
-        align-items: flex-start;
-        gap: 14px;
-        padding: 14px 0;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
       }
-      .ability-row:last-child { border-bottom: none; }
+
       .btn-action {
-        background: rgba(255,255,255,0.04);
+        flex: 1 !important;
+        width: auto !important; /* Отменяем любые фиксированные width из других мест */
+        min-width: 0 !important; /* Сбрасываем старый min-width: 100px или больше, который ломал верстку */
+        max-width: none !important;
+        background: rgba(255, 255, 255, 0.04);
         color: var(--accent);
-        border: 1px solid rgba(140,108,255,0.26);
+        border: 1px solid rgba(140, 108, 255, 0.26);
         padding: 12px 16px;
         border-radius: 14px;
         font-weight: 700;
         font-size: 0.95rem;
         cursor: pointer;
-        min-width: 100px;
         text-align: center;
+        transition: all 0.2s ease;
       }
-      .btn-action:hover { background: rgba(255,255,255,0.08); }
+      
+      .info-btn-round {
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important; /* Защита от сжатия */
+        max-width: 34px !important;
+        border-radius: 50% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-weight: bold !important;
+        flex: 0 0 auto !important;
+        background: rgba(255, 255, 255, 0.06) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: var(--text) !important;
+      }
+      .info-btn-round:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+      }
+      .btn-action:hover { background: rgba(255, 255, 255, 0.08); }
+      .btn-action:disabled {
+        background: rgba(10, 10, 15, 0.6) !important;
+        color: #a0a0b2 !important;
+        border-color: rgba(255, 255, 255, 0.05) !important;
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .btn-action:hover { background: rgba(255, 255, 255, 0.08); }
+      .btn-action:disabled {
+        background: rgba(10, 10, 15, 0.6) !important;
+        color: #a0a0b2 !important;
+        border-color: rgba(255, 255, 255, 0.05) !important;
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
       .ability-desc {
         font-size: 0.92rem;
         color: var(--muted);

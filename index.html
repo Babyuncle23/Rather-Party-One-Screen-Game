@@ -50,7 +50,7 @@
         <!-- STEP 3 -->
         <div class="help-step" data-step="3">
           <p><strong>Step 3: The Guessers</strong></p>
-          <p>Other players must guess: What did Player 2 choose? Use points to open hidden letters.</p>
+          <p>Other players must guess: What did Player 2 choose? Use buttons below to open hidden letters. First choice is FREE, second costs 15 points! ⚠️ Note: Depending on the words written in this round, some buttons might lock or open fewer letters. You can tap the small "?" icon if you want to see exactly what that button will do right now.</p>
           <div class="tip-visual" style="margin-bottom: 16px;">
             <div style="font-size: 0.85rem; color: var(--muted);">GUESSERS SEE:</div>
             <div style="border-left: 3px solid var(--accent); padding-left: 8px;">Would you rather eat <span style="color: var(--positive);">P * * Z *</span> or <span style="color: var(--danger);">B * * G * *</span>?</div>
@@ -58,11 +58,11 @@
           </div>
         </div>
 
-        <!-- КНОПКИ КАРУСЕЛИ -->
+        <!-- КНОПКИ КАРУСЕЛИ (ПОЛНОСТЬЮ ИЗОЛИРОВАННЫЕ КНОПКИ) -->
         <div class="carousel-controls" style="margin-top: 12px;">
-          <button id="help-prev-btn" class="btn btn-small" style="width: auto; padding: 8px 16px;">← Back</button>
-          <span id="carousel-index" style="color: var(--accent); font-weight: bold;">Step 1 / 3</span>
-          <button id="help-next-btn" class="btn btn-small" style="width: auto; padding: 8px 16px;">Next →</button>
+          <button id="help-prev-btn" class="carousel-btn">← Back</button>
+          <span id="carousel-index">Step 1 / 3</span>
+          <button id="help-next-btn" class="carousel-btn">Next →</button>
         </div>
 
         <p class="tip-note" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; font-size: 0.85rem; margin-top: 12px;">
@@ -100,14 +100,11 @@
       <button id="start-game-btn" class="btn btn-primary" style="margin-top: 15px;">Start Game</button>
     </div>
 
- <!-- ХОД ИГРОКА 1 (ВЫБОР ПОДСКАЗКИ) -->
+    <!-- ХОД ИГРОКА 1 (ВЫБОР ПОДСКАЗКИ) -->
     <div id="picker-screen" style="display:none;">
       <h2><span id="picker-name" class="player-name-game-slow"></span>'s Turn</h2>
-      <p style="color:#c0bfe2; line-height:1.6; margin-top:0;">
-        Read the secret question and choose one prompt for <span id="responder-target-name"></span>.
-        The next player sees only the prompt first, then enters two answers before the question is revealed.
-      </p>
       <div class="card-question">
+
         <p>Your secret question:</p>
         <p id="secret-question-text" class="highlight-text"></p>
       </div>
@@ -125,15 +122,20 @@
     <!-- ХОД ИГРОКА 2 (ВВОД СЛОВ И ВЫБОР) -->
     <div id="responder-screen" style="display:none;">
       <h2><span id="responder-name" class="player-name-game-slow"></span>'s Turn</h2>
-      <p style="color:#c0bfe2; line-height:1.6; margin-top:0;">
-        You see only the prompt. Type two different answers (max 25 letters each) and press Submit.
-        Then choose which answer fits the secret question.
+      <p style="text-align: center; font-size: 1.05rem; color: var(--muted); line-height: 1.5; margin-bottom: 20px;">
+        Your prompt is: <span id="displayed-hint" style="color: #ffffff; font-weight: 600; margin-left: 4px;"></span>
       </p>
+      <div class="input-container-with-counter" style="position: relative; margin-bottom: 14px; width: 100%;">
+        <input id="word-input-1" type="text" placeholder="First answer" maxlength="25" class="input-field" style="margin-bottom: 0; width: 100%; padding-right: 55px;">
+        <span id="word-counter-1" style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--muted); pointer-events: none; opacity: 0.7;">0/25</span>
+      </div>
+      <div class="input-container-with-counter" style="position: relative; margin-bottom: 14px; width: 100%;">
+        <input id="word-input-2" type="text" placeholder="Second answer" maxlength="25" class="input-field" style="margin-bottom: 0; width: 100%; padding-right: 55px;">
+        <span id="word-counter-2" style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--muted); pointer-events: none; opacity: 0.7;">0/25</span>
+      </div>
 
-      <p>Your prompt is: <strong id="displayed-hint" class="prompt-badge"></strong></p>
-      <input id="word-input-1" type="text" placeholder="First answer (max 25 chars)" maxlength="25" class="input-field"><br>
-      <input id="word-input-2" type="text" placeholder="Second answer (max 25 chars)" maxlength="25" class="input-field"><br>
-      <button id="submit-words-btn" class="btn btn-primary">Submit Answers</button>
+      <button id="submit-words-btn" class="btn btn-primary" style="margin-top: 10px;">Submit Answers</button>
+
 
       <div id="responder-choice-block" style="display:none; margin-top: 20px;">
         <h3>Now choose:</h3>
@@ -145,46 +147,57 @@
       </div>
     </div>
 
-<!-- НАЙДИТЕ И ПОЛНОСТЬЮ ЗАМЕНИТЕ БЛОК guesser-screen В index.html -->
+<!-- ИСПРАВЛЕННЫЙ ЭКРАН УГАДЫВАНИЯ (БЕЗ ДУБЛИРОВАНИЯ ТЕГОВ) -->
 <div id="guesser-screen" style="display:none;">
   <h2><span id="guesser-name" class="player-name-game-slow"></span>, Guess!</h2>
   
-  <p style="text-align: center; margin-bottom: 5px; color: #a0a0b2;">
-    The prompt was: <strong id="guesser-displayed-hint" class="prompt-badge"></strong>
-  </p>
+  <!-- БЛОК ПРОМПТА БЕЗ ПЛАШКИ (ШРИФТ КАК У ВОПРОСА) -->
+  <div style="text-align: center; margin-top: 10px; margin-bottom: 12px;">
+    <div style="font-size: 0.8rem; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; margin-bottom: 4px;">THE PROMPT WAS:</div>
+    <div id="guesser-displayed-hint" style="font-size: 1.05rem; font-weight: 600; line-height: 1.5; color: #f7f7ff;"></div>
+  </div>
 
-  <p id="guesser-question-display" class="card-question highlight-text"></p>
+  <!-- БЛОК СЕКРЕТНОГО ВОПРОСА БЕЗ ПЛАШКИ -->
+  <div style="text-align: center; margin-bottom: 16px; padding: 0 10px;">
+    <div style="font-size: 0.8rem; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; margin-bottom: 4px;">SECRET QUESTION:</div>
+    <div id="guesser-question-display" style="font-size: 1.05rem; font-weight: 600; line-height: 1.5; color: #f7f7ff;"></div>
+  </div>
   
+  <!-- КНОПКИ ВЫБОРА ТЕПЕРЬ НАХОДЯТСЯ ЗДЕСЬ (В ОДИН РЯД ДЛЯ КОМПАКТНОСТИ) -->
+  <div class="final-guess-block" style="margin-top: 8px; margin-bottom: 12px; border-top: none; padding-top: 0; width: 100%;">
+    <p style="text-align: center; color: #a0a0b2; margin-bottom: 6px; font-size: 14px;">Tap your final guess:</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%;">
+      <button id="guess-word-1" class="btn btn-choice" style="margin-bottom: 0; padding: 10px 6px; width: 100%; font-size: 15px; min-height: 44px;"></button>
+      <button id="guess-word-2" class="btn btn-choice" style="margin-bottom: 0; padding: 10px 6px; width: 100%; font-size: 15px; min-height: 44px;"></button>
+    </div>
+  </div>
+
   <div class="stats-bar">
     <span id="potential-score">Win: +50 points</span>
     <span id="gold-balance" class="gold-balance">Points: 50</span>
   </div>
   
-  <p style="color:#c0bfe2; line-height:1.6; margin-top:16px; margin-bottom:16px; text-align:center;">
-    Choose one or two reveals (second costs 15 points), then tap the choice you think the player picked.
-  </p>
+  <div style="margin-top: 10px;"></div>
   
-  <!-- СПИСОК СПОСОБНОСТЕЙ В СТОЛБИК С ОБЪЯСНЕНИЕМ -->
+  <!-- КОРОТКАЯ ПОДПИСЬ ДЛЯ ИГРОКА -->
+  <p style="text-align: center; color: #a0a0b2; margin-bottom: 6px; font-size: 14px;">Tap buttons below to open letters:</p>
+
+  <!-- СПИСОК СПОСОБНОСТЕЙ С КОМПАКТНЫМИ ИКОНКАМИ ПОДПИСЕЙ (ОЧИЩЕННЫЙ HTML) -->
   <div class="abilities-list-vertical">
     <div class="ability-row">
-      <button id="ability-pos-btn" class="btn-action">📍 Positions</button>
-      <span class="ability-desc" id="pos-desc">Reveal key letters <strong style="color:#7dffaa;">(FREE)</strong></span>
+      <button id="ability-pos-btn" class="btn-action"></button>
+      <button id="info-pos-btn" class="carousel-btn info-btn-round">?</button>
     </div>
     
     <div class="ability-row">
-      <button id="ability-rand-btn" class="btn-action">🎲 Random</button>
-      <span class="ability-desc" id="rand-desc">Reveal random letters <strong style="color:#7dffaa;">(FREE)</strong></span>
+      <button id="ability-rand-btn" class="btn-action"></button>
+      <button id="info-rand-btn" class="carousel-btn info-btn-round">?</button>
     </div>
 
     <div class="ability-row">
-      <button id="ability-type-btn" class="btn-action">🔤 Letters</button>
-      <span class="ability-desc" id="type-desc">Reveal vowels or consonants <strong style="color:#7dffaa;">(FREE)</strong></span>
+      <button id="ability-type-btn" class="btn-action"></button>
+      <button id="info-type-btn" class="carousel-btn info-btn-round">?</button>
     </div>
-  </div>
-  <div class="final-guess-block">
-    <p style="text-align: center; color: #a0a0b2;">Tap your final guess:</p>
-    <button id="guess-word-1" class="btn btn-choice"></button>
-    <button id="guess-word-2" class="btn btn-choice"></button>
   </div>
 </div>
 

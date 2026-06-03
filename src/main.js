@@ -442,7 +442,15 @@ function startResponderPhase() {
     
     const in1 = document.getElementById('word-input-1');
     const in2 = document.getElementById('word-input-2');
+    const counter1 = document.getElementById('word-counter-1');
+    const counter2 = document.getElementById('word-counter-2');
+    
     in1.value = ""; in2.value = "";
+    counter1.innerText = "0/25";
+    counter2.innerText = "0/25";
+
+    in1.oninput = (e) => { counter1.innerText = `${e.target.value.length}/25`; };
+    in2.oninput = (e) => { counter2.innerText = `${e.target.value.length}/25`; };
     
     const submitWordsBtn = document.getElementById('submit-words-btn');
     const choiceBlock = document.getElementById('responder-choice-block');
@@ -457,18 +465,31 @@ function startResponderPhase() {
         return;
       }
 
-      // Проверка на ослабление способностей (nerf)
+      // Разбиваем каждую строчку на отдельные слова по пробелам
+      const tokens1 = w1.split(/\s+/).filter(Boolean);
+      const tokens2 = w2.split(/\s+/).filter(Boolean);
 
-      // Проверка на ослабление способностей (nerf)
-      const hasSimpleColor = SIMPLE_COLORS.includes(w1) || SIMPLE_COLORS.includes(w2);
+      // Проверяем, является ли хотя бы один ответ фразой из нескольких слов
+      const isMultiWord = tokens1.length > 1 || tokens2.length > 1;
+
+      // Поштучная проверка каждого слова в массивах на штрафы (Nerf)
+      const hasSimpleColor1 = tokens1.some(t => SIMPLE_COLORS.includes(t));
+      const hasSimpleColor2 = tokens2.some(t => SIMPLE_COLORS.includes(t));
+      const hasSimpleColor = hasSimpleColor1 || hasSimpleColor2;
       
-      const hasSimpleMaterialBoth = SIMPLE_MATERIALS.includes(w1) && SIMPLE_MATERIALS.includes(w2);
-      const hasSimpleMoodBoth = SIMPLE_MOODS.includes(w1) && SIMPLE_MOODS.includes(w2);
+      const hasSimpleMaterial1 = tokens1.some(t => SIMPLE_MATERIALS.includes(t));
+      const hasSimpleMaterial2 = tokens2.some(t => SIMPLE_MATERIALS.includes(t));
+      const hasSimpleMaterialBoth = hasSimpleMaterial1 && hasSimpleMaterial2;
+
+      const hasSimpleMood1 = tokens1.some(t => SIMPLE_MOODS.includes(t));
+      const hasSimpleMood2 = tokens2.some(t => SIMPLE_MOODS.includes(t));
+      const hasSimpleMoodBoth = hasSimpleMood1 && hasSimpleMood2;
 
       const shouldNerf = hasSimpleColor || hasSimpleMaterialBoth || hasSimpleMoodBoth;
       
-      shifter = new WordShifter(w1, w2, shouldNerf);
+      shifter = new WordShifter(w1, w2, shouldNerf, isMultiWord);
       choiceBlock.style.display = 'block';
+
 
       
       const finalQ = currentQuestion.text.replace("___", w1).replace("___", w2);
@@ -526,8 +547,8 @@ function setupNextGuesser() {
     }
     
     currentGuesserIndex = remainingGuessers.shift();
-    // Пересоздаем WordShifter для следующего угадывающего игрока, сохраняя флаг ослабления
-    shifter = new WordShifter(shifter.orig1, shifter.orig2, shifter.isNerfed);
+    // Пересоздаем WordShifter для следующего угадывающего игрока, сохраняя все флаги баланса
+    shifter = new WordShifter(shifter.orig1, shifter.orig2, shifter.isNerfed, shifter.isMultiWord);
     revealCount = 0;
     
     // Получаем имя игрока, который придумывал слова
@@ -546,15 +567,22 @@ function setupNextGuesser() {
 function startGuesserPhase() {
   try {
     screens.switchScreen('guesser');
-    document.getElementById('guesser-name').innerText = game.players[currentGuesserIndex].name;
+    
+    const nameEl = document.getElementById('guesser-name');
+    if (nameEl && game && typeof currentGuesserIndex === 'number') {
+      nameEl.innerText = game.players[currentGuesserIndex].name;
+    }
     
     updateGuesserUI();
     setupRevealButtons();
     
-    document.getElementById('guess-word-1').onclick = () => makeGuess(shifter.orig1);
-    document.getElementById('guess-word-2').onclick = () => makeGuess(shifter.orig2);
+    const btn1 = document.getElementById('guess-word-1');
+    const btn2 = document.getElementById('guess-word-2');
+    
+    if (btn1 && shifter) btn1.onclick = () => makeGuess(shifter.orig1);
+    if (btn2 && shifter) btn2.onclick = () => makeGuess(shifter.orig2);
   } catch (err) {
-    alert("Error inside startGuesserPhase: " + err.message);
+    console.error("Error inside startGuesserPhase:", err);
   }
 }
 
@@ -564,28 +592,36 @@ function setupRevealButtons() {
   const typeBtn = document.getElementById('ability-type-btn');
   
   const getButtonState = () => {
-    if (revealCount === 0) return { disabled: false, cost: 0, label: '(FREE)' };
-    if (revealCount === 1) return { disabled: false, cost: 15, label: '(15 pts)' };
-    return { disabled: true, cost: 0, label: '(Used)' };
+    if (revealCount === 0) return { disabled: false, cost: 0, label: ' (FREE)' };
+    if (revealCount === 1) return { disabled: false, cost: 15, label: ' (15 pts)' };
+    return { disabled: true, cost: 0, label: ' (Used)' };
   };
   
   const state = getButtonState();
+
+  // Если введено несколько слов, Positions и Letters блокируются, а Random остается доступен
+  if (shifter && shifter.isMultiWord) {
+    posBtn.disabled = true;
+    typeBtn.disabled = true;
+    randBtn.disabled = state.disabled;
+  } else {
+    posBtn.disabled = state.disabled;
+    typeBtn.disabled = state.disabled;
+    randBtn.disabled = state.disabled;
+  }
   
-  posBtn.disabled = state.disabled;
-  randBtn.disabled = state.disabled;
-  typeBtn.disabled = state.disabled;
-  
+  // Привязка обработчиков кликов с передачей актуальной стоимости
   posBtn.onclick = (e) => {
     e.stopPropagation(); // Глушим обычный клик
-    useReveal('positional', state.cost);
+    if (!posBtn.disabled) useReveal('positional', state.cost);
   };
   randBtn.onclick = (e) => {
     e.stopPropagation(); // Глушим обычный клик
-    useReveal('random', state.cost);
+    if (!randBtn.disabled) useReveal('random', state.cost);
   };
   typeBtn.onclick = (e) => {
     e.stopPropagation(); // Глушим обычный клик
-    useReveal('type', state.cost);
+    if (!typeBtn.disabled) useReveal('type', state.cost);
   };
 }
 
@@ -614,60 +650,105 @@ function useReveal(revealType, cost) {
 }
 
 function updateGuesserUI() {
-  const masks = shifter.getMaskedWords();
-  
-  // Функция превращает строку с точками в набор анимированных тегов span с задержкой
-  const createAnimatedWordHTML = (maskedWord) => {
-    let globalDelayIndex = 0;
-    return maskedWord
-      .split("")
-      .map((char) => {
-        // Пробелы и точки-заполнители открываются сразу, новые раскрытые буквы идут «волной»
-        const delay = char === "•" || char === " " ? 0 : globalDelayIndex * 0.04;
-        if (char !== "•" && char !== " ") {
-          globalDelayIndex++; // Увеличиваем задержку только для реальных открывшихся букв
-        }
-        return `<span class="animated-letter" style="animation-delay: ${delay}s">${char}</span>`;
-      })
-      .join("");
-  };
+  try {
+    const masks = shifter.getMaskedWords();
+    
+    // Muutetaan kirjaimet animoiduiksi span-tageiksi, joissa on välistys
+    const createAnimatedWordHTML = (maskedWord) => {
+      let globalDelayIndex = 0;
+      return maskedWord
+        .split("")
+        .map((char) => {
+          const delay = char === "•" || char === " " ? 0 : globalDelayIndex * 0.04;
+          if (char !== "•" && char !== " ") {
+            globalDelayIndex++;
+          }
+          return `<span class="animated-letter" style="animation-delay: ${delay}s">${char}</span>`;
+        })
+        .join("");
+    };
 
-  const htmlW1 = createAnimatedWordHTML(masks.w1);
-  const htmlW2 = createAnimatedWordHTML(masks.w2);
+    const htmlW1 = createAnimatedWordHTML(masks.w1);
+    const htmlW2 = createAnimatedWordHTML(masks.w2);
 
-  // Собираем текст секретного вопроса с анимированными вставками слов
-  const displayQHTML = currentQuestion.text.replace("___", htmlW1).replace("___", htmlW2);
-  
-  document.getElementById('guesser-displayed-hint').innerText = currentHint.toUpperCase();
-  document.getElementById('guesser-question-display').innerHTML = displayQHTML;
-  document.getElementById('potential-score').innerText = `Win: +${FIXED_REWARD} points`;
-  document.getElementById('gold-balance').innerText = `Points: ${game.players[currentGuesserIndex].gold}`;
-  
-  // Обновляем также и финальные кнопки выбора
-  document.getElementById('guess-word-1').innerHTML = htmlW1;
-  document.getElementById('guess-word-2').innerHTML = htmlW2;
-  
-  // Update dynamic descriptions for each reveal type
-  const intensity = revealCount + 1;
-  const posDesc = shifter.getPositionalDescription(intensity);
-  const randDesc = shifter.getRandomDescription(intensity);
-  const typeDesc = shifter.getLetterTypeDescription(intensity);
-  
-  const getCostLabel = () => {
-    if (revealCount === 0) return '(FREE)';
-    if (revealCount === 1) return '(15 pts)';
-    return '(Used)';
-  };
-  const costLabel = getCostLabel();
-  
-  const descPos = document.getElementById('pos-desc');
-  const descRand = document.getElementById('rand-desc');
-  const descType = document.getElementById('type-desc');
-  
-  if (descPos) descPos.innerHTML = `${posDesc} <strong style="color:#7dffaa;">${costLabel}</strong>`;
-  if (descRand) descRand.innerHTML = `${randDesc} <strong style="color:#7dffaa;">${costLabel}</strong>`;
-  if (descType) descType.innerHTML = `${typeDesc} <strong style="color:#7dffaa;">${costLabel}</strong>`;
+    // Гарантированно заменяем ВСЕ маркеры "___" на одинаковые линии строго по 6 символов
+    const displayStaticQuestion = currentQuestion.text.replace(/___/g, "______");
+    
+    // Hetaan viitteet DOM-elementteihin
+    const hintEl = document.getElementById('guesser-displayed-hint');
+    const questionEl = document.getElementById('guesser-question-display');
+    const scoreEl = document.getElementById('potential-score');
+    const balanceEl = document.getElementById('gold-balance');
+    const guess1Btn = document.getElementById('guess-word-1');
+    const guess2Btn = document.getElementById('guess-word-2');
+
+    if (hintEl) hintEl.innerText = currentHint;
+    if (questionEl) questionEl.innerText = displayStaticQuestion;
+    if (scoreEl) scoreEl.innerText = `Win: +${FIXED_REWARD} points`;
+    if (balanceEl) balanceEl.innerText = `Points: ${game.players[currentGuesserIndex].gold}`;
+    
+    // Kirjainten paljastaminen aaltona tapahtuu vain lopullisissa valintapainikkeissa
+    if (guess1Btn) guess1Btn.innerHTML = htmlW1;
+    if (guess2Btn) guess2Btn.innerHTML = htmlW2;
+    
+    // Haetaan kykyjen painikkeet ja infopainikkeet
+    const posBtn = document.getElementById('ability-pos-btn');
+    const randBtn = document.getElementById('ability-rand-btn');
+    const typeBtn = document.getElementById('ability-type-btn');
+    const infoPos = document.getElementById('info-pos-btn');
+    const infoRand = document.getElementById('info-rand-btn');
+    const infoType = document.getElementById('info-type-btn');
+
+    const getCostLabel = () => {
+      if (revealCount === 0) return ' (FREE)';
+      if (revealCount === 1) return ' (15 pts)';
+      return ' (Used)';
+    };
+    const costLabel = getCostLabel();
+
+    const intensity = revealCount + 1;
+    const posDesc = shifter.getPositionalDescription(intensity);
+    const randDesc = shifter.getRandomDescription(intensity);
+    const typeDesc = shifter.getLetterTypeDescription(intensity);
+
+    // Настраиваем текст кнопок с правильным добавлением стоимости для каждой из них
+    if (shifter && shifter.isMultiWord) {
+      if (posBtn) posBtn.innerText = "🔒 Locked";
+      if (randBtn) randBtn.innerText = `🎲 Random${costLabel}`;
+      if (typeBtn) typeBtn.innerText = "🔒 Locked";
+    } else {
+      if (posBtn) posBtn.innerText = `📍 Start/Mid/End${costLabel}`;
+      if (randBtn) randBtn.innerText = `🎲 Random${costLabel}`;
+      if (typeBtn) typeBtn.innerText = `🔤 Vowels/Consonants${costLabel}`;
+    }
+
+    // Вешаем лаконичные вызовы алертов на круглые кнопки вопросов (синхронизировано с новыми названиями кнопок)
+    const roundDynamicNote = "\n\n(Note: The number and way letters open change every round depending on the words written by the player).";
+
+    if (infoPos) {
+      infoPos.onclick = (e) => {
+        e.stopPropagation();
+        alert(`Start/Mid/End Button:\n\n${shifter.isMultiWord ? "Not available for multi-word phrases." : posDesc}${roundDynamicNote}`);
+      };
+    }
+    if (infoRand) {
+      infoRand.onclick = (e) => {
+        e.stopPropagation();
+        alert(`Random Button:\n\n${randDesc}${roundDynamicNote}`);
+      };
+    }
+    if (infoType) {
+      infoType.onclick = (e) => {
+        e.stopPropagation();
+        alert(`Vowels/Consonants Button:\n\n${shifter.isMultiWord ? "Not available for multi-word phrases." : typeDesc}${roundDynamicNote}`);
+      };
+    }
+
+  } catch (err) {
+    console.error("Error in updateGuesserUI render loop:", err);
+  }
 }
+
 
 function makeGuess(word) {
   try {
