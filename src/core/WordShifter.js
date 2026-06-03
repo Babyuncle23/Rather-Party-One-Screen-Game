@@ -138,15 +138,28 @@ export class WordShifter {
     };
 
     if (this.isNerfed) {
-      // При штрафе открываем строго по 1 букве (гласной в 1-й раз, согласной во 2-й) во всем пуле закрытых букв
+      // При штрафе объединяем буквы обоих слов в один пул для честного случайного выбора
       const targetList = (intensity === 1) ? vowelsList : consonantsList;
       const pool1 = collectClosedByList(this.orig1, this.openedIndices1, targetList);
       const pool2 = collectClosedByList(this.orig2, this.openedIndices2, targetList);
       
-      if (pool1.length > 0) this.openedIndices1.add(pool1[Math.floor(Math.random() * pool1.length)]);
-      else if (pool2.length > 0) this.openedIndices2.add(pool2[Math.floor(Math.random() * pool2.length)]);
+      // Создаем общий список вариантов с указанием, к какому слову принадлежит индекс
+      const combinedPool = [
+        ...pool1.map(idx => ({ wordNum: 1, index: idx })),
+        ...pool2.map(idx => ({ wordNum: 2, index: idx }))
+      ];
+      
+      if (combinedPool.length > 0) {
+        const randomTarget = combinedPool[Math.floor(Math.random() * combinedPool.length)];
+        if (randomTarget.wordNum === 1) {
+          this.openedIndices1.add(randomTarget.index);
+        } else {
+          this.openedIndices2.add(randomTarget.index);
+        }
+      }
       return;
     }
+
 
     if (intensity === 1) {
       // Первое раскрытие: часть гласных с прогрессией на уменьшение для коротких слов
@@ -189,37 +202,78 @@ export class WordShifter {
     }
   }
 
-  // Динамические описания для интерфейса игрока (с четким указанием распределения на оба поля)
+  // Динамические описания для интерфейса игрока (с чётким указанием распределения на оба поля)
   getPositionalDescription(intensity = 1) {
     if (this.isMultiWord) return "Not available for multi-word phrases";
-    const getWordDesc = (word) => {
+    
+    // Вспомогательная функция, которая смотрит, какие именно позиции ЕЩЕ НЕ ОТКРЫТЫ в конкретном слове
+    const getNextRevealsForWord = (word, openedSet) => {
       const len = word.length;
+      if (len === 0) return "nothing";
+      
+      const firstIdx = 0;
+      const lastIdx = len - 1;
+      const middleIdx = Math.floor((len - 1) / 2);
+      
       if (this.isNerfed) {
-        return intensity === 1 ? "only start" : "only middle";
+        if (!openedSet.has(firstIdx) && word[firstIdx] !== " ") return "+1st letter";
+        if (!openedSet.has(middleIdx) && word[middleIdx] !== " ") return "+middle letter";
+        return "no new letters";
       }
+      
       if (intensity === 1) {
-        return len > 4 ? "start & mid" : "start";
+        const reveals = [];
+        if (!openedSet.has(firstIdx) && word[firstIdx] !== " ") reveals.push("1st");
+        if (len > 4 && !openedSet.has(middleIdx) && word[middleIdx] !== " ") reveals.push("middle");
+        return reveals.length > 0 ? `+${reveals.join(" & ")}` : "no new letters";
       } else {
-        return "start, mid & end";
+        const reveals = [];
+        if (!openedSet.has(firstIdx) && word[firstIdx] !== " ") reveals.push("1st");
+        if (len > 2 && !openedSet.has(middleIdx) && word[middleIdx] !== " ") reveals.push("middle");
+        if (len > 1 && !openedSet.has(lastIdx) && word[lastIdx] !== " ") reveals.push("last");
+        return reveals.length > 0 ? `+${reveals.join(", ")}` : "no new letters";
       }
     };
 
-    return `Applied to both: [W1: ${getWordDesc(this.orig1)}] & [W2: ${getWordDesc(this.orig2)}]`;
+    return `Will reveal: [W1: ${getNextRevealsForWord(this.orig1, this.openedIndices1)}] & [W2: ${getNextRevealsForWord(this.orig2, this.openedIndices2)}]`;
   }
 
   getRandomDescription(intensity = 1) {
-    if (this.isMultiWord && intensity >= 2) {
-      return "Guaranteed first letter of each word + random letters";
-    }
-    const suffix = " (split randomly between words)";
-    if (this.isNerfed) {
-      return (intensity === 1 ? "~15% random letters" : "~30% random letters") + suffix;
-    }
+    // Считаем точное количество скрытых букв, которое сейчас откроет алгоритм revealRandom
+    const totalLen = this.getTotalLength();
+    let percentage = 0;
     if (intensity === 1) {
-      return "30%–40% random letters" + suffix;
-    } else {
-      return "50%–80% random letters" + suffix;
+      if (totalLen <= 6) percentage = 0.4;
+      else if (totalLen <= 10) percentage = 0.3;
+      else percentage = 0.2;
+    } else if (intensity >= 2) {
+      if (totalLen <= 6) percentage = 0.8;
+      else if (totalLen <= 10) percentage = 0.6;
+      else percentage = 0.4;
     }
+
+    if (this.isNerfed) {
+      percentage = percentage / 2;
+    }
+
+    const countClosed = (word, openedSet) => {
+      let count = 0;
+      for (let i = 0; i < word.length; i++) {
+        if (!openedSet.has(i) && word[i] !== " ") count++;
+      }
+      return count;
+    };
+
+    const closed1 = countClosed(this.orig1, this.openedIndices1);
+    const closed2 = countClosed(this.orig2, this.openedIndices2);
+    const totalClosed = closed1 + closed2;
+    
+    if (totalClosed === 0) return "No hidden letters left";
+    
+    const totalToReveal = Math.min(totalClosed, Math.max(1, Math.ceil(totalClosed * percentage)));
+    const basePrefix = this.isMultiWord && intensity >= 2 ? "🥇 1st letters guaranteed + " : "";
+
+    return `${basePrefix}Will reveal exactly +${totalToReveal} random letter${totalToReveal > 1 ? 's' : ''} total`;
   }
 
   getLetterTypeDescription(intensity = 1) {

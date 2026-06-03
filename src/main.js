@@ -3,18 +3,19 @@ import { WordShifter } from './core/WordShifter.js';
 import { ScreenController } from './ui/ScreenController.js';
 import { AudioManager } from './audio/AudioManager.js';
 import { AUTOCOMPLETE_WORDS } from './data/autocompleteWords.js';
-import { SIMPLE_COLORS, SIMPLE_MATERIALS, SIMPLE_MOODS } from './data/nerfWords.js';
-
+import { SIMPLE_COLORS, SIMPLE_MATERIALS, SIMPLE_MOODS, SIMPLE_ERAS, HELPER_CHATSHEETS } from './data/nerfWords.js';
 let game = null;
 let screens = null;
 let audioManager = null;
 
 let currentQuestion = null;
 let currentHint = "";
+let isCustomHintActive = false; // Флаг: написана ли подсказка вручную игроком
 let shifter = null;
 let responderChoice = "";
 
 let remainingGuessers = []; 
+let totalGuessersThisRound = 0; // Сохраняем исходное количество угадывающих для правильного рендера точек
 let currentGuesserIndex = null;
 const FIXED_REWARD = 50; // Each correct answer is worth 50 points
 let revealCount = 0; // Track: 0 = no reveals, 1 = one reveal used, 2 = two reveals used
@@ -383,32 +384,55 @@ function initRound() {
     document.getElementById('responder-target-name').innerText = game.players[game.getResponderIndex()].name;
     document.getElementById('secret-question-text').innerText = currentQuestion.text;
     updateHelpTargetText();
+
+    // Настройка кнопки реролла вопроса
+    const rerollBtn = document.getElementById('reroll-question-btn');
+    if (rerollBtn) {
+      rerollBtn.style.display = 'block'; // Показываем кнопку в начале раунда
+      rerollBtn.onclick = () => {
+        // Возвращаем старый вопрос обратно в пул (чтобы не пропадал навсегда) и берем новый
+        game.shuffledQuestions.unshift(currentQuestion);
+        currentQuestion = game.getRandomQuestion();
+        
+        // Обновляем текст вопроса на экране
+        document.getElementById('secret-question-text').innerText = currentQuestion.text;
+        
+        // Пересчитываем и обновляем кнопки подсказок для нового вопроса
+        updatePickerHints();
+        
+        // Скрываем кнопку, так как лимит на раунд исчерпан
+        rerollBtn.style.display = 'none';
+      };
+    }
     
     const btn1 = document.getElementById('hint-btn-1');
     const btn2 = document.getElementById('hint-btn-2');
     
-    // Создаем копию массива подсказок, чтобы безопасно выбирать случайные
-    const availableHints = [...currentQuestion.hints];
-    
-    // Выбираем первую случайную подсказку и вырезаем её из копии массива
-    const randomIndex1 = Math.floor(Math.random() * availableHints.length);
-    const hint1 = availableHints.splice(randomIndex1, 1)[0];
-    
-    // Выбираем вторую случайную подсказку из оставшихся вариантов
-    const randomIndex2 = Math.floor(Math.random() * availableHints.length);
-    const hint2 = availableHints[randomIndex2];
-    
-    // Назначаем текст и действия на кнопки
-    btn1.innerText = hint1;
-    btn2.innerText = hint2;
-    
-    btn1.onclick = () => selectHint(hint1);
-    btn2.onclick = () => selectHint(hint2);
+    // Выносим генерацию подсказок в изолированную функцию, чтобы переиспользовать при реролле
+    const updatePickerHints = () => {
+      const availableHints = [...currentQuestion.hints];
+      const randomIndex1 = Math.floor(Math.random() * availableHints.length);
+      const hint1 = availableHints.splice(randomIndex1, 1)[0];
+      
+      const randomIndex2 = Math.floor(Math.random() * availableHints.length);
+      const hint2 = availableHints[randomIndex2];
+      
+      btn1.innerText = hint1;
+      btn2.innerText = hint2;
+      
+      // Стандартные кнопки сбрасывают флаг кастомного промпта
+      btn1.onclick = () => { isCustomHintActive = false; selectHint(hint1); };
+      btn2.onclick = () => { isCustomHintActive = false; selectHint(hint2); };
+    };
+
+    // Первичный вызов при старте хода
+    updatePickerHints();
     
     const customInput = document.getElementById('custom-hint-input');
     customInput.value = "";
     document.getElementById('custom-hint-btn').onclick = () => {
       if (customInput.value.trim().length > 0) {
+        isCustomHintActive = true; // Игрок написал свою подсказку, включаем защиту
         selectHint(customInput.value.trim());
       }
     };
@@ -439,6 +463,113 @@ function startResponderPhase() {
     
     document.getElementById('responder-name').innerText = responder.name;
     document.getElementById('displayed-hint').innerText = currentHint.toUpperCase();
+
+    // Логика контекстной компактной подсказки со спойлером
+    const helperBox = document.getElementById('responder-helper-box');
+    const helperToggle = document.getElementById('responder-helper-toggle');
+    const helperContent = document.getElementById('responder-helper-content');
+    const helperText = document.getElementById('responder-helper-text');
+    
+    if (helperBox && helperToggle && helperContent && helperText) {
+      helperBox.style.display = 'none'; 
+      helperContent.style.display = 'none'; 
+      helperToggle.innerText = '[ 💡 Need ideas? Tap to brainstorm ]';
+      
+      const lowerHint = currentHint.toLowerCase();
+      let ideas = [];
+      
+      // Запускаем анализ слов ТОЛЬКО если подсказка выбрана из базы, а не введена вручную
+      if (!isCustomHintActive) {
+        // Анализ МАТЕРИАЛОВ с учетом физических, тактильных и контекстных свойств костюмов/зданий
+        if (lowerHint.includes('material') || lowerHint.includes('fabric') || lowerHint.includes('substance') || lowerHint.includes('texture')) {
+          if (lowerHint.includes('unpleasant') || lowerHint.includes('dislike') || lowerHint.includes('weird')) {
+            ideas = HELPER_CHATSHEETS.materialsUnpleasant;
+          } else if (lowerHint.includes('clothing') || lowerHint.includes('fabrics') || lowerHint.includes('suit') || lowerHint.includes('fine')) {
+            // Если просят ткань для дорогой одежды — даем Cloth из стандартных и Gold/Marble из сильных
+            ideas = ["Cloth", "Gold", "Marble", "Bronze"];
+          } else if (lowerHint.includes('fragile') || lowerHint.includes('breakable')) {
+            // Исключаем Cloth из бьющихся материалов — оставляем только чистый хрупкий деструктив
+            ideas = ["Glass", "Porcelain", "Ceramic", "Ice", "Crystal", "Chalk"];
+          } else if (lowerHint.includes('strong') || lowerHint.includes('rigid') || lowerHint.includes('heavy') || lowerHint.includes('building')) {
+            ideas = HELPER_CHATSHEETS.materialsStrong;
+          } else {
+            ideas = HELPER_CHATSHEETS.materialsStandard;
+          }
+        } 
+        // Анализ ЛЮДЕЙ с четким разделением на историю и современность
+        else if (lowerHint.includes('figure') || lowerHint.includes('people') || lowerHint.includes('actor') || lowerHint.includes('celebrit') || lowerHint.includes('personality')) {
+          if (lowerHint.includes('worst') || lowerHint.includes('villain') || lowerHint.includes('dislike')) {
+            ideas = HELPER_CHATSHEETS.figuresWorst;
+          } else if (lowerHint.includes('inspiring') || lowerHint.includes('creative') || lowerHint.includes('interesting')) {
+            // Добавили маркер "interesting" (для Вопроса №1) — теперь вдохновляющие исторические личности гарантированно защищены от Киану Ривза
+            ideas = HELPER_CHATSHEETS.figuresInspiring;
+          } else if (lowerHint.includes('historical') || lowerHint.includes('history') || lowerHint.includes('past') || lowerHint.includes('era')) {
+            ideas = HELPER_CHATSHEETS.figuresHistory;
+          } else if (lowerHint.includes('actor') || lowerHint.includes('celebrit') || lowerHint.includes('modern') || lowerHint.includes('star')) {
+            ideas = HELPER_CHATSHEETS.figuresModern;
+          } else {
+            ideas = HELPER_CHATSHEETS.figuresHistory;
+          }
+        }
+        // Перехват скучной или тяжелой рутины (Вопрос №11) через существующие маркеры настроения и материалов
+        else if (lowerHint.includes('activit') || lowerHint.includes('subject') || lowerHint.includes('disciplin')) {
+          if (lowerHint.includes('boring') || lowerHint.includes('tedious') || lowerHint.includes('repetitive')) {
+            // Подкидываем рутинные базовые вещи из существующих массивов (Paper, Plastic, Clay)
+            ideas = ["Paperwork", "Sorting Plastic", "Shoveling Clay", "Cleaning Glass"];
+          }
+        }
+        // Анализ ЭПОХ И СОБЫТИЙ с учетом эмоционального фона
+        else if (lowerHint.includes('event') || lowerHint.includes('hardship') || lowerHint.includes('war') || lowerHint.includes('era') || lowerHint.includes('period') || lowerHint.includes('decade') || lowerHint.includes('time')) {
+          if (lowerHint.includes('hardship') || lowerHint.includes('severe') || lowerHint.includes('bad') || lowerHint.includes('lacked')) {
+            ideas = HELPER_CHATSHEETS.eventsBad;
+          } else {
+            ideas = HELPER_CHATSHEETS.eventsGood; 
+          }
+        } 
+        // Анализ ЖИВОТНЫХ с учетом уровня опасности и мифологии
+        else if (lowerHint.includes('animal') || lowerHint.includes('creature') || lowerHint.includes('beast') || lowerHint.includes('monster')) {
+          if (lowerHint.includes('prehistoric') || lowerHint.includes('mythological') || lowerHint.includes('monster') || lowerHint.includes('bizarre') || lowerHint.includes('dinosaur')) {
+            ideas = HELPER_CHATSHEETS.animalsMythical;
+          } else if (lowerHint.includes('creeps') || lowerHint.includes('terrify') || lowerHint.includes('toxic') || lowerHint.includes('danger')) {
+            ideas = HELPER_CHATSHEETS.animalsScary;
+          } else {
+            ideas = HELPER_CHATSHEETS.animalsExotic;
+          }
+        }
+        // Анализ ИГР с упором на физическую активность
+        else if (lowerHint.includes('game')) {
+          if (lowerHint.includes('physical') || lowerHint.includes('activity') || lowerHint.includes('energy')) {
+            ideas = HELPER_CHATSHEETS.gamesActive;
+          }
+        }
+        // Анализ ЕДЫ с учетом её свойств (аппетитная или липкая/маркая)
+        else if (lowerHint.includes('food') || lowerHint.includes('snack') || lowerHint.includes('ingredient') || lowerHint.includes('breakfast')) {
+          if (lowerHint.includes('sticky') || lowerHint.includes('wet') || lowerHint.includes('stain') || lowerHint.includes('crumbly')) {
+            ideas = HELPER_CHATSHEETS.foodMessy;
+          } else {
+            ideas = HELPER_CHATSHEETS.foodGood;
+          }
+        }
+      } // Конец проверки !isCustomHintActive
+
+      if (ideas.length > 0) {
+        const randomIdeas = [...ideas].sort(() => Math.random() - 0.5).slice(0, 4);
+        helperText.innerText = randomIdeas.join(', ');
+        helperBox.style.display = 'block'; 
+        
+        helperToggle.onclick = (e) => {
+          e.stopPropagation();
+          const isCollapsed = helperContent.style.display === 'none';
+          if (isCollapsed) {
+            helperContent.style.display = 'block';
+            helperToggle.innerText = '[ 🔼 Hide brainstorm ideas ]';
+          } else {
+            helperContent.style.display = 'none';
+            helperToggle.innerText = '[ 💡 Need ideas? Tap to brainstorm ]';
+          }
+        };
+      }
+    }
     
     const in1 = document.getElementById('word-input-1');
     const in2 = document.getElementById('word-input-2');
@@ -485,7 +616,10 @@ function startResponderPhase() {
       const hasSimpleMood2 = tokens2.some(t => SIMPLE_MOODS.includes(t));
       const hasSimpleMoodBoth = hasSimpleMood1 && hasSimpleMood2;
 
-      const shouldNerf = hasSimpleColor || hasSimpleMaterialBoth || hasSimpleMoodBoth;
+      // Если хотя бы в одном поле написана простая эпоха (например, 90S) — раунд сразу штрафуется
+      const hasSimpleEra = tokens1.some(t => SIMPLE_ERAS.includes(t)) || tokens2.some(t => SIMPLE_ERAS.includes(t));
+
+      const shouldNerf = hasSimpleColor || hasSimpleMaterialBoth || hasSimpleMoodBoth || hasSimpleEra;
       
       shifter = new WordShifter(w1, w2, shouldNerf, isMultiWord);
       choiceBlock.style.display = 'block';
@@ -528,6 +662,7 @@ function confirmResponderChoice(w1, w2, choice) {
     game.history[game.history.length - 1].resultSentence = formattedResultString;
     
     remainingGuessers = [game.pickerIndex, ...game.getOtherGuessersIndices()];
+    totalGuessersThisRound = remainingGuessers.length; // Фиксируем размер очереди перед тем, как извлекать игроков
     setupNextGuesser();
   } catch (err) {
     alert("Error inside confirmResponderChoice: " + err.message);
@@ -564,6 +699,8 @@ function setupNextGuesser() {
   }
 }
 
+let activeAbilities = []; // Храним 2 выбранные способности для текущего раунда
+
 function startGuesserPhase() {
   try {
     screens.switchScreen('guesser');
@@ -573,8 +710,21 @@ function startGuesserPhase() {
       nameEl.innerText = game.players[currentGuesserIndex].name;
     }
     
-    updateGuesserUI();
+    // Если это первый угадывающий в раунде (revealCount === 0), выбираем случайные способности
+    if (revealCount === 0) {
+      const allTypes = ['positional', 'random', 'type'];
+      if (shifter && shifter.isMultiWord) {
+        // Если много слов, принудительно оставляем только одну способность Random, остальные будут полностью скрыты
+        activeAbilities = ['random'];
+      } else {
+        // Иначе просто перемешиваем и берем ровно 2 случайные способности для раунда
+        const shuffled = [...allTypes].sort(() => Math.random() - 0.5);
+        activeAbilities = [shuffled[0], shuffled[1]];
+      }
+    }
+    
     setupRevealButtons();
+    updateGuesserUI();
     
     const btn1 = document.getElementById('guess-word-1');
     const btn2 = document.getElementById('guess-word-2');
@@ -599,28 +749,21 @@ function setupRevealButtons() {
   
   const state = getButtonState();
 
-  // Если введено несколько слов, Positions и Letters блокируются, а Random остается доступен
-  if (shifter && shifter.isMultiWord) {
-    posBtn.disabled = true;
-    typeBtn.disabled = true;
-    randBtn.disabled = state.disabled;
-  } else {
-    posBtn.disabled = state.disabled;
-    typeBtn.disabled = state.disabled;
-    randBtn.disabled = state.disabled;
-  }
+  // Логика блокировки на основе выбранных activeAbilities и флага isMultiWord
+  posBtn.disabled = state.disabled || !activeAbilities.includes('positional') || (shifter && shifter.isMultiWord);
+  randBtn.disabled = state.disabled || !activeAbilities.includes('random');
+  typeBtn.disabled = state.disabled || !activeAbilities.includes('type') || (shifter && shifter.isMultiWord);
   
-  // Привязка обработчиков кликов с передачей актуальной стоимости
   posBtn.onclick = (e) => {
-    e.stopPropagation(); // Глушим обычный клик
+    e.stopPropagation();
     if (!posBtn.disabled) useReveal('positional', state.cost);
   };
   randBtn.onclick = (e) => {
-    e.stopPropagation(); // Глушим обычный клик
+    e.stopPropagation();
     if (!randBtn.disabled) useReveal('random', state.cost);
   };
   typeBtn.onclick = (e) => {
-    e.stopPropagation(); // Глушим обычный клик
+    e.stopPropagation();
     if (!typeBtn.disabled) useReveal('type', state.cost);
   };
 }
@@ -645,12 +788,27 @@ function useReveal(revealType, cost) {
   
   audioManager.playRevealCombo(); // Запускаем одновременное воспроизведение двух звуков
   revealCount++;
-  updateGuesserUI();
   setupRevealButtons();
+  updateGuesserUI();
 }
 
 function updateGuesserUI() {
   try {
+    // Рендеринг компактного индикатора раунда и очереди
+    const progressEl = document.getElementById('guesser-round-progress');
+    if (progressEl && game) {
+      // Вычисляем строгую позицию текущего угадывающего в цепочке (человеческий счет с 1)
+      const currentGuesserStep = totalGuessersThisRound - remainingGuessers.length;
+
+      progressEl.innerHTML = `
+        <span>ROUND ${game.currentRound}/${game.totalRounds}</span>
+        <span style="color: rgba(255,255,255,0.15)">|</span>
+        <span>GUESSER ${currentGuesserStep} OF ${totalGuessersThisRound}</span>
+      `;
+    }
+
+
+
     const masks = shifter.getMaskedWords();
     
     // Muutetaan kirjaimet animoiduiksi span-tageiksi, joissa on välistys
@@ -711,38 +869,44 @@ function updateGuesserUI() {
     const randDesc = shifter.getRandomDescription(intensity);
     const typeDesc = shifter.getLetterTypeDescription(intensity);
 
-    // Настраиваем текст кнопок с правильным добавлением стоимости для каждой из них
-    if (shifter && shifter.isMultiWord) {
-      if (posBtn) posBtn.innerText = "🔒 Locked";
-      if (randBtn) randBtn.innerText = `🎲 Random${costLabel}`;
-      if (typeBtn) typeBtn.innerText = "🔒 Locked";
-    } else {
-      if (posBtn) posBtn.innerText = `📍 Start/Mid/End${costLabel}`;
-      if (randBtn) randBtn.innerText = `🎲 Random${costLabel}`;
-      if (typeBtn) typeBtn.innerText = `🔤 Vowels/Consonants${costLabel}`;
+    // Выводим интуитивный статус ролла и счетчик оставшихся попыток раскрытия
+    const rollStatusEl = document.getElementById('ability-roll-status');
+    if (rollStatusEl) {
+      const remainingReveals = Math.max(0, 2 - revealCount);
+      if (remainingReveals > 0) {
+        rollStatusEl.innerHTML = `✨ Letter reveals left: <span style="color: var(--accent); font-weight: 800;">${remainingReveals}</span>`;
+      } else {
+        rollStatusEl.innerHTML = `🔒 No reveals left for this turn`;
+      }
     }
 
-    // Вешаем лаконичные вызовы алертов на круглые кнопки вопросов (синхронизировано с новыми названиями кнопок)
-    const roundDynamicNote = "\n\n(Note: The number and way letters open change every round depending on the words written by the player).";
+    // Настраиваем отображение кнопок с полным скрытием невыбранных вариантов
+    const renderAbility = (btn, type, label, icon, desc) => {
+      if (!btn) return;
+      const row = btn.closest('.ability-row');
+      
+      // ВСЕГДА обновляем текст и цену кнопки актуальными данными текущего шага до проверки скрытия
+      btn.innerHTML = `<div><strong>${icon} ${label}${costLabel}</strong></div><div style="font-size: 12px; color: var(--muted); font-weight: 400; margin-top: 2px;">${desc}</div>`;
+      
+      const isNotRolled = !activeAbilities.includes(type);
+      const isLockedByMultiWord = shifter && shifter.isMultiWord && type !== 'random';
+      
+      if (isNotRolled || isLockedByMultiWord || btn.disabled) {
+        if (row) {
+          row.style.setProperty('display', 'none', 'important');
+          row.style.marginBottom = '0';
+        }
+      } else {
+        if (row) {
+          row.style.setProperty('display', 'flex', 'important');
+          row.style.marginBottom = '10px'; // Восстанавливаем отступ для чистой верстки
+        }
+      }
+    };
 
-    if (infoPos) {
-      infoPos.onclick = (e) => {
-        e.stopPropagation();
-        alert(`Start/Mid/End Button:\n\n${shifter.isMultiWord ? "Not available for multi-word phrases." : posDesc}${roundDynamicNote}`);
-      };
-    }
-    if (infoRand) {
-      infoRand.onclick = (e) => {
-        e.stopPropagation();
-        alert(`Random Button:\n\n${randDesc}${roundDynamicNote}`);
-      };
-    }
-    if (infoType) {
-      infoType.onclick = (e) => {
-        e.stopPropagation();
-        alert(`Vowels/Consonants Button:\n\n${shifter.isMultiWord ? "Not available for multi-word phrases." : typeDesc}${roundDynamicNote}`);
-      };
-    }
+    renderAbility(posBtn, 'positional', 'Positional', '📍', posDesc);
+    renderAbility(randBtn, 'random', 'Random', '🎲', randDesc);
+    renderAbility(typeBtn, 'type', 'Letters Type', '🔤', typeDesc);
 
   } catch (err) {
     console.error("Error in updateGuesserUI render loop:", err);
@@ -759,9 +923,11 @@ function makeGuess(word) {
     if (isCorrect) {
       guesser.gold += FIXED_REWARD;
       animateGoldChange(FIXED_REWARD, true);
-      audioManager.play('win');
+      // Умножаем на 0.6, чтобы сделать звук на 40% тише базовой громкости
+      audioManager.play('win', audioManager.getVolume() * 0.6);
     } else {
-      audioManager.play('lose');
+      // Умножаем на 0.75, чтобы сделать звук на 25% тише базовой громкости
+      audioManager.play('lose', audioManager.getVolume() * 0.75);
     }
 
     // 1. Получаем последнее сохраненное предложение из истории

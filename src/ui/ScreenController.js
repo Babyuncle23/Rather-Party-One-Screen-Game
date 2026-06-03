@@ -476,9 +476,15 @@ export class ScreenController {
         margin: 12px 0;
         display: flex !important;
         flex-direction: column !important;
-        gap: 10px !important;
         width: 100% !important;
         box-sizing: border-box !important;
+      }
+      .abilities-list-vertical .ability-row {
+        margin-bottom: 10px;
+      }
+      .abilities-list-vertical .ability-row:last-child,
+      .abilities-list-vertical .ability-row[style*="display: none"] + .ability-row:last-child {
+        margin-bottom: 0;
       }
 
       .ability-row {
@@ -508,41 +514,16 @@ export class ScreenController {
         transition: all 0.2s ease;
       }
       
-      .info-btn-round {
-        width: 34px !important;
-        height: 34px !important;
-        min-width: 34px !important; /* Защита от сжатия */
-        max-width: 34px !important;
-        border-radius: 50% !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-weight: bold !important;
-        flex: 0 0 auto !important;
-        background: rgba(255, 255, 255, 0.06) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        color: var(--text) !important;
+      .btn-action:hover { 
+        background: rgba(255, 255, 255, 0.08); 
       }
-      .info-btn-round:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
-      }
-      .btn-action:hover { background: rgba(255, 255, 255, 0.08); }
       .btn-action:disabled {
-        background: rgba(10, 10, 15, 0.6) !important;
-        color: #a0a0b2 !important;
-        border-color: rgba(255, 255, 255, 0.05) !important;
-        opacity: 0.4;
+        background: rgba(15, 14, 23, 0.7) !important;
+        color: rgba(160, 160, 178, 0.5) !important;
+        border-color: rgba(255, 255, 255, 0.03) !important;
+        opacity: 0.5;
         cursor: not-allowed;
-      }
-      .btn-action:hover { background: rgba(255, 255, 255, 0.08); }
-      .btn-action:disabled {
-        background: rgba(10, 10, 15, 0.6) !important;
-        color: #a0a0b2 !important;
-        border-color: rgba(255, 255, 255, 0.05) !important;
-        opacity: 0.4;
-        cursor: not-allowed;
+        box-shadow: none !important;
       }
       .ability-desc {
         font-size: 0.92rem;
@@ -579,6 +560,13 @@ export class ScreenController {
         width: 100%;
         text-align: left;
       }
+      #reroll-question-btn:hover {
+        color: var(--text) !important;
+      }
+      #reroll-question-btn:active {
+        transform: scale(0.97);
+      }
+
       .rules-dropdown-box {
         background: rgba(255,255,255,0.03);
         border: 1px solid rgba(255,255,255,0.06);

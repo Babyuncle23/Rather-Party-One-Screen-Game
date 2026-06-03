@@ -1,5 +1,57 @@
-export const questionsDatabase = [
-  {
+/**
+ * ============================================================================
+ *   ИНСТРУКЦИЯ ДЛЯ РАЗРАБОТКИ: ДОБАВЛЕНИЕ НОВЫХ ВОПРОСОВ (questions.js)
+ * ============================================================================
+ * 
+ * При добавлении новой карточки в массив `questionsDatabase` строго соблюдайте 
+ * следующую структуру и правила, чтобы не сломать игровую логику:
+ * 
+ * {
+ *   id: 17,                                 // Уникальный порядковый номер (Number)
+ *   category: "food",                       // Текстовый идентификатор категории
+ *   difficulty: "easy",                     // Сложность карточки: easy | medium | hard
+ *   text: "Would you rather eat ___ ...",   // Строка вопроса. Должна содержать СТРОГО ДВА маркера "___"
+ *   resultTemplate: "{name} would rather...",// Шаблон для вывода в историю. Обязательные теги:
+ *                                           // {name} - имя игрока, {winner} - выбор, {loser} - проигравшее слово
+ *   hints: [                                // Массив встроенных промптов (минимум 2, лучше 3-5).
+ *     "Name two fast-food items",           // Игрок 1 (Picker) увидит 2 случайных варианта из этого пула.
+ *     "Name two ingredients for pizza"
+ *   ]
+ * }
+ * 
+ * ----------------------------------------------------------------------------
+ * ⚠️ КРИТИЧЕСКИ ВАЖНО ДЛЯ РАБОТЫ «ЧУТКИХ» ПОДСКАЗОК (Brainstorm Helper):
+ * ----------------------------------------------------------------------------
+ * Текст ваших подсказок (строки внутри массива `hints`) напрямую анализируется 
+ * регулярными выражениями и триггерами в `main.js`. Чтобы для Responder'а в шаге 2 
+ * правильно открывался интерактивный спойлер идей, используйте в тексте хинтов 
+ * следующие ключевые слова-маркеры:
+ * 
+ * 1. МАТЕРИАЛЫ: Используйте слова "material", "fabric", "substance", "texture".
+ *    - Если материал должен быть хрупким, добавьте: "fragile", "breakable", "stain".
+ *    - Если прочным/строительным, добавьте: "strong", "rigid", "heavy", "building".
+ * 
+ * 2. ЛЮДИ / ПЕРСОНЫ: Используйте слова "figure", "people", "actor", "celebrity", "personality".
+ *    - Если нужны злодеи/худшие, добавьте: "worst", "villain", "dislike".
+ *    - Если вдохновляющие/известные, добавьте: "interesting", "inspiring", "creative", "famous".
+ * 
+ * 3. ЭПОХИ И СОБЫТИЯ: Используйте слова "event", "hardship", "war", "era", "period", "decade", "time".
+ *    - Если эпоха мрачная/тяжелая, добавьте: "hardship", "severe", "bad", "lacked".
+ * 
+ * 4. ЖИВОТНЫЕ И МОНСТРЫ: Используйте слова "animal", "creature", "beast", "monster".
+ *    - Если нужны древние твари/мифы, добавьте: "prehistoric", "mythological", "monster", "bizarre", "dinosaur".
+ *    - Если жуткие/опасные, добавьте: "creeps", "terrify", "toxic", "danger".
+ * 
+ * 5. ИГРЫ И АКТИВНОСТЬ: Используйте слово "game".
+ *    - Для подвижных игр добавьте: "physical", "activity", "energy".
+ * 
+ * 6. ЕДА И ПРОДУКТЫ: Используйте слова "food", "snack", "ingredient", "breakfast".
+ *    - Если еда должна пачкать одежду, добавьте: "sticky", "wet", "stain", "crumbly".
+ * 
+ * Если в вашем хинте не будет этих ключевых слов, спойлер штурма идей останется скрытым.
+ */
+
+export const questionsDatabase = [ {
     id: 1,
     category: "people",
     difficulty: "hard",
@@ -192,6 +244,19 @@ export const questionsDatabase = [
       "Name two crazy or absurd situations that make no sense",
       "Name two mildly annoying, awkward, or ironic everyday accidents",
       "Name two unexpectedly pleasant or surprisingly satisfying feelings"
+    ]
+  },
+  {
+    id: 16,
+    category: "history",
+    difficulty: "hard",
+    text: "Would you rather travel 100 years into the future to see the development of ___ or the development of ___?",
+    resultTemplate: "{name} would rather travel 100 years into the future to see the development of {winner} than of {loser}.",
+    hints: [
+      "Name two advanced futuristic technologies or sci-fi inventions",
+      "Name two mega-corporations, digital platforms, or popular websites",
+      "Name two massive global cities or geographic regions",
+      "Name two major industries, scientific fields, or professional domains"
     ]
   }
 ];

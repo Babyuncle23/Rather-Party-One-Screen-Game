@@ -48,17 +48,20 @@ export class AudioManager {
     const pool = this.audioPool[type];
     if (!pool) return null;
     
+    // Вычисляем стартовое время: для клика пропускаем тишину (0.33 сек), для остальных с самого начала
+    const startTime = (type === 'click') ? 0.10 : 0;
+    
     // Find a stopped audio element
     for (let audio of pool) {
       if (audio.paused || audio.ended) {
-        audio.currentTime = 0;
+        audio.currentTime = startTime;
         return audio;
       }
     }
     
     // If all are playing, return the first one (will restart it)
     const audio = pool[0];
-    audio.currentTime = 0;
+    audio.currentTime = startTime;
     return audio;
   }
 

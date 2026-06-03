@@ -94,7 +94,7 @@
 
       <div style="margin-top: 20px;">
         <label for="rounds-input" style="display:block; margin-bottom: 5px; color:#a0a0b2;">Number of rounds:</label>
-        <input id="rounds-input" type="number" value="3" class="input-field">
+        <input id="rounds-input" type="number" value="1" class="input-field">
       </div>
       
       <button id="start-game-btn" class="btn btn-primary" style="margin-top: 15px;">Start Game</button>
@@ -106,7 +106,8 @@
       <div class="card-question">
 
         <p>Your secret question:</p>
-        <p id="secret-question-text" class="highlight-text"></p>
+        <p id="secret-question-text" class="highlight-text" style="margin-bottom: 20px;"></p>
+        <button id="reroll-question-btn" style="background: none; border: none; padding: 4px 12px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; display: block; margin: 0 auto; transition: color 0.2s ease, transform 0.1s ease; -webkit-tap-highlight-color: transparent;">🔄 Reroll (1 per turn)</button>
       </div>
       <p style="margin-bottom: 8px; color:#c0bfe2;">Pick one prompt for <span id="responder-target-name"></span>:</p>
       <button id="hint-btn-1" class="btn btn-secondary"></button>
@@ -122,9 +123,18 @@
     <!-- ХОД ИГРОКА 2 (ВВОД СЛОВ И ВЫБОР) -->
     <div id="responder-screen" style="display:none;">
       <h2><span id="responder-name" class="player-name-game-slow"></span>'s Turn</h2>
-      <p style="text-align: center; font-size: 1.05rem; color: var(--muted); line-height: 1.5; margin-bottom: 20px;">
+      <p style="text-align: center; font-size: 1.05rem; color: var(--muted); line-height: 1.5; margin-bottom: 12px;">
         Your prompt is: <span id="displayed-hint" style="color: #ffffff; font-weight: 600; margin-left: 4px;"></span>
       </p>
+      
+      <!-- ИНТЕРАКТИВНЫЙ СПОЙЛЕР ДЛЯ ШПАРГАЛКИ -->
+      <div id="responder-helper-box" style="display: none; margin-bottom: 16px; width: 100%;">
+        <button id="responder-helper-toggle" style="background: none; border: none; width: 100%; color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; padding: 6px 0; text-align: center; transition: opacity 0.2s ease;">[ 💡 Need ideas? Tap to brainstorm ]</button>
+        <div id="responder-helper-content" style="display: none; background: rgba(255,255,255,0.03); border: 1px dashed rgba(140, 108, 255, 0.25); border-radius: 14px; padding: 10px 12px; margin-top: 6px; font-size: 0.85rem; text-align: center; line-height: 1.4;">
+          <span id="responder-helper-text" style="color: var(--muted);"></span>
+        </div>
+      </div>
+
       <div class="input-container-with-counter" style="position: relative; margin-bottom: 14px; width: 100%;">
         <input id="word-input-1" type="text" placeholder="First answer" maxlength="25" class="input-field" style="margin-bottom: 0; width: 100%; padding-right: 55px;">
         <span id="word-counter-1" style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--muted); pointer-events: none; opacity: 0.7;">0/25</span>
@@ -149,6 +159,10 @@
 
 <!-- ИСПРАВЛЕННЫЙ ЭКРАН УГАДЫВАНИЯ (БЕЗ ДУБЛИРОВАНИЯ ТЕГОВ) -->
 <div id="guesser-screen" style="display:none;">
+  
+  <!-- МИНИ-ДИСПЛЕЙ ПРОГРЕССА РАУНДА И ОЧЕРЕДИ -->
+  <div id="guesser-round-progress" style="display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 12px; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.05em;"></div>
+
   <h2><span id="guesser-name" class="player-name-game-slow"></span>, Guess!</h2>
   
   <!-- БЛОК ПРОМПТА БЕЗ ПЛАШКИ (ШРИФТ КАК У ВОПРОСА) -->
@@ -179,24 +193,21 @@
   
   <div style="margin-top: 10px;"></div>
   
-  <!-- КОРОТКАЯ ПОДПИСЬ ДЛЯ ИГРОКА -->
-  <p style="text-align: center; color: #a0a0b2; margin-bottom: 6px; font-size: 14px;">Tap buttons below to open letters:</p>
+  <!-- ДИНАМИЧЕСКИЙ ЗАГОЛОВОК ДЛЯ ИНТУИТИВНОГО ПОНИМАНИЯ РОЛЛА -->
+  <p id="ability-roll-status" style="text-align: center; color: #ffd56b; font-weight: 700; margin-bottom: 8px; font-size: 14px; letter-spacing: 0.02em;"></p>
 
-  <!-- СПИСОК СПОСОБНОСТЕЙ С КОМПАКТНЫМИ ИКОНКАМИ ПОДПИСЕЙ (ОЧИЩЕННЫЙ HTML) -->
+  <!-- СПИСОК СПОСОБНОСТЕЙ С ДИНАМИЧЕСКИМ ОПИСАНИЕМ ВНУТРИ КНОПОК -->
   <div class="abilities-list-vertical">
     <div class="ability-row">
-      <button id="ability-pos-btn" class="btn-action"></button>
-      <button id="info-pos-btn" class="carousel-btn info-btn-round">?</button>
+      <button id="ability-pos-btn" class="btn-action" style="text-align: left; line-height: 1.4; padding: 12px 14px;"></button>
     </div>
     
     <div class="ability-row">
-      <button id="ability-rand-btn" class="btn-action"></button>
-      <button id="info-rand-btn" class="carousel-btn info-btn-round">?</button>
+      <button id="ability-rand-btn" class="btn-action" style="text-align: left; line-height: 1.4; padding: 12px 14px;"></button>
     </div>
 
     <div class="ability-row">
-      <button id="ability-type-btn" class="btn-action"></button>
-      <button id="info-type-btn" class="carousel-btn info-btn-round">?</button>
+      <button id="ability-type-btn" class="btn-action" style="text-align: left; line-height: 1.4; padding: 12px 14px;"></button>
     </div>
   </div>
 </div>
