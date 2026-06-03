@@ -139,7 +139,7 @@ export const questionsDatabase = [
       "Name two creative arts, styles of performance, crafts, or musical instruments",
       "Name two activities that you find incredibly boring, repetitive, or tedious to do",
       "Name two fields that are notoriously stressful, high-pressure, or exhausting",
-      "Name two highly specific, unusual, or absurd hobbies"
+      "Name two highly specific, unusual, or absurd activities"
     ]
   },
   {
