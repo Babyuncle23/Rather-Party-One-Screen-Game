@@ -1,57 +1,5 @@
-/**
- * ============================================================================
- *   ИНСТРУКЦИЯ ДЛЯ РАЗРАБОТКИ: ДОБАВЛЕНИЕ НОВЫХ ВОПРОСОВ (questions.js)
- * ============================================================================
- * 
- * При добавлении новой карточки в массив `questionsDatabase` строго соблюдайте 
- * следующую структуру и правила, чтобы не сломать игровую логику:
- * 
- * {
- *   id: 17,                                 // Уникальный порядковый номер (Number)
- *   category: "food",                       // Текстовый идентификатор категории
- *   difficulty: "easy",                     // Сложность карточки: easy | medium | hard
- *   text: "Would you rather eat ___ ...",   // Строка вопроса. Должна содержать СТРОГО ДВА маркера "___"
- *   resultTemplate: "{name} would rather...",// Шаблон для вывода в историю. Обязательные теги:
- *                                           // {name} - имя игрока, {winner} - выбор, {loser} - проигравшее слово
- *   hints: [                                // Массив встроенных промптов (минимум 2, лучше 3-5).
- *     "Name two fast-food items",           // Игрок 1 (Picker) увидит 2 случайных варианта из этого пула.
- *     "Name two ingredients for pizza"
- *   ]
- * }
- * 
- * ----------------------------------------------------------------------------
- * ⚠️ КРИТИЧЕСКИ ВАЖНО ДЛЯ РАБОТЫ «ЧУТКИХ» ПОДСКАЗОК (Brainstorm Helper):
- * ----------------------------------------------------------------------------
- * Текст ваших подсказок (строки внутри массива `hints`) напрямую анализируется 
- * регулярными выражениями и триггерами в `main.js`. Чтобы для Responder'а в шаге 2 
- * правильно открывался интерактивный спойлер идей, используйте в тексте хинтов 
- * следующие ключевые слова-маркеры:
- * 
- * 1. МАТЕРИАЛЫ: Используйте слова "material", "fabric", "substance", "texture".
- *    - Если материал должен быть хрупким, добавьте: "fragile", "breakable", "stain".
- *    - Если прочным/строительным, добавьте: "strong", "rigid", "heavy", "building".
- * 
- * 2. ЛЮДИ / ПЕРСОНЫ: Используйте слова "figure", "people", "actor", "celebrity", "personality".
- *    - Если нужны злодеи/худшие, добавьте: "worst", "villain", "dislike".
- *    - Если вдохновляющие/известные, добавьте: "interesting", "inspiring", "creative", "famous".
- * 
- * 3. ЭПОХИ И СОБЫТИЯ: Используйте слова "event", "hardship", "war", "era", "period", "decade", "time".
- *    - Если эпоха мрачная/тяжелая, добавьте: "hardship", "severe", "bad", "lacked".
- * 
- * 4. ЖИВОТНЫЕ И МОНСТРЫ: Используйте слова "animal", "creature", "beast", "monster".
- *    - Если нужны древние твари/мифы, добавьте: "prehistoric", "mythological", "monster", "bizarre", "dinosaur".
- *    - Если жуткие/опасные, добавьте: "creeps", "terrify", "toxic", "danger".
- * 
- * 5. ИГРЫ И АКТИВНОСТЬ: Используйте слово "game".
- *    - Для подвижных игр добавьте: "physical", "activity", "energy".
- * 
- * 6. ЕДА И ПРОДУКТЫ: Используйте слова "food", "snack", "ingredient", "breakfast".
- *    - Если еда должна пачкать одежду, добавьте: "sticky", "wet", "stain", "crumbly".
- * 
- * Если в вашем хинте не будет этих ключевых слов, спойлер штурма идей останется скрытым.
- */
-
-export const questionsDatabase = [ {
+export const questionsDatabase = [
+  {
     id: 1,
     category: "people",
     difficulty: "hard",
@@ -61,7 +9,7 @@ export const questionsDatabase = [ {
       "Name the two worst people in history",
       "Name two characters from any book or movie you remember",
       "Name two world-famous actors or celebrities everyone knows",
-      "Name two historical figures you find interesting"
+      { text: "Name two historical figures you find interesting", brainstorm: ["Albert Einstein", "Leonardo da Vinci", "Marie Curie", "Isaac Newton", "Aristotle", "Galileo Galilei"] }
     ]
   },
   {
@@ -113,7 +61,7 @@ export const questionsDatabase = [ {
       "Name two wild animals that are known to be large and heavy",
       "Name two well-known comic book or movie superheroes",
       "Name two random everyday objects in this room",
-      "Name two mythical creatures from classic stories or fairy tales",
+      { text: "Name two mythical creatures from classic stories or fairy tales", brainstorm: ["Dragon", "Phoenix", "Kraken", "Minotaur", "Pegasus", "Hydra", "Chimeras", "Griffon"] },
       "Name two of the cutest animals in your opinion"
     ]
   },
@@ -138,8 +86,8 @@ export const questionsDatabase = [ {
     hints: [
       "Name two delicious sweet treats or candies", 
       "Name two building materials or metals",
-      "Name two fragile or easily breakable materials",
-      "Name two substances or textures that for some reason feel unpleasant to you"
+      { text: "Name two fragile or easily breakable materials", brainstorm: ["Glass", "Porcelain", "Ceramic", "Ice", "Crystal", "Chalk", "Eggshells"] },
+      { text: "Name two substances or textures that for some reason feel unpleasant to you", brainstorm: ["Sandpaper", "Wet Cardboard", "Slime", "Velvet", "Sticky Tape", "Aluminum Foil"] }
     ]
   },
   {
@@ -149,8 +97,8 @@ export const questionsDatabase = [ {
     text: "Would you rather have your bedroom completely filled with ___ or with ___?",
     resultTemplate: "{name} would rather have a bedroom completely filled with {winner} than with {loser}.",
     hints: [
-      "Name two things that make an extremely unpleasant or annoying sound",
-      "Name two soft things that you love to touch",
+      { text: "Name two things that make an extremely unpleasant or annoying sound", brainstorm: ["Chalkboard Scratch", "Car Alarm", "Dentist Drill", "Mosquito Buzzing", "Crying Baby", "Screeching Brakes"] },
+      { text: "Name two soft things that you love to touch", brainstorm: ["Velvet Fabric", "Silk Sheets", "Cat Fur", "Memory Foam", "Feather Pillow", "Cashmere Sweater"] },
       "Name two tech gadgets or electronic devices"
     ]
   },
@@ -161,7 +109,7 @@ export const questionsDatabase = [ {
     text: "Would you rather receive a lifetime endless supply of ___ or of ___?",
     resultTemplate: "{name} would rather receive a lifetime endless supply of {winner} than of {loser}.",
     hints: [
-      "Name two expensive items or luxury goods you wish you owned",
+      { text: "Name two expensive items or luxury goods you wish you owned", brainstorm: ["Sports Car", "Private Jet", "Designer Watch", "Luxury Mansion", "Yacht", "Diamond Jewelry"] },
       "Name two daily services or subscriptions that you use often",
       "Name two necessary everyday goods or products that you always buy",
       "Name two good moods",
@@ -177,7 +125,7 @@ export const questionsDatabase = [ {
     hints: [
       "Name two countries, cities, or regions that you personally find beautiful or fascinating",
       "Name two distinct types of natural terrain or geographic ecosystems",
-      "Name two areas known for extreme weather, intense pollution, or very difficult terrain"
+      { text: "Name two areas known for extreme weather, intense pollution, or very difficult terrain", brainstorm: ["Sahara Desert", "Siberian Tundra", "Amazon Rainforest", "Death Valley", "Mariana Trench", "Mount Everest"] }
     ]
   },
   {
@@ -187,9 +135,9 @@ export const questionsDatabase = [ {
     text: "Would you rather instantly become a world-class expert in ___ or in ___?",
     resultTemplate: "{name} would rather instantly become a world-class expert in {winner} than in {loser}.",
     hints: [
-      "Name two complex academic subjects, scientific disciplines, or professional industries",
+      { text: "Name two complex academic subjects, scientific disciplines, or professional industries", brainstorm: ["Quantum Mechanics", "Neuroscience", "Astrophysics", "Paleontology", "Cryptography", "Genetics"] },
       "Name two creative arts, styles of performance, crafts, or musical instruments",
-      "Name two activities that you find incredibly boring, repetitive, or tedious to do",
+      { text: "Name two activities that you find incredibly boring, repetitive, or tedious to do", brainstorm: ["Doing Taxes", "Ironing Shirts", "Data Entry", "Washing Dishes", "Sorting Files", "Weeding Gardens"] },
       "Name two fields that are notoriously stressful, high-pressure, or exhausting",
       "Name two highly specific, unusual, or absurd activities"
     ]
@@ -202,9 +150,9 @@ export const questionsDatabase = [ {
     resultTemplate: "{name} would rather have a pet {winner} than a pet {loser} for the next ten years.",
     hints: [
       "Name two animals that you think are affectionate, gentle, or great companions",
-      "Name two wild, rare, or majestic animals that you usually only see in nature documentaries",
-      "Name two creatures that terrify you, give you the creeps, or possess toxic defenses",
-      "Name two animals known for being extremely noisy, destructive, or bad-smelling",
+      { text: "Name two wild, rare, or majestic animals that you usually only see in nature documentaries", brainstorm: ["Snow Leopard", "Blue Whale", "Golden Eagle", "Emperor Penguin", "Panda Bear", "Bengal Tiger"] },
+      { text: "Name two creatures that terrify you, give you the creeps, or possess toxic defenses", brainstorm: ["Box Jellyfish", "Black Widow", "King Cobra", "Poison Dart Frog", "Grizzly Bear", "Vampire Bat"] },
+      { text: "Name two animals known for being extremely noisy, destructive, or bad-smelling", brainstorm: ["Skunk", "Hyena", "Raccoon", "Howler Monkey", "Tasmanian Devil", "Wild Boar"] },
       "Name two massive prehistoric beasts, mythological creatures, or bizarre monsters"
     ]
   },
@@ -215,10 +163,10 @@ export const questionsDatabase = [ {
     text: "Would you rather attend a formal gala wearing a suit made of ___ or made of ___?",
     resultTemplate: "{name} would rather attend a formal gala wearing a suit made of {winner} than made of {loser}.",
     hints: [
-      "Name two high-quality fabrics, textures, or materials used to make fine clothing",
-      "Name two shiny, rigid, or reflective elements found in nature or manufacturing",
+      { text: "Name two high-quality fabrics, textures, or materials used to make fine clothing", brainstorm: ["Egyptian Cotton", "Mulberry Silk", "Italian Cashmere", "Merino Wool", "Satin Fabric", "Velvet Cloth"] },
+      { text: "Name two shiny, rigid, or reflective elements found in nature or manufacturing", brainstorm: ["Polished Chrome", "Raw Obsidian", "Stained Glass", "Liquid Mercury", "Gold Leaf", "Titanium Sheet"] },
       "Name two sticky, wet, or crumbly foods that would easily stain or fall apart",
-      "Name two random objects you would find in a recycling bin, tool shed, or hardware store"
+      { text: "Name two random objects you would find in a recycling bin, tool shed, or hardware store", brainstorm: ["Rusty Wrench", "Plastic Bottle", "Cardboard Box", "Power Drill", "Metal Paint Can", "Rubber Mallet"] }
     ]
   },
   {
@@ -228,10 +176,10 @@ export const questionsDatabase = [ {
     text: "Would you rather travel back in time to experience the era of ___ or the era of ___?",
     resultTemplate: "{name} would rather travel back in time to experience the era of {winner} than the era of {loser}.",
     hints: [
-      "Name two historical time periods known for significant artistic, architectural, or cultural growth",
+      { text: "Name two historical time periods known for significant artistic, architectural, or cultural growth", brainstorm: ["The Renaissance", "Ancient Egypt", "Classical Antiquity", "Victorian Era", "The Roaring 20s", "Age of Enlightenment"] },
       "Name two specific decades from the past century",
-      "Name two historical events marked by severe hardships",
-      "Name two time periods that lacked modern conveniences like indoor plumbing or electricity"
+      { text: "Name two historical events marked by severe hardships", brainstorm: ["The Great Depression", "The Black Death", "Pompeii Eruption", "The Dust Bowl", "The Potato Famine"] },
+      { text: "Name two time periods that lacked modern conveniences like indoor plumbing or electricity", brainstorm: ["The Middle Ages", "The Stone Age", "Ancient Rome", "The Viking Age", "The Wild West"] }
     ]
   },
   {
@@ -242,7 +190,7 @@ export const questionsDatabase = [ {
     resultTemplate: "{name} would rather be forced to experience {winner} than {loser} for the next 5 years of life.",
     hints: [
       "Name two crazy or absurd situations that make no sense",
-      "Name two mildly annoying, awkward, or ironic everyday accidents",
+      { text: "Name two mildly annoying, awkward, or ironic everyday accidents", brainstorm: ["Stepping on Lego", "Dropping Phone on Face", "Spilling Coffee on Shirt", "Stubbing Little Toe", "Forgetting Someone's Name"] },
       "Name two unexpectedly pleasant or surprisingly satisfying feelings"
     ]
   },
@@ -256,7 +204,7 @@ export const questionsDatabase = [ {
       "Name two advanced futuristic technologies or sci-fi inventions",
       "Name two mega-corporations, digital platforms, or popular websites",
       "Name two massive global cities or geographic regions",
-      "Name two major industries, scientific fields, or professional domains"
+      { text: "Name two major industries, scientific fields, or professional domains", brainstorm: ["Quantum Computing", "Renewable Energy", "Aerospace Engineering", "Biotechnology", "Artificial Intelligence", "Marine Biology"] }
     ]
   }
 ];

@@ -12,15 +12,23 @@ export class ScreenController {
   }
 
   switchScreen(screenName) {
+    let screenChanged = false;
     Object.keys(this.screens).forEach(key => {
       if (this.screens[key]) {
-        if (key === 'pass') {
-          this.screens[key].style.display = screenName === 'pass' ? 'flex' : 'none';
-        } else {
-          this.screens[key].style.display = key === screenName ? 'block' : 'none';
+        const isTarget = key === screenName;
+        const currentDisplay = this.screens[key].style.display;
+        const nextDisplay = key === 'pass' ? (isTarget ? 'flex' : 'none') : (isTarget ? 'block' : 'none');
+        
+        if (currentDisplay !== nextDisplay) {
+          this.screens[key].style.display = nextDisplay;
+          if (isTarget) screenChanged = true;
         }
       }
     });
+    // Скроллим наверх только если игрок действительно перешел на новый игровой экран
+    if (screenChanged) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
   }
 
   showPassScreen(player, onConfirm, note = "Only this player should look at the phone. Keep it hidden from others.") {
@@ -42,6 +50,9 @@ export class ScreenController {
 
     message.innerHTML = `PASS THE PHONE TO:<br>${highlightedTargetName}<br><br><span style="font-size: 1.2rem; font-weight: 400; color: var(--muted);">${cleanNote}</span>`;
     
+    // Скроллим наверх, чтобы окно передачи телефона гарантированно отцентрировалось по высоте экрана мобильного
+    window.scrollTo({ top: 0, behavior: 'instant' });
+
     btn.onclick = null;
     btn.onclick = () => {
       this.screens.pass.style.display = 'none';
@@ -684,6 +695,28 @@ export class ScreenController {
         .volume-slider {
           width: 80px;
         }
+      }
+
+      /* Анимации для эффекта сгорания способностей */
+      .ability-row {
+        transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 1;
+        transform: scale(1);
+      }
+      .ability-row.burned {
+        opacity: 0 !important;
+        transform: scale(0.92);
+        pointer-events: none;
+      }
+
+      /* Анимация пульсации и покачивания счетчика */
+      .pulse-shake {
+        animation: pulseShakeAnim 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+      }
+      @keyframes pulseShakeAnim {
+        0%, 100% { transform: scale(1) translateX(0); }
+        20%, 60% { transform: scale(1.08) translateX(-2px); color: var(--danger); }
+        40%, 80% { transform: scale(1.08) translateX(2px); color: var(--danger); }
       }
     `;
     document.head.appendChild(style);

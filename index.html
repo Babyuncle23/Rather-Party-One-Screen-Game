@@ -137,11 +137,15 @@
 
       <div class="input-container-with-counter" style="position: relative; margin-bottom: 14px; width: 100%;">
         <input id="word-input-1" type="text" placeholder="First answer" maxlength="25" class="input-field" style="margin-bottom: 0; width: 100%; padding-right: 55px;">
-        <span id="word-counter-1" style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--muted); pointer-events: none; opacity: 0.7;">0/25</span>
+        <span id="word-counter-1" style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--muted); pointer-events: none; opacity: 0.7;">
+          <span class="counter-text">0/25</span><span class="lock-icon" style="display: none;">🔒</span>
+        </span>
       </div>
       <div class="input-container-with-counter" style="position: relative; margin-bottom: 14px; width: 100%;">
         <input id="word-input-2" type="text" placeholder="Second answer" maxlength="25" class="input-field" style="margin-bottom: 0; width: 100%; padding-right: 55px;">
-        <span id="word-counter-2" style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--muted); pointer-events: none; opacity: 0.7;">0/25</span>
+        <span id="word-counter-2" style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--muted); pointer-events: none; opacity: 0.7;">
+          <span class="counter-text">0/25</span><span class="lock-icon" style="display: none;">🔒</span>
+        </span>
       </div>
 
       <button id="submit-words-btn" class="btn btn-primary" style="margin-top: 10px;">Submit Answers</button>
