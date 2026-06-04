@@ -154,26 +154,23 @@ export class WordShifter {
       return arr;
     };
 
-    // 1. ШТРАФНОЙ РЕЖИМ (Глобальный Nerf): Открывает строго 1 букву на всё поле
+    // Штрафной симметричный режим: открывает строго по 1 букве нужного типа в каждом поле (W1 и W2)
     if (this.isNerfed || this.getTotalLength() <= 3) {
-      let pool1 = collectClosedByList(this.orig1, this.openedIndices1, consonantsList);
-      let pool2 = collectClosedByList(this.orig2, this.openedIndices2, consonantsList);
-      
-      if (pool1.length === 0 && pool2.length === 0) {
-        pool1 = collectClosedByList(this.orig1, this.openedIndices1, vowelsList);
-        pool2 = collectClosedByList(this.orig2, this.openedIndices2, vowelsList);
-      }
+      const openOneForField = (word, openedSet) => {
+        let pool = collectClosedByList(word, openedSet, targetList);
+        // Если букв основного целевого типа (например, согласных) нет, ищем альтернативный тип
+        if (pool.length === 0) {
+          const altList = (intensity === 1) ? vowelsList : consonantsList;
+          pool = collectClosedByList(word, openedSet, altList);
+        }
+        if (pool.length > 0) {
+          const randIdx = Math.floor(Math.random() * pool.length);
+          openedSet.add(pool[randIdx]);
+        }
+      };
 
-      const combinedPool = [
-        ...pool1.map(idx => ({ wordNum: 1, index: idx })),
-        ...pool2.map(idx => ({ wordNum: 2, index: idx }))
-      ];
-      
-      if (combinedPool.length > 0) {
-        const target = combinedPool[Math.floor(Math.random() * combinedPool.length)];
-        if (target.wordNum === 1) this.openedIndices1.add(target.index);
-        else this.openedIndices2.add(target.index);
-      }
+      openOneForField(this.orig1, this.openedIndices1);
+      openOneForField(this.orig2, this.openedIndices2);
       return;
     }
 
@@ -305,43 +302,61 @@ export class WordShifter {
   }
 
   getLetterTypeDescription(intensity = 1) {
-    if (this.isNerfed || this.getTotalLength() <= 3) {
-      return "Will reveal exactly +1 random structural letter total";
-    }
-
     const vowelsList = 'aeiouAEIOU';
     const consonantsList = 'bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
     const targetList = (intensity === 1) ? consonantsList : vowelsList;
     const typeLabel = (intensity === 1) ? "consonants" : "vowels";
 
-    // Функция симулирует умный пословесный подсчет, чтобы вывести точную цифру на кнопку
-    const calculateSimulatedCount = (origWord, openedSet) => {
-      let totalToOpen = 0;
-      let currentPos = 0;
-      
-      const tokens = origWord.split(/(\s+)/);
-      tokens.forEach(token => {
-        if (token.trim().length > 0) {
-          const wordLen = token.length;
-          let allowedLimit = (wordLen <= 3) ? 1 : 2;
-          
-          let availableClosed = 0;
-          for (let i = 0; i < wordLen; i++) {
-            const globalIdx = currentPos + i;
-            if (!openedSet.has(globalIdx) && targetList.includes(token[i])) {
-              availableClosed++;
-            }
+    // Отдельный симуляционный подсчет для штрафного симметричного режима
+    if (this.isNerfed || this.getTotalLength() <= 3) {
+      const countRemainingInField = (word, openedSet) => {
+        let count = 0;
+        for (let i = 0; i < word.length; i++) {
+          if (!openedSet.has(i) && (consonantsList.includes(word[i]) || vowelsList.includes(word[i]))) {
+            count = 1; // Способность гарантированно найдет и откроет 1 букву, если они вообще есть
+            break;
           }
-          totalToOpen += Math.min(allowedLimit, availableClosed);
         }
-        currentPos += token.length;
-      });
-      return totalToOpen;
+        return count;
+      };
+      const c1 = countRemainingInField(this.orig1, this.openedIndices1);
+      const c2 = countRemainingInField(this.orig2, this.openedIndices2);
+      return `Reveals ${typeLabel}: [W1: +${c1} letters] & [W2: +${c2} letters]`;
+    }
+
+    if (this.isMultiWord) return "Not available for multi-word phrases";
+
+    // Функция считает, сколько закрытых букв нужного типа ОСТАЛОСЬ в слове
+    const countRemaining = (word, openedSet, listStr) => {
+      let count = 0;
+      for (let i = 0; i < word.length; i++) {
+        if (!openedSet.has(i) && listStr.includes(word[i])) count++;
+      }
+      return count;
     };
 
-    const count1 = calculateSimulatedCount(this.orig1, this.openedIndices1);
-    const count2 = calculateSimulatedCount(this.orig2, this.openedIndices2);
+    if (intensity === 1) {
+      // Считаем точное количество согласных для первой попытки в обычном режиме
+      const getConsonantsToOpen = (word, openedSet) => {
+        const available = countRemaining(word, openedSet, consonantsList);
+        return Math.max(0, Math.ceil(available * 0.4));
+      };
 
-    return `Reveals ${typeLabel}: [W1: +${count1} letters] & [W2: +${count2} letters]`;
+      const count1 = getConsonantsToOpen(this.orig1, this.openedIndices1);
+      const count2 = getConsonantsToOpen(this.orig2, this.openedIndices2);
+
+      return `Reveals ${typeLabel}: [W1: +${count1} letters] & [W2: +${count2} letters]`;
+    } else {
+      // Считаем точное количество гласных для второй попытки в обычном режиме
+      const getVowelsToOpen = (word, openedSet) => {
+        const available = countRemaining(word, openedSet, vowelsList);
+        return Math.max(0, Math.ceil(available * 0.5));
+      };
+
+      const count1 = getVowelsToOpen(this.orig1, this.openedIndices1);
+      const count2 = getVowelsToOpen(this.orig2, this.openedIndices2);
+
+      return `Reveals ${typeLabel}: [W1: +${count1} letters] & [W2: +${count2} letters]`;
+    }
   }
 }
