@@ -92,8 +92,23 @@ export class WordShifter {
 
     const collectClosed = (word, openedSet) => {
       const arr = [];
+      const endsWithIng = word.toUpperCase().endsWith("ING");
+      const ingStartIdx = word.length - 3;
+
       for (let i = 0; i < word.length; i++) {
+        // Если слово заканчивается на ING, исключаем последние 3 индекса из случайного пула
+        if (endsWithIng && i >= ingStartIdx) {
+          continue;
+        }
         if (!openedSet.has(i) && word[i] !== " ") arr.push(i);
+      }
+      
+      // Пограничный сценарий: если ВСЕ оставшиеся буквы в слове — это только ING, 
+      // возвращаем их обратно в пул, чтобы способность не сработала вхолостую
+      if (arr.length === 0) {
+        for (let i = 0; i < word.length; i++) {
+          if (!openedSet.has(i) && word[i] !== " ") arr.push(i);
+        }
       }
       return arr;
     };
@@ -123,10 +138,11 @@ export class WordShifter {
     pickRandomFrom(closed2, toReveal2, this.openedIndices2);
   }
 
-  // Reveal Type 3: Vowels & Consonants (инвертированный порядок: согласные, затем гласные)
+  // Reveal Type 3: Vowels & Consonants (Умный пословесный лимит с учетом Nerf-системы)
   revealLetterType(intensity = 1) {
     const vowelsList = 'aeiouAEIOU';
     const consonantsList = 'bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
+    const targetList = (intensity === 1) ? consonantsList : vowelsList;
 
     const collectClosedByList = (word, openedSet, listStr) => {
       const arr = [];
@@ -138,12 +154,11 @@ export class WordShifter {
       return arr;
     };
 
-    // Оптимальный штрафной режим: открывает строго 1 согласную на всё игровое поле за раз
+    // 1. ШТРАФНОЙ РЕЖИМ (Глобальный Nerf): Открывает строго 1 букву на всё поле
     if (this.isNerfed || this.getTotalLength() <= 3) {
       let pool1 = collectClosedByList(this.orig1, this.openedIndices1, consonantsList);
       let pool2 = collectClosedByList(this.orig2, this.openedIndices2, consonantsList);
       
-      // Если закрытых согласных не осталось вообще, переключаемся на гласные
       if (pool1.length === 0 && pool2.length === 0) {
         pool1 = collectClosedByList(this.orig1, this.openedIndices1, vowelsList);
         pool2 = collectClosedByList(this.orig2, this.openedIndices2, vowelsList);
@@ -162,37 +177,46 @@ export class WordShifter {
       return;
     }
 
-    if (intensity === 1) {
-      // Обычный режим (1-я попытка): открываем часть сильных СОГЛАСНЫХ букв
-      const openConsonantsForWord = (word, openedSet) => {
-        const closedConsonants = collectClosedByList(word, openedSet, consonantsList);
-        if (closedConsonants.length === 0) return;
-
-        let countToOpen = Math.max(1, Math.ceil(closedConsonants.length * 0.4));
-        for (let i = 0; i < countToOpen; i++) {
-          const randIdx = Math.floor(Math.random() * closedConsonants.length);
-          openedSet.add(closedConsonants[randIdx]);
-          closedConsonants.splice(randIdx, 1);
+    // 2. ОБЫЧНЫЙ УМНЫЙ РЕЖИМ: Пропорциональный пословесный расчет длин
+    const processSmartWordReveal = (origWord, openedSet) => {
+      // Разбиваем фразу на отдельные слова, сохраняя их стартовые индексы в исходной строке
+      const wordsData = [];
+      let currentPos = 0;
+      
+      origWord.split(/(\s+)/).forEach(token => {
+        if (token.trim().length > 0) {
+          wordsData.push({ text: token, startIdx: currentPos });
         }
-      };
-      openConsonantsForWord(this.orig1, this.openedIndices1);
-      openConsonantsForWord(this.orig2, this.openedIndices2);
-    } else {
-      // Обычный режим (2-я попытка): открываем до половины ГЛАСНЫХ букв
-      const openVowelsForWord = (word, openedSet) => {
-        const closedVowels = collectClosedByList(word, openedSet, vowelsList);
-        if (closedVowels.length === 0) return;
+        currentPos += token.length;
+      });
 
-        let countToOpen = Math.max(1, Math.ceil(closedVowels.length * 0.5));
-        for (let i = 0; i < countToOpen; i++) {
-          const randIdx = Math.floor(Math.random() * closedVowels.length);
-          openedSet.add(closedVowels[randIdx]);
-          closedVowels.splice(randIdx, 1);
+      // Перебираем каждое слово внутри фразы индивидуально
+      wordsData.forEach(wData => {
+        const wordLen = wData.text.length;
+        // Умный лимит: 1 буква для коротких слов (<=3), 2 буквы для длинных слов (4+)
+        let allowedLimit = (wordLen <= 3) ? 1 : 2;
+
+        // Собираем закрытые буквы нужного типа строго для границ ЭТОГО слова
+        const availableClosedIndices = [];
+        for (let i = 0; i < wordLen; i++) {
+          const globalIdx = wData.startIdx + i;
+          if (!openedSet.has(globalIdx) && targetList.includes(wData.text[i])) {
+            availableClosedIndices.push(globalIdx);
+          }
         }
-      };
-      openVowelsForWord(this.orig1, this.openedIndices1);
-      openVowelsForWord(this.orig2, this.openedIndices2);
-    }
+
+        // Открываем буквы в пределах рассчитанного лимита
+        const countToOpen = Math.min(allowedLimit, availableClosedIndices.length);
+        for (let i = 0; i < countToOpen; i++) {
+          const randIdx = Math.floor(Math.random() * availableClosedIndices.length);
+          openedSet.add(availableClosedIndices[randIdx]);
+          availableClosedIndices.splice(randIdx, 1);
+        }
+      });
+    };
+
+    processSmartWordReveal(this.orig1, this.openedIndices1);
+    processSmartWordReveal(this.orig2, this.openedIndices2);
   }
 
   // Динамические описания для интерфейса игрока (с чётким указанием распределения на оба поля)
@@ -251,8 +275,19 @@ export class WordShifter {
 
     const countClosed = (word, openedSet) => {
       let count = 0;
+      const endsWithIng = word.toUpperCase().endsWith("ING");
+      const ingStartIdx = word.length - 3;
+
       for (let i = 0; i < word.length; i++) {
+        if (endsWithIng && i >= ingStartIdx) continue;
         if (!openedSet.has(i) && word[i] !== " ") count++;
+      }
+      
+      // Если кроме ING ничего не осталось, считаем их, чтобы не показывать 0
+      if (count === 0) {
+        for (let i = 0; i < word.length; i++) {
+          if (!openedSet.has(i) && word[i] !== " ") count++;
+        }
       }
       return count;
     };
@@ -270,46 +305,43 @@ export class WordShifter {
   }
 
   getLetterTypeDescription(intensity = 1) {
-    if (this.isMultiWord) return "Not available for multi-word phrases";
     if (this.isNerfed || this.getTotalLength() <= 3) {
-      // Полностью скрываем техническую информацию о штрафе. Игрок видит только чистый результат.
       return "Will reveal exactly +1 random structural letter total";
     }
 
     const vowelsList = 'aeiouAEIOU';
     const consonantsList = 'bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
+    const targetList = (intensity === 1) ? consonantsList : vowelsList;
+    const typeLabel = (intensity === 1) ? "consonants" : "vowels";
 
-    // Функция считает, сколько закрытых букв нужного типа ОСТАЛОСЬ в слове
-    const countRemaining = (word, openedSet, listStr) => {
-      let count = 0;
-      for (let i = 0; i < word.length; i++) {
-        if (!openedSet.has(i) && listStr.includes(word[i])) count++;
-      }
-      return count;
+    // Функция симулирует умный пословесный подсчет, чтобы вывести точную цифру на кнопку
+    const calculateSimulatedCount = (origWord, openedSet) => {
+      let totalToOpen = 0;
+      let currentPos = 0;
+      
+      const tokens = origWord.split(/(\s+)/);
+      tokens.forEach(token => {
+        if (token.trim().length > 0) {
+          const wordLen = token.length;
+          let allowedLimit = (wordLen <= 3) ? 1 : 2;
+          
+          let availableClosed = 0;
+          for (let i = 0; i < wordLen; i++) {
+            const globalIdx = currentPos + i;
+            if (!openedSet.has(globalIdx) && targetList.includes(token[i])) {
+              availableClosed++;
+            }
+          }
+          totalToOpen += Math.min(allowedLimit, availableClosed);
+        }
+        currentPos += token.length;
+      });
+      return totalToOpen;
     };
 
-    if (intensity === 1) {
-      // Считаем точное количество согласных для первой попытки
-      const getConsonantsToOpen = (word, openedSet) => {
-        const available = countRemaining(word, openedSet, consonantsList);
-        return Math.max(0, Math.ceil(available * 0.4));
-      };
+    const count1 = calculateSimulatedCount(this.orig1, this.openedIndices1);
+    const count2 = calculateSimulatedCount(this.orig2, this.openedIndices2);
 
-      const count1 = getConsonantsToOpen(this.orig1, this.openedIndices1);
-      const count2 = getConsonantsToOpen(this.orig2, this.openedIndices2);
-
-      return `Reveals consonants: [W1: +${count1} letters] & [W2: +${count2} letters]`;
-    } else {
-      // Считаем точное количество гласных для второй попытки
-      const getVowelsToOpen = (word, openedSet) => {
-        const available = countRemaining(word, openedSet, vowelsList);
-        return Math.max(0, Math.ceil(available * 0.5));
-      };
-
-      const count1 = getVowelsToOpen(this.orig1, this.openedIndices1);
-      const count2 = getVowelsToOpen(this.orig2, this.openedIndices2);
-
-      return `Reveals vowels: [W1: +${count1} letters] & [W2: +${count2} letters]`;
-    }
+    return `Reveals ${typeLabel}: [W1: +${count1} letters] & [W2: +${count2} letters]`;
   }
 }

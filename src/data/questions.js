@@ -198,8 +198,8 @@ export const questionsDatabase = [
     id: 16,
     category: "history",
     difficulty: "hard",
-    text: "Would you rather travel 100 years into the future to see the development of ___ or the development of ___?",
-    resultTemplate: "{name} would rather travel 100 years into the future to see the development of {winner} than of {loser}.",
+    text: "Would you rather travel 25 years into the future to see the development of ___ or the development of ___?",
+    resultTemplate: "{name} would rather travel 25 years into the future to see the development of {winner} than of {loser}.",
     hints: [
       "Name two advanced futuristic technologies or sci-fi inventions",
       "Name two mega-corporations, digital platforms, or popular websites",
