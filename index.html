@@ -169,21 +169,21 @@
 
   <h2><span id="guesser-name" class="player-name-game-slow"></span>, Guess!</h2>
   
-  <!-- БЛОК ПРОМПТА БЕЗ ПЛАШКИ (ШРИФТ КАК У ВОПРОСА) -->
-  <div style="text-align: center; margin-top: 10px; margin-bottom: 12px;">
-    <div style="font-size: 0.8rem; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; margin-bottom: 4px;">THE PROMPT WAS:</div>
-    <div id="guesser-displayed-hint" style="font-size: 1.05rem; font-weight: 600; line-height: 1.5; color: #f7f7ff;"></div>
+<!-- БЛОК ПРОМПТА С УЛУЧШЕННОЙ ЧИТАЕМОСТЬЮ -->
+  <div class="guesser-info-block">
+    <div class="guesser-info-subtitle">THE PROMPT WAS</div>
+    <div id="guesser-displayed-hint" class="guesser-info-title hint-highlight"></div>
   </div>
 
-  <!-- БЛОК СЕКРЕТНОГО ВОПРОСА БЕЗ ПЛАШКИ -->
-  <div style="text-align: center; margin-bottom: 16px; padding: 0 10px;">
-    <div style="font-size: 0.8rem; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; margin-bottom: 4px;">SECRET QUESTION:</div>
-    <div id="guesser-question-display" style="font-size: 1.05rem; font-weight: 600; line-height: 1.5; color: #f7f7ff;"></div>
+  <!-- БЛОК СЕКРЕТНОГО ВОПРОСА С УЛУЧШЕННОЙ ЧИТАЕМОСТЬЮ -->
+  <div class="guesser-info-block border-top-dashed">
+    <div class="guesser-info-subtitle">SECRET QUESTION</div>
+    <div id="guesser-question-display" class="guesser-info-title question-highlight"></div>
   </div>
   
   <!-- КНОПКИ ВЫБОРА ТЕПЕРЬ НАХОДЯТСЯ ЗДЕСЬ (В ОДИН РЯД ДЛЯ КОМПАКТНОСТИ) -->
-  <div class="final-guess-block" style="margin-top: 8px; margin-bottom: 12px; border-top: none; padding-top: 0; width: 100%;">
-    <p style="text-align: center; color: #a0a0b2; margin-bottom: 6px; font-size: 14px;">Tap your final guess:</p>
+  <div class="final-guess-block" style="margin-top: 14px; margin-bottom: 14px; border-top: none; padding-top: 0; width: 100%;">
+    <p style="text-align: center; color: #a0a0b2; margin-bottom: 8px; font-size: 14px;">Tap your final guess:</p>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%;">
       <button id="guess-word-1" class="btn btn-choice" style="margin-bottom: 0; padding: 10px 6px; width: 100%; font-size: 15px; min-height: 44px;"></button>
       <button id="guess-word-2" class="btn btn-choice" style="margin-bottom: 0; padding: 10px 6px; width: 100%; font-size: 15px; min-height: 44px;"></button>
@@ -194,6 +194,9 @@
     <span id="potential-score">Win: +50 points</span>
     <span id="gold-balance" class="gold-balance">Points: 50</span>
   </div>
+
+  <!-- КНОПКА ДЛЯ УСТНОЙ ПОДСКАЗКИ ПЕРЕНЕСЕНА СЮДА -->
+  <button id="oral-hint-btn" class="btn btn-small" style="display: none; background: rgba(255, 213, 107, 0.08); border: 1px dashed rgba(255, 213, 107, 0.3); color: #ffd56b; font-weight: 700; margin-top: 12px; margin-bottom: 4px; border-radius: 14px;">💬 Ask for oral hint (-10 pts)</button>
   
   <div style="margin-top: 10px;"></div>
   

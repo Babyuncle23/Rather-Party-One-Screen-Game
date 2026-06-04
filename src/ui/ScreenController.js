@@ -324,18 +324,82 @@ export class ScreenController {
         100% { background-position: 0% 50%; }
       }
 
-      /* Kirjainten vuorotellen ilmestymisen efekti */
-      .animated-letter {
-        display: inline-block;
-        opacity: 0;
-        transform: translateY(2px) scale(0.95);
-        animation: letterReveal 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        margin-right: 0.35em; /* Selkeä väli piilotettujen pisteiden välillä */
+      /* Стили для предотвращения разрыва слов по буквам */
+      .masked-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 0;
+        row-gap: 6px;
       }
-      
-      /* Piilotettujen pisteiden tyylittely parasta luettavuutta varten */
-      .animated-letter:has(text) {
-         letter-spacing: 0.15em;
+      .revealed-char {
+        display: inline-block;
+        white-space: nowrap;
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--positive);
+        padding: 0 1px;
+      }
+      /* Интуитивно понятный мерцающий разделитель пропусков */
+      .letter-gap {
+        display: inline-block;
+        width: 6px;
+        height: 18px;
+        background: rgba(140, 108, 255, 0.4);
+        border-radius: 2px;
+        margin: 0 4px;
+        box-shadow: 0 0 6px rgba(140, 108, 255, 0.3);
+        animation: smoothPulseGap 1.8s ease-in-out infinite;
+      }
+      /* Визуальный разделитель слов внутри одной фразы */
+      .word-space {
+        display: inline-block;
+        width: 20px; /* Огромный пустой пробел между словами */
+        height: 1px;
+        vertical-align: middle;
+      }
+      @keyframes smoothPulseGap {
+        0%, 100% { opacity: 0.3; background: rgba(140, 108, 255, 0.2); }
+        50% { opacity: 0.9; background: rgba(140, 108, 255, 0.65); }
+      }
+      /* Дизайн inline-меток внутри описания способностей */
+      .ability-inline-label {
+        font-size: 10.5px;
+        opacity: 1;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        color: #ffd56b; /* Фирменный мягкий золотистый цвет для идеальной видимости */
+      }
+            /* Стили для кардинального улучшения читаемости экрана угадывания */
+      .guesser-info-block {
+        text-align: center;
+        padding: 12px 10px;
+        margin: 4px 0;
+      }
+      .border-top-dashed {
+        border-top: 1px dashed rgba(255, 255, 255, 0.07);
+        padding-top: 14px;
+      }
+      .guesser-info-subtitle {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--muted);
+        opacity: 0.6;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .guesser-info-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        line-height: 1.5;
+      }
+      .hint-highlight {
+        color: #ffd56b; /* Промпт выделен мягким золотистым для фокуса внимания */
+        font-weight: 700;
+      }
+      .question-highlight {
+        color: #ffffff;
       }
 
       /* Harvennettu fontti kysymysloholle ja arvauspainikkeille */

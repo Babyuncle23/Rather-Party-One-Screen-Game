@@ -711,6 +711,34 @@ function startGuesserPhase() {
     setupRevealButtons();
     updateGuesserUI();
 
+        // Логика устной подсказки для режима 2 игроков
+    const oralBtn = document.getElementById('oral-hint-btn');
+    if (oralBtn) {
+      if (game && game.players.length === 2) {
+        oralBtn.style.display = 'block';
+        
+        oralBtn.onclick = (e) => {
+          e.stopPropagation();
+          const guesser = game.players[currentGuesserIndex];
+          
+          if (guesser.gold < 10) {
+            alert('Not enough points for an oral hint!');
+            return;
+          }
+          
+          guesser.gold -= 10;
+          animateGoldChange(-10);
+          
+          alert(`💬 Oral Hint Activated!\n\nAsk your friend to give you a single honest oral hint or association about their choice.\n\n(For example: "This is a physical object" or "I encounter this at work")`);
+          
+          oralBtn.style.display = 'none';
+          updateGuesserUI();
+        };
+      } else {
+        oralBtn.style.display = 'none';
+      }
+    }
+
     screens.switchScreen('guesser');
     
     const nameEl = document.getElementById('guesser-name');
@@ -767,30 +795,50 @@ function useReveal(revealType, cost) {
     alert('Not enough points for this reveal!');
     return;
   }
-  
+
+  // 1. Списываем очки и активируем анимацию баланса гарантированно
   if (cost > 0) {
     guesser.gold -= cost;
     animateGoldChange(-cost);
   }
+
+  // 2. Запоминаем состояние до раскрытия
+  const openedBefore = shifter.openedIndices1.size + shifter.openedIndices2.size;
   
   const intensity = revealCount + 1;
   if (revealType === 'positional') shifter.revealPositional(intensity);
   else if (revealType === 'random') shifter.revealRandom(intensity);
   else if (revealType === 'type') shifter.revealLetterType(intensity);
   
-  audioManager.playRevealCombo(); // Запускаем одновременное воспроизведение двух звуков
+  // 3. Проверяем состояние после раскрытия
+  const openedAfter = shifter.openedIndices1.size + shifter.openedIndices2.size;
+  const newlyOpened = openedAfter - openedBefore;
+
+  audioManager.playRevealCombo();
   revealCount++;
 
-  // Запускаем эффект покачивания счетчика попыток
   const rollStatusEl = document.getElementById('ability-roll-status');
   if (rollStatusEl) {
     rollStatusEl.classList.remove('pulse-shake');
-    void rollStatusEl.offsetWidth; // Магия JS для перезапуска CSS анимации
+    void rollStatusEl.offsetWidth;
     rollStatusEl.classList.add('pulse-shake');
   }
 
   setupRevealButtons();
   updateGuesserUI();
+
+  // 4. Если буквы не открылись, уведомляем игрока о неудаче
+  if (newlyOpened === 0) {
+    let reason = "Bad luck! All possible letters for this ability are already revealed or do not exist in these answers.";
+    if (revealType === 'type') {
+      reason = intensity === 1 
+        ? "Bad luck! There are no hidden CONSONANTS left in these answers." 
+        : "Bad luck! There are no hidden VOWELS left in these answers.";
+    } else if (revealType === 'positional') {
+      reason = "Bad luck! The target positions (start, middle, or end) are already completely visible.";
+    }
+    alert(`⚠️ Unlucky Reveal:\n${reason}`);
+  }
 }
 
 function updateGuesserUI() {
@@ -812,28 +860,8 @@ function updateGuesserUI() {
 
     const masks = shifter.getMaskedWords();
     
-    // Muutetaan kirjaimet animoiduiksi span-tageiksi, joissa on välistys
-    const createAnimatedWordHTML = (maskedWord) => {
-      let globalDelayIndex = 0;
-      return maskedWord
-        .split("")
-        .map((char) => {
-          const delay = char === "•" || char === " " ? 0 : globalDelayIndex * 0.04;
-          if (char !== "•" && char !== " ") {
-            globalDelayIndex++;
-          }
-          return `<span class="animated-letter" style="animation-delay: ${delay}s">${char}</span>`;
-        })
-        .join("");
-    };
-
-    const htmlW1 = createAnimatedWordHTML(masks.w1);
-    const htmlW2 = createAnimatedWordHTML(masks.w2);
-
-    // Гарантированно заменяем ВСЕ маркеры "___" на одинаковые линии строго по 6 символов
     const displayStaticQuestion = currentQuestion.text.replace(/___/g, "______");
     
-    // Hetaan viitteet DOM-elementteihin
     const hintEl = document.getElementById('guesser-displayed-hint');
     const questionEl = document.getElementById('guesser-question-display');
     const scoreEl = document.getElementById('potential-score');
@@ -846,10 +874,13 @@ function updateGuesserUI() {
     if (scoreEl) scoreEl.innerText = `Win: +${FIXED_REWARD} points`;
     if (balanceEl) balanceEl.innerText = `Points: ${game.players[currentGuesserIndex].gold}`;
     
-    // Добавляем аккуратные маленькие приписки W1 и W2 перед маскированными словами
-    if (guess1Btn) guess1Btn.innerHTML = `<span style="font-size: 11px; opacity: 0.4; font-weight: 700; margin-right: 8px; letter-spacing: 0;">W1</span> ${htmlW1}`;
-    if (guess2Btn) guess2Btn.innerHTML = `<span style="font-size: 11px; opacity: 0.4; font-weight: 700; margin-right: 8px; letter-spacing: 0;">W2</span> ${htmlW2}`;
-    
+    const count1 = shifter.getWordCount1();
+    const count2 = shifter.getWordCount2();
+    const wordLabel1 = count1 === 1 ? "1 word" : `${count1} words`;
+    const wordLabel2 = count2 === 1 ? "1 word" : `${count2} words`;
+
+    if (guess1Btn) guess1Btn.innerHTML = `<span style="font-size: 10px; opacity: 0.4; font-weight: 700; margin-right: 8px; display: block; margin-bottom: 2px; letter-spacing: 0.05em;">ANSWER 1</span><span style="font-size: 9px; opacity: 0.35; font-weight: 600; display: block; margin-bottom: 6px; letter-spacing: 0.02em;">(${wordLabel1})</span><div class="masked-wrapper">${masks.w1}</div>`;
+    if (guess2Btn) guess2Btn.innerHTML = `<span style="font-size: 10px; opacity: 0.4; font-weight: 700; margin-right: 8px; display: block; margin-bottom: 2px; letter-spacing: 0.05em;">ANSWER 2</span><span style="font-size: 9px; opacity: 0.35; font-weight: 600; display: block; margin-bottom: 6px; letter-spacing: 0.02em;">(${wordLabel2})</span><div class="masked-wrapper">${masks.w2}</div>`;
     // Haetaan kykyjen painikkeet ja infopainikkeet
     const posBtn = document.getElementById('ability-pos-btn');
     const randBtn = document.getElementById('ability-rand-btn');

@@ -12,16 +12,48 @@ export class WordShifter {
     return this.orig1.length + this.orig2.length;
   }
 
+    getWordCount1() {
+    return this.orig1.split(/\s+/).filter(Boolean).length;
+  }
+
+  getWordCount2() {
+    return this.orig2.split(/\s+/).filter(Boolean).length;
+  }
+
   getMaskedWords() {
-    const mask = (word, openedSet) => {
-      return word
-        .split("")
-        .map((char, index) => (openedSet.has(index) || char === " " ? char : "•"))
-        .join("");
+    const maskToHtml = (word, openedSet) => {
+      let html = "";
+      let inGap = false;
+      
+      // Если скрытые буквы идут в самом начале
+      if (word.length > 0 && !openedSet.has(0) && word[0] !== " ") {
+        html += '<span class="letter-gap"></span>';
+        inGap = true;
+      }
+      
+      for (let i = 0; i < word.length; i++) {
+        const char = word[i];
+        if (openedSet.has(i) || char === " ") {
+          if (char === " ") {
+            html += '<span class="word-space"></span>';
+          } else {
+            html += `<span class="revealed-char">${char}</span>`;
+          }
+          inGap = false;
+        } else {
+          // Если текущий символ скрыт и мы еще не создали разделитель для текущей группы пропусков
+          if (!inGap && char !== " ") {
+            html += '<span class="letter-gap"></span>';
+            inGap = true;
+          }
+        }
+      }
+      return html;
     };
+
     return {
-      w1: mask(this.orig1, this.openedIndices1),
-      w2: mask(this.orig2, this.openedIndices2)
+      w1: maskToHtml(this.orig1, this.openedIndices1),
+      w2: maskToHtml(this.orig2, this.openedIndices2)
     };
   }
 
@@ -174,42 +206,21 @@ export class WordShifter {
       return;
     }
 
-    // 2. ОБЫЧНЫЙ УМНЫЙ РЕЖИМ: Пропорциональный пословесный расчет длин
+    // 2. ОБЫЧНЫЙ УМНЫЙ РЕЖИМ: Гарантированно открывает 2 буквы нужного типа на всё поле
     const processSmartWordReveal = (origWord, openedSet) => {
-      // Разбиваем фразу на отдельные слова, сохраняя их стартовые индексы в исходной строке
-      const wordsData = [];
-      let currentPos = 0;
+      const availableClosedIndices = [];
+      for (let i = 0; i < origWord.length; i++) {
+        if (!openedSet.has(i) && targetList.includes(origWord[i])) {
+          availableClosedIndices.push(i);
+        }
+      }
       
-      origWord.split(/(\s+)/).forEach(token => {
-        if (token.trim().length > 0) {
-          wordsData.push({ text: token, startIdx: currentPos });
-        }
-        currentPos += token.length;
-      });
-
-      // Перебираем каждое слово внутри фразы индивидуально
-      wordsData.forEach(wData => {
-        const wordLen = wData.text.length;
-        // Умный лимит: 1 буква для коротких слов (<=3), 2 буквы для длинных слов (4+)
-        let allowedLimit = (wordLen <= 3) ? 1 : 2;
-
-        // Собираем закрытые буквы нужного типа строго для границ ЭТОГО слова
-        const availableClosedIndices = [];
-        for (let i = 0; i < wordLen; i++) {
-          const globalIdx = wData.startIdx + i;
-          if (!openedSet.has(globalIdx) && targetList.includes(wData.text[i])) {
-            availableClosedIndices.push(globalIdx);
-          }
-        }
-
-        // Открываем буквы в пределах рассчитанного лимита
-        const countToOpen = Math.min(allowedLimit, availableClosedIndices.length);
-        for (let i = 0; i < countToOpen; i++) {
-          const randIdx = Math.floor(Math.random() * availableClosedIndices.length);
-          openedSet.add(availableClosedIndices[randIdx]);
-          availableClosedIndices.splice(randIdx, 1);
-        }
-      });
+      const countToOpen = Math.min(2, availableClosedIndices.length);
+      for (let i = 0; i < countToOpen; i++) {
+        const randIdx = Math.floor(Math.random() * availableClosedIndices.length);
+        openedSet.add(availableClosedIndices[randIdx]);
+        availableClosedIndices.splice(randIdx, 1);
+      }
     };
 
     processSmartWordReveal(this.orig1, this.openedIndices1);
@@ -220,7 +231,6 @@ export class WordShifter {
   getPositionalDescription(intensity = 1) {
     if (this.isMultiWord) return "Not available for multi-word phrases";
     
-    // Вспомогательная функция, которая смотрит, какие именно позиции ЕЩЕ НЕ ОТКРЫТЫ в конкретном слове
     const getNextRevealsForWord = (word, openedSet) => {
       const len = word.length;
       if (len === 0) return "nothing";
@@ -247,7 +257,7 @@ export class WordShifter {
       }
     };
 
-    return `Will reveal: [W1: ${getNextRevealsForWord(this.orig1, this.openedIndices1)}] & [W2: ${getNextRevealsForWord(this.orig2, this.openedIndices2)}]`;
+    return `Will reveal: [<span class="ability-inline-label">ANSWER 1</span>: ${getNextRevealsForWord(this.orig1, this.openedIndices1)}] & [<span class="ability-inline-label">ANSWER 2</span>: ${getNextRevealsForWord(this.orig2, this.openedIndices2)}]`;
   }
 
 
@@ -319,44 +329,27 @@ export class WordShifter {
         }
         return count;
       };
-      const c1 = countRemainingInField(this.orig1, this.openedIndices1);
-      const c2 = countRemainingInField(this.orig2, this.openedIndices2);
-      return `Reveals ${typeLabel}: [W1: +${c1} letters] & [W2: +${c2} letters]`;
+    const c1 = countRemainingInField(this.orig1, this.openedIndices1);
+    const c2 = countRemainingInField(this.orig2, this.openedIndices2);
+    return `Reveals ${typeLabel}: [<span class="ability-inline-label">ANSWER 1</span>: +${c1} letters] & [<span class="ability-inline-label">ANSWER 2</span>: +${c2} letters]`;
+  }
+
+  const countRemaining = (word, openedSet, listStr) => {
+    let count = 0;
+    for (let i = 0; i < word.length; i++) {
+      if (!openedSet.has(i) && listStr.includes(word[i])) count++;
     }
+    return count;
+  };
 
-    // Строка блокировки удалена, чтобы умный пословесный подсчет выводился для любых фраз
-
-    // Функция считает, сколько закрытых букв нужного типа ОСТАЛОСЬ в слове
-    const countRemaining = (word, openedSet, listStr) => {
-      let count = 0;
-      for (let i = 0; i < word.length; i++) {
-        if (!openedSet.has(i) && listStr.includes(word[i])) count++;
-      }
-      return count;
-    };
-
-    if (intensity === 1) {
-      // Считаем точное количество согласных для первой попытки в обычном режиме
-      const getConsonantsToOpen = (word, openedSet) => {
-        const available = countRemaining(word, openedSet, consonantsList);
-        return Math.max(0, Math.ceil(available * 0.4));
-      };
-
-      const count1 = getConsonantsToOpen(this.orig1, this.openedIndices1);
-      const count2 = getConsonantsToOpen(this.orig2, this.openedIndices2);
-
-      return `Reveals ${typeLabel}: [W1: +${count1} letters] & [W2: +${count2} letters]`;
-    } else {
-      // Считаем точное количество гласных для второй попытки в обычном режиме
-      const getVowelsToOpen = (word, openedSet) => {
-        const available = countRemaining(word, openedSet, vowelsList);
-        return Math.max(0, Math.ceil(available * 0.5));
-      };
-
-      const count1 = getVowelsToOpen(this.orig1, this.openedIndices1);
-      const count2 = getVowelsToOpen(this.orig2, this.openedIndices2);
-
-      return `Reveals ${typeLabel}: [W1: +${count1} letters] & [W2: +${count2} letters]`;
-    }
+  if (intensity === 1) {
+    const count1 = Math.min(2, countRemaining(this.orig1, this.openedIndices1, consonantsList));
+    const count2 = Math.min(2, countRemaining(this.orig2, this.openedIndices2, consonantsList));
+    return `Reveals ${typeLabel}: [<span class="ability-inline-label">ANSWER 1</span>: +${count1} letters] & [<span class="ability-inline-label">ANSWER 2</span>: +${count2} letters]`;
+  } else {
+    const count1 = Math.min(2, countRemaining(this.orig1, this.openedIndices1, vowelsList));
+    const count2 = Math.min(2, countRemaining(this.orig2, this.openedIndices2, vowelsList));
+    return `Reveals ${typeLabel}: [<span class="ability-inline-label">ANSWER 1</span>: +${count1} letters] & [<span class="ability-inline-label">ANSWER 2</span>: +${count2} letters]`;
+  }
   }
 }
