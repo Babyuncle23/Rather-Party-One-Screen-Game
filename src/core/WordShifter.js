@@ -324,7 +324,7 @@ export class WordShifter {
       return `Reveals ${typeLabel}: [W1: +${c1} letters] & [W2: +${c2} letters]`;
     }
 
-    if (this.isMultiWord) return "Not available for multi-word phrases";
+    // Строка блокировки удалена, чтобы умный пословесный подсчет выводился для любых фраз
 
     // Функция считает, сколько закрытых букв нужного типа ОСТАЛОСЬ в слове
     const countRemaining = (word, openedSet, listStr) => {
