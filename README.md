@@ -1,94 +1,95 @@
 # 🎭 Rather Party — One Screen Party Game
 
-A sleek, engaging, and mobile-friendly **"Would You Rather"** party game designed for 2 or more players on a single device. Pass the phone around, craft custom prompts, make secret choices, and decode your friends' answers using special investigative abilities!
+A modular, framework-less web application delivering a mobile-optimized "Would You Rather" party game for two or more players on a single shared device. The software coordinates custom prompt generation, hidden state transitions, and cryptographic-style masked word decoding via dedicated investigative mechanics.
 
 ---
 
 ## 🌟 Features
 
-*   **Single-Device Multi-Player:** No internet or multiple phones needed. Just gather your friends and pass one screen around.
-*   **Dynamic Smart Autocomplete:** A built-in context-aware prediction system helper for typing custom hidden prompts smoothly.
-*   **Intuitive Word Reveal Mechanics:** 
-    *   📍 **Positions Ability:** Reveals predictable strategic letters (Start, Middle, End) based on text length.
-    *   🎲 **Random Percentage Ability:** Proportional distribution of uncovered indices between fields.
-    *   🔤 **Smart Vowels & Consonants Ability:** Targets structural letters with logical step progression (Vowels first, then Consonants).
-*   **Anti-Cheat Smart Balance (Nerf System):** If a player inputs overly simplistic words (basic colors, materials, or moods), the investigative abilities automatically scale down to keep the game challenging and fair.
-*   **Fluid UX & UI:** 
-    *   Designed with an elegant dark space-themed cyber-neon aesthetic.
-    *   Extremely optimized layout prevents eye-strain during intense gameplay loops.
-    *   Custom animated step-by-step onboarding carousel integrated seamlessly into current screen context.
-*   **Advanced Web Audio Architecture:** Pre-cached sound pools and simultaneous Web Audio API multi-track blending (`typewriter` + `flap` mechanism) for instant zero-latency feedback.
+* **Single-Device Architecture:** Operates entirely client-side on a single physical device with no external network requests or server synchronization required.
+* **Deterministic Input Prediction & Helper Modules:** Employs a context-free token matching subsystem for input autocomplete, combined with an isolated, static array mapping for localized `Brainstorm` hint objects.
+* **State Immutability & Input Controls:** Upon data submission, input fields transition to a persistent `disabled` state augmented with visual indicators (`🔒`) to prevent post-reveal memory tampering or state reversion.
+* **Algorithmic Word Masking & Revelation Engines:**
+  * 📍 **Positions Engine:** Discloses character tokens at deterministic indices (Initial, Median, Terminal) relative to string length.
+  * 🎲 **Proportional Random Engine:** Distributes dynamic bitmasks across separate string arrays using stochastic weighting.
+  * 🔤 **Structural Typography Engine:** Sequences character disclosure based on phoneme categories (Vowels initiated on Pass 1, Consonants initiated on Pass 2).
+* **Adaptive Balance Subsystem (Nerf Controls):** Token validation pipelines parse input strings against runtime dictionaries (Colors, Materials, Moods). Detection of matching low-complexity sequences dynamically downscales reveal coefficients.
+* **Mobile Layout Optimization & Scroll Anchoring:**
+  * Implements an absolute dark viewport theme designed to mitigate optic fatigue during continuous device usage.
+  * Explicit UI position states prevent viewport oscillation during letter transitions, while automatically invoking targeted element-level smooth scrolling to the options container post-submission.
+  * Displays an isolated step-by-step documentation widget configured as a discrete carousel element.
+* **Low-Latency Web Audio Context:** Pre-instantiated audio element pooling combined with parallel Web Audio API buffer node decoding executes real-time multi-track audio blending (simultaneous transient and cyclic sound rendering).
 
 ---
 
-## 🎮 Game Flow
+## 🎮 Game Execution Loop
 
-1.  **The Setup:** Enter player names and set the desired number of rounds.
-2.  **Phase 1 (The Picker):** Player 1 reads a secret question and selects or writes a guiding prompt for the next player.
-3.  **Phase 2 (The Responder):** Player 2 sees *only* the prompt, types two answers (max 25 characters each), and privately selects which one fits the secret question best.
-4.  **Phase 3 (The Guessers):** The phone goes to the remaining players one by one. They see the secret question with answers masked (`W • • • R •`). They can spend points to reveal specific letters before making a final guess.
-5.  **The Verdict:** Score points for correct guesses. Review the match history and global leaderboards at the end of the game!
+1. **Initialization Sequence:** Runtime variables consume player identifiers and define absolute iteration constraints (total rounds).
+2. **Phase 1 (The Picker Matrix):** Input parameters load a randomized question object. Player 1 defines a contextual guiding prompt string.
+3. **Phase 2 (The Responder Configuration):** Player 2 assumes interface focus. Optional static array values populate the brainstorm container. Upon answer submission, token string arrays are committed, inputs lock down (`🔒`), and the DOM shifts focus directly to the target question layout to process the hidden selection vector.
+4. **Phase 3 (The Guesser Verification Loop):** Device focus cycles through remaining active player indices sequentially. Strings are obfuscated using placeholder character points (`W • • • R •`). Investigative assets consume points balances to update visible bitmasks prior to final variable selection.
+5. **Evaluation Matrix:** Correct match inputs increment points balances. Matches terminate by exporting comprehensive logs to global score tables and historical execution arrays.
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## 🛠️ Architecture & Directory Mapping
 
-This project is built using pure **Vanilla JavaScript (ES6+)** with a strict modular component structure:
+The codebase conforms to ECMAScript 2020 (ES6+) modular design specifications with absolute component separation:
 
 ```text
-├── index.html                  # Main UI structure & App container
+├── index.html                  # Core DOM node declarations & layout constraints
 └── src
-    ├── main.js                 # Global game loop manager & DOM events
+    ├── main.js                 # Global application controller & DOM lifecycle router
     ├── core
-    │   ├── Match.js            # Core match state, rounds, & Fisher-Yates shuffling
-    │   └── WordShifter.js      # Masking engine, reveal math, & adaptive descriptors
+    │   ├── Match.js            # Match state machine, counters, & Fisher-Yates shuffling
+    │   └── WordShifter.js      # Masking processor, bitwise indexes, & string descriptors
     ├── ui
-    │   └── ScreenController.js # Screen-switching matrix & CSS-in-JS style injection
+    │   └── ScreenController.js # View state switching layer & style injection engine
     ├── audio
-    │   └── AudioManager.js     # Audio pools, Web Audio Context, & combo play
+    │   └── AudioManager.js     # Audio contexts, buffer management, & parallel track blending
     └── data
-        ├── autocompleteWords.js# Databank for custom input predictions
-        ├── nerfWords.js        # Trigger dictionary for the balance system
-        └── questions.js        # Curated list of unique question objects
+        ├── autocompleteWords.js# Text dictionary for data entry predictions
+        ├── nerfWords.js        # Filter dictionaries for balance downscaling
+        └── questions.js        # Data records map containing questions and static brainstorms
 ```
 
-*   **No Frameworks / Zero Dependencies:** Lightweight, blazingly fast load times, completely independent of external packages or npm building pipelines.
-*   **Hardware Acceleration:** CSS animations utilize GPU-friendly transitions (`transform`, `opacity`) preventing lagging rendering workflows on older mobile browsers.
+* **Zero-Dependency Pipeline:** Engineered without external frameworks, transpilers, or npm build automation pipelines, resulting in optimized load times and native browser compatibility.
+* **Hardware Acceleration Constraints:** Layout transformations and animations are bound to GPU-backed layers (`transform`, `opacity`) to maintain optimal frame render rates on mobile device processors.
 
 ---
 
-## 🚀 Quick Start & Installation
+## 🚀 Deployment & Local Environment Setup
 
-Since the game is pure client-side web software, you don't need any complex installation steps.
+The application executes natively inside client web clients without compilation.
 
-1.  Clone the repository:
-    ```bash
-    git clone https://github.com
-    ```
-2.  Open `index.html` directly in any modern browser (Chrome, Safari, Edge, Firefox).
-3.  *Alternative for Local Testing:* Run a simple lightweight server to avoid potential CORS limitations with specific local modular script file execution:
-    ```bash
-    npx serve .
-    ```
+1. Fetch target repository records:
+   ```bash
+   git clone https://github.com
+   ```
+2. Launch `index.html` inside a supported browser environment (Chrome, Safari, Edge, Firefox).
 
----
-
-## 🔧 Extending the Game Databases
-
-*   **Adding Questions:** Open `src/data/questions.js` and add a new object to `questionsDatabase` following the existing `id`, `category`, `text`, `resultTemplate`, and `hints` schema.
-*   **Expanding the Balance Filter:** To nerf more basic words, just add uppercase string tokens directly to the arrays inside `src/data/nerfWords.js`.
+* **Local Module Execution:** To satisfy strict browser security restrictions (CORS) regarding local modular ES6 script execution, run the application root through a standard local web server node:
+  ```bash
+  npx serve .
+  ```
 
 ---
 
-## 🎨 Vibe Coding & Collaboration Credits
+## 🔧 Database Extension Configurations
 
-This project is pure **Vibe Coding**! ⚡ 
-The mechanics, logic pipelines, and system configurations were shaped through a fluid, interactive dialogue with an AI assistant. 
-
-As the creator, my primary focus was **game design, gameplay aesthetics, and meticulous tuning of the user experience**. I collaborated closely with AI to map out visual solutions, refine the micro-animations, and test out experimental UX variations to ensure the game feels incredibly smooth, comfortable for the eyes, and fun to play.
+* **Schema Updates (Questions & Brainstorms):** Modify `src/data/questions.js` by inserting valid schema records containing `id`, `category`, `text`, `resultTemplate`, and `hints`. Explicit brainstorm options are mapped directly to corresponding hint structures by declaring a `brainstorm: ["Value1", "Value2"]` property array.
+* **Dictionary Tuning (Nerf Controls):** Expand the token balance filter list by adding uppercase string array elements directly to the target modules inside `src/data/nerfWords.js`.
 
 ---
 
-## 📄 License
+## 🧬 Development Protocol & Vibe Coding
+
+Project development utilized an asynchronous, AI-augmented iterative engineering methodology. Core application mechanics, state routing, and structural design configurations were generated through a collaborative human-AI syntax loop. System specifications, interface adjustments, performance tuning, and low-latency audio setups were verified and deployed interactively to optimize the application's runtime execution and UI comfort.
+
+---
+
+## 📄 Licensing
+
+This software utility is distributed under the conditions of the open-source MIT License. Audio assets bound to the application assets framework are registered under universal CC0 (Creative Commons Zero) terms.
 
 This project is open-source software licensed under the **MIT License**. Sound effects utilized inside the assets system are registered under **CC0 (Creative Commons Zero)** licenses.
