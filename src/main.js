@@ -883,15 +883,20 @@ function updateGuesserUI() {
       
       if (isNotRolled || isLockedByMultiWord || btn.disabled) {
         if (row) {
-          // Если кнопка заблокирована изначально или только что использована — запускаем сгорание
-          row.classList.add('burned');
-          // Ждем окончания CSS-анимации растворения, прежде чем убрать из разметки
-          setTimeout(() => {
-            if (row.classList.contains('burned')) {
-              row.style.setProperty('display', 'none', 'important');
-              row.style.marginBottom = '0';
-            }
-          }, 350);
+          // Если это самый старт раунда (revealCount === 0), скрываем мгновенно без прыжков верстки
+          if (revealCount === 0) {
+            row.style.setProperty('display', 'none', 'important');
+            row.style.marginBottom = '0';
+          } else {
+            // Если способность была сожжена игроком в процессе — плавно растворяем её
+            row.classList.add('burned');
+            setTimeout(() => {
+              if (row.classList.contains('burned')) {
+                row.style.setProperty('display', 'none', 'important');
+                row.style.marginBottom = '0';
+              }
+            }, 350);
+          }
         }
       } else {
         if (row) {
