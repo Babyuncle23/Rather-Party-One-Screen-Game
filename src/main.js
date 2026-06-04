@@ -711,34 +711,7 @@ function startGuesserPhase() {
     setupRevealButtons();
     updateGuesserUI();
 
-        // Логика устной подсказки для режима 2 игроков
-    const oralBtn = document.getElementById('oral-hint-btn');
-    if (oralBtn) {
-      if (game && game.players.length === 2) {
-        oralBtn.style.display = 'block';
-        
-        oralBtn.onclick = (e) => {
-          e.stopPropagation();
-          const guesser = game.players[currentGuesserIndex];
-          
-          if (guesser.gold < 10) {
-            alert('Not enough points for an oral hint!');
-            return;
-          }
-          
-          guesser.gold -= 10;
-          animateGoldChange(-10);
-          
-          alert(`💬 Oral Hint Activated!\n\nAsk your friend to give you a single honest oral hint or association about their choice.\n\n(For example: "This is a physical object" or "I encounter this at work")`);
-          
-          oralBtn.style.display = 'none';
-          updateGuesserUI();
-        };
-      } else {
-        oralBtn.style.display = 'none';
-      }
-    }
-
+    // Старый блок устной подсказки полностью удален отсюда, управление передано в updateGuesserUI
     screens.switchScreen('guesser');
     
     const nameEl = document.getElementById('guesser-name');
@@ -956,6 +929,38 @@ function updateGuesserUI() {
     renderAbility(posBtn, 'positional', 'Positional', '📍', posDesc);
     renderAbility(randBtn, 'random', 'Random', '🎲', randDesc);
     renderAbility(typeBtn, 'type', 'Letters Type', '🔤', typeDesc);
+
+    // ДИНАМИЧЕСКОЕ ОТОБРАЖЕНИЕ УСТНОЙ ПОДСКАЗКИ (Только когда попытки раскрытия = 0)
+    const oralBtn = document.getElementById('oral-hint-btn');
+    if (oralBtn) {
+      const remainingReveals = Math.max(0, 2 - revealCount);
+      
+      // Условие: режим 2 игроков AND больше нет доступных раскрытий букв
+      if (game && game.players.length === 2 && remainingReveals === 0) {
+        oralBtn.style.setProperty('display', 'block', 'important');
+        
+        oralBtn.onclick = (e) => {
+          e.stopPropagation();
+          const guesser = game.players[currentGuesserIndex];
+          
+          if (guesser.gold < 10) {
+            alert('Not enough points for an oral hint!');
+            return;
+          }
+          
+          guesser.gold -= 10;
+          animateGoldChange(-10);
+          
+          alert(`💬 Oral Hint Activated!\n\nAsk your friend to give you a single honest oral hint or association about their choice.\n\n(For example: "This is a physical object" or "I encounter this at work")`);
+          
+          // Удаляем кнопку из DOM/скрываем навсегда после одного использования в раунде
+          oralBtn.remove(); 
+          updateGuesserUI();
+        };
+      } else {
+        oralBtn.style.setProperty('display', 'none', 'important');
+      }
+    }
 
   } catch (err) {
     console.error("Error in updateGuesserUI render loop:", err);
