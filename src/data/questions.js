@@ -6,7 +6,6 @@ export const questionsDatabase = [
     text: "Would you rather be stranded on a desert island until the end of your life with ___ or with ___?",
     resultTemplate: "{name} would rather be stranded on a desert island until the end of life with {winner} than with {loser}.",
     hints: [
-      "Name the two worst people in history",
       "Name two characters from any book or movie you remember",
       "Name two world-famous actors or celebrities everyone knows",
       { text: "Name two historical figures you find interesting", brainstorm: ["Albert Einstein", "Leonardo da Vinci", "Marie Curie", "Isaac Newton", "Aristotle", "Galileo Galilei"] }
