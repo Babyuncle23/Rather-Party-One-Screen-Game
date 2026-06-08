@@ -205,5 +205,77 @@ export const questionsDatabase = [
       "Name two massive global cities or geographic regions",
       { text: "Name two major industries, scientific fields, or professional domains", brainstorm: ["Quantum Computing", "Renewable Energy", "Aerospace Engineering", "Biotechnology", "Artificial Intelligence", "Marine Biology"] }
     ]
+  },
+  {
+    id: 17,
+    category: "people",
+    difficulty: "easy",
+    text: "Would you rather have every second child born in the world named ___ or named ___?",
+    resultTemplate: "{name} would rather every second child born be named {winner} than {loser}.",
+    hints: [
+      "Name two classic and popular names that you know",
+      "Name two unique names from your favorite movies or books",
+      { text: "Name two famous historical figures", brainstorm: ["Newton", "Da Vinci", "Tesla", "Mozart", "Curie", "Lincoln"] }
+    ]
+  },
+  {
+    id: 18,
+    category: "skills",
+    difficulty: "easy",
+    text: "Would you rather permanently lose the ability to say the word ___ or the word ___?",
+    resultTemplate: "{name} would rather lose the ability to say the word {winner} than the word {loser}.",
+    hints: [
+      "Name two short everyday words you say many times a day",
+      { text: "Name two words that are long or difficult to spell", brainstorm: ["Beautiful", "Necessary", "Queue", "Restaurant", "Receipt", "Schedule"] },
+      "Name two basic things you can see in the room right now"
+    ]
+  },
+  {
+    id: 19,
+    category: "lifestyle",
+    difficulty: "easy",
+    text: "Would you rather live in a world where everyone thinks you are ___ years old or ___ years old?",
+    resultTemplate: "{name} would rather everyone believe they are {winner} years old than {loser} years old.",
+    hints: [
+      "Name two random numbers between 1 and 100",
+      "Name two ages when people usually study at school or university"
+    ]
+  },
+  {
+    id: 20,
+    category: "pop-culture",
+    difficulty: "medium",
+    text: "Would you rather found a legendary new music band and name it ___ or name it ___?",
+    resultTemplate: "{name} would rather name their new music band {winner} than {loser}.",
+    hints: [
+      { text: "Name two cool objects from outer space", brainstorm: ["Black Hole", "Supernova", "Milky Way", "Asteroid", "Shooting Star", "Red Planet"] },
+      "Name two delicious foods or drinks",
+      { text: "Name two beautiful elements of nature", brainstorm: ["Thunderstorm", "Midnight Rain", "Neon Oasis", "Solar Flare", "Golden River", "Ocean Echo"] },
+      "Write two short dramatic phrases that sound like a movie title",
+      "Write two funny, positive phrases that a happy person would say"
+    ]
+  },
+  {
+    id: 21,
+    category: "skills",
+    difficulty: "hard",
+    text: "Would you rather have to say ___ or say ___ every time you finish a phone call?",
+    resultTemplate: "{name} would rather have to say {winner} than {loser} at the end of every phone call.",
+    hints: [
+      "Write two short phrases that sound like a famous movie line",
+      "Write two funny phrases you would say to your best friend when leaving",
+      "Write two polite but completely random phrases to say goodbye"
+    ]
+  },
+  {
+    id: 22,
+    category: "lifestyle",
+    difficulty: "hard",
+    text: "Would you rather say ___ or say ___ every time someone steps ahead of you in a line?",
+    resultTemplate: "{name} would rather say {winner} than {loser} when someone steps ahead of them in a line.",
+    hints: [
+      "Write two funny phrases that show you are completely confused",
+      "Write two polite, formal phrases to tell someone they made a mistake"
+    ]
   }
 ];
