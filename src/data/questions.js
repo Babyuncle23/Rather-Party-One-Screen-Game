@@ -233,12 +233,13 @@ export const questionsDatabase = [
   {
     id: 19,
     category: "lifestyle",
-    difficulty: "easy",
-    text: "Would you rather live in a world where everyone thinks you are ___ years old or ___ years old?",
-    resultTemplate: "{name} would rather everyone believe they are {winner} years old than {loser} years old.",
+    difficulty: "medium",
+    text: "Would you rather live in a world where everyone thinks you are the same age as ___ or the same age as ___?",
+    resultTemplate: "{name} would rather everyone believe they are the same age as {winner} than {loser}.",
     hints: [
-      "Name two random numbers between 1 and 100",
-      "Name two ages when people usually study at school or university"
+      "Name two famous people who are alive today and have a big age difference",
+      "Name two world-famous currently alive actors or singers of different generations",
+      "Name two popular currently alive internet creators or bloggers, one young and one older"
     ]
   },
   {
@@ -248,34 +249,47 @@ export const questionsDatabase = [
     text: "Would you rather found a legendary new music band and name it ___ or name it ___?",
     resultTemplate: "{name} would rather name their new music band {winner} than {loser}.",
     hints: [
-      { text: "Name two cool objects from outer space", brainstorm: ["Black Hole", "Supernova", "Milky Way", "Asteroid", "Shooting Star", "Red Planet"] },
+      { text: "Name two objects from outer space", brainstorm: ["Black Hole", "Supernova", "Milky Way", "Asteroid", "Shooting Star", "Red Planet"] },
       "Name two delicious foods or drinks",
-      { text: "Name two beautiful elements of nature", brainstorm: ["Thunderstorm", "Midnight Rain", "Neon Oasis", "Solar Flare", "Golden River", "Ocean Echo"] },
       "Write two short dramatic phrases that sound like a movie title",
       "Write two funny, positive phrases that a happy person would say"
     ]
-  },
+  }, 
   {
     id: 21,
     category: "skills",
     difficulty: "hard",
-    text: "Would you rather have to say ___ or say ___ every time you finish a phone call?",
-    resultTemplate: "{name} would rather have to say {winner} than {loser} at the end of every phone call.",
+    text: "Would you rather have to say Thank you, but I need to check my/the ___ or say Excuse me, but I need to look for my/the ___ every time you finish a phone call?",
+    resultTemplate: "{name} would rather have to say Thank you, but I need to check my/the {winner} than Excuse me, but I need to look for my/the {loser} at the end of every phone call.",
     hints: [
-      "Write two short phrases that sound like a famous movie line",
-      "Write two funny phrases you would say to your best friend when leaving",
-      "Write two polite but completely random phrases to say goodbye"
+      { text: "Name two everyday tech things or apps you use", brainstorm: ["Emails", "Map", "Calendar", "Battery", "Tickets"] },
+      { text: "Name two important people in your life", brainstorm: ["Boss", "Doctor", "Driver", "Manager", "Teacher"] },
+      { text: "Name two household objects or locations", brainstorm: ["Oven", "Door", "Kitchen", "Keys", "Windows"] }
     ]
   },
   {
     id: 22,
-    category: "lifestyle",
-    difficulty: "hard",
-    text: "Would you rather say ___ or say ___ every time someone steps ahead of you in a line?",
-    resultTemplate: "{name} would rather say {winner} than {loser} when someone steps ahead of them in a line.",
+    category: "pop-culture",
+    difficulty: "medium",
+    text: "Would you rather create a legendary new ___ or create a legendary new ___?",
+    resultTemplate: "{name} would rather create a legendary new {winner} than a legendary new {loser}.",
     hints: [
-      "Write two funny phrases that show you are completely confused",
-      "Write two polite, formal phrases to tell someone they made a mistake"
+      { text: "Name two types of creative projects", brainstorm: ["Music Band", "Movie Studio", "Video Game", "Fashion Brand", "Comic Book", "Dance Academy"] },
+      { text: "Name two interesting places or businesses for entertainment", brainstorm: ["Theme Park", "Cat Cafe", "Board Game Club", "Water Park", "Virtual Reality Zone"] },
+      { text: "Name two types of services that you like to use in your life", brainstorm: ["Food Delivery", "Taxi", "Fitness Club", "Coffee Shop", "Cinema Ticket App"] }
+    ]
+  },
+  {
+    id: 23,
+    category: "travel",
+    difficulty: "medium",
+    text: "Would you rather have to ask Please help me find a/the ___ or ask Please help me find a/the ___ every time you visit a new city?",
+    resultTemplate: "{name} would rather have to ask Please help me find a/the {winner} than Please help me find a/the {loser} every time they visit a new city.",
+    hints: [
+      { text: "Name two locations that exist in almost any town", brainstorm: ["Cinema", "Library", "Stadium", "Post Office"] },
+      { text: "Name two products or items you can buy in a shop", brainstorm: ["Drink", "Fruit", "Lemonade", "Chocolate Bar"] },
+      { text: "Name two objects or animals you can find in a forest", brainstorm: ["Bear", "Squirrel", "Tree", "Mushroom"] },
+      { text: "Name two things that you feel you are missing in your life recently", brainstorm: ["Free Time", "Sleep", "Rest", "Vacation"] }
     ]
   }
 ];
