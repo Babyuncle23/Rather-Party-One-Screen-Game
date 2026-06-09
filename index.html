@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Rather Party — One Screen Game</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -16,15 +17,139 @@
     </div>
   </div>
 
-  <div class="game-container">
-    <div class="help-section">
-      <div class="help-toggle-row">
-        <button id="help-toggle-btn" class="btn btn-small">Show compact gameplay tips</button>
+   <!-- МОДАЛЬНОЕ ОКНО ПСИХОЛОГИЧЕСКОЙ БЕЗОПАСНОСТИ -->
+  <div id="safety-modal" class="modal-overlay" style="display: none; z-index: 1001;">
+    <div class="modal-content" style="width: min(460px, 95%); padding: 24px; position: relative;">
+      
+      <!-- ЭКРАН 1: ТАЙНЫЙ ВХОД (ПРИВАТНОСТЬ И SAFER SPACE) -->
+      <div id="safety-screen-privacy">
+        <h2 style="color: #ffd56b; font-size: 1.6rem; margin-bottom: 8px;">🌱 Safety Timeout</h2>
+        <p style="color: #ffe2eb; font-weight: 600; line-height: 1.4; margin-bottom: 12px; font-size: 0.95rem;">
+          Nothing happened yet. The game is on pause.<br>Only you can see this screen.
+        </p>
+        
+        <!-- БЛОК ПРИНЦИПОВ SAFER SPACE (ВИЗУАЛЬНО МИМИКРИРУЕТ ПОД ИНСТРУКЦИЮ) -->
+        <div class="rules-dropdown-box" style="display: block; text-align: left; font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5; padding: 12px 14px;">
+          <div style="font-weight: 800; color: var(--positive); margin-bottom: 6px; text-align: center; letter-spacing: 0.03em;">SAFER SPACE PRINCIPLES:</div>
+          • <strong>Right to Stop:</strong> Personal boundaries matter more than any game points.<br>
+          • <strong>Respect & Comfort:</strong> Players don't judge or force anyone to view, discuss, or process uncomfortable topics in any form.<br>
+          • <strong>Privacy:</strong> You can preview all safety options completely privately below.
+        </div>
+        <!-- КНОПКИ НАВИГАЦИИ ДЛЯ ЭКРАНА 1 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 16px; background: rgba(255, 255, 255, 0.03); padding: 10px 14px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.05); box-sizing: border-box; width: 100%;">
+          <button id="safety-close-btn-1" class="btn btn-small" style="margin: 0;">← Return</button>
+          <button id="safety-proceed-btn" class="btn btn-primary" style="margin: 0; color: var(--accent);">Next ➜</button>
+        </div>
       </div>
+
+      <!-- ЭКРАН 2: ПРЕДПРОСМОТР ОПЦИЙ -->
+      <div id="safety-screen-options" style="display: none;">
+        <h2 style="color: #ffd56b; font-size: 1.5rem; margin-bottom: 6px;">Safety Options</h2>
+        <p style="font-size: 0.85rem; margin-bottom: 16px; color: var(--muted);">Tap any option for a safe preview. No actions will trigger instantly.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px; text-align: left;">
+          <!-- ОПЦИЯ 1: СКИП РАУНДА -->
+          <div class="safety-option-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 12px; cursor: pointer;">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; color: #ffd56b; font-size: 0.95rem;">
+              <span>🔄 Skip This Round</span>
+              <span class="safe-preview-badge" style="font-size: 11px; color: var(--positive); opacity: 0.7; font-weight: 400;">[ ℹ️ Safe Preview ]</span>
+            </div>
+            <div class="safety-desc-text" style="display: none; font-size: 0.85rem; color: var(--muted); margin-top: 6px; line-height: 1.4;">
+              This round is instantly canceled. No one scores or loses points. The game draws a completely new question and restarts the turn for the same chooser.
+            </div>
+            <button class="safety-hold-trigger btn btn-small" data-action="skip" style="display: none; margin-top: 10px; background: rgba(255,213,107,0.1); color: #ffd56b; border: 1px solid rgba(255,213,107,0.2); position: relative; overflow: hidden; height: 38px; padding: 0; width: 100%;">Hold for 2s to Confirm</button>
+          </div>
+
+          <!-- ОПЦИЯ 2: ОТКРЫТЫЙ ДИАЛОГ -->
+          <div class="safety-option-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 12px; cursor: pointer;">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; color: var(--positive); font-size: 0.95rem;">
+              <span>💬 Open Circle (Let's Talk)</span>
+              <span class="safe-preview-badge" style="font-size: 11px; color: var(--positive); opacity: 0.7; font-weight: 400;">[ ℹ️ Safe Preview ]</span>
+            </div>
+            <div class="safety-desc-text" style="display: none; font-size: 0.85rem; color: var(--muted); margin-top: 6px; line-height: 1.4;">
+              Pauses the game and opens a friendly text screen for the whole company to safely talk through the uncomfortable moment or clear the air together.
+            </div>
+            <button class="safety-hold-trigger btn btn-small" data-action="talk" style="display: none; margin-top: 10px; background: rgba(55,255,226,0.1); color: var(--positive); border: 1px solid rgba(55,255,226,0.2); position: relative; overflow: hidden; height: 38px; padding: 0; width: 100%;">Hold for 2s to Confirm</button>
+          </div>
+
+          <!-- ОПЦИЯ 3: ПРЯМАЯ ОТКРЫТАЯ ОСТАНОВКА -->
+          <div class="safety-option-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 12px; cursor: pointer;">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; color: var(--danger); font-size: 0.95rem;">
+              <span>🛑 Stop Match & Talk Openly</span>
+              <span class="safe-preview-badge" style="font-size: 11px; color: var(--positive); opacity: 0.7; font-weight: 400;">[ ℹ️ Safe Preview ]</span>
+            </div>
+            <div class="safety-desc-text" style="display: none; font-size: 0.85rem; color: var(--muted); margin-top: 6px; line-height: 1.4;">
+              Stops the match instantly and saves your current points. Use this if you want to explicitly tell the company that the game needs to stop right now.
+            </div>
+            <button class="safety-hold-trigger btn btn-small" data-action="stop-direct" style="display: none; margin-top: 10px; background: rgba(255,111,122,0.1); color: var(--danger); border: 1px solid rgba(255,111,122,0.2); position: relative; overflow: hidden; height: 38px; padding: 0; width: 100%;">Hold for 2s to Confirm</button>
+          </div>
+
+          <!-- ОПЦИЯ 4: АНОНИМНЫЙ ТАЙМЕР ВЫХОДА (СТИЛИЗОВАН ПОД GAMEPLAY TIPS) -->
+          <div class="safety-option-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 12px; cursor: pointer;">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; color: #a5a1c8; font-size: 0.95rem;">
+              <span>⏳ Set Anonymous Exit Timer</span>
+              <span class="safe-preview-badge" style="font-size: 11px; color: var(--positive); opacity: 0.7; font-weight: 400;">[ ℹ️ Safe Preview ]</span>
+            </div>
+            <div class="safety-desc-text" style="display: none; font-size: 0.85rem; color: var(--muted); margin-top: 8px; line-height: 1.45;">
+              If you feel uncomfortable due to the question, topics, or behavior of other players, use this to trigger a natural game close. Choose a delay below, and the match will end automatically later under the guise of a standard session limit break. No one will know you triggered it.
+              
+              <!-- КНОПКИ УПРАВЛЕНИЯ ТАЙМЕРОМ В СТИЛЕ TIP-VISUAL -->
+              <div class="tip-visual" style="margin-top: 10px; margin-bottom: 10px; text-align: left; background: rgba(255,255,255,0.02); border-left: 3px solid var(--accent); padding-left: 10px;">
+                <div style="font-size: 0.8rem; color: var(--muted); font-weight: 700; margin-bottom: 4px;">FLOW CONFIG:</div>
+                <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                  <button type="button" id="safety-timer-minus" class="btn btn-small" style="width: auto; padding: 6px 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); font-size: 12px;">0 min</button>
+                  <button type="button" id="safety-timer-plus" class="btn btn-small" style="width: auto; padding: 6px 12px; background: rgba(55,255,226,0.1); color: var(--positive); border: 1px solid rgba(55,255,226,0.15); font-size: 12px;">+1 min</button>
+                  <span id="safety-timer-display" style="font-weight: 700; color: #ffd56b; margin-left: auto; font-size: 13px;">Current: 0 min</span>
+                </div>
+              </div>
+
+              <!-- ВРЕМЕННАЯ ПРИПИСКА О БЕТА-ТЕСТЕ -->
+              <p style="font-size: 11px; color: var(--danger); opacity: 0.7; margin: 8px 0 0 0; line-height: 1.3; font-style: italic;">
+                ⚠️ Note: This automated safety module is currently under development and beta-testing. It may not always function as expected on all hardware setups.
+              </p>
+            </div>
+            <button class="safety-hold-trigger btn btn-small" data-action="stop-delayed" style="display: none; margin-top: 10px; background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid rgba(255,255,255,0.1); position: relative; overflow: hidden; height: 38px; padding: 0; width: 100%;">Hold for 2s to Confirm</button>
+          </div>
+        </div>
+        <!-- ФИКСИРОВАННЫЙ ВЫХОД ИЗ ОКНА БЕЗОПАСНОСТИ -->
+        <div style="display: flex; justify-content: flex-start; align-items: center; margin-top: 16px; background: rgba(255, 255, 255, 0.03); padding: 10px 14px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.05); box-sizing: border-box; width: 100%;">
+          <button id="safety-close-btn-2" class="btn btn-small" style="margin: 0; width: 100%; text-align: center;">← Return to Game</button>
+        </div>
+      </div>
+
+      <!-- ЭКРАН 3: ФАСИЛИТАЦИЯ ДИАЛОГА -->
+      <div id="safety-screen-talk" style="display: none;">
+        <h2 style="color: var(--positive); font-size: 1.6rem; margin-bottom: 12px;">Open Circle</h2>
+        <p style="color: #ffffff; font-weight: 600; text-align: center; line-height: 1.6; margin-bottom: 16px;">
+          This game is made for fun, connection, and good times — never for causing genuine distress or making anyone feel unsafe.
+        </p>
+        <p style="color: var(--muted); text-align: center; font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px;">
+          Take a deep breath. Use this timeout to check in with each other, talk openly, or simply shift the conversation. Your friendship matters more than any points.
+        </p>
+        <button id="safety-resume-match-btn" class="btn btn-primary" style="background: linear-gradient(135deg, #37ffe2, #4d5dff); color: #08080d;">We Are Ready to Continue</button>
+      </div>
+
+    </div> <!-- Закрылся .modal-content -->
+  </div> <!-- Закрылся #safety-modal -->
+
+  <!-- ГЛАВНЫЙ КОНТЕЙНЕР ИГРЫ -->
+  <div class="game-container">
+    
+    <!-- ВЕРХНЯЯ СТРОКА УПРАВЛЕНИЯ -->
+    <div class="help-section">
+      <div class="help-toggle-row" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%;">
+        <button id="safety-global-btn" class="btn btn-small" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: var(--text); font-weight: 700; display: block;">🌱 Psychological Safety</button>
+        <button id="help-toggle-btn" class="btn btn-small" style="margin-left: auto;">Show compact gameplay tips</button>
+      </div>
+      <!-- ДИНАМИЧЕСКАЯ ПОДПИСЬ БЕЗОПАСНОСТИ -->
+      <div id="safety-tip-text" style="font-size: 11px; color: var(--muted); text-align: left; margin-top: 6px; padding: 0 4px; font-style: italic; line-height: 1.4;">
+        Recommended for all players to read before starting.
+      </div>
+      
+      <!-- ВЫПАДАЮЩАЯ ПАНЕЛЬ СЛОВАРИКА ПРАВИЛ -->
       <div id="help-panel" class="rules-dropdown-box" style="display:none;">
         <p style="font-size: 1.1rem; margin-bottom: 12px; text-align: center;"><strong>How to play (Easy Guide)</strong></p>
         
-        <!-- STEP 1 -->
         <div class="help-step" data-step="1">
           <p><strong>Step 1: The Picker</strong></p>
           <p>Read the secret question. Choose 1 pre-made prompt or write a custom one for the next player.</p>
@@ -35,7 +160,6 @@
           </div>
         </div>
 
-        <!-- STEP 2 -->
         <div class="help-step" data-step="2">
           <p><strong>Step 2: The Responder</strong></p>
           <p>You see ONLY the prompt. Type 2 different answers, then secretly select your preferred option.</p>
@@ -47,10 +171,9 @@
           </div>
         </div>
 
-        <!-- STEP 3 -->
         <div class="help-step" data-step="3">
           <p><strong>Step 3: The Guessers</strong></p>
-          <p>Guess what Player 2 chose! Word lengths are completely hidden behind pulsing separators. Use indicators like <span style="color: var(--muted); font-size: 0.85rem;">(1 word)</span> to navigate structures. Spend points on abilities to open letters (1st is FREE, 2nd costs 15 pts). In 2-player matches, once all reveals are spent, a special <span style="color: #ffd56b; font-weight: 700;">Oral Hint</span> option will appear for a final clue!</p>
+          <p>Guess what Player 2 chose! Word lengths are hidden behind separators. Spend points on abilities to open letters (1st is FREE, 2nd costs 15 pts). In 2-player matches, once all reveals are spent, an Oral Hint option appears!</p>
           <div class="tip-visual" style="margin-bottom: 16px;">
             <div style="font-size: 0.85rem; color: var(--muted);">GUESSERS SEE:</div>
             <div style="border-left: 3px solid var(--accent); padding-left: 8px; font-weight: 700;">ANSWER 1 <span style="font-size: 0.8rem; opacity: 0.6;">(1 word)</span></div>
@@ -59,7 +182,6 @@
           </div>
         </div>
 
-        <!-- КНОПКИ КАРУСЕЛИ (ПОЛНОСТЬЮ ИЗОЛИРОВАННЫЕ КНОПКИ) -->
         <div class="carousel-controls" style="margin-top: 12px;">
           <button id="help-prev-btn" class="carousel-btn">← Back</button>
           <span id="carousel-index">Step 1 / 3</span>
@@ -72,8 +194,7 @@
         </p>
       </div>
     </div>
-
-    <!-- НАСТРОЙКА ИГРЫ (ОБНОВЛЕНА) -->
+    <!-- НАСТРОЙКА ИГРЫ -->
     <div id="setup-screen">
       <h2>Rather Party</h2>
       <p style="color:#ffd56b; font-weight:700; text-align:center; line-height:1.5; margin-bottom:16px;">
@@ -101,20 +222,37 @@
       <button id="start-game-btn" class="btn btn-primary" style="margin-top: 15px;">Start Game</button>
     </div>
 
-    <!-- ХОД ИГРОКА 1 (ВЫБОР ПОДСКАЗКИ) -->
+    <!-- ХОД ИГРОКА 1 (ВЫБОР ПОДСКАЗКИ И РЕДАКТИРОВАНИЕ ВОПРОСА) -->
     <div id="picker-screen" style="display:none;">
       <h2><span id="picker-name" class="player-name-game-slow"></span>'s Turn</h2>
       <div class="card-question">
-
         <p>Your secret question:</p>
-        <p id="secret-question-text" class="highlight-text" style="margin-bottom: 20px;"></p>
+        <p id="secret-question-text" class="highlight-text" style="margin-bottom: 15px;"></p>
+        
+        <!-- КНОПКА РЕДАКТИРОВАНИЯ -->
+        <button id="edit-question-toggle-btn" style="background: none; border: none; padding: 4px 12px; font-size: 13px; font-weight: 600; color: var(--accent); cursor: pointer; display: block; margin: 0 auto 10px auto; transition: opacity 0.2s ease, transform 0.1s ease; -webkit-tap-highlight-color: transparent;">✏️ Edit Question</button>
+
+        <!-- ТРИ ПОЛЯ РЕДАКТИРОВАНИЯ (СКРЫТЫ ПО УМОЛЧАНИЮ) -->
+        <div id="edit-question-block" style="display: none; margin-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px;">
+          <input id="edit-q-part1" type="text" placeholder="Start: Would you rather..." class="input-field" style="margin-bottom: 8px; font-size: 14px; padding: 12px;">
+          <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;">[ ___ ANSWER 1 ___ ]</div>
+          <input id="edit-q-part2" type="text" placeholder="Middle: or playing..." class="input-field" style="margin-bottom: 8px; font-size: 14px; padding: 12px;">
+          <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;">[ ___ ANSWER 2 ___ ]</div>
+          <input id="edit-q-part3" type="text" placeholder="End: ?" class="input-field" style="margin-bottom: 12px; font-size: 14px; padding: 12px;">
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <button id="edit-q-cancel-btn" class="btn btn-small" style="background: rgba(255,111,122,0.1); color: var(--danger); border: 1px solid rgba(255,111,122,0.2);">Cancel</button>
+            <button id="edit-q-save-btn" class="btn btn-small" style="background: rgba(55,255,226,0.1); color: var(--positive); border: 1px solid rgba(55,255,226,0.2);">Save</button>
+          </div>
+        </div>
+
         <button id="reroll-question-btn" style="background: none; border: none; padding: 4px 12px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; display: block; margin: 0 auto; transition: color 0.2s ease, transform 0.1s ease; -webkit-tap-highlight-color: transparent;">🔄 Reroll (1 per turn)</button>
       </div>
       <p style="margin-bottom: 8px; color:#c0bfe2;">Pick one prompt for <span id="responder-target-name"></span>:</p>
-      <button id="hint-btn-1" class="btn btn-secondary"></button>
-      <button id="hint-btn-2" class="btn btn-secondary"></button>
+      <button id="hint-btn-1" class="btn btn-secondary" style="margin-bottom: 10px;"></button>
+      <button id="hint-btn-2" class="btn btn-secondary" style="margin-bottom: 10px;"></button>
       
-      <div class="custom-hint-block">
+      <div class="custom-hint-block" style="margin-top: 15px;">
         <p>Or type a new prompt for the next player:</p>
         <input id="custom-hint-input" type="text" placeholder="Write something ..." class="input-field">
         <button id="custom-hint-btn" class="btn btn-accent">Use Custom Hint</button>
@@ -151,87 +289,87 @@
 
       <button id="submit-words-btn" class="btn btn-primary" style="margin-top: 10px;">Submit Answers</button>
 
-
       <div id="responder-choice-block" style="display:none; margin-top: 20px;">
         <h3>Now choose:</h3>
         <p id="responder-final-question" class="card-question highlight-text"></p>
         <div class="choice-buttons-grid">
-          <button id="opt-btn-1" class="btn btn-choice"></button>
-          <button id="opt-btn-2" class="btn btn-choice"></button>
+          <button id="opt-btn-1" class="btn btn-choice" style="margin-bottom: 10px; width: 100%;"></button>
+          <button id="opt-btn-2" class="btn btn-choice" style="margin-bottom: 10px; width: 100%;"></button>
         </div>
       </div>
     </div>
 
-<!-- ИСПРАВЛЕННЫЙ ЭКРАН УГАДЫВАНИЯ (БЕЗ ДУБЛИРОВАНИЯ ТЕГОВ) -->
-<div id="guesser-screen" style="display:none;">
-  
-  <!-- МИНИ-ДИСПЛЕЙ ПРОГРЕССА РАУНДА И ОЧЕРЕДИ -->
-  <div id="guesser-round-progress" style="display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 12px; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.05em;"></div>
+    <!-- ЭКРАН УГАДЫВАНИЯ -->
+    <div id="guesser-screen" style="display:none;">
+      <!-- МИНИ-ДИСПЛЕЙ ПРОГРЕССА РАУНДА И ОЧЕРЕДИ -->
+      <div id="guesser-round-progress" style="display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 12px; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.05em;"></div>
 
-  <h2><span id="guesser-name" class="player-name-game-slow"></span>, Guess!</h2>
-  
-<!-- БЛОК ПРОМПТА С УЛУЧШЕННОЙ ЧИТАЕМОСТЬЮ -->
-  <div class="guesser-info-block">
-    <div class="guesser-info-subtitle">THE PROMPT WAS</div>
-    <div id="guesser-displayed-hint" class="guesser-info-title hint-highlight"></div>
-  </div>
+      <h2><span id="guesser-name" class="player-name-game-slow"></span>, Guess!</h2>
+      
+      <!-- БЛОК ПРОМПТА С УЛУЧШЕННОЙ ЧИТАЕМОСТЬЮ -->
+      <div class="guesser-info-block">
+        <div class="guesser-info-subtitle">THE PROMPT WAS</div>
+        <div id="guesser-displayed-hint" class="guesser-info-title hint-highlight"></div>
+      </div>
 
-  <!-- БЛОК СЕКРЕТНОГО ВОПРОСА С УЛУЧШЕННОЙ ЧИТАЕМОСТЬЮ -->
-  <div class="guesser-info-block border-top-dashed">
-    <div class="guesser-info-subtitle">SECRET QUESTION</div>
-    <div id="guesser-question-display" class="guesser-info-title question-highlight"></div>
-  </div>
-  
-  <!-- КНОПКИ ВЫБОРА ТЕПЕРЬ НАХОДЯТСЯ ЗДЕСЬ (В ОДИН РЯД ДЛЯ КОМПАКТНОСТИ) -->
-  <div class="final-guess-block" style="margin-top: 14px; margin-bottom: 14px; border-top: none; padding-top: 0; width: 100%;">
-    <p style="text-align: center; color: #a0a0b2; margin-bottom: 8px; font-size: 14px;">Tap your final guess:</p>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%;">
-      <button id="guess-word-1" class="btn btn-choice" style="margin-bottom: 0; padding: 10px 6px; width: 100%; font-size: 15px; min-height: 44px;"></button>
-      <button id="guess-word-2" class="btn btn-choice" style="margin-bottom: 0; padding: 10px 6px; width: 100%; font-size: 15px; min-height: 44px;"></button>
+      <!-- БЛОК СЕКРЕТНОГО ВОПРОСА С УЛУЧШЕННОЙ ЧИТАЕМОСТЬЮ -->
+      <div class="guesser-info-block border-top-dashed">
+        <div class="guesser-info-subtitle">SECRET QUESTION</div>
+        <div id="guesser-question-display" class="guesser-info-title question-highlight"></div>
+      </div>
+      
+      <!-- КНОПКИ ВЫБОРА (В ОДИН РЯД ДЛЯ КОМПАКТНОСТИ) -->
+      <div class="final-guess-block" style="margin-top: 14px; margin-bottom: 14px; border-top: none; padding-top: 0; width: 100%;">
+        <p style="text-align: center; color: #a0a0b2; margin-bottom: 8px; font-size: 14px;">Tap your final guess:</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%;">
+          <button id="guess-word-1" class="btn btn-choice" style="margin-bottom: 0; padding: 10px 6px; width: 100%; font-size: 15px; min-height: 44px;"></button>
+          <button id="guess-word-2" class="btn btn-choice" style="margin-bottom: 0; padding: 10px 6px; width: 100%; font-size: 15px; min-height: 44px;"></button>
+        </div>
+      </div>
+
+      <div class="stats-bar">
+        <span id="potential-score">Win: +50 points</span>
+        <span id="gold-balance" class="gold-balance">Points: 50</span>
+      </div>
+
+      <!-- КНОПКА ДЛЯ УСТНОЙ ПОДСКАЗКИ -->
+      <button id="oral-hint-btn" class="btn btn-small" style="display: none; background: rgba(255, 213, 107, 0.08); border: 1px dashed rgba(255, 213, 107, 0.3); color: #ffd56b; font-weight: 700; margin-top: 12px; margin-bottom: 4px; border-radius: 14px; width: 100%;">💬 Ask for oral hint (-10 pts)</button>
+      
+      <div style="margin-top: 10px;"></div>
+      
+      <!-- ДИНАМИЧЕСКИЙ ЗАГОЛОВОК ДЛЯ ИНТУИТИВНОГО ПОНИМАНИЯ РОЛЛА -->
+      <p id="ability-roll-status" style="text-align: center; color: #ffd56b; font-weight: 700; margin-bottom: 8px; font-size: 14px; letter-spacing: 0.02em;"></p>
+
+      <!-- СПИСОК СПОСОБНОСТЕЙ С ДИНАМИЧЕСКИМ ОПИСАНИЕМ ВНУТРИ КНОПОК -->
+      <div class="abilities-list-vertical">
+        <div class="ability-row">
+          <button id="ability-pos-btn" class="btn-action" style="text-align: left; line-height: 1.4; padding: 12px 14px; width: 100%;"></button>
+        </div>
+        
+        <div class="ability-row">
+          <button id="ability-rand-btn" class="btn-action" style="text-align: left; line-height: 1.4; padding: 12px 14px; width: 100%;"></button>
+        </div>
+
+        <div class="ability-row">
+          <button id="ability-type-btn" class="btn-action" style="text-align: left; line-height: 1.4; padding: 12px 14px; width: 100%;"></button>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <div class="stats-bar">
-    <span id="potential-score">Win: +50 points</span>
-    <span id="gold-balance" class="gold-balance">Points: 50</span>
-  </div>
-
-  <!-- КНОПКА ДЛЯ УСТНОЙ ПОДСКАЗКИ ПЕРЕНЕСЕНА СЮДА -->
-  <button id="oral-hint-btn" class="btn btn-small" style="display: none; background: rgba(255, 213, 107, 0.08); border: 1px dashed rgba(255, 213, 107, 0.3); color: #ffd56b; font-weight: 700; margin-top: 12px; margin-bottom: 4px; border-radius: 14px;">💬 Ask for oral hint (-10 pts)</button>
-  
-  <div style="margin-top: 10px;"></div>
-  
-  <!-- ДИНАМИЧЕСКИЙ ЗАГОЛОВОК ДЛЯ ИНТУИТИВНОГО ПОНИМАНИЯ РОЛЛА -->
-  <p id="ability-roll-status" style="text-align: center; color: #ffd56b; font-weight: 700; margin-bottom: 8px; font-size: 14px; letter-spacing: 0.02em;"></p>
-
-  <!-- СПИСОК СПОСОБНОСТЕЙ С ДИНАМИЧЕСКИМ ОПИСАНИЕМ ВНУТРИ КНОПОК -->
-  <div class="abilities-list-vertical">
-    <div class="ability-row">
-      <button id="ability-pos-btn" class="btn-action" style="text-align: left; line-height: 1.4; padding: 12px 14px;"></button>
-    </div>
-    
-    <div class="ability-row">
-      <button id="ability-rand-btn" class="btn-action" style="text-align: left; line-height: 1.4; padding: 12px 14px;"></button>
-    </div>
-
-    <div class="ability-row">
-      <button id="ability-type-btn" class="btn-action" style="text-align: left; line-height: 1.4; padding: 12px 14px;"></button>
-    </div>
-  </div>
-</div>
 
     <!-- ФИНАЛЬНЫЙ ЭКРАН -->
-<div id="final-screen" style="display:none;">
-    <h2>Game Over!</h2>
-    <h3>Leaderboard</h3>
-    <ol id="final-scores-list" class="leaderboard-list"></ol>
-    
-    <h3>Match History</h3>
-    <div id="history-player-list" class="history-player-list"></div>
-    <div id="final-history-window" class="history-window-container"></div>
+    <div id="final-screen" style="display:none;">
+      <h2>Game Over!</h2>
+      <h3>Leaderboard</h3>
+      <ol id="final-scores-list" class="leaderboard-list"></ol>
+      
+      <h3>Match History</h3>
+      <div id="history-player-list" class="history-player-list"></div>
+      <div id="final-history-window" class="history-window-container"></div>
 
-    <button id="back-to-setup-btn" class="btn btn-primary" style="margin-top: 24px;">Play Again (Keep Players)</button>
-  </div>
+      <button id="back-to-setup-btn" class="btn btn-primary" style="margin-top: 24px;">Play Again (Keep Players)</button>
+    </div>
+
+  </div> <!-- ЗАКРЫЛСЯ .game-container -->
 
   <audio id="sound-click" src="./src/audio/click.mp3" preload="auto"></audio>
   <audio id="sound-win" src="./src/audio/win.mp3" preload="auto"></audio>

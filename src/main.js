@@ -2,13 +2,13 @@ import { Match } from './core/Match.js';
 import { WordShifter } from './core/WordShifter.js';
 import { ScreenController } from './ui/ScreenController.js';
 import { AudioManager } from './audio/AudioManager.js';
-import { AUTOCOMPLETE_WORDS } from './data/autocompleteWords.js';
 import { SIMPLE_COLORS, SIMPLE_MATERIALS, SIMPLE_MOODS, SIMPLE_ERAS, SIMPLE_COUNTRIES, SIMPLE_CITIES, SIMPLE_FOODS } from './data/nerfWords.js';
 let game = null;
 let screens = null;
 let audioManager = null;
 
 let currentQuestion = null;
+let roundScoresSnapshot = null; // Хранит бэкап очков на случай скипа раунда
 let currentHint = "";
 let currentHintObject = null; // Хранит ссылку на объект выбранной подсказки (для брейншторма)
 let isCustomHintActive = false; // Флаг: написана ли подсказка вручную игроком
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupInitialEventListeners();
     setupHelpPanel();
     setupGlobalButtonSounds();
-    setupCustomHintAutocomplete();
+    setupPsychologicalSafetySystem(); // Теперь кнопка работает сразу при загрузке сайта
 
     // Запускаем предзагрузку тяжелых звуков при первом клике или тапе по экрану
     const initAudioPreload = () => {
@@ -48,183 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
     alert("UI Style Injection failed: " + error.message);
   }
 });
-
-function setupCustomHintAutocomplete() {
-  try {
-    const customInput = document.getElementById('custom-hint-input');
-    if (!customInput) return;
-
-    // Create a wrapper for proper positioning
-    const wrapper = document.createElement('div');
-    wrapper.className = 'autocomplete-wrapper';
-    wrapper.style.position = 'relative';
-    wrapper.style.width = '100%';
-    wrapper.style.marginBottom = '14px';
-
-    // Insert wrapper right after input
-    customInput.parentNode.insertBefore(wrapper, customInput.nextSibling);
-    
-    // Move input into wrapper
-    wrapper.appendChild(customInput);
-
-    // Create suggestion container (positioned absolutely below input)
-    const suggestions = document.createElement('div');
-    suggestions.className = 'autocomplete-suggestions';
-    suggestions.style.position = 'absolute';
-    suggestions.style.top = '100%';
-    suggestions.style.left = '0';
-    suggestions.style.right = '0';
-    suggestions.style.marginTop = '4px';
-    suggestions.style.display = 'none';
-    suggestions.style.background = 'rgba(20, 19, 29, 0.96)';
-    suggestions.style.border = '1px solid rgba(140, 108, 255, 0.24)';
-    suggestions.style.borderRadius = '14px';
-    suggestions.style.padding = '8px 0';
-    suggestions.style.maxHeight = '200px';
-    suggestions.style.overflowY = 'auto';
-    suggestions.style.zIndex = '1000';
-    suggestions.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.5)';
-
-    wrapper.appendChild(suggestions);
-
-    // Inject comprehensive styles for suggestion items
-    const style = document.createElement('style');
-    style.textContent = `
-      .autocomplete-item {
-        padding: 10px 14px;
-        cursor: pointer;
-        color: var(--muted);
-        font-size: 14px;
-        transition: background 0.15s ease, color 0.15s ease;
-        display: flex;
-        align-items: center;
-      }
-      .autocomplete-item:hover {
-        background: rgba(140, 108, 255, 0.18);
-        color: var(--text);
-      }
-      .autocomplete-item.selected {
-        background: rgba(140, 108, 255, 0.28);
-        color: var(--accent);
-        font-weight: 600;
-      }
-      .autocomplete-item-icon {
-        font-size: 12px;
-        margin-right: 8px;
-        opacity: 0.5;
-      }
-      .autocomplete-item.selected .autocomplete-item-icon {
-        opacity: 1;
-      }
-    `;
-    document.head.appendChild(style);
-
-    let selectedIndex = -1;
-
-    function insertSuggestion(word) {
-      const val = customInput.value;
-      const parts = val.split(/\s+/);
-      if (parts.length === 0) {
-        customInput.value = word + ' ';
-      } else {
-        parts.pop();
-        const newVal = (parts.concat([word])).filter(Boolean).join(' ') + ' ';
-        customInput.value = newVal;
-      }
-      customInput.focus();
-      showSuggestionsFor('');
-    }
-
-    function showSuggestionsFor(prefix) {
-      const p = (prefix || '').toLowerCase().trim();
-      if (!p) {
-        suggestions.style.display = 'none';
-        suggestions.innerHTML = '';
-        selectedIndex = -1;
-        return;
-      }
-
-      const matches = AUTOCOMPLETE_WORDS.filter(w => w.toLowerCase().startsWith(p)).slice(0, 10);
-      if (matches.length === 0) {
-        suggestions.style.display = 'none';
-        suggestions.innerHTML = '';
-        selectedIndex = -1;
-        return;
-      }
-
-      suggestions.innerHTML = '';
-      selectedIndex = -1;
-
-      matches.forEach((m, idx) => {
-        const it = document.createElement('div');
-        it.className = 'autocomplete-item';
-        it.dataset.index = idx;
-        it.innerHTML = `<span class="autocomplete-item-icon">✓</span>${m}`;
-        it.onclick = () => {
-          insertSuggestion(m);
-        };
-        suggestions.appendChild(it);
-      });
-      suggestions.style.display = 'block';
-    }
-
-    function updateSelectedClass() {
-      const items = suggestions.querySelectorAll('.autocomplete-item');
-      items.forEach((item, idx) => {
-        if (idx === selectedIndex) {
-          item.classList.add('selected');
-        } else {
-          item.classList.remove('selected');
-        }
-      });
-    }
-
-    customInput.addEventListener('input', (e) => {
-      const val = e.target.value;
-      const lastToken = (val.split(/\s+/).pop() || '').replace(/[^\w-]/g, '');
-      showSuggestionsFor(lastToken);
-      selectedIndex = -1;
-    });
-
-    customInput.addEventListener('keydown', (e) => {
-      const items = suggestions.querySelectorAll('.autocomplete-item');
-      if (items.length === 0) return;
-
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
-        updateSelectedClass();
-        items[selectedIndex].scrollIntoView({ block: 'nearest' });
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        selectedIndex = Math.max(selectedIndex - 1, -1);
-        if (selectedIndex >= 0) {
-          updateSelectedClass();
-          items[selectedIndex].scrollIntoView({ block: 'nearest' });
-        } else {
-          suggestions.querySelectorAll('.autocomplete-item').forEach(it => it.classList.remove('selected'));
-        }
-      } else if (e.key === 'Enter' && selectedIndex >= 0) {
-        e.preventDefault();
-        const word = items[selectedIndex].textContent.replace('✓', '').trim();
-        insertSuggestion(word);
-      } else if (e.key === 'Escape') {
-        suggestions.style.display = 'none';
-        selectedIndex = -1;
-      }
-    });
-
-    // Hide suggestions when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!wrapper.contains(e.target)) {
-        suggestions.style.display = 'none';
-        selectedIndex = -1;
-      }
-    });
-  } catch (err) {
-    console.warn('Autocomplete init failed', err);
-  }
-}
 
 function setupInitialEventListeners() {
   const addPlayerBtn = document.getElementById('add-player-btn');
@@ -256,10 +79,19 @@ function setupInitialEventListeners() {
     }
     game = new Match(temporaryPlayersList, roundsInput);
     window.game = game; // Делаем доступным для экрана передачи телефона
+    
+    // Гарантируем, что кнопка видна, когда матч начался
+    const safetyBtn = document.getElementById('safety-global-btn');
+    if (safetyBtn) safetyBtn.style.display = 'block';
+    
+    // Меняем подпись на игровую
+    const safetyTip = document.getElementById('safety-tip-text');
+    if (safetyTip) safetyTip.innerText = "Open without showing other players if needed.";
+
     screens.showPassScreen(
       game.players[game.pickerIndex],
       initRound,
-      "This is your turn only. Read the question and choose a prompt."
+      "This is your call only. Read the question and choose a prompt."
     );
   };
 }
@@ -344,17 +176,225 @@ function setupHelpPanel() {
   updateHelpTargetText();
 }
 
-/**
- * Add click sound to all buttons globally
- */
 function setupGlobalButtonSounds() {
   document.addEventListener('click', (e) => {
     const button = e.target.closest('button');
     if (button) {
+      // Если кликнули на саму кнопку безопасности или на кнопку внутри её модального окна — глушим звук
+      if (button.id === 'safety-global-btn' || button.closest('#safety-modal')) {
+        return;
+      }
       audioManager.play('click');
     }
   }, true);
 }
+
+/**
+ * Инициализация системы психологической безопасности (Hold to Confirm)
+ */
+function setupPsychologicalSafetySystem() {
+  const globalBtn = document.getElementById('safety-global-btn');
+  const modal = document.getElementById('safety-modal');
+  const scrPrivacy = document.getElementById('safety-screen-privacy');
+  const scrOptions = document.getElementById('safety-screen-options');
+  const scrTalk = document.getElementById('safety-screen-talk');
+  
+  const proceedBtn = document.getElementById('safety-proceed-btn');
+  const closeBtn1 = document.getElementById('safety-close-btn-1');
+  const closeBtn2 = document.getElementById('safety-close-btn-2');
+  const resumeMatchBtn = document.getElementById('safety-resume-match-btn');
+
+  if (!globalBtn || !modal) return;
+
+  globalBtn.onclick = (e) => {
+    e.stopPropagation();
+    scrPrivacy.style.display = 'block';
+    scrOptions.style.display = 'none';
+    scrTalk.style.display = 'none';
+    modal.style.display = 'flex';
+  };
+
+  proceedBtn.onclick = () => {
+    scrPrivacy.style.display = 'none';
+    scrOptions.style.display = 'block';
+  };
+
+  const closeSafety = () => { modal.style.display = 'none'; };
+  closeBtn1.onclick = () => { closeSafety(); resetSafetyButtonsState(scrOptions); };
+  closeBtn2.onclick = () => { closeSafety(); resetSafetyButtonsState(scrOptions); };
+  resumeMatchBtn.onclick = () => { closeSafety(); resetSafetyButtonsState(scrOptions); };
+
+  // Логика кастомного таймера маскировки
+  let safetySelectedMinutes = 0;
+  const timerMinus = document.getElementById('safety-timer-minus');
+  const timerPlus = document.getElementById('safety-timer-plus');
+  const timerDisplay = document.getElementById('safety-timer-display');
+
+  if (timerMinus && timerPlus && timerDisplay) {
+    const handleMinus = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      safetySelectedMinutes = 0;
+      timerDisplay.innerText = "Current: 0 min";
+    };
+
+    const handlePlus = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      safetySelectedMinutes += 1;
+      timerDisplay.innerText = `Current: ${safetySelectedMinutes} min`;
+    };
+
+    timerMinus.onclick = handleMinus;
+    timerMinus.ontouchstart = handleMinus;
+    timerPlus.onclick = handlePlus;
+    timerPlus.ontouchstart = handlePlus;
+  }
+
+  // Логика раскрытия карточек-спойлеров по клику
+  const optionCards = scrOptions.querySelectorAll('.safety-option-card');
+  optionCards.forEach(card => {
+    card.onclick = (e) => {
+      if (e.target.closest('.safety-hold-trigger') || e.target.closest('.btn-small')) return;
+
+      const desc = card.querySelector('.safety-desc-text');
+      const trigger = card.querySelector('.safety-hold-trigger');
+      const badge = card.querySelector('.safe-preview-badge');
+      const isOpen = desc.style.display === 'block';
+
+      optionCards.forEach(c => {
+        c.querySelector('.safety-desc-text').style.display = 'none';
+        c.querySelector('.safety-hold-trigger').style.display = 'none';
+        const b = c.querySelector('.safe-preview-badge');
+        if (b) b.style.display = 'inline';
+      });
+
+      if (!isOpen) {
+        desc.style.display = 'block';
+        trigger.style.display = 'block';
+        if (badge) badge.style.display = 'none';
+      }
+    };
+  });
+
+  // Передаем переменную выбранных минут в обработчик удержания кнопок
+  setupSafetyHoldTriggers(scrOptions, scrTalk, modal, () => safetySelectedMinutes);
+}
+
+/**
+ * Вспомогательный метод сброса кнопок удержания при закрытии
+ */
+function resetSafetyButtonsState(scrOptions) {
+  const cards = scrOptions.querySelectorAll('.safety-option-card');
+  cards.forEach(c => {
+    c.querySelector('.safety-desc-text').style.display = 'none';
+    c.querySelector('.safety-hold-trigger').style.display = 'none';
+    const b = c.querySelector('.safe-preview-badge');
+    if (b) b.style.display = 'inline';
+  });
+  const display = document.getElementById('safety-timer-display');
+  if (display) display.innerText = "Current: 0 min";
+}
+
+
+/**
+ * Обработка 2-секундного удержания для безопасных опций
+ */
+function setupSafetyHoldTriggers(scrOptions, scrTalk, modal, getMinutesFn) {
+  const triggers = scrOptions.querySelectorAll('.safety-hold-trigger');
+  
+  triggers.forEach(btn => {
+    let holdTimer = null;
+
+    const startHold = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      btn.classList.add('holding');
+      btn.innerText = "Holding...";
+
+      holdTimer = setTimeout(() => {
+        const minutes = typeof getMinutesFn === 'function' ? getMinutesFn() : 0;
+        executeSafetyAction(btn.dataset.action, scrOptions, scrTalk, modal, minutes);
+        endHold();
+      }, 2000);
+    };
+
+    const endHold = () => {
+      if (holdTimer) clearTimeout(holdTimer);
+      btn.classList.remove('holding');
+      btn.innerText = "Hold for 2s to Confirm";
+    };
+
+    btn.onmousedown = startHold;
+    btn.onmouseup = endHold;
+    btn.onmouseleave = endHold;
+
+    btn.ontouchstart = startHold;
+    btn.ontouchend = endHold;
+    btn.ontouchcancel = endHold;
+  });
+}
+
+/**
+ * Исполнение выбранного безопасного действия
+ */
+function executeSafetyAction(action, scrOptions, scrTalk, modal, minutes) {
+  if (action === 'skip') {
+    modal.style.display = 'none';
+    if (game && game.players && roundScoresSnapshot) {
+      game.players.forEach(p => {
+        const backup = roundScoresSnapshot.find(b => b.id === p.id);
+        if (backup) p.gold = backup.gold;
+      });
+    }
+    initRound();
+    alert("🛡️ Safety: Current round was canceled. All scores earned during this round have been rolled back, and a new question is loaded.");
+
+  } else if (action === 'talk') {
+    scrOptions.style.display = 'none';
+    scrTalk.style.display = 'block';
+
+  } else if (action === 'stop-direct') {
+    modal.style.display = 'none';
+    const progressReport = game.players.map(p => `${p.name}: ${p.gold} pts`).join('\n');
+    
+    alert(`🛑 Match Stopped by Player Request\n\nThe session has been explicitly halted. Current player scores have been preserved successfully:\n\n${progressReport}\n\nReturning to the main lobby.`);
+    
+    const safetyTip = document.getElementById('safety-tip-text');
+    if (safetyTip) safetyTip.innerText = "Recommended for all players to read before starting.";
+    game = null;
+    renderPlayerBoxes();
+    screens.switchScreen('setup');
+
+  } else if (action === 'stop-delayed') {
+    modal.style.display = 'none';
+    const delayMs = minutes * 60 * 1000;
+    
+    setTimeout(() => {
+      let scoresSummary = "No active players data found.";
+      if (window.game && window.game.players) {
+        scoresSummary = window.game.players.map(p => `${p.name}: ${p.gold} pts`).join('\n');
+      }
+
+      const sessionCloseAlert = 
+        `⏱️ SESSION NOTICE: Play Time Limit Reached\n\n` +
+        `To ensure session health and automatic player background anonymization, this match has been finalized by the system.\n\n` +
+        `FINAL MATCH SCORES:\n${scoresSummary}\n\n` +
+        `The lobby is now closed. Please recreate players or take a routine break.`;
+      
+      alert(sessionCloseAlert);
+      
+      const safetyTip = document.getElementById('safety-tip-text');
+      if (safetyTip) safetyTip.innerText = "Recommended for all players to read before starting.";
+      window.game = null;
+      game = null;
+      renderPlayerBoxes();
+      screens.switchScreen('setup');
+    }, delayMs);
+  }
+}
+
 
 function updateHelpTargetText() {
   const helpResponderName = document.getElementById('help-responder-name');
@@ -373,6 +413,11 @@ function updateHelpTargetText() {
 
 function initRound() {
   try {
+    // Делаем снимок очков всех игроков перед началом раунда для безопасного отката
+    if (game && game.players) {
+      roundScoresSnapshot = game.players.map(p => ({ id: p.id, gold: p.gold }));
+    }
+
     currentQuestion = game.getRandomQuestion();
     if (!currentQuestion || !currentQuestion.hints || currentQuestion.hints.length < 2) {
       throw new Error("Invalid question structure in database! Check hints array.");
@@ -385,6 +430,54 @@ function initRound() {
     document.getElementById('responder-target-name').innerText = game.players[game.getResponderIndex()].name;
     document.getElementById('secret-question-text').innerText = currentQuestion.text;
     updateHelpTargetText();
+
+    // Логика трехзонного редактирования вопроса
+    const editToggleBtn = document.getElementById('edit-question-toggle-btn');
+    const editBlock = document.getElementById('edit-question-block');
+    const editPart1 = document.getElementById('edit-q-part1');
+    const editPart2 = document.getElementById('edit-q-part2');
+    const editPart3 = document.getElementById('edit-q-part3');
+    const editCancelBtn = document.getElementById('edit-q-cancel-btn');
+    const editSaveBtn = document.getElementById('edit-q-save-btn');
+
+    if (editToggleBtn && editBlock) {
+      editBlock.style.display = 'none';
+      editToggleBtn.style.display = 'block';
+
+      editToggleBtn.onclick = () => {
+        // Разбиваем текущую строку вопроса по маркеру "___"
+        const parts = currentQuestion.text.split('___');
+        editPart1.value = parts[0] || "";
+        editPart2.value = parts[1] || "";
+        editPart3.value = parts[2] || "";
+        
+        editBlock.style.display = 'block';
+        editToggleBtn.style.display = 'none';
+      };
+
+      editCancelBtn.onclick = () => {
+        editBlock.style.display = 'none';
+        editToggleBtn.style.display = 'block';
+      };
+
+      editSaveBtn.onclick = () => {
+        const p1 = editPart1.value.trim();
+        const p2 = editPart2.value.trim();
+        const p3 = editPart3.value.trim();
+
+        if (!p1 || !p2) {
+          alert("The first two parts of the question cannot be empty!");
+          return;
+        }
+
+        // Собираем измененную строку обратно с сохранением структуры пропусков
+        currentQuestion.text = `${p1} ___ ${p2} ___ ${p3}`;
+        document.getElementById('secret-question-text').innerText = currentQuestion.text;
+        
+        editBlock.style.display = 'none';
+        editToggleBtn.style.display = 'block';
+      };
+    }
 
     // Настройка кнопки реролла вопроса
     const rerollBtn = document.getElementById('reroll-question-btn');
@@ -638,19 +731,25 @@ function confirmResponderChoice(w1, w2, choice) {
     // Определяем проигравшее слово (loser)
     const loserWord = (choice === w1) ? w2 : w1;
     
-    // Генерируем красивую грамматическую строку по шаблону
-    const formattedResultString = currentQuestion.resultTemplate
-      .replace("{name}", `<strong>${responder.name}</strong>`)
-      .replace("{winner}", `<span style="color: #00ffb3; font-weight: bold;">${choice}</span>`)
-      .replace("{loser}", `<span style="color: #ff4a4a; font-weight: bold;">${loserWord}</span>`);
-
-    // Сохраняем это предложение в историю раунда
+    // Сохраняем базовые данные раунда в историю
     game.saveRoundToHistory(currentQuestion.text, currentHint, w1, w2, choice);
+
+    // Собираем полный текст вопроса со вставленными на свои места ответами
+    const fullQuestionText = currentQuestion.text
+      .replace("___", `<span style="color: #00ffb3; font-weight: bold;">${w1}</span>`)
+      .replace("___", `<span style="color: #ff4a4a; font-weight: bold;">${w2}</span>`);
     
-    // Дописываем сгенерированную строку прямо в объект последнего раунда истории
+    // Формируем красивую, грамматически независимую строку истории по вашей новой формуле
+    const formattedResultString = `<strong>${responder.name}</strong> chose ` +
+      `<span style="color: #00ffb3; font-weight: bold;">${choice}</span> over ` +
+      `<span style="color: #ff4a4a; font-weight: bold;">${loserWord}</span> in the question:<br>` +
+      `<span style="color: var(--muted); font-style: italic;">"${fullQuestionText}"</span>`;
+    
+    // Записываем сгенерированное предложение в последний элемент истории
     game.history[game.history.length - 1].resultSentence = formattedResultString;
     
     remainingGuessers = [game.pickerIndex, ...game.getOtherGuessersIndices()];
+
     totalGuessersThisRound = remainingGuessers.length; // Фиксируем размер очереди перед тем, как извлекать игроков
     setupNextGuesser();
   } catch (err) {
@@ -1088,6 +1187,10 @@ function showFinalScores() {
 
         // Перерисовываем коробочки с игроками (они остались в temporaryPlayersList)
         renderPlayerBoxes();
+
+        // Reset safety tip text for the setup screen
+        const safetyTip = document.getElementById('safety-tip-text');
+        if (safetyTip) safetyTip.innerText = "Recommended for all players to read before starting.";
 
         // Возвращаем пользователя на экран настройки
         screens.switchScreen('setup');

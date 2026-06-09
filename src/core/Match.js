@@ -55,7 +55,8 @@ export class Match {
       question: questionText,
       hint: hintText,
       words: [input1.toUpperCase(), input2.toUpperCase()],
-      chosenByResponder: finalChoice.toUpperCase()
+      chosenByResponder: finalChoice.toUpperCase(),
+      resultSentence: "" // Будет заполнено динамически в main.js
     });
   }
 
