@@ -228,23 +228,6 @@
       <div class="card-question">
         <p>Your secret question:</p>
         <p id="secret-question-text" class="highlight-text" style="margin-bottom: 15px;"></p>
-        
-        <!-- КНОПКА РЕДАКТИРОВАНИЯ -->
-        <button id="edit-question-toggle-btn" style="background: none; border: none; padding: 4px 12px; font-size: 13px; font-weight: 600; color: var(--accent); cursor: pointer; display: block; margin: 0 auto 10px auto; transition: opacity 0.2s ease, transform 0.1s ease; -webkit-tap-highlight-color: transparent;">✏️ Edit Question</button>
-
-        <!-- ТРИ ПОЛЯ РЕДАКТИРОВАНИЯ (СКРЫТЫ ПО УМОЛЧАНИЮ) -->
-        <div id="edit-question-block" style="display: none; margin-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px;">
-          <input id="edit-q-part1" type="text" placeholder="Start: Would you rather..." class="input-field" style="margin-bottom: 8px; font-size: 14px; padding: 12px;">
-          <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;">[ ___ ANSWER 1 ___ ]</div>
-          <input id="edit-q-part2" type="text" placeholder="Middle: or playing..." class="input-field" style="margin-bottom: 8px; font-size: 14px; padding: 12px;">
-          <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;">[ ___ ANSWER 2 ___ ]</div>
-          <input id="edit-q-part3" type="text" placeholder="End: ?" class="input-field" style="margin-bottom: 12px; font-size: 14px; padding: 12px;">
-          
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <button id="edit-q-cancel-btn" class="btn btn-small" style="background: rgba(255,111,122,0.1); color: var(--danger); border: 1px solid rgba(255,111,122,0.2);">Cancel</button>
-            <button id="edit-q-save-btn" class="btn btn-small" style="background: rgba(55,255,226,0.1); color: var(--positive); border: 1px solid rgba(55,255,226,0.2);">Save</button>
-          </div>
-        </div>
 
         <button id="reroll-question-btn" style="background: none; border: none; padding: 4px 12px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; display: block; margin: 0 auto; transition: color 0.2s ease, transform 0.1s ease; -webkit-tap-highlight-color: transparent;">🔄 Reroll (1 per turn)</button>
       </div>

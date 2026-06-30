@@ -23,6 +23,8 @@ let revealCount = 0; // Track: 0 = no reveals, 1 = one reveal used, 2 = two reve
 let currentCardIndex = 0;
 
 let temporaryPlayersList = [];
+let currentFragmentsState = [];
+let safetyDelayedTimer = null; // <-- Добавь эту строку
 
 document.addEventListener("DOMContentLoaded", () => {
   try {
@@ -357,6 +359,7 @@ function executeSafetyAction(action, scrOptions, scrTalk, modal, minutes) {
 
   } else if (action === 'stop-direct') {
     modal.style.display = 'none';
+    if (safetyDelayedTimer) clearTimeout(safetyDelayedTimer);
     const progressReport = game.players.map(p => `${p.name}: ${p.gold} pts`).join('\n');
     
     alert(`🛑 Match Stopped by Player Request\n\nThe session has been explicitly halted. Current player scores have been preserved successfully:\n\n${progressReport}\n\nReturning to the main lobby.`);
@@ -367,16 +370,20 @@ function executeSafetyAction(action, scrOptions, scrTalk, modal, minutes) {
     renderPlayerBoxes();
     screens.switchScreen('setup');
 
-  } else if (action === 'stop-delayed') {
+} else if (action === 'stop-delayed') {
     modal.style.display = 'none';
     const delayMs = minutes * 60 * 1000;
     
-    setTimeout(() => {
+    // Очищаем старый таймер, если игрок случайно запустил его дважды
+    if (safetyDelayedTimer) clearTimeout(safetyDelayedTimer);
+    
+    safetyDelayedTimer = setTimeout(() => {
+      // ... (внутренний код алерта и сброса оставляем без изменений)
       let scoresSummary = "No active players data found.";
       if (window.game && window.game.players) {
         scoresSummary = window.game.players.map(p => `${p.name}: ${p.gold} pts`).join('\n');
       }
-
+      
       const sessionCloseAlert = 
         `⏱️ SESSION NOTICE: Play Time Limit Reached\n\n` +
         `To ensure session health and automatic player background anonymization, this match has been finalized by the system.\n\n` +
@@ -411,90 +418,134 @@ function updateHelpTargetText() {
   }
 }
 
+function getValidFragmentOptions(fragIndex) {
+  const frag = currentQuestion.fragments[fragIndex];
+  
+  // Первый фрагмент всегда доступен полностью
+  if (fragIndex === 0) return frag.options;
+  
+  // 1. Собираем массив всех типов (type), которые игрок уже выбрал в предыдущих фрагментах
+  const activeTypes = [];
+  for (let i = 0; i < fragIndex; i++) {
+    const selectedOpt = currentQuestion.fragments[i].options[currentFragmentsState[i]];
+    if (selectedOpt.type) {
+      activeTypes.push(selectedOpt.type);
+    }
+  }
+
+  // 2. Фильтруем опции текущего фрагмента на основе собранной истории
+  return frag.options.filter(opt => {
+    // Если у опции нет требований, она доступна всем
+    if (!opt.requires || opt.requires.length === 0) return true;
+    
+    // Опция доступна, если хотя бы один её требуемый тип есть в нашей истории activeTypes
+    return opt.requires.some(req => activeTypes.includes(req));
+  });
+}
+
+function handleFragmentTap(fragIndex) {
+  const frag = currentQuestion.fragments[fragIndex];
+  const validOptions = getValidFragmentOptions(fragIndex);
+  const currentOpt = frag.options[currentFragmentsState[fragIndex]];
+
+  let validIdx = validOptions.indexOf(currentOpt);
+  validIdx = (validIdx + 1) % validOptions.length;
+
+  currentFragmentsState[fragIndex] = frag.options.indexOf(validOptions[validIdx]);
+
+  // Каскадная валидация последующих фрагментов
+  for (let i = fragIndex + 1; i < currentQuestion.fragments.length; i++) {
+    const validForNext = getValidFragmentOptions(i);
+    const nextCurrentOpt = currentQuestion.fragments[i].options[currentFragmentsState[i]];
+    if (!validForNext.includes(nextCurrentOpt)) {
+      currentFragmentsState[i] = currentQuestion.fragments[i].options.indexOf(validForNext[0]);
+    }
+  }
+
+  renderInteractiveQuestion();
+  audioManager.play('click');
+}
+
+function renderInteractiveQuestion() {
+  const container = document.getElementById('secret-question-text');
+  container.innerHTML = currentQuestion.text + " ";
+  
+  currentQuestion.fragments.forEach((frag, i) => {
+    const optText = frag.options[currentFragmentsState[i]].text;
+    const span = document.createElement('span');
+    // Если опций больше одной (с учетом валидации), делаем кликабельным
+    const validCount = getValidFragmentOptions(i).length;
+    if (validCount > 1) {
+      span.className = 'tappable-fragment';
+      span.onclick = () => handleFragmentTap(i);
+    }
+    span.innerText = optText + " ";
+    container.appendChild(span);
+  });
+}
+
+function getCompiledQuestionString(w1 = "___", w2 = "___", useHtml = false) {
+  let str = currentQuestion.text + " ";
+  currentQuestion.fragments.forEach((frag, i) => {
+    str += frag.options[currentFragmentsState[i]].text + " ";
+  });
+  
+  if (useHtml) {
+    str = str.replace("___", `<span style="color: #00ffb3; font-weight: bold;">${w1}</span>`);
+    str = str.replace("___", `<span style="color: #ff4a4a; font-weight: bold;">${w2}</span>`);
+  } else {
+    str = str.replace("___", w1).replace("___", w2);
+  }
+  return str.trim();
+}
+
 function initRound() {
   try {
-    // Делаем снимок очков всех игроков перед началом раунда для безопасного отката
     if (game && game.players) {
       roundScoresSnapshot = game.players.map(p => ({ id: p.id, gold: p.gold }));
     }
 
     currentQuestion = game.getRandomQuestion();
-    if (!currentQuestion || !currentQuestion.hints || currentQuestion.hints.length < 2) {
-      throw new Error("Invalid question structure in database! Check hints array.");
-    }
+    
+    // Инициализация дефолтного состояния фрагментов с учетом зависимостей
+    currentFragmentsState = [];
+    currentQuestion.fragments.forEach((frag, i) => {
+      if (i === 0) {
+        currentFragmentsState.push(0);
+      } else {
+        const validOptions = getValidFragmentOptions(i);
+        currentFragmentsState.push(frag.options.indexOf(validOptions[0]));
+      }
+    });
 
     const picker = game.players[game.pickerIndex];
     screens.switchScreen('picker');
     
     document.getElementById('picker-name').innerText = picker.name;
     document.getElementById('responder-target-name').innerText = game.players[game.getResponderIndex()].name;
-    document.getElementById('secret-question-text').innerText = currentQuestion.text;
+    
+    renderInteractiveQuestion();
     updateHelpTargetText();
 
-    // Логика трехзонного редактирования вопроса
-    const editToggleBtn = document.getElementById('edit-question-toggle-btn');
-    const editBlock = document.getElementById('edit-question-block');
-    const editPart1 = document.getElementById('edit-q-part1');
-    const editPart2 = document.getElementById('edit-q-part2');
-    const editPart3 = document.getElementById('edit-q-part3');
-    const editCancelBtn = document.getElementById('edit-q-cancel-btn');
-    const editSaveBtn = document.getElementById('edit-q-save-btn');
-
-    if (editToggleBtn && editBlock) {
-      editBlock.style.display = 'none';
-      editToggleBtn.style.display = 'block';
-
-      editToggleBtn.onclick = () => {
-        // Разбиваем текущую строку вопроса по маркеру "___"
-        const parts = currentQuestion.text.split('___');
-        editPart1.value = parts[0] || "";
-        editPart2.value = parts[1] || "";
-        editPart3.value = parts[2] || "";
-        
-        editBlock.style.display = 'block';
-        editToggleBtn.style.display = 'none';
-      };
-
-      editCancelBtn.onclick = () => {
-        editBlock.style.display = 'none';
-        editToggleBtn.style.display = 'block';
-      };
-
-      editSaveBtn.onclick = () => {
-        const p1 = editPart1.value.trim();
-        const p2 = editPart2.value.trim();
-        const p3 = editPart3.value.trim();
-
-        if (!p1 || !p2) {
-          alert("The first two parts of the question cannot be empty!");
-          return;
-        }
-
-        // Собираем измененную строку обратно с сохранением структуры пропусков
-        currentQuestion.text = `${p1} ___ ${p2} ___ ${p3}`;
-        document.getElementById('secret-question-text').innerText = currentQuestion.text;
-        
-        editBlock.style.display = 'none';
-        editToggleBtn.style.display = 'block';
-      };
-    }
-
-    // Настройка кнопки реролла вопроса
     const rerollBtn = document.getElementById('reroll-question-btn');
     if (rerollBtn) {
-      rerollBtn.style.display = 'block'; // Показываем кнопку в начале раунда
+      rerollBtn.style.display = 'block';
       rerollBtn.onclick = () => {
-        // Возвращаем старый вопрос обратно в пул (чтобы не пропадал навсегда) и берем новый
         game.shuffledQuestions.unshift(currentQuestion);
         currentQuestion = game.getRandomQuestion();
         
-        // Обновляем текст вопроса на экране
-        document.getElementById('secret-question-text').innerText = currentQuestion.text;
-        
-        // Пересчитываем и обновляем кнопки подсказок для нового вопроса
+        currentFragmentsState = [];
+        currentQuestion.fragments.forEach((frag, i) => {
+          if (i === 0) {
+            currentFragmentsState.push(0);
+          } else {
+            const validOptions = getValidFragmentOptions(i);
+            currentFragmentsState.push(frag.options.indexOf(validOptions[0]));
+          }
+        });
+
+        renderInteractiveQuestion();
         updatePickerHints();
-        
-        // Скрываем кнопку, так как лимит на раунд исчерпан
         rerollBtn.style.display = 'none';
       };
     }
@@ -502,33 +553,27 @@ function initRound() {
     const btn1 = document.getElementById('hint-btn-1');
     const btn2 = document.getElementById('hint-btn-2');
     
-    // Выносим генерацию подсказок в изолированную функцию, чтобы переиспользовать при реролле
     const updatePickerHints = () => {
       const availableHints = [...currentQuestion.hints];
       const randomIndex1 = Math.floor(Math.random() * availableHints.length);
       const hint1 = availableHints.splice(randomIndex1, 1)[0];
-      
       const randomIndex2 = Math.floor(Math.random() * availableHints.length);
       const hint2 = availableHints[randomIndex2];
       
-      // Извлекаем текст для отображения на кнопках, если подсказка является сложным объектом
-      btn1.innerText = typeof hint1 === 'object' ? hint1.text : hint1;
-      btn2.innerText = typeof hint2 === 'object' ? hint2.text : hint2;
+      btn1.innerText = hint1;
+      btn2.innerText = hint2;
       
-      // Стандартные кнопки сбрасывают флаг кастомного промпта
       btn1.onclick = () => { isCustomHintActive = false; selectHint(hint1); };
       btn2.onclick = () => { isCustomHintActive = false; selectHint(hint2); };
     };
 
-
-    // Первичный вызов при старте хода
     updatePickerHints();
     
     const customInput = document.getElementById('custom-hint-input');
     customInput.value = "";
     document.getElementById('custom-hint-btn').onclick = () => {
       if (customInput.value.trim().length > 0) {
-        isCustomHintActive = true; // Игрок написал свою подсказку, включаем защиту
+        isCustomHintActive = true;
         selectHint(customInput.value.trim());
       }
     };
@@ -703,7 +748,7 @@ function startResponderPhase() {
 
 
       
-      const finalQ = currentQuestion.text.replace("___", w1).replace("___", w2);
+      const finalQ = getCompiledQuestionString(w1, w2, false);
       document.getElementById('responder-final-question').innerText = finalQ;
       
       const opt1 = document.getElementById('opt-btn-1');
@@ -731,13 +776,10 @@ function confirmResponderChoice(w1, w2, choice) {
     // Определяем проигравшее слово (loser)
     const loserWord = (choice === w1) ? w2 : w1;
     
-    // Сохраняем базовые данные раунда в историю
-    game.saveRoundToHistory(currentQuestion.text, currentHint, w1, w2, choice);
-
-    // Собираем полный текст вопроса со вставленными на свои места ответами
-    const fullQuestionText = currentQuestion.text
-      .replace("___", `<span style="color: #00ffb3; font-weight: bold;">${w1}</span>`)
-      .replace("___", `<span style="color: #ff4a4a; font-weight: bold;">${w2}</span>`);
+const plainQuestionText = getCompiledQuestionString("___", "___", false);
+    game.saveRoundToHistory(plainQuestionText, currentHint, w1, w2, choice);
+    
+    const fullQuestionText = getCompiledQuestionString(w1, w2, true);
     
     // Формируем красивую, грамматически независимую строку истории по вашей новой формуле
     const formattedResultString = `<strong>${responder.name}</strong> chose ` +
@@ -932,7 +974,7 @@ function updateGuesserUI() {
 
     const masks = shifter.getMaskedWords();
     
-    const displayStaticQuestion = currentQuestion.text.replace(/___/g, "______");
+    const displayStaticQuestion = getCompiledQuestionString("______", "______", false);
     
     const hintEl = document.getElementById('guesser-displayed-hint');
     const questionEl = document.getElementById('guesser-question-display');
@@ -1175,6 +1217,7 @@ function showFinalScores() {
     const backBtn = document.getElementById('back-to-setup-btn');
     if (backBtn) {
       backBtn.onclick = () => {
+        if (safetyDelayedTimer) clearTimeout(safetyDelayedTimer);
         // Полностью обнуляем состояние прошлой игры
         game = null;
         currentQuestion = null;
