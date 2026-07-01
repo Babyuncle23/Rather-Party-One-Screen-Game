@@ -12,63 +12,69 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "on a desert island", requires: ["stranded", "left"], type: "isolated", hints: ["Name two famous singers", "Name two annoying people", "Name two youtubers"] },
-          { text: "in the woods alone", requires: ["stranded", "left"], type: "isolated", hints: ["Name two fictional characters", "Name two of your favorite artists"] },
-          { text: "in a completely unfamiliar city", requires: ["left"], type: "urban", hints: ["Name two famous politicians", "Name two types of tourists"] },
+          { text: "on a desert island", requires: ["stranded", "left"], type: "isolated", hints: ["Name a famous singer", "Name an annoying person", "Name a youtuber"] },
+          { text: "in the woods alone", requires: ["stranded", "left"], type: "isolated", hints: [{ text: "Fictional character", brainstorm: ["Harry Potter", "Batman", "Sherlock Holmes", "Darth Vader"] }] },
+          { text: "in a completely unfamiliar city", requires: ["left"], type: "urban", hints: [{ text: "Famous politician", brainstorm: ["Barack Obama", "Winston Churchill", "Abraham Lincoln"] }] },
         ]
       },
       {
         options: [
-          { text: "for the rest of your life", hints: ["Name two famous actors", "Name two historical figures"] },
+          { text: "for the rest of your life", hints: [{ text: "Famous actor", brainstorm: ["Leonardo DiCaprio", "Brad Pitt", "Tom Cruise", "Johnny Depp"] }] },
           { text: "for 5 years" },
           { text: "for 10 years" },
-          { text: "for one day", hints: ["Name two people you trust", "Name two random celebrities"] },
+          { text: "for one day" },
           { text: "for one week" },
           { text: "forever" }
         ]
       },
       {
         options: [
-          { text: "accompanied by [ ... ] or by [ ... ]?", hints: ["Name two people playing this game", "Name two people you dislike"] }
+          { text: "accompanied by [ ... ] or by [ ... ]?", hints: ["Name a type of person you find annoying", "Name a profession"] }
         ]
       }
     ],
     hints: [
-      "Name two cartoon characters",
-      "Name two famous people"
+      { text: "Cartoon character", brainstorm: ["Mickey Mouse", "Homer Simpson", "SpongeBob", "Bugs Bunny"] },
+      { text: "Famous media personality", brainstorm: ["Kim Kardashian", "Oprah Winfrey", "Gordon Ramsay"] }
     ]
   },
-  {
+{
     id: 2,
     category: "activities",
     text: "Would you rather",
     fragments: [
       {
         options: [
-          { text: "spend 1000 hours", type: "time", hints: ["Name two popular video games", "Name two boring chores"] },
-          { text: "enter a competition for", type: "compete", hints: ["Name two board games", "Name two sports"] },
+          { text: "spend 1000 hours", type: "time", hints: [{ text: "Popular video game", brainstorm: ["Minecraft", "GTA V", "Fortnite", "Skyrim"] }] },
+          { text: "enter a competition for", type: "compete", hints: ["Name a board game", { text: "Sport", brainstorm: ["Football", "Basketball", "Tennis", "Golf"] }] },
           { text: "dedicate your entire future to", type: "future" },
-          { text: "sacrifice all your free time to", type: "sacrifice", hints: ["Name two annoying habits", "Name two basic human activities"] },
+          { text: "sacrifice all your free time to", type: "sacrifice", hints: ["Name an annoying habit"] },
           { text: "spend all your weekends", type: "weekends" },
           { text: "be cursed to spend the rest of your life", type: "curse" }
         ]
       },
       {
         options: [
-          { text: "playing", requires: ["time", "compete", "sacrifice", "weekends", "curse"], hints: ["Name two games you play on a phone", "Name two party games"] },
-          { text: "mastering", requires: ["future", "sacrifice"], hints: ["Name two musical instruments", "Name two creative hobbies"] },
-          { text: "watching", requires: ["time", "weekends"], hints: ["Name two popular TV shows", "Name two meme videos"] },
-          { text: "obsessively analyzing", requires: ["future", "curse"], hints: ["Name two weird rumors", "Name two school subjects"] },
-          { text: "aggressively teaching people about", requires: ["curse"], hints: ["Name two conspiracy theories", "Name two random facts"] }
+          // Добавлен type: "winnable", чтобы привязать к этому действию условие победы/поражения
+          { text: "playing", requires: ["time", "compete", "sacrifice", "weekends", "curse"], type: "winnable", hints: ["Name a mobile game"] },
+          { text: "mastering", requires: ["future", "sacrifice"], hints: [{ text: "Musical instrument", brainstorm: ["Guitar", "Piano", "Violin", "Drums"] }] },
+          { text: "watching", requires: ["time", "weekends"], hints: [{ text: "Popular TV show", brainstorm: ["Breaking Bad", "Game of Thrones", "Friends", "The Office"] }, { text: "Natural process", brainstorm: ["Campfire burning", "Leaves falling", "Rain pouring", "Clouds moving"] }] },
+          { text: "obsessively analyzing", requires: ["future", "curse"], hints: [{ text: "Weird conspiracy theory", brainstorm: ["Flat earth", "Birds aren't real", "Lizard people", "Faked moon landing"] }, { text: "School subject", brainstorm: ["Math", "History", "Physics", "Literature"] }] },
+          { text: "aggressively teaching people about", requires: ["curse"], hints: ["Name a random country"] }
         ]
       },
       {
         options: [
-          { text: "[ ... ] or [ ... ]?" }
+          { text: "[ ... ] or [ ... ]?" },
+          // Добавлено ограничение requires: ["compete", "winnable"] и улучшен текст штрафа
+          { text: "[ ... ] or [ ... ], and if you win you get a million dollars, but if you lose, you pay a fine equal to your entire annual income?", requires: ["compete", "winnable"] }
         ]
       }
     ],
-    hints: [] // Очищено, чтобы избежать конфликтов с глаголами (например, "смотреть беспорядок")
+    hints: [
+      { text: "Creative hobby", brainstorm: ["Painting", "Writing", "Photography", "Knitting", "Beatmaking", "Sculpting", "Composing"] },
+      { text: "Basic human activity", brainstorm: ["Sleeping", "Eating", "Walking", "Breathing"] }
+    ]
   },
   {
     id: 3,
@@ -77,34 +83,34 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "have a pet", type: "possession", hints: ["Name two chubby animals", "Name two farm animals"] },
-          { text: "be chased by a", type: "threat_run", hints: ["Name two fast animals", "Name two birds"] },
-          { text: "be trapped alone with a", type: "threat_close", hints: ["Name two very loud animals", "Name two angry-looking animals"] },
-          { text: "have to play with a", type: "threat_close", hints: ["Name two dangerous animals"] }
+          { text: "have a pet", type: "possession", hints: ["Name a chubby animal", { text: "Farm animal", brainstorm: ["Cow", "Pig", "Chicken", "Sheep"] }] },
+          { text: "be chased by a", type: "threat_run", hints: [{ text: "Fast animal", brainstorm: ["Cheetah", "Horse", "Ostrich", "Greyhound"] }, { text: "Angry animal", brainstorm: ["Bull", "Wolverine", "Hornet", "Boar"] }, { text: "Weird-looking animal", brainstorm: ["Platypus", "Sloth", "Pug", "Emu"] }] },
+          { text: "be trapped alone with a", type: "threat_close", hints: ["Name a very loud animal"] },
+          { text: "have to play with a", type: "threat_close", hints: [{ text: "Dangerous animal", brainstorm: ["Tiger", "Shark", "Crocodile", "Bear"] }] }
         ]
       },
       {
         options: [
           { text: "[ ... ] or [ ... ]", type: "normal" },
-          { text: "giant [ ... ] or giant [ ... ]", type: "giant", hints: ["Name two common insects", "Name two house pets"] },
-          { text: "tiny [ ... ] or tiny [ ... ]", type: "tiny", hints: ["Name two heavy animals", "Name two animals that swim"] },
-          { text: "invisible [ ... ] or invisible [ ... ]", type: "invisible", hints: ["Name two famous musicians", "Name two animals that bite"] }
+          { text: "giant [ ... ] or giant [ ... ]", type: "giant", hints: [{ text: "Common insect", brainstorm: ["Ant", "Spider", "Fly", "Mosquito"] }] },
+          { text: "tiny [ ... ] or tiny [ ... ]", type: "tiny", hints: [{ text: "Heavy animal", brainstorm: ["Elephant", "Rhino", "Hippo", "Whale"] }] },
+          { text: "invisible [ ... ] or invisible [ ... ]", type: "invisible", hints: ["Name an animal that bites"] }
         ]
       },
       {
         options: [
           { text: "for the next ten years?", requires: ["possession"] },
-          { text: "in a tiny studio apartment?", requires: ["possession", "threat_run", "threat_close"], hints: ["Name two huge animals", "Name two fluffy animals"] },
-          { text: "in a dark forest?", requires: ["threat_run", "threat_close"], hints: ["Name two nocturnal animals"] },
-          { text: "in an empty mall?", requires: ["threat_run", "threat_close"], hints: ["Name two animals you see at the zoo"] },
-          { text: "inside a small elevator?", requires: ["threat_close"] } 
+          { text: "in a tiny studio apartment?", requires: ["possession", "threat_run", "threat_close"] },
+          { text: "in a dark forest?", requires: ["threat_run", "threat_close"], hints: [{ text: "Nocturnal animal", brainstorm: ["Owl", "Bat", "Raccoon", "Moth"] }] },
+          { text: "in an empty mall?", requires: ["threat_run", "threat_close"] },
+          { text: "inside a small elevator?", requires: ["threat_close"] },
+          { text: "?" } 
         ]
       }
     ],
     hints: [
-      "Name two wild animals",
-      "Name two cute animals",
-      "Name two dog breeds"
+      { text: "Wild animal", brainstorm: ["Wolf", "Fox", "Lion", "Zebra"] },
+      { text: "Dog breed", brainstorm: ["Pug", "Bulldog", "Husky", "Golden Retriever"] }
     ]
   },
   {
@@ -118,10 +124,9 @@ export const questionsDatabase = [
             text: "instantly become a world-class expert in", 
             type: "positive", 
             hints: [
-              "Name two school subjects",
-              "Name two foreign languages",
-              "Name two high-paying jobs",
-              "Name two martial arts"
+              { text: "Foreign language", brainstorm: ["Spanish", "Mandarin", "French", "Japanese"] },
+              { text: "Professional field", brainstorm: ["Medicine", "Law", "Engineering", "Finance"] },
+              { text: "Martial art", brainstorm: ["Karate", "Judo", "Boxing", "Taekwondo"] }
             ] 
           },
         ]
@@ -139,13 +144,13 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "your friends", requires: ["context"], hints: ["Name two superpowers", "Name two impressive skills"] },
-          { text: "the hiring manager during a job interview?", requires: ["context"], hints: ["Name two professional skills", "Name two skills you would like to have", "Name two martial arts"] },
+          { text: "the first person you meet on the street?", requires: ["context"], hints: [{ text: "Superpower", brainstorm: ["Flying", "Invisibility", "Telepathy", "Time travel"] }] },
+          { text: "the hiring manager during a job interview?", requires: ["context"], hints: ["Name a professional skill"] },
           { text: "your parents at dinner?", requires: ["context"] },
-          { text: "completely hungover?", requires: ["condition"], hints: ["Name two academic subjects", "Name two school subjects"] },
-          { text: "in sauna?", requires: ["condition"], hints: ["Name two academic subjects", "Name two school subjects"] },
+          { text: "completely hungover?", requires: ["condition"] },
+          { text: "in sauna?", requires: ["condition"] },
           { text: "having a bad hair day?", requires: ["condition"] },
-          { text: "on a first date?", requires: ["condition"], hints: ["Name two topics for small talk", "Name two bad conversation topics"] }
+          { text: "on a first date?", requires: ["condition"], hints: ["Name a topic for small talk"] }
         ]
       }
     ]
@@ -157,10 +162,10 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "have to brush your teeth with", type: "hygiene", hints: ["Name two sauces", "Name two sweet drinks"] },
-          { text: "have to wash your clothes in", type: "hygiene", hints: ["Name two hot drinks", "Name two sticky things"] },
-          { text: "have to drink a full glass of", type: "utility", hints: ["Name two sauces", "Name two hot drinks"] },
-          { text: "fill your bed pillows with", type: "storage", hints: ["Name two crunchy snacks", "Name two cold things"] }
+          { text: "have to brush your teeth with", type: "hygiene", hints: [{ text: "Sauce", brainstorm: ["Ketchup", "Mayo", "Mustard", "Soy Sauce"] }, { text: "Sticky thing", brainstorm: ["Honey", "Glue", "Syrup", "Melted cheese"] }] },
+          { text: "have to wash your clothes in", type: "hygiene", hints: [{ text: "Sauce", brainstorm: ["Ketchup", "Mayo", "Mustard", "Soy Sauce"] }, { text: "Sticky thing", brainstorm: ["Honey", "Glue", "Syrup", "Melted cheese"] }] },
+          { text: "have to drink a full glass of", type: "utility", hints: [{ text: "Hot drink", brainstorm: ["Coffee", "Tea", "Hot Chocolate", "Mulled Wine"] }, { text: "Popular drink", brainstorm: ["Cola", "Juice", "Beer", "Milk"] }] },
+          { text: "fill your bed pillows with", type: "storage", hints: [{ text: "Crunchy snack", isPlural: true, brainstorm: ["Chips", "Nuts", "Pretzels", "Crackers"] }, { text: "Kitchen item", isPlural: true, brainstorm: ["Spoons", "Plates", "Blenders", "Knives"] }] }
         ]
       },
       {
@@ -171,16 +176,14 @@ export const questionsDatabase = [
       {
         options: [
           { text: "every single morning for the rest of your life?" },
-          { text: "for an entire year, but you get paid a million dollars for it?" },
-          { text: "before sleep?" },
-          { text: "but random stranger is forced to watch you do it?" }
+          { text: "every single day for an entire year, receiving the million dollars only at the very end?" },
+          { text: "right before sleep?" },
+          { text: "but a random stranger is forced to watch you do it?" },
+          { text: "?" }
         ]
       }
     ],
-    hints: [
-      "Name two popular drinks",
-      "Name two things you find in a kitchen"
-    ]
+    hints: [] 
   },
   {
     id: 6,
@@ -189,17 +192,18 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "instantly sweat a puddle that", type: "sweat", hints: ["Name two hot drinks", "Name two sweet liquids"] },
-          { text: "breathe out a cloud that", type: "breath", hints: ["Name two types of fast food", "Name two strong-smelling foods"] },
-          { text: "produce saliva that", type: "saliva", hints: ["Name two sour foods", "Name two types of candy"] },
-          { text: "have a face that", type: "face" }
+          { text: "instantly sweat a puddle that", type: "sweat", hints: [{ text: "Sweet liquid", brainstorm: ["Maple syrup", "Melted chocolate", "Apple juice", "Honey"] }, { text: "Strong-smelling food", brainstorm: ["Onion", "Garlic", "Fish", "Blue Cheese"] }] },
+          { text: "breathe out a cloud that", type: "breath", hints: [{ text: "Fast food", brainstorm: ["Burger", "Pizza", "Fries", "Hot Dog"] }, { text: "Strong-smelling food", brainstorm: ["Onion", "Garlic", "Fish", "Blue Cheese"] }] },
+          { text: "produce saliva that", type: "saliva", hints: [{ text: "Type of candy", brainstorm: ["Gummy bears", "Chocolate", "Lollipop", "Skittles"] }, { text: "Sweet liquid", brainstorm: ["Maple syrup", "Melted chocolate", "Apple juice", "Honey"] }] },
+          { text: "have a face that", type: "face", hints: [{ text: "Body part", brainstorm: ["Foot", "Ear", "Knee", "Elbow"] }] },
+          { text: "have a head that", type: "face", hints: [{ text: "Body part", brainstorm: ["Foot", "Ear", "Knee", "Elbow"] }] }
         ]
       },
       {
         options: [
           { text: "smells exactly like", requires: ["sweat", "breath"] },
           { text: "tastes exactly like", requires: ["sweat", "saliva"] },
-          { text: "looks exactly like a", requires: ["face"], hints: ["Name two cartoon characters", "Name two scary creatures", "Name two famous politicians", "Name two body parts"] }
+          { text: "looks exactly like a", requires: ["face"] }
         ]
       },
       {
@@ -217,13 +221,14 @@ export const questionsDatabase = [
         options: [
           { text: "in a bad mood?", requires: ["condition"] },
           { text: "in a great mood?", requires: ["condition"] },
-          { text: "feeling guilty?", requires: ["condition"], hints: ["Name two junk foods", "Name two things that have a strange flavor"] },
-          { text: "trying to sleep?", requires: ["condition"], hints: ["Name two energy drinks", "Name two soft things"] },
-          { text: "sit perfectly still?", requires: ["action"] },
+          { text: "feeling guilty?", requires: ["condition"], hints: [{ text: "Junk food", brainstorm: ["Chips", "Donuts", "Ice cream", "Nachos"] }] },
+          { text: "trying to sleep?", requires: ["condition"] },
+          { text: "sit still?", requires: ["action"] },
           { text: "start laughing?", requires: ["action"] },
           { text: "get nervous?", requires: ["action"] },
           { text: "start eating?", requires: ["action"] },
-          { text: "sneeze?", requires: ["action"], hints: ["Name two strong spices", "Name two dusty things"] } 
+          { text: "sneeze?", requires: ["action"], hints: [{ text: "Strong spice", brainstorm: ["Pepper", "Chili", "Cinnamon", "Garlic"] }] },
+          { text: "?" }
         ]
       }
     ],
@@ -258,13 +263,13 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "without [ ... ] or without [ ... ]?", hints: ["Name two types of clothing that you often wear", "Name two things that modern human 'cannot live without'"] }
+          { text: "without [ ... ] or without [ ... ]?", hints: [{ text: "Common piece of clothing", brainstorm: ["Sock", "Shoe", "Jacket", "Hat"] }, { text: "Facility people visit regularly", brainstorm: ["Gym", "Cinema", "Supermarket", "Library"] }] }
         ]
       }
     ],
     hints: [
-      "Name two items you use daily",
-      "Name two hygiene products"
+      { text: "Daily item", brainstorm: ["Key", "Phone", "Wallet", "Watch"] },
+      { text: "Hygiene product", isPlural: true, brainstorm: ["Soaps", "Toothpastes", "Shampoos", "Deodorants"] }
     ]
   },
   {
@@ -274,29 +279,31 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "magically receive an endless supply of", type: "recurring", hints: ["Name two large items in a house", "Name two delicious snacks"] },
+          { text: "magically receive an endless supply of", type: "recurring", hints: [{ text: "Large item in a house", isPlural: true, brainstorm: ["Sofas", "Beds", "Fridges", "Tables"] }] },
           { text: "receive a random package every day containing", type: "recurring" },
-          { text: "randomly spawn a pile of", type: "recurring" },
-          { text: "get only one more chance in your life to use", type: "one-time", hints: ["Name two expensive things", "Name two things that are very rare"] }
+          { text: "randomly find a pile of", type: "recurring" },
+          { text: "get to use", type: "one-time", hints: [{ text: "Expensive thing", isPlural: true, brainstorm: ["Cars", "Yachts", "Diamonds", "Mansions"] }] }
         ]
       },
       {
         options: [
-          { text: "[ ... ] or [ ... ]," }
+          { text: "[ ... ] or [ ... ]", type: "middle" }
         ]
       },
       {
         options: [
-          { text: "but you have no control over when it appears?", requires: ["recurring"] }, 
+          { text: "appear out of thin air, but you have no control over when it happens?", requires: ["recurring"] }, 
           { text: "except it completely disappears on weekends?", requires: ["recurring"] }, 
+          { text: "but it always emits a terrible, rotten smell?", requires: ["recurring"], hints: [{ text: "Thing that smells bad", brainstorm: ["Garbage", "Skunk", "Rotten egg", "Mud"] }] },
+          { text: "only one more time in your entire life?", requires: ["one-time"], hints: [{ text: "Thing you use daily", isPlural: true, brainstorm: ["Toothbrushes", "Smartphones", "Microwaves", "Toilets"] }] },
           { text: "but you are forced to share it with a total stranger?" }, 
-          { text: "and it always emits a terrible, rotten smell?", hints: ["Name two things that smell bad", "Name two liquids you shouldn't drink"] } 
+          { text: "?" }
         ]
       }
     ],
     hints: [
-      "Name two things you find in a refrigerator",
-      "Name two things you wear on your head"
+      { text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] },
+      { text: "Thing you wear on your head", isPlural: true, brainstorm: ["Hats", "Helmets", "Caps", "Headbands"] }
     ]
   },
   {
@@ -306,10 +313,9 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "be adopted by a family of", type: "adopted", hints: ["Name two animals", "Name two famous TV families"] },
-          { text: "be fully accepted into a secret society of", type: "society", hints: ["Name two boring professions", "Name two hobbies"] }, 
-          { text: "be raised from birth by a pack of", type: "raised", hints: ["Name two angry-looking animals", "Name two wild animals", "Name two cute animals", "Name two professions you dislike"] },
-          { text: "be fully accepted into a magic school of", type: "society", hints: ["Name two boring professions", "Name two phenomenons", "Name two things that make you feel bored"] }, 
+{ text: "be adopted by a family of", type: "adopted", hints: [{ text: "Animal", isPlural: true, brainstorm: ["Wolves", "Monkeys", "Penguins", "Bears"] }, { text: "Type of rich person", isPlural: true, brainstorm: ["Billionaires", "Aristocrats", "Celebrities", "Royals"] }] },          { text: "be fully accepted into a secret society of", type: "society", hints: [{ text: "Boring profession", isPlural: true, brainstorm: ["Accountants", "Data entry clerks", "Actuaries", "Auditors"] }, { text: "Exciting profession", isPlural: true, brainstorm: ["Astronauts", "Spies", "Stunt doubles", "Detectives"] }] }, 
+          { text: "be raised from birth by a pack of", type: "raised", hints: [{ text: "Angry-looking animal", isPlural: true, brainstorm: ["Rhinos", "Bulls", "Eagles", "Hippos"] }] },
+          { text: "be fully accepted into a magic school of", type: "society" }, 
         ]
       },
       {
@@ -319,8 +325,8 @@ export const questionsDatabase = [
       }
     ],
     hints: [
-      "Name two groups of people",
-      "Name two pets"
+      "Name a group of people (use plural)",
+      { text: "Pet", isPlural: true, brainstorm: ["Dogs", "Cats", "Parrots", "Hamsters"] }
     ]
   },
   {
@@ -330,13 +336,15 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "start a successful business that only sells", type: "business", hints: ["Name two cheap items", "Name two heavy objects", "Name two toys"] },
-          { text: "found a popular new cult based entirely on", type: "cult", hints: ["Name two popular drinks", "Name two fast food chains"] },
-          { text: "start a massive social movement focused on", type: "movement", hints: ["Name two minor inconveniences", "Name two common habits"] },
-          { text: "open a fancy restaurant where everything tastes like", type: "restaurant", hints: ["Name two things you find in a bathroom", "Name two things that smell bad"] },
-          { text: "host a daily podcast that obsessively discusses", type: "podcast", hints: ["Name two things old people complain about", "Name two popular snacks", "Name two countries", "Name two diseases"] },
-          { text: "form a popular musical band where all instruments are replaced by", type: "band", hints: ["Name two tools", "Name two office supplies"] },
-          { text: "start a feared criminal gang that exclusively steals", type: "gang", hints: ["Name two cheap household items", "Name two things you find in a kitchen"] }
+          { text: "start a successful business that only sells", type: "business", hints: [{ text: "Cheap item", isPlural: true, brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] }] },
+          { text: "found a popular new cult based entirely on the use of", type: "cult" },
+          { text: "start a massive social movement focused on", type: "movement", hints: [{ text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }] },
+          { text: "open a fancy restaurant where everything tastes like", type: "restaurant", hints: [{ text: "Thing you find in a bathroom", brainstorm: ["Soap", "Shampoo", "Toothpaste", "Toilet paper"] }] },
+          { text: "host a daily podcast that obsessively discusses", type: "podcast", hints: [{ text: "Disease", isPlural: true, brainstorm: ["Flus", "Colds", "Headaches", "Allergies"] }] },
+          { text: "run a massive YouTube channel dedicated to", type: "podcast" },
+          { text: "become the CEO of a company that produces", type: "business" },
+          { text: "form a popular musical band where all instruments are replaced by", type: "band", hints: [{ text: "Tool", isPlural: true, brainstorm: ["Hammers", "Saws", "Drills", "Wrenches"] }] },
+          { text: "start a feared criminal gang that exclusively steals", type: "gang", hints: [{ text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }] }
         ]
       },
       {
@@ -349,13 +357,53 @@ export const questionsDatabase = [
           { text: "and become incredibly famous, but everyone makes fun of you?" },
           { text: "but your entire family is forced to participate?" }, 
           { text: "and you have to bring it up in every single conversation?" },
-          { text: "but you secretly absolutely hate it?" }
+          { text: "but you secretly absolutely hate it?" },
+          { text: "?" }
         ]
       }
     ],
     hints: [
-      "Name two random things in your room",
-      "Name two random things of the same color"
+      { text: "Random thing in your room", isPlural: true, brainstorm: ["Books", "Cables", "Pillows", "Cups"] },
+      { text: "Office supply", isPlural: true, brainstorm: ["Staplers", "Pens", "Sticky notes", "Folders"] }
     ]
+  },
+  {
+    id: 11,
+    category: "time_travel",
+    text: "Would you rather",
+    fragments: [
+      {
+        options: [
+          { text: "travel 100 years into the past", type: "past", hints: [{ text: "Historical figure", brainstorm: ["Napoleon", "Cleopatra", "Lincoln", "Einstein"] }, { text: "Famous event", brainstorm: ["World War", "Moon Landing", "Titanic sinking", "Woodstock"] }] },
+          { text: "travel back to the 80s", type: "past", hints: [{ text: "80s Pop Culture Icon", brainstorm: ["Michael Jackson", "Madonna", "Pac-Man", "Darth Vader"] }, { text: "Famous 80s movie", brainstorm: ["Star Wars", "Back to the Future", "Ghostbusters", "Terminator"] }] },
+          { text: "travel 1000 years into the future", type: "future" },
+          { text: "pause time for one hour every day", type: "pause" },
+          { text: "go back to your childhood", type: "childhood" }
+        ]
+      },
+      {
+        options: [
+          { text: "and accidentally alter the fate of", requires: ["past"], type: "change" },
+          { text: "and discover that future humans worship", requires: ["future"], type: "worship" },
+          { text: "to secretly steal", requires: ["pause"], type: "steal", hints: [{ text: "Everyday object", isPlural: true, brainstorm: ["Smartphones", "Toasters", "Fidget spinners", "Vinyl records"] }] },
+          { text: "to secretly fart on", requires: ["pause"], type: "steal", hints: [{ text: "Everyday object", isPlural: true, brainstorm: ["Smartphones", "Toasters", "Fidget spinners", "Vinyl records"] }] },
+          { text: "but you can only talk to", requires: ["childhood"], type: "talk", hints: [{ text: "Family member", brainstorm: ["Grandma", "Grandpa", "Uncle", "Aunt"] }, { text: "Childhood hero", brainstorm: ["Santa Claus", "Spider-Man", "Batman", "Tooth Fairy"] }] }
+        ]
+      },
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]", type: "normal" }
+        ]
+      },
+      {
+        options: [
+          { text: "before returning to the present?", requires: ["change", "steal"] },
+          { text: "and they refuse to let you leave?", requires: ["worship"] },
+          { text: "until you grow up again?", requires: ["talk"] },
+          { text: "?" }
+        ]
+      }
+    ],
+    hints: [] // Глобальные подсказки убраны, чтобы они не конфликтовали с ветками
   }
 ];

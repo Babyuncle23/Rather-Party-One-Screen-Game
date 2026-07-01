@@ -30,20 +30,21 @@ export class ScreenController {
     }
   }
 
-  showPassScreen(player, onConfirm, note = "Only this player should look at the phone. Keep it hidden from others.") {
+showPassScreen(player, onConfirm, note = "Only this player should look at the phone. Keep it hidden from others.") {
     this.screens.pass.style.display = 'flex';
     const message = document.getElementById('pass-message');
     const btn = document.getElementById('pass-confirm-btn');
     
-    // Подсвечиваем имя главного получателя телефона классом для экрана передачи
-    const highlightedTargetName = `<span class="player-name-pass-fade">${player.name.toUpperCase()}</span>`;
+    // Подсвечиваем имя главного получателя вместе с его эмодзи
+    const highlightedTargetName = `<span class="player-name-pass-fade">${player.emoji} ${player.name.toUpperCase()}</span>`;
     
-    // Если в тексте записки note встречается имя отвечающего, подсвечиваем и его тоже
+    // Если в тексте записки note встречается имя отвечающего, подсвечиваем его и добавляем его эмодзи
     let cleanNote = note;
     if (window.game) {
-      const responderName = window.game.players[window.game.getResponderIndex()].name.toUpperCase();
+      const responder = window.game.players[window.game.getResponderIndex()];
+      const responderName = responder.name.toUpperCase();
       if (cleanNote.includes(responderName)) {
-        cleanNote = cleanNote.replace(responderName, `<span class="player-name-pass-fade">${responderName}</span>`);
+        cleanNote = cleanNote.replace(responderName, `<span class="player-name-pass-fade">${responder.emoji} ${responderName}</span>`);
       }
     }
 

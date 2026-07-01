@@ -10,6 +10,7 @@
       --text: #e8e9f1; --muted: #a5a1c8;
       --accent: #8c6cff; --warning: #ffd56b;
       --danger: #ff6f7a; --info: #37ffe2;
+      --comment: #bd93f9;
     }
     body {
       background: var(--bg); color: var(--text);
@@ -37,7 +38,8 @@
       transition: border-color 0.2s ease;
     }
     .q-text { font-size: 18px; font-weight: 600; line-height: 1.5; margin-bottom: 10px; }
-    .q-hints { color: var(--warning); font-size: 14px; margin-bottom: 16px; font-weight: 600; }
+    .q-hints { color: var(--warning); font-size: 14px; margin-bottom: 8px; font-weight: 600; }
+    .q-brainstorm { color: #8be9fd; font-size: 13px; margin-bottom: 16px; line-height: 1.4; }
     
     .eval-controls {
       display: flex; gap: 8px; flex-wrap: wrap;
@@ -55,12 +57,13 @@
       font-size: 13px; font-weight: bold; cursor: pointer; color: #111;
     }
     .btn-eval:active { transform: scale(0.95); }
-    .btn-funny { background: #50fa7b; }         /* Забавно */
-    .btn-confusing { background: #ffb86c; }     /* Сбивает с толку */
-    .btn-mismatch { background: #ff79c6; color: #fff; } /* Не подходит к вопросу */
-    .btn-boring { background: #8ba4b8; }        /* Скучно */
-    .btn-specific { background: #8be9fd; }      /* Специфично */
-    .btn-inappropriate { background: #ff5555; color: #fff; } /* Неприемлемо */
+    .btn-funny { background: #50fa7b; }         
+    .btn-confusing { background: #ffb86c; }     
+    .btn-mismatch { background: #ff79c6; color: #fff; } 
+    .btn-boring { background: #8ba4b8; }        
+    .btn-specific { background: #8be9fd; }      
+    .btn-inappropriate { background: #ff5555; color: #fff; } 
+    .btn-comment { background: var(--comment); color: #fff; }
     
     .tags-container {
       margin-top: 10px; display: flex; flex-direction: column; gap: 6px;
@@ -83,6 +86,7 @@
     .tag-boring { border-color: #8ba4b8; }
     .tag-specific { border-color: #8be9fd; }
     .tag-inappropriate { border-color: #ff5555; }
+    .tag-comment { border-color: var(--comment); }
 
     /* Report Modal */
     #report-modal {
@@ -120,14 +124,13 @@
     Вы также можете вписать свой комментарий перед нажатием кнопки оценки!
   </div>
 
-  <div class="top-controls">
+  <div class="top-controls {">
     <button class="btn-main btn-gen" id="generate-btn">🔄 Generate 10 Questions</button>
     <button class="btn-main btn-report" id="report-btn">📋 Show Report (0)</button>
   </div>
   
   <div id="output"></div>
 
-  <!-- Модальное окно отчета -->
   <div id="report-modal">
     <div class="modal-content">
       <h2 style="margin-top: 0;">Отчет (автоматически сохранен):</h2>
@@ -210,7 +213,7 @@
       return {
         category: q.category,
         text: str.trim(),
-        hints: finalHints.join(" | ")
+        hintsRaw: finalHints // Сохраняем исходные объекты подсказок для рендеринга brainstorm
       };
     }
 
@@ -266,17 +269,14 @@
 
     // Глобальная функция удаления тега
     window.removeTag = function(logId) {
-      // Удаляем из массива и обновляем память
       window.qaReportLog = window.qaReportLog.filter(log => log.id !== logId);
       localStorage.setItem('qaReportLog', JSON.stringify(window.qaReportLog));
       updateReportCounter();
       
-      // Удаляем элемент интерфейса
       const badge = document.getElementById(`badge-${logId}`);
       if (badge) {
         const card = badge.closest('.q-card');
         badge.remove();
-        // Если тегов на карточке больше нет, возвращаем обычный бордер
         if (card.querySelectorAll('.tag-badge').length === 0) {
           card.style.borderColor = "rgba(255,255,255,0.08)";
         }
@@ -290,13 +290,37 @@
       
       for(let i = 0; i < 10; i++) {
         const data = buildRandomQuestion();
+        
+        let hintsTextArray = [];
+        let hintsHtmlArray = [];
+        let brainstormHtmlArray = [];
+
+        data.hintsRaw.forEach(h => {
+          let text = typeof h === 'object' ? h.text : h;
+          if (typeof h === 'object' && h.isPlural) text += " (plural)";
+          
+          hintsHtmlArray.push(text);
+          hintsTextArray.push(text);
+          
+          if (typeof h === 'object' && Array.isArray(h.brainstorm)) {
+            brainstormHtmlArray.push(`<strong>${h.text}:</strong> ${h.brainstorm.join(', ')}`);
+            hintsTextArray.push(`[Brainstorm for ${h.text}: ${h.brainstorm.join(', ')}]`);
+          }
+        });
+
+        const reportHintsString = hintsTextArray.join(" | ");
+        const displayHintsHtml = hintsHtmlArray.join(" | ") || "No hints available";
+        const displayBrainstormHtml = brainstormHtmlArray.join("<br>") || "";
+
         out.innerHTML += `
-          <div class="q-card" data-q="${data.text}" data-hints="${data.hints}">
+          <div class="q-card" data-q="${data.text}" data-hints="${reportHintsString}">
             <div class="q-text">${data.text}</div>
-            <div class="q-hints">💡 Hints: ${data.hints}</div>
+            <div class="q-hints">💡 Hints: ${displayHintsHtml}</div>
+            ${displayBrainstormHtml ? `<div class="q-brainstorm">🧠 Brainstorm Ideas:<br>${displayBrainstormHtml}</div>` : ''}
             
             <div class="eval-controls">
-              <input type="text" class="comment-input" placeholder="Доп. комментарий (необязательно)..." onmousedown="event.stopPropagation()">
+              <input type="text" class="comment-input" placeholder="Доп. комментарий (выделите текст на карточке для привязки к части фразы)..." onmousedown="event.stopPropagation()">
+              <button class="btn-eval btn-comment" onmousedown="event.preventDefault(); window.tagIssue('comment', 'Комментарий', this)">💬 Комментарий</button>
               <button class="btn-eval btn-funny" onmousedown="event.preventDefault(); window.tagIssue('funny', 'Забавно', this)">Забавно</button>
               <button class="btn-eval btn-mismatch" onmousedown="event.preventDefault(); window.tagIssue('mismatch', 'Не подходит к вопросу', this)">Не подходит</button>
               <button class="btn-eval btn-confusing" onmousedown="event.preventDefault(); window.tagIssue('confusing', 'Сбивает с толку', this)">Сбивает с толку</button>
@@ -326,7 +350,7 @@
           if (log.comment) markdown += `**Ваш комментарий:** ${log.comment}\\n`;
           markdown += `*Полный вопрос:* ${log.question}\\n`;
           markdown += `*Подсказки:* ${log.hints}\\n`;
-          markdown += `---\\n\\n`;
+          markdown += `-- Rhine Party Matcher Item ---\\n\\n`;
         });
         textarea.value = markdown;
       }

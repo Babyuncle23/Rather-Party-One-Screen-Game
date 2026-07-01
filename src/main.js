@@ -3,6 +3,32 @@ import { WordShifter } from './core/WordShifter.js';
 import { ScreenController } from './ui/ScreenController.js';
 import { AudioManager } from './audio/AudioManager.js';
 import { SIMPLE_COLORS, SIMPLE_MATERIALS, SIMPLE_MOODS, SIMPLE_ERAS, SIMPLE_COUNTRIES, SIMPLE_CITIES, SIMPLE_FOODS } from './data/nerfWords.js';
+
+const PLAYER_EMOJIS = [
+  "🦊", "🐼", "🐸", "🐱", "🐶", "🐰", "🐯", "🐨", "🐷", "🐮", "🐵", "🐙", "🐢", "🦕", 
+  "🦋", "🌸", "🌻", "🍄", "🍉", "🍓", "🥑", "🍕", "🍩", "🎲", "👾", "👻", "👽", "🤖", 
+  "🤠", "😎", "🤓", "🥳", "🥸", "🤡", "🦄", "🐧", "🦉", "🐝", "🦦", "🦥"
+];
+// Словарь для озвучки названий эмодзи
+const EMOJI_NAMES = {
+  "🦊": "Fox", "🐼": "Panda", "🐸": "Frog", "🐱": "Cat", "🐶": "Dog", "🐰": "Bunny", 
+  "🐯": "Tiger", "🐨": "Koala", "🐷": "Pig", "🐮": "Cow", "🐵": "Monkey", "🐙": "Octopus", 
+  "🐢": "Turtle", "🦕": "Dinosaur", "🦋": "Butterfly", "🌸": "Flower", "🌻": "Sunflower", 
+  "🍄": "Mushroom", "🍉": "Watermelon", "🍓": "Strawberry", "🥑": "Avocado", "🍕": "Pizza", 
+  "🍩": "Donut", "🎲": "Dice", "👾": "Alien", "👻": "Ghost", "👽": "Alien", "🤖": "Robot", 
+  "🤠": "Cowboy", "😎": "Cool guy", "🤓": "Nerd", "🥳": "Party face", "🥸": "Disguise", 
+  "🤡": "Clown", "🦄": "Unicorn", "🐧": "Penguin", "🦉": "Owl", "🐝": "Bee", "🦦": "Otter", "🦥": "Sloth"
+};
+
+// Функция-обертка для передачи телефона с озвучкой
+function passPhoneWithSpeech(player, onConfirm, note) {
+  const emojiName = EMOJI_NAMES[player.emoji] || "";
+  // Озвучиваем: "Pass the phone to Fox Alex"
+  if (audioManager) {
+    audioManager.speak(`Pass the phone to ${emojiName} ${player.name}`);
+  }
+  screens.showPassScreen(player, onConfirm, note);
+}
 let game = null;
 let screens = null;
 let audioManager = null;
@@ -21,6 +47,7 @@ let currentGuesserIndex = null;
 const FIXED_REWARD = 50; // Each correct answer is worth 50 points
 let revealCount = 0; // Track: 0 = no reveals, 1 = one reveal used, 2 = two reveals used
 let currentCardIndex = 0;
+let fragmentsHistory = [];
 
 let temporaryPlayersList = [];
 let currentFragmentsState = [];
@@ -56,14 +83,18 @@ function setupInitialEventListeners() {
   const singleInput = document.getElementById('single-player-input');
   const startGameBtn = document.getElementById('start-game-btn');
 
-  addPlayerBtn.onclick = () => {
+addPlayerBtn.onclick = () => {
     const name = singleInput.value.trim();
     if (name.length > 0) {
-      if (temporaryPlayersList.includes(name.toUpperCase())) {
+      // Ищем дубликаты теперь по ключу name
+      if (temporaryPlayersList.some(p => p.name === name.toUpperCase())) {
         alert("This name is already taken!");
         return;
       }
-      temporaryPlayersList.push(name.toUpperCase());
+      
+      const randomEmoji = PLAYER_EMOJIS[Math.floor(Math.random() * PLAYER_EMOJIS.length)];
+      temporaryPlayersList.push({ name: name.toUpperCase(), emoji: randomEmoji });
+      
       singleInput.value = "";
       renderPlayerBoxes();
     }
@@ -90,7 +121,7 @@ function setupInitialEventListeners() {
     const safetyTip = document.getElementById('safety-tip-text');
     if (safetyTip) safetyTip.innerText = "Open without showing other players if needed.";
 
-    screens.showPassScreen(
+passPhoneWithSpeech(
       game.players[game.pickerIndex],
       initRound,
       "This is your call only. Read the question and choose a prompt."
@@ -101,14 +132,31 @@ function setupInitialEventListeners() {
 function renderPlayerBoxes() {
   const container = document.getElementById('players-boxes-container');
   container.innerHTML = "";
-  temporaryPlayersList.forEach((name, index) => {
+  temporaryPlayersList.forEach((player, index) => {
     const box = document.createElement('div');
     box.className = "player-box";
-    box.innerHTML = `<span>${name}</span><button class="delete-box-btn">✕</button>`;
+    box.innerHTML = `
+      <div class="player-box-left">
+        <div class="player-avatar" title="Tap to reroll emoji">${player.emoji}</div>
+        <span>${player.name}</span>
+      </div>
+      <button class="delete-box-btn">✕</button>
+    `;
+    
+    // Удаление
     box.querySelector('.delete-box-btn').onclick = () => {
       temporaryPlayersList.splice(index, 1);
       renderPlayerBoxes();
     };
+    
+    // Реролл смайлика по клику
+    box.querySelector('.player-avatar').onclick = (e) => {
+      e.stopPropagation();
+      player.emoji = PLAYER_EMOJIS[Math.floor(Math.random() * PLAYER_EMOJIS.length)];
+      if (audioManager) audioManager.play('click'); // Звук при смене
+      renderPlayerBoxes();
+    };
+    
     container.appendChild(box);
   });
   updateHelpTargetText();
@@ -411,8 +459,8 @@ function updateHelpTargetText() {
     helpResponderName.innerText = game.players[game.getResponderIndex()].name;
   } else if (game && game.players.length > 2) {
     helpResponderName.innerText = 'the next player in order';
-  } else if (temporaryPlayersList.length === 2) {
-    helpResponderName.innerText = temporaryPlayersList[1] || 'the other player';
+} else if (temporaryPlayersList.length === 2) {
+    helpResponderName.innerText = temporaryPlayersList[1].name || 'the other player';
   } else {
     helpResponderName.innerText = 'the next player';
   }
@@ -453,12 +501,17 @@ function getValidFragmentOptions(fragIndex) {
 }
 
 function randomizeCurrentFragments() {
+  // Если у нас уже есть какое-то состояние, сохраняем его копию в историю перед рероллом
+  if (currentFragmentsState && currentFragmentsState.length > 0) {
+    fragmentsHistory.push([...currentFragmentsState]);
+    const undoBtn = document.getElementById('undo-options-btn');
+    if (undoBtn) undoBtn.style.display = 'inline-block';
+  }
+
   currentFragmentsState = [];
   currentQuestion.fragments.forEach((frag, i) => {
     const validOptions = getValidFragmentOptions(i);
-    // Выбираем случайную опцию из доступных
     const randIdx = Math.floor(Math.random() * validOptions.length);
-    // Сохраняем её глобальный индекс
     currentFragmentsState.push(frag.options.indexOf(validOptions[randIdx]));
   });
   renderInteractiveQuestion();
@@ -497,8 +550,23 @@ function updatePickerHints() {
   const randomIndex2 = Math.floor(Math.random() * availableHints.length);
   const hint2 = availableHints[randomIndex2];
   
-  btn1.innerText = typeof hint1 === 'object' ? hint1.text : hint1;
-  btn2.innerText = typeof hint2 === 'object' ? hint2.text : hint2;
+const formatHintText = (hint) => {
+    let text = typeof hint === 'object' ? hint.text : hint;
+    
+    // Если текст не начинается со слова "Name", добавляем инструкцию
+    if (!text.toLowerCase().startsWith('name')) {
+      text = `Name two: ${text}`;
+    }
+    
+    if (typeof hint === 'object' && hint.isPlural) {
+      text += " (plural)";
+    }
+    
+    return text;
+  };
+  
+  btn1.innerText = formatHintText(hint1);
+  btn2.innerText = formatHintText(hint2);
   
   btn1.onclick = () => { isCustomHintActive = false; selectHint(hint1); };
   btn2.onclick = () => { isCustomHintActive = false; selectHint(hint2); };
@@ -541,8 +609,26 @@ function initRound() {
       roundScoresSnapshot = game.players.map(p => ({ id: p.id, gold: p.gold }));
     }
 
-    currentQuestion = game.getRandomQuestion();
+currentQuestion = game.getRandomQuestion();
     
+    // Очищаем историю рероллов опций при смене вопроса или начале нового раунда
+    fragmentsHistory = [];
+    currentFragmentsState = []; // 🟢 ДОБАВЛЕНО: сброс индексов от прошлого раунда
+    const undoBtn = document.getElementById('undo-options-btn');
+    if (undoBtn) {
+      undoBtn.style.display = 'none';
+      undoBtn.onclick = () => {
+        if (fragmentsHistory.length > 0) {
+          // Достаем предыдущее состояние
+          currentFragmentsState = fragmentsHistory.pop();
+          renderInteractiveQuestion();
+          audioManager.play('click');
+          
+          // Скрываем кнопку, если история закончилась
+          if (fragmentsHistory.length === 0) undoBtn.style.display = 'none';
+        }
+      };
+    }
 
     // 2. Сразу генерируем случайную вариацию (вместо старого цикла forEach)
     randomizeCurrentFragments();
@@ -550,8 +636,9 @@ function initRound() {
     const picker = game.players[game.pickerIndex];
     screens.switchScreen('picker');
     
-    document.getElementById('picker-name').innerText = picker.name;
-    document.getElementById('responder-target-name').innerText = game.players[game.getResponderIndex()].name;
+document.getElementById('picker-name').innerText = `${picker.emoji} ${picker.name}`;
+    const responder = game.players[game.getResponderIndex()];
+    document.getElementById('responder-target-name').innerText = `${responder.emoji} ${responder.name}`;
     
     updateHelpTargetText();
 
@@ -571,6 +658,12 @@ const rerollBtn = document.getElementById('reroll-question-btn');
       rerollBtn.onclick = () => {
         game.shuffledQuestions.unshift(currentQuestion);
         currentQuestion = game.getRandomQuestion();
+        
+        // 🟢 ДОБАВЛЕНО: Полностью обнуляем память перед генерацией вариантов для НОВОГО вопроса
+        fragmentsHistory = [];
+        currentFragmentsState = []; 
+        const undoBtn = document.getElementById('undo-options-btn');
+        if (undoBtn) undoBtn.style.display = 'none';
         
         randomizeCurrentFragments();
         updatePickerHints();
@@ -598,9 +691,15 @@ const rerollBtn = document.getElementById('reroll-question-btn');
 function selectHint(hint) {
   try {
     currentHintObject = hint;
-    currentHint = typeof hint === 'object' ? hint.text : hint;
+    
+    // Формируем финальную строку подсказки с учетом isPlural
+    let hintStr = typeof hint === 'object' ? hint.text : hint;
+    if (typeof hint === 'object' && hint.isPlural) {
+      hintStr += " (plural)";
+    }
+    currentHint = hintStr;
     const responder = game.players[game.getResponderIndex()];
-    screens.showPassScreen(
+passPhoneWithSpeech(
       responder,
       startResponderPhase,
       "Only the next player should look at the phone. Keep it hidden from others."
@@ -615,7 +714,7 @@ function startResponderPhase() {
     screens.switchScreen('responder');
     const responder = game.players[game.getResponderIndex()];
     
-    document.getElementById('responder-name').innerText = responder.name;
+    document.getElementById('responder-name').innerText = `${responder.emoji} ${responder.name}`;
     document.getElementById('displayed-hint').innerText = currentHint.toUpperCase();
 
     // Логика контекстной компактной подсказки со спойлером
@@ -815,10 +914,11 @@ function setupNextGuesser() {
   try {
     if (remainingGuessers.length === 0) {
       game.nextTurn();
-      if (game.isGameOver()) {
+if (game.isGameOver()) {
         showFinalScores();
       } else {
-        screens.showPassScreen(game.players[game.pickerIndex], initRound);
+        // БЫЛО: screens.showPassScreen(game.players[game.pickerIndex], initRound);
+        passPhoneWithSpeech(game.players[game.pickerIndex], initRound);
       }
       return;
     }
@@ -834,7 +934,7 @@ function setupNextGuesser() {
     // Получаем имя игрока, который придумывал слова
     const responderName = game.players[game.getResponderIndex()].name;
 
-    screens.showPassScreen(
+passPhoneWithSpeech(
       game.players[currentGuesserIndex],
       startGuesserPhase,
       `Only this player should hold the phone, but ${responderName} can watch the guessing process!`
@@ -867,9 +967,10 @@ function startGuesserPhase() {
     // Старый блок устной подсказки полностью удален отсюда, управление передано в updateGuesserUI
     screens.switchScreen('guesser');
     
-    const nameEl = document.getElementById('guesser-name');
+const nameEl = document.getElementById('guesser-name');
     if (nameEl && game && typeof currentGuesserIndex === 'number') {
-      nameEl.innerText = game.players[currentGuesserIndex].name;
+      const guesser = game.players[currentGuesserIndex];
+      nameEl.innerText = `${guesser.emoji} ${guesser.name}`;
     }
     
     const btn1 = document.getElementById('guess-word-1');
@@ -1149,13 +1250,15 @@ function makeGuess(word) {
     const goldChange = isCorrect ? `+${FIXED_REWARD}` : "0";
     const finalWallet = guesser.gold;
 
-    const alertMessage = 
+const alertMessage = 
       `${statusIcon}\n` +
       `You earned: ${pointsEarned}\n` +
       `Score: ${goldBefore} → ${finalWallet} points (${goldChange})\n\n` +
       `--- CHOICE SCHEME ---\n` +
       `${cleanSentence}\n\n` +
       `• Your guess was: "${word}"`;
+
+
 
     alert(alertMessage);
 
@@ -1172,10 +1275,19 @@ function showFinalScores() {
   try {
     screens.switchScreen('final');
     
-    // 1. Рендерим таблицу лидеров
+// 1. Рендерим таблицу лидеров со смайликами
     const leaderboard = [...game.players].sort((a, b) => (b.gold || 0) - (a.gold || 0));
     document.getElementById('final-scores-list').innerHTML = leaderboard
-      .map(p => `<li><strong>${p.name}</strong>: ${p.gold || 0} points</li>`).join('');
+      .map(p => `<li><strong>${p.emoji} ${p.name}</strong>: ${p.gold || 0} points</li>`).join('');
+
+    if (audioManager) {
+      let resultText = "Game Over! ";
+      leaderboard.forEach((p, index) => {
+        const emojiName = EMOJI_NAMES[p.emoji] || "";
+        resultText += `Number ${index + 1}: ${emojiName} ${p.name}, ${p.gold || 0} points. `;
+      });
+      audioManager.speak(resultText);
+    }
 
     // 2. Рендерим кнопки выбора игрока и одно окно истории
     const playerList = document.getElementById('history-player-list');
@@ -1183,11 +1295,11 @@ function showFinalScores() {
 
     playerList.innerHTML = game.players.map((player, index) => `
       <button class="btn btn-small history-player-btn" data-player="${player.name}" data-index="${index}">
-        ${player.name}
+        ${player.emoji} ${player.name}
       </button>
     `).join('');
 
-    const renderHistoryForPlayer = (playerName) => {
+const renderHistoryForPlayer = (playerName) => {
       const rows = game.history
         .filter((h) => h.responder === playerName)
         .map((h) => `
@@ -1209,6 +1321,20 @@ function showFinalScores() {
         </div>
       `;
     };
+
+    const buttons = playerList.querySelectorAll('.history-player-btn');
+    buttons.forEach((button, index) => {
+      button.onclick = () => {
+        buttons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        renderHistoryForPlayer(button.dataset.player);
+      };
+    });
+
+    if (buttons.length > 0) {
+      buttons[0].classList.add('active');
+      renderHistoryForPlayer(buttons[0].dataset.player);
+    }
 
     const buttons = playerList.querySelectorAll('.history-player-btn');
     buttons.forEach((button, index) => {

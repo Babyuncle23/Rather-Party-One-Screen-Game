@@ -943,3 +943,105 @@ p {
   margin-bottom: 8px;
 }
 
+.creator-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(140, 108, 255, 0.25);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+.creator-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 22px;
+  
+  /* Максимально абсурдный шрифт */
+  font-family: "Comic Sans MS", "Comic Sans", cursive, sans-serif !important;
+  font-size: 15px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #fff;
+  
+  /* Агрессивная переливающаяся радуга */
+  background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
+  background-size: 400% 400%;
+  animation: rainbowBadge 3s ease infinite;
+  
+  /* 3D Объем, белая рамка и глубокие тени */
+  border: 3px solid #ffffff;
+  border-radius: 50px;
+  box-shadow: 
+    0 8px 0px #8c6cff, /* Толстая 3D-основа */
+    0 15px 20px rgba(0,0,0,0.6), /* Внешняя тень */
+    inset 0 4px 10px rgba(255,255,255,0.7); /* Внутренний блик */
+    
+  /* Жирная черная обводка текста */
+  text-shadow: 
+    2px 2px 0 #000, 
+    -2px -2px 0 #000, 
+    2px -2px 0 #000, 
+    -2px 2px 0 #000,
+    0 4px 0 #000;
+    
+  /* Слегка наклонено для комичности */
+  transform: rotate(-3deg);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin: 10px 0 20px 0;
+  cursor: pointer;
+}
+
+.creator-badge:hover {
+  transform: rotate(4deg) scale(1.1);
+}
+
+
+/* Анимация радуги */
+@keyframes rainbowBadge {
+    0% { background-position: 0% 82%; }
+    50% { background-position: 100% 19%; }
+    100% { background-position: 0% 82%; }
+}
+
+/* --- СТИЛИ ДЛЯ АВАТАРОК ИГРОКОВ --- */
+.player-box-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.player-avatar {
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.2s ease;
+  user-select: none;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.player-avatar:hover {
+  transform: scale(1.15) rotate(10deg);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.player-avatar:active {
+  transform: scale(0.9);
+}

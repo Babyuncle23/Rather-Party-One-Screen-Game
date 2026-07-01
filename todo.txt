@@ -1,0 +1,4 @@
+make testing for third step
+update instruction
+add voicing
+генерация аватаров

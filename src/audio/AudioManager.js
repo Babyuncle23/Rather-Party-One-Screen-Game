@@ -230,4 +230,22 @@ export class AudioManager {
       console.debug("Instant audio combo failed:", err.message);
     }
   }
+  /**
+   * Озвучивание текста (Text-to-Speech)
+   * @param {string} text - Текст для озвучки
+   */
+  speak(text) {
+    if (!this.enabled || !window.speechSynthesis) return;
+    
+    // Сбрасываем предыдущую фразу, чтобы они не наслаивались
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.volume = this.volume;
+    utterance.lang = 'en-US'; // Язык озвучки (игра на английском)
+    utterance.rate = 1.0; // Нормальная скорость чтения
+    
+    window.speechSynthesis.speak(utterance);
+  }
 }
+

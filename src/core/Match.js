@@ -1,9 +1,13 @@
 import { questionsDatabase } from '../data/questions.js';
 
 export class Match {
-  constructor(playerNames, totalRounds) {
-    // Each player starts with 50 points instead of 0
-    this.players = playerNames.map((name, index) => ({ id: index + 1, name: name.toUpperCase(), gold: 50 }));
+constructor(playersData, totalRounds) {
+    // Теперь принимаем объекты с эмодзи или обычные строки (для совместимости)
+    this.players = playersData.map((data, index) => {
+      const name = typeof data === 'string' ? data : data.name;
+      const emoji = typeof data === 'string' ? '👤' : data.emoji;
+      return { id: index + 1, name: name.toUpperCase(), emoji: emoji, gold: 50 };
+    });
     this.totalRounds = totalRounds;
     this.currentRound = 1;
     this.pickerIndex = 0; 
