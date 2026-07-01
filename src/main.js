@@ -34,7 +34,7 @@ const EMOJI_NAMES = {
 
   "🍩": "Donut", "🎲": "Dice", "👾": "Alien", "👻": "Ghost", "👽": "Alien", "🤖": "Robot",
 
-  "🤠": "Cowboy", "😎": "Cool guy", "🤓": "Nerd", "🥳": "Party face", "🥸": "Disguise",
+  "🤠": "Cowboy face", "😎": "Cool face", "🤓": "Nerdy", "🥳": "Party face", "🥸": "Disguise",
 
   "🤡": "Clown", "🦄": "Unicorn", "🐧": "Penguin", "🦉": "Owl", "🐝": "Bee", "🦦": "Otter", "🦥": "Sloth"
 
