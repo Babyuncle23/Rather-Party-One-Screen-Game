@@ -36,7 +36,8 @@ showPassScreen(player, onConfirm, note = "Only this player should look at the ph
     const btn = document.getElementById('pass-confirm-btn');
     
     // Подсвечиваем имя главного получателя вместе с его эмодзи
-    const highlightedTargetName = `<span class="player-name-pass-fade">${player.emoji} ${player.name.toUpperCase()}</span>`;
+    // Подсвечиваем имя главного получателя телефона вместе с его эмодзи
+    const highlightedTargetName = `<span class="player-name-pass-fade">${player.emoji || ''} ${player.name.toUpperCase()}</span>`;
     
     // Если в тексте записки note встречается имя отвечающего, подсвечиваем его и добавляем его эмодзи
     let cleanNote = note;

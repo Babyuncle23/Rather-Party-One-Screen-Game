@@ -1,12 +1,11 @@
 import { questionsDatabase } from '../data/questions.js';
 
 export class Match {
-constructor(playersData, totalRounds) {
-    // Теперь принимаем объекты с эмодзи или обычные строки (для совместимости)
-    this.players = playersData.map((data, index) => {
-      const name = typeof data === 'string' ? data : data.name;
-      const emoji = typeof data === 'string' ? '👤' : data.emoji;
-      return { id: index + 1, name: name.toUpperCase(), emoji: emoji, gold: 50 };
+constructor(playerNames, totalRounds) {
+    this.players = playerNames.map((data, index) => {
+      const playerName = typeof data === 'string' ? data : data.name;
+      const playerEmoji = typeof data === 'string' ? '' : data.emoji;
+      return { id: index + 1, name: playerName.toUpperCase(), emoji: playerEmoji, gold: 50 };
     });
     this.totalRounds = totalRounds;
     this.currentRound = 1;
