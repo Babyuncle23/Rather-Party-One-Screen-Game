@@ -12,71 +12,63 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "on a desert island", requires: ["stranded", "left"], type: "isolated" },
-          { text: "in the woods alone", requires: ["stranded", "left"], type: "isolated" },
-          { text: "in a completely unfamiliar city", requires: ["left"], type: "urban" },
-          { text: "on a space station", requires: ["stranded"], type: "isolated" }
+          { text: "on a desert island", requires: ["stranded", "left"], type: "isolated", hints: ["Name two famous singers", "Name two annoying people", "Name two youtubers"] },
+          { text: "in the woods alone", requires: ["stranded", "left"], type: "isolated", hints: ["Name two fictional characters", "Name two of your favorite artists"] },
+          { text: "in a completely unfamiliar city", requires: ["left"], type: "urban", hints: ["Name two famous politicians", "Name two types of tourists"] },
         ]
       },
       {
         options: [
-          { text: "for the rest of your life" },
+          { text: "for the rest of your life", hints: ["Name two famous actors", "Name two historical figures"] },
           { text: "for 5 years" },
           { text: "for 10 years" },
-          { text: "for one day" },
+          { text: "for one day", hints: ["Name two people you trust", "Name two random celebrities"] },
           { text: "for one week" },
           { text: "forever" }
         ]
       },
       {
         options: [
-          { text: "accompanied by ___ or by ___?" }
+          { text: "accompanied by [ ... ] or by [ ... ]?", hints: ["Name two people playing this game", "Name two people you dislike"] }
         ]
       }
     ],
     hints: [
-      "Name two celebrities",
-      "Name two people who would be helpful in a crisis",
-      "Name two weird travel companions",
-      "Name two youtubers"
+      "Name two cartoon characters",
+      "Name two famous people"
     ]
   },
   {
     id: 2,
-    category: "gaming",
+    category: "activities",
     text: "Would you rather",
     fragments: [
       {
         options: [
-          { text: "spend 1000 hours" },
-          { text: "compete in a world tournament" },
-          { text: "dedicate your entire future" },
-          { text: "sacrifice all your free time" },
-          { text: "spend all your weekends" },
-          { text: "be cursed to only ever engage in" }
+          { text: "spend 1000 hours", type: "time", hints: ["Name two popular video games", "Name two boring chores"] },
+          { text: "enter a competition for", type: "compete", hints: ["Name two board games", "Name two sports"] },
+          { text: "dedicate your entire future to", type: "future" },
+          { text: "sacrifice all your free time to", type: "sacrifice", hints: ["Name two annoying habits", "Name two basic human activities"] },
+          { text: "spend all your weekends", type: "weekends" },
+          { text: "be cursed to spend the rest of your life", type: "curse" }
         ]
       },
       {
         options: [
-          { text: "playing", requires: ["spend 1000 hours", "sacrifice all your free time", "spend all your weekends"] },
-          { text: "mastering", requires: ["compete in a world tournament", "dedicate your entire future"] },
-          { text: "watching", requires: ["spend 1000 hours", "spend all your weekends"] },
-          { text: "obsessively analyzing", requires: ["dedicate your entire future"] },
-          { text: "aggressively teaching", requires: ["be cursed to only ever engage in"] }
+          { text: "playing", requires: ["time", "compete", "sacrifice", "weekends", "curse"], hints: ["Name two games you play on a phone", "Name two party games"] },
+          { text: "mastering", requires: ["future", "sacrifice"], hints: ["Name two musical instruments", "Name two creative hobbies"] },
+          { text: "watching", requires: ["time", "weekends"], hints: ["Name two popular TV shows", "Name two meme videos"] },
+          { text: "obsessively analyzing", requires: ["future", "curse"], hints: ["Name two weird rumors", "Name two school subjects"] },
+          { text: "aggressively teaching people about", requires: ["curse"], hints: ["Name two conspiracy theories", "Name two random facts"] }
         ]
       },
       {
         options: [
-          { text: "___ or ___?" }
+          { text: "[ ... ] or [ ... ]?" }
         ]
       }
     ],
-    hints: [
-      "Name two video games",
-      "Name two bizarre activities",
-      "Name two board games",
-      "Name two outdoor activities"
-    ]
+    hints: [] // Очищено, чтобы избежать конфликтов с глаголами (например, "смотреть беспорядок")
   },
   {
     id: 3,
@@ -85,34 +77,33 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "have a pet", type: "possession" },
-          { text: "be chased by a wild", type: "threat" },
-          { text: "be adopted by a", type: "threat" },
-          { text: "be forced to live with a", type: "possession" }
+          { text: "have a pet", type: "possession", hints: ["Name two chubby animals", "Name two farm animals"] },
+          { text: "be chased by a", type: "threat_run", hints: ["Name two fast animals", "Name two birds"] },
+          { text: "be trapped alone with a", type: "threat_close", hints: ["Name two very loud animals", "Name two angry-looking animals"] },
+          { text: "have to play with a", type: "threat_close", hints: ["Name two dangerous animals"] }
         ]
       },
       {
         options: [
-          { text: "for the next ten years", requires: ["possession"] },
-          { text: "through a dark forest", requires: ["threat"] },
-          { text: "in an empty mall", requires: ["threat"] },
-          { text: "in your own bedroom", requires: ["possession", "threat"] },
-          { text: "on a deserted beach", requires: ["possession", "threat"] }
+          { text: "[ ... ] or [ ... ]", type: "normal" },
+          { text: "giant [ ... ] or giant [ ... ]", type: "giant", hints: ["Name two common insects", "Name two house pets"] },
+          { text: "tiny [ ... ] or tiny [ ... ]", type: "tiny", hints: ["Name two heavy animals", "Name two animals that swim"] },
+          { text: "invisible [ ... ] or invisible [ ... ]", type: "invisible", hints: ["Name two famous musicians", "Name two animals that bite"] }
         ]
       },
       {
         options: [
-          { text: "that is a normal ___ or normal ___?" },
-          { text: "that is a giant ___ or giant ___?" },
-          { text: "that is a tiny ___ or tiny ___?" },
-          { text: "that is an invisible ___ or invisible ___?" }
+          { text: "for the next ten years?", requires: ["possession"] },
+          { text: "in a tiny studio apartment?", requires: ["possession", "threat_run", "threat_close"], hints: ["Name two huge animals", "Name two fluffy animals"] },
+          { text: "in a dark forest?", requires: ["threat_run", "threat_close"], hints: ["Name two nocturnal animals"] },
+          { text: "in an empty mall?", requires: ["threat_run", "threat_close"], hints: ["Name two animals you see at the zoo"] },
+          { text: "inside a small elevator?", requires: ["threat_close"] } 
         ]
       }
     ],
     hints: [
-      "Name two animals",
-      "Name two mythical creatures",
-      "Name two celebrities",
+      "Name two wild animals",
+      "Name two cute animals",
       "Name two dog breeds"
     ]
   },
@@ -123,37 +114,40 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "instantly become a world-class expert in", type: "positive" },
-          { text: "permanently lose the ability to understand", type: "negative" }
+          { 
+            text: "instantly become a world-class expert in", 
+            type: "positive", 
+            hints: [
+              "Name two school subjects",
+              "Name two foreign languages",
+              "Name two high-paying jobs",
+              "Name two martial arts"
+            ] 
+          },
         ]
       },
       {
         options: [
-          { text: "___ or ___" }
+          { text: "[ ... ] or [ ... ]" }
         ]
       },
       {
         options: [
           { text: "but only when you are", type: "condition" },
-          { text: "while desperately trying to impress", type: "context" }
+          { text: "but only when you are trying to impress", type: "context" }
         ]
       },
       {
         options: [
-          { text: "a crush at a party", requires: ["context"] },
-          { text: "your boss at a meeting", requires: ["context"] },
-          { text: "your parents at dinner", requires: ["context"] },
-          { text: "completely hungover", requires: ["condition"] },
-          { text: "having a bad hair day", requires: ["condition"] },
-          { text: "on a first date", requires: ["condition"] }
+          { text: "your friends", requires: ["context"], hints: ["Name two superpowers", "Name two impressive skills"] },
+          { text: "the hiring manager during a job interview?", requires: ["context"], hints: ["Name two professional skills", "Name two skills you would like to have", "Name two martial arts"] },
+          { text: "your parents at dinner?", requires: ["context"] },
+          { text: "completely hungover?", requires: ["condition"], hints: ["Name two academic subjects", "Name two school subjects"] },
+          { text: "in sauna?", requires: ["condition"], hints: ["Name two academic subjects", "Name two school subjects"] },
+          { text: "having a bad hair day?", requires: ["condition"] },
+          { text: "on a first date?", requires: ["condition"], hints: ["Name two topics for small talk", "Name two bad conversation topics"] }
         ]
       }
-    ],
-    hints: [
-      "Name two academic subjects",
-      "Name two creative arts",
-      "Name two professional industries",
-      "Name two foreign languages"
     ]
   },
   {
@@ -163,38 +157,29 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "live in a house completely made of", type: "material" },
-          { text: "have a bedroom filled with", type: "objects" },
-          { text: "wear a full outfit crafted from", type: "material" }
+          { text: "have to brush your teeth with", type: "hygiene", hints: ["Name two sauces", "Name two sweet drinks"] },
+          { text: "have to wash your clothes in", type: "hygiene", hints: ["Name two hot drinks", "Name two sticky things"] },
+          { text: "have to drink a full glass of", type: "utility", hints: ["Name two sauces", "Name two hot drinks"] },
+          { text: "fill your bed pillows with", type: "storage", hints: ["Name two crunchy snacks", "Name two cold things"] }
         ]
       },
       {
         options: [
-          { text: "___ or ___", requires: ["material", "objects"] }
+          { text: "[ ... ] or [ ... ]" }
         ]
       },
       {
         options: [
-          { text: "but your residence is in the middle of", type: "location" },
-          { text: "and you are forced to wear it while", type: "usage" }
-        ]
-      },
-      {
-        options: [
-          { text: "an active volcano", requires: ["location"] },
-          { text: "a busy airport runway", requires: ["location"] },
-          { text: "a high-security prison", requires: ["location"] },
-          { text: "giving a professional presentation", requires: ["usage"] },
-          { text: "your first date", requires: ["usage"] },
-          { text: "a professional wrestling match", requires: ["usage"] }
+          { text: "every single morning for the rest of your life?" },
+          { text: "for an entire year, but you get paid a million dollars for it?" },
+          { text: "before sleep?" },
+          { text: "but random stranger is forced to watch you do it?" }
         ]
       }
     ],
     hints: [
-      "Name two gross materials",
-      "Name two sticky or slimy objects",
-      "Name two fragile things",
-      "Name two things that attract bugs"
+      "Name two popular drinks",
+      "Name two things you find in a kitchen"
     ]
   },
   {
@@ -204,90 +189,48 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "have sweat that", type: "sweat" },
-          { text: "have breath that", type: "breath" },
-          { text: "have a face that" }
+          { text: "instantly sweat a puddle that", type: "sweat", hints: ["Name two hot drinks", "Name two sweet liquids"] },
+          { text: "breathe out a cloud that", type: "breath", hints: ["Name two types of fast food", "Name two strong-smelling foods"] },
+          { text: "produce saliva that", type: "saliva", hints: ["Name two sour foods", "Name two types of candy"] },
+          { text: "have a face that", type: "face" }
         ]
       },
       {
         options: [
-          { text: "always smells like", requires: ["sweat", "breath"] },
-          { text: "always tastes like", requires: ["sweat", "breath"] },
-          { text: "always looks like", requires: ["face"] }
+          { text: "smells exactly like", requires: ["sweat", "breath"] },
+          { text: "tastes exactly like", requires: ["sweat", "saliva"] },
+          { text: "looks exactly like a", requires: ["face"], hints: ["Name two cartoon characters", "Name two scary creatures", "Name two famous politicians", "Name two body parts"] }
         ]
       },
       {
         options: [
-          { text: "___ or ___," }
+          { text: "[ ... ] or [ ... ]," }
         ]
       },
       {
         options: [
           { text: "but only when you are", type: "condition" },
-          { text: "and it triggers every time you", type: "action" }
+          { text: "and it triggers instantly every time you", type: "action" }
         ]
       },
       {
         options: [
-          { text: "in a bad mood", requires: ["condition"] },
-          { text: "in a great mood", requires: ["condition"] },
-          { text: "feeling guilty", requires: ["condition"] },
-          { text: "trying to sleep", requires: ["condition"] },
-          { text: "sit perfectly still", requires: ["action"] },
-          { text: "start laughing", requires: ["action"] },
-          { text: "get nervous", requires: ["action"] },
-          { text: "start eating", requires: ["action"] }
+          { text: "in a bad mood?", requires: ["condition"] },
+          { text: "in a great mood?", requires: ["condition"] },
+          { text: "feeling guilty?", requires: ["condition"], hints: ["Name two junk foods", "Name two things that have a strange flavor"] },
+          { text: "trying to sleep?", requires: ["condition"], hints: ["Name two energy drinks", "Name two soft things"] },
+          { text: "sit perfectly still?", requires: ["action"] },
+          { text: "start laughing?", requires: ["action"] },
+          { text: "get nervous?", requires: ["action"] },
+          { text: "start eating?", requires: ["action"] },
+          { text: "sneeze?", requires: ["action"], hints: ["Name two strong spices", "Name two dusty things"] } 
         ]
       }
     ],
-    hints: [
-      "Name two types of food",
-      "Name two famous celebrities",
-      "Name two weird objects",
-      "Name two animals"
-    ]
-  },
-{
-  id: 7,
-  category: "social",
-  text: "Would you rather",
-  fragments: [
-    {
-      options: [
-        { text: "accidentally start loudly commentating on people's actions like a sports reporter to", type: "recipient" },
-        { text: "be caught intensely sniffing", type: "object" }
-      ]
-    },
-    {
-      options: [
-        { text: "___ or ___," }
-      ]
-    },
-      {
-        options: [
-          { text: "right in the middle of", type: "place" },
-          { text: "while your entire family is watching", type: "family" }
-        ]
-      },
-      {
-        options: [
-          { text: "a professional job interview", requires: ["place"] },
-          { text: "your own wedding ceremony", requires: ["place"] },
-          { text: "a funeral service", requires: ["place"] },
-          { text: "a crowded public elevator", requires: ["place"] },
-          { text: "a live news broadcast", requires: ["place"] }
-        ]
-      }
-    ],
-    hints: [
-      "Name two people you know",
-      "Name two weird objects",
-      "Name two types of professionals",
-      "Name two places you shouldn't be"
-    ]
+    hints: [] 
   },
   {
-    id: 8,
+    id: 7,
     category: "survival",
     text: "Would you rather",
     fragments: [
@@ -315,49 +258,104 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "without possessing ___ or without ___?" }
+          { text: "without [ ... ] or without [ ... ]?", hints: ["Name two types of clothing that you often wear", "Name two things that modern human 'cannot live without'"] }
         ]
       }
     ],
     hints: [
-      "Name two things you can't live without",
-      "Name two types of activities to do with others",
       "Name two items you use daily",
-      "Name two essential tech gadgets"
+      "Name two hygiene products"
     ]
   },
   {
-    id: 9,
+    id: 8,
     category: "lifestyle",
     text: "Would you rather",
     fragments: [
       {
         options: [
-          { text: "have an infinite supply of" },
-          { text: "receive a daily dose of" },
-          { text: "find a random amount of" },
-          { text: "get exactly one lifetime use of" }
+          { text: "magically receive an endless supply of", type: "recurring", hints: ["Name two large items in a house", "Name two delicious snacks"] },
+          { text: "receive a random package every day containing", type: "recurring" },
+          { text: "randomly spawn a pile of", type: "recurring" },
+          { text: "get only one more chance in your life to use", type: "one-time", hints: ["Name two expensive things", "Name two things that are very rare"] }
         ]
       },
       {
         options: [
-          { text: "___ or ___," }
+          { text: "[ ... ] or [ ... ]," }
         ]
       },
       {
         options: [
-          { text: "but you have no control over when it appears?" },
-          { text: "except it completely disappears on weekends?" },
-          { text: "but you are forced to share it with a total stranger?" },
-          { text: "and it always emits a bizarre, pungent smell?" }
+          { text: "but you have no control over when it appears?", requires: ["recurring"] }, 
+          { text: "except it completely disappears on weekends?", requires: ["recurring"] }, 
+          { text: "but you are forced to share it with a total stranger?" }, 
+          { text: "and it always emits a terrible, rotten smell?", hints: ["Name two things that smell bad", "Name two liquids you shouldn't drink"] } 
         ]
       }
     ],
     hints: [
-      "Name two strong emotions",
-      "Name two valuable materials",
-      "Name two weird liquids",
-      "Name two everyday objects"
+      "Name two things you find in a refrigerator",
+      "Name two things you wear on your head"
+    ]
+  },
+  {
+    id: 9,
+    category: "social",
+    text: "Would you rather",
+    fragments: [
+      {
+        options: [
+          { text: "be adopted by a family of", type: "adopted", hints: ["Name two animals", "Name two famous TV families"] },
+          { text: "be fully accepted into a secret society of", type: "society", hints: ["Name two boring professions", "Name two hobbies"] }, 
+          { text: "be raised from birth by a pack of", type: "raised", hints: ["Name two angry-looking animals", "Name two wild animals", "Name two cute animals", "Name two professions you dislike"] },
+          { text: "be fully accepted into a magic school of", type: "society", hints: ["Name two boring professions", "Name two phenomenons", "Name two things that make you feel bored"] }, 
+        ]
+      },
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]?" } 
+        ]
+      }
+    ],
+    hints: [
+      "Name two groups of people",
+      "Name two pets"
+    ]
+  },
+  {
+    id: 10,
+    category: "career",
+    text: "Would you rather",
+    fragments: [
+      {
+        options: [
+          { text: "start a successful business that only sells", type: "business", hints: ["Name two cheap items", "Name two heavy objects", "Name two toys"] },
+          { text: "found a popular new cult based entirely on", type: "cult", hints: ["Name two popular drinks", "Name two fast food chains"] },
+          { text: "start a massive social movement focused on", type: "movement", hints: ["Name two minor inconveniences", "Name two common habits"] },
+          { text: "open a fancy restaurant where everything tastes like", type: "restaurant", hints: ["Name two things you find in a bathroom", "Name two things that smell bad"] },
+          { text: "host a daily podcast that obsessively discusses", type: "podcast", hints: ["Name two things old people complain about", "Name two popular snacks", "Name two countries", "Name two diseases"] },
+          { text: "form a popular musical band where all instruments are replaced by", type: "band", hints: ["Name two tools", "Name two office supplies"] },
+          { text: "start a feared criminal gang that exclusively steals", type: "gang", hints: ["Name two cheap household items", "Name two things you find in a kitchen"] }
+        ]
+      },
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]," }
+        ]
+      },
+      {
+        options: [
+          { text: "and become incredibly famous, but everyone makes fun of you?" },
+          { text: "but your entire family is forced to participate?" }, 
+          { text: "and you have to bring it up in every single conversation?" },
+          { text: "but you secretly absolutely hate it?" }
+        ]
+      }
+    ],
+    hints: [
+      "Name two random things in your room",
+      "Name two random things of the same color"
     ]
   }
 ];

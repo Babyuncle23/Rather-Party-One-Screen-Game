@@ -8,7 +8,7 @@ let screens = null;
 let audioManager = null;
 
 let currentQuestion = null;
-let roundScoresSnapshot = null; // Хранит бэкап очков на случай скипа раунда
+let roundScoresSnapshot = null;
 let currentHint = "";
 let currentHintObject = null; // Хранит ссылку на объект выбранной подсказки (для брейншторма)
 let isCustomHintActive = false; // Флаг: написана ли подсказка вручную игроком
@@ -427,43 +427,81 @@ function getValidFragmentOptions(fragIndex) {
   // 1. Собираем массив всех типов (type), которые игрок уже выбрал в предыдущих фрагментах
   const activeTypes = [];
   for (let i = 0; i < fragIndex; i++) {
-    const selectedOpt = currentQuestion.fragments[i].options[currentFragmentsState[i]];
-    if (selectedOpt.type) {
+    const stateIndex = currentFragmentsState[i];
+    
+    // ЗАЩИТА: Если индекс сломался (-1 или undefined), пропускаем итерацию
+    if (stateIndex === undefined || stateIndex === -1) continue;
+    
+    const selectedOpt = currentQuestion.fragments[i].options[stateIndex];
+    if (selectedOpt && selectedOpt.type) {
       activeTypes.push(selectedOpt.type);
     }
   }
 
   // 2. Фильтруем опции текущего фрагмента на основе собранной истории
-  return frag.options.filter(opt => {
+  const validOptions = frag.options.filter(opt => {
     // Если у опции нет требований, она доступна всем
     if (!opt.requires || opt.requires.length === 0) return true;
     
     // Опция доступна, если хотя бы один её требуемый тип есть в нашей истории activeTypes
     return opt.requires.some(req => activeTypes.includes(req));
   });
+  
+  // БРОНЕБОЙНАЯ ЗАЩИТА: Если из-за опечатки в базе отфильтровались ВСЕ варианты,
+  // мы принудительно возвращаем все опции фрагмента, чтобы игра не зависла.
+  return validOptions.length > 0 ? validOptions : frag.options;
 }
 
-function handleFragmentTap(fragIndex) {
-  const frag = currentQuestion.fragments[fragIndex];
-  const validOptions = getValidFragmentOptions(fragIndex);
-  const currentOpt = frag.options[currentFragmentsState[fragIndex]];
+function randomizeCurrentFragments() {
+  currentFragmentsState = [];
+  currentQuestion.fragments.forEach((frag, i) => {
+    const validOptions = getValidFragmentOptions(i);
+    // Выбираем случайную опцию из доступных
+    const randIdx = Math.floor(Math.random() * validOptions.length);
+    // Сохраняем её глобальный индекс
+    currentFragmentsState.push(frag.options.indexOf(validOptions[randIdx]));
+  });
+  renderInteractiveQuestion();
+}
 
-  let validIdx = validOptions.indexOf(currentOpt);
-  validIdx = (validIdx + 1) % validOptions.length;
+// Глобальная функция, которая собирает умные подсказки
+function updatePickerHints() {
+  if (!currentQuestion) return;
+  
+  const btn1 = document.getElementById('hint-btn-1');
+  const btn2 = document.getElementById('hint-btn-2');
+  if (!btn1 || !btn2) return;
 
-  currentFragmentsState[fragIndex] = frag.options.indexOf(validOptions[validIdx]);
-
-  // Каскадная валидация последующих фрагментов
-  for (let i = fragIndex + 1; i < currentQuestion.fragments.length; i++) {
-    const validForNext = getValidFragmentOptions(i);
-    const nextCurrentOpt = currentQuestion.fragments[i].options[currentFragmentsState[i]];
-    if (!validForNext.includes(nextCurrentOpt)) {
-      currentFragmentsState[i] = currentQuestion.fragments[i].options.indexOf(validForNext[0]);
+  // 1. Берем общие подсказки для категории (если есть)
+  let availableHints = currentQuestion.hints ? [...currentQuestion.hints] : [];
+  
+  // 2. Ищем КОНТЕКСТНЫЕ подсказки внутри выбранных вариантов
+  currentQuestion.fragments.forEach((frag, i) => {
+    const selectedOption = frag.options[currentFragmentsState[i]];
+    if (selectedOption.hints && Array.isArray(selectedOption.hints)) {
+      availableHints.push(...selectedOption.hints);
     }
+  });
+  
+  // 3. Убираем дубликаты
+  availableHints = [...new Set(availableHints)];
+
+  // Если подсказок маловато, добавляем дефолтные для безопасности
+  if (availableHints.length < 2) {
+    availableHints.push("Name two weird things", "Name two objects");
   }
 
-  renderInteractiveQuestion();
-  audioManager.play('click');
+  // 4. Достаем 2 случайные подсказки из собранного пула
+  const randomIndex1 = Math.floor(Math.random() * availableHints.length);
+  const hint1 = availableHints.splice(randomIndex1, 1)[0];
+  const randomIndex2 = Math.floor(Math.random() * availableHints.length);
+  const hint2 = availableHints[randomIndex2];
+  
+  btn1.innerText = typeof hint1 === 'object' ? hint1.text : hint1;
+  btn2.innerText = typeof hint2 === 'object' ? hint2.text : hint2;
+  
+  btn1.onclick = () => { isCustomHintActive = false; selectHint(hint1); };
+  btn2.onclick = () => { isCustomHintActive = false; selectHint(hint2); };
 }
 
 function renderInteractiveQuestion() {
@@ -473,28 +511,26 @@ function renderInteractiveQuestion() {
   currentQuestion.fragments.forEach((frag, i) => {
     const optText = frag.options[currentFragmentsState[i]].text;
     const span = document.createElement('span');
-    // Если опций больше одной (с учетом валидации), делаем кликабельным
-    const validCount = getValidFragmentOptions(i).length;
-    if (validCount > 1) {
-      span.className = 'tappable-fragment';
-      span.onclick = () => handleFragmentTap(i);
-    }
-    span.innerText = optText + " ";
+    span.innerText = optText + " "; // Просто склеиваем текст в предложение
     container.appendChild(span);
   });
+
+  updatePickerHints();
 }
 
-function getCompiledQuestionString(w1 = "___", w2 = "___", useHtml = false) {
+function getCompiledQuestionString(w1 = "[ ... ]", w2 = "[ ... ]", useHtml = false) {
+  // Используем сгенерированный activeText
   let str = currentQuestion.text + " ";
   currentQuestion.fragments.forEach((frag, i) => {
     str += frag.options[currentFragmentsState[i]].text + " ";
   });
   
+  // Заменяем маркер [ ... ] на нужные слова
   if (useHtml) {
-    str = str.replace("___", `<span style="color: #00ffb3; font-weight: bold;">${w1}</span>`);
-    str = str.replace("___", `<span style="color: #ff4a4a; font-weight: bold;">${w2}</span>`);
+    str = str.replace("[ ... ]", `<span style="color: #00ffb3; font-weight: bold;">${w1}</span>`);
+    str = str.replace("[ ... ]", `<span style="color: #ff4a4a; font-weight: bold;">${w2}</span>`);
   } else {
-    str = str.replace("___", w1).replace("___", w2);
+    str = str.replace("[ ... ]", w1).replace("[ ... ]", w2);
   }
   return str.trim();
 }
@@ -507,16 +543,9 @@ function initRound() {
 
     currentQuestion = game.getRandomQuestion();
     
-    // Инициализация дефолтного состояния фрагментов с учетом зависимостей
-    currentFragmentsState = [];
-    currentQuestion.fragments.forEach((frag, i) => {
-      if (i === 0) {
-        currentFragmentsState.push(0);
-      } else {
-        const validOptions = getValidFragmentOptions(i);
-        currentFragmentsState.push(frag.options.indexOf(validOptions[0]));
-      }
-    });
+
+    // 2. Сразу генерируем случайную вариацию (вместо старого цикла forEach)
+    randomizeCurrentFragments();
 
     const picker = game.players[game.pickerIndex];
     screens.switchScreen('picker');
@@ -524,27 +553,26 @@ function initRound() {
     document.getElementById('picker-name').innerText = picker.name;
     document.getElementById('responder-target-name').innerText = game.players[game.getResponderIndex()].name;
     
-    renderInteractiveQuestion();
     updateHelpTargetText();
 
-    const rerollBtn = document.getElementById('reroll-question-btn');
+    // 3. Подключаем кнопку бесконечной генерации вариантов
+    const rerollOptionsBtn = document.getElementById('reroll-options-btn');
+    if (rerollOptionsBtn) {
+      rerollOptionsBtn.onclick = () => {
+        randomizeCurrentFragments();
+        audioManager.play('click'); // Опционально: звук при генерации
+      };
+    }
+
+    // 4. Подключаем кнопку полной смены вопроса (1 раз за ход)
+const rerollBtn = document.getElementById('reroll-question-btn');
     if (rerollBtn) {
       rerollBtn.style.display = 'block';
       rerollBtn.onclick = () => {
         game.shuffledQuestions.unshift(currentQuestion);
         currentQuestion = game.getRandomQuestion();
         
-        currentFragmentsState = [];
-        currentQuestion.fragments.forEach((frag, i) => {
-          if (i === 0) {
-            currentFragmentsState.push(0);
-          } else {
-            const validOptions = getValidFragmentOptions(i);
-            currentFragmentsState.push(frag.options.indexOf(validOptions[0]));
-          }
-        });
-
-        renderInteractiveQuestion();
+        randomizeCurrentFragments();
         updatePickerHints();
         rerollBtn.style.display = 'none';
       };
@@ -552,22 +580,6 @@ function initRound() {
     
     const btn1 = document.getElementById('hint-btn-1');
     const btn2 = document.getElementById('hint-btn-2');
-    
-    const updatePickerHints = () => {
-      const availableHints = [...currentQuestion.hints];
-      const randomIndex1 = Math.floor(Math.random() * availableHints.length);
-      const hint1 = availableHints.splice(randomIndex1, 1)[0];
-      const randomIndex2 = Math.floor(Math.random() * availableHints.length);
-      const hint2 = availableHints[randomIndex2];
-      
-      btn1.innerText = hint1;
-      btn2.innerText = hint2;
-      
-      btn1.onclick = () => { isCustomHintActive = false; selectHint(hint1); };
-      btn2.onclick = () => { isCustomHintActive = false; selectHint(hint2); };
-    };
-
-    updatePickerHints();
     
     const customInput = document.getElementById('custom-hint-input');
     customInput.value = "";
@@ -974,8 +986,7 @@ function updateGuesserUI() {
 
     const masks = shifter.getMaskedWords();
     
-    const displayStaticQuestion = getCompiledQuestionString("______", "______", false);
-    
+    const displayStaticQuestion = getCompiledQuestionString("[ ANSWER 1 ]", "[ ANSWER 2 ]", false);
     const hintEl = document.getElementById('guesser-displayed-hint');
     const questionEl = document.getElementById('guesser-question-display');
     const scoreEl = document.getElementById('potential-score');

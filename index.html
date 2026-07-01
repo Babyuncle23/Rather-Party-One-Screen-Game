@@ -225,11 +225,17 @@
     <!-- ХОД ИГРОКА 1 (ВЫБОР ПОДСКАЗКИ И РЕДАКТИРОВАНИЕ ВОПРОСА) -->
     <div id="picker-screen" style="display:none;">
       <h2><span id="picker-name" class="player-name-game-slow"></span>'s Turn</h2>
-      <div class="card-question">
+<div class="card-question">
         <p>Your secret question:</p>
-        <p id="secret-question-text" class="highlight-text" style="margin-bottom: 15px;"></p>
+        <!-- Текст теперь просто белый и без лишних стилей -->
+        <p id="secret-question-text" class="highlight-text" style="margin-bottom: 20px; text-align: center;"></p>
 
-        <button id="reroll-question-btn" style="background: none; border: none; padding: 4px 12px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; display: block; margin: 0 auto; transition: color 0.2s ease, transform 0.1s ease; -webkit-tap-highlight-color: transparent;">🔄 Reroll (1 per turn)</button>
+        <!-- Блок с кнопками по центру -->
+        <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+          <button id="reroll-options-btn" class="btn btn-small" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; width: auto; padding: 8px 16px;">🎲 Reroll question options</button>
+          
+          <button id="reroll-question-btn" style="background: none; border: none; padding: 4px 12px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; transition: color 0.2s ease; -webkit-tap-highlight-color: transparent;">🔄 Change question</button>
+        </div>
       </div>
       <p style="margin-bottom: 8px; color:#c0bfe2;">Pick one prompt for <span id="responder-target-name"></span>:</p>
       <button id="hint-btn-1" class="btn btn-secondary" style="margin-bottom: 10px;"></button>

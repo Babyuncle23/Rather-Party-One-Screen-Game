@@ -276,9 +276,10 @@ p {
 }
 
 .highlight-text {
-  color: #f7f7ff;
+  color: #ffffff; /* Обычный чистый белый цвет */
   font-weight: 600;
   line-height: 1.6;
+  display: block;
 }
 
 .player-name-game-slow,
@@ -942,20 +943,3 @@ p {
   margin-bottom: 8px;
 }
 
-.tappable-fragment {
-  cursor: pointer;
-  border-bottom: 2px dotted rgba(140, 108, 255, 0.6);
-  color: #f7f7ff;
-  transition: color 0.2s ease, border-color 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-  padding-bottom: 2px;
-}
-
-.tappable-fragment:hover {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
-}
-
-.tappable-fragment:active {
-  opacity: 0.7;
-}
