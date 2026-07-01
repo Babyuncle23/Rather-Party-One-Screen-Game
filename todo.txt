@@ -1,3 +1,16 @@
 make testing for third step
 update instruction
-спроси почему start button не запускается
+name 2 in step 2 is well?
+чуть лучше объяснения и дизайн в начале
+дать другу затестить
+начать делать версию сетевую
+можно добавить смайлик со стариком, малышом, anxious, cute?, tree, computer, sensei + belt, robot, angry?, sceleton, dangerous
+возможность выбрать эмоджи
+кнопки, паришие в начале
+анду виден в самом начале
+вопрос про суперсилы
+Would you rather spend 1000 hours playing [ ... ] or [ ... ], and if you win you get a million dollars, but if you lose, you pay a fine equal to your entire annual income? does not make sense
+убераем все ховеры, так как игра ориентирована на мобилку
+тень заголовков
+over не нужно, так как говорися в вопросе
+верни градиент

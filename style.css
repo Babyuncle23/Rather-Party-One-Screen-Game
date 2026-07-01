@@ -1045,3 +1045,360 @@ p {
 .player-avatar:active {
   transform: scale(0.9);
 }
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0.5; }
+}
+
+/* =========================================
+   UNIFIED 3D BUTTONS (Оригинальные цвета + Объём)
+   ========================================= */
+
+/* 1. Общая форма и физика для всех кнопок */
+button, .btn, .btn-primary, .btn-secondary, .btn-accent, .btn-action, .btn-small, .btn-choice,
+.safety-hold-trigger, .delete-box-btn, .history-player-btn, 
+.player-avatar, #audio-toggle-btn, #safety-global-btn {
+  position: relative;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  border-radius: 16px;
+  transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 2. БАЗОВЫЕ / ВТОРИЧНЫЕ КНОПКИ (Темный элегантный фон) */
+button, .btn, .btn-secondary, .btn-small {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.8);
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.05),
+    0 5px 0 rgba(10, 9, 15, 0.9), 
+    0 8px 15px rgba(0, 0, 0, 0.4);
+  color: #f7f7ff;
+}
+
+/* 3. ОСНОВНАЯ КНОПКА (Start Game - Оригинальный сине-фиолетовый) */
+.btn-primary {
+  background: linear-gradient(135deg, #7f65ff, #4d5dff) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.3),
+    0 5px 0 #3a45c2, /* Темно-синяя грань для объема */
+    0 8px 20px rgba(93, 75, 255, 0.4) !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* 4. КНОПКА АКЦЕНТА (Add Player - Оригинальный розово-оранжевый) */
+.btn-accent {
+  background: linear-gradient(135deg, #ff6c8d, #ff9d4a) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.3),
+    0 5px 0 #c24b64, /* Темно-розовая грань для объема */
+    0 8px 20px rgba(255, 108, 141, 0.4) !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* 5. ИГРОВЫЕ ДЕЙСТВИЯ (Оставляем в стиле темных карточек с бирюзовым текстом) */
+.btn-action, #guess-word-1, #guess-word-2, #hint-btn-1, #hint-btn-2 {
+  background: linear-gradient(180deg, rgba(30, 28, 42, 0.95) 0%, rgba(20, 18, 28, 0.98) 100%) !important;
+  border: 1px solid rgba(140, 108, 255, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.8);
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.05),
+    0 5px 0 rgba(10, 9, 15, 0.9), 
+    0 8px 15px rgba(0, 0, 0, 0.4) !important;
+  color: var(--positive) !important;
+}
+
+/* 6. КНОПКА БЕЗОПАСНОСТИ (Успокаивающий мятный) */
+#safety-global-btn {
+  background: linear-gradient(135deg, rgba(80, 255, 150, 0.15) 0%, rgba(40, 150, 90, 0.05) 100%) !important;
+  border: 1px solid rgba(80, 255, 150, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.2),
+    0 5px 0 rgba(20, 80, 50, 0.9), 
+    0 8px 15px rgba(80, 255, 150, 0.15) !important;
+  color: #a8ffd2 !important;
+}
+
+/* 7. ФИЗИКА НАЖАТИЯ (Утапливаем кнопку, скрывая её 3D-грань) */
+button:active:not(:disabled), .btn:active:not(:disabled), 
+.btn-primary:active:not(:disabled), .btn-accent:active:not(:disabled), .btn-action:active:not(:disabled), 
+.btn-danger:active:not(:disabled), .history-player-btn.active, 
+.history-player-btn:active, .safety-hold-trigger.holding, #safety-global-btn:active {
+  transform: translateY(5px) !important;
+  border-top-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 
+    inset 0 1px 3px rgba(0, 0, 0, 0.4),
+    0 0px 0 rgba(0, 0, 0, 0), /* Прячем нижнюю грань */
+    0 2px 4px rgba(0, 0, 0, 0.4) !important;
+}
+
+button:disabled, .btn:disabled, .btn-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: translateY(5px);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.1),
+    0 0px 0 rgba(0, 0, 0, 0),
+    0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  filter: grayscale(0.5);
+}
+
+/* =========================================
+   ОБЪЕМНЫЕ ОКНА И КАРТОЧКИ (3D Containers)
+   ========================================= */
+.game-container, .modal-content, .player-box, .rules-dropdown-box, .history-card, .q-card, .history-window {
+  background: linear-gradient(180deg, rgba(25, 23, 35, 0.95) 0%, rgba(15, 14, 22, 0.98) 100%);
+  border: 1px solid rgba(140, 108, 255, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.8);
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.05), /* Блик сверху */
+    0 6px 0 rgba(10, 9, 15, 0.9),              /* 3D Толщина */
+    0 15px 40px rgba(0, 0, 0, 0.6);            /* Падающая тень */
+  border-radius: 24px;
+  margin-bottom: 6px; 
+}
+
+.player-box {
+  border-radius: 16px;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.05),
+    0 4px 0 rgba(10, 9, 15, 0.9),
+    0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.player-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.1),
+    0 6px 0 rgba(10, 9, 15, 0.9),
+    0 10px 20px rgba(140, 108, 255, 0.2);
+}
+
+/* =========================================
+   ВДАВЛЕННЫЕ ПОЛЯ ВВОДА (Reverse Volumetric)
+   ========================================= */
+.input-field {
+  background: rgba(5, 5, 8, 0.7); /* Очень темный фон углубления */
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15); /* Блик на нижней фаске */
+  border-top: 2px solid rgba(0, 0, 0, 0.9);           /* Глубокая тень на верхней фаске */
+  border-radius: 16px;
+  color: var(--text);
+  font-family: inherit;
+  font-weight: 600;
+  box-shadow: 
+    inset 0 6px 12px rgba(0, 0, 0, 0.8), /* Темнота внутри отверстия */
+    inset 0 2px 4px rgba(0, 0, 0, 0.9), 
+    0 1px 2px rgba(255, 255, 255, 0.05); /* Легкий свет снаружи */
+  transition: all 0.2s ease;
+}
+
+.input-field:focus {
+  background: rgba(15, 12, 25, 0.9);
+  outline: none;
+  border-bottom: 1px solid rgba(140, 108, 255, 0.5);
+  box-shadow: 
+    inset 0 6px 12px rgba(0, 0, 0, 0.8),
+    inset 0 0 0 1px var(--accent),
+    0 0 15px rgba(140, 108, 255, 0.2);
+}
+
+/* =========================================
+   БЕЙДЖ "DESIGNED BY HUMAN" (Редизайн)
+   ========================================= */
+.creator-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 22px;
+  
+  font-family: "Comic Sans MS", "Comic Sans", cursive, sans-serif !important;
+  font-style: italic; /* <--- КУРСИВ */
+  font-size: 15px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #fff;
+  
+  /* Смягченная переливающаяся радуга (пастельно-неоновая) */
+  background: linear-gradient(124deg, #d9534f, #d98cb3, #d9a84f, #a2d94f, #4fd98c, #4fb3d9, #6a4fd9, #b34fd9);
+  background-size: 400% 400%;
+  animation: rainbowBadge 4s ease infinite; /* Чуть замедлили */
+  
+  border: 3px solid #ffffff;
+  border-radius: 50px;
+  box-shadow: 
+    0 6px 0px rgba(140, 108, 255, 0.7), /* Смягчили жесткий низ */
+    0 12px 15px rgba(0,0,0,0.5), 
+    inset 0 4px 10px rgba(255,255,255,0.5); 
+    
+  text-shadow: 
+    2px 2px 0 #000, -2px -2px 0 #000, 
+    2px -2px 0 #000, -2px 2px 0 #000,
+    0 4px 0 #000;
+    
+  transform: rotate(-3deg);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin: 10px 0 20px 0;
+  cursor: pointer;
+}
+
+.creator-badge:hover {
+  transform: rotate(4deg) scale(1.05);
+}
+
+@keyframes rainbowBadge {
+    0% { background-position: 0% 82%; }
+    50% { background-position: 100% 19%; }
+    100% { background-position: 0% 82%; }
+}
+
+/* =========================================
+   ПАНЕЛИ УТИЛИТ (Скринридер и нижние блоки навигации)
+   Превращаем плоские инлайн-контейнеры в 3D
+   ========================================= */
+#setup-screen > div:has(#sr-mode-toggle),
+#safety-screen-privacy > div:last-child,
+#safety-screen-options > div:last-child {
+  background: linear-gradient(180deg, rgba(25, 23, 35, 0.8) 0%, rgba(15, 14, 22, 0.95) 100%) !important;
+  border: 1px solid rgba(140, 108, 255, 0.2) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.8) !important;
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.03),
+    0 4px 0 rgba(10, 9, 15, 0.6),
+    0 8px 15px rgba(0, 0, 0, 0.3) !important;
+  border-radius: 16px !important;
+}
+
+/* Делаем сам квадратик чекбокса скринридера вдавленным ("reverse 3D") */
+#sr-mode-toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px !important;
+  height: 22px !important;
+  background: rgba(5, 5, 8, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 2px solid rgba(0, 0, 0, 0.9);
+  border-radius: 6px;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(255, 255, 255, 0.05);
+  position: relative;
+  cursor: pointer;
+}
+
+#sr-mode-toggle:checked {
+  background: var(--accent);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 0 10px rgba(140, 108, 255, 0.4);
+  border-top: 1px solid rgba(0,0,0,0.5);
+}
+
+#sr-mode-toggle:checked::after {
+  content: '✔';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+/* =========================================
+   ФИНАЛЬНАЯ ПОЛИРОВКА (Аватары, Аудио, Бейдж, Безопасность)
+   ========================================= */
+
+/* 1. Возвращаем 3D-объем аватаркам (перезаписываем старый плоский стиль) */
+.player-avatar {
+  width: 44px !important;
+  height: 44px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.8) !important;
+  border-radius: 50% !important;
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.05),
+    0 4px 0 rgba(10, 9, 15, 0.9), 
+    0 6px 10px rgba(0, 0, 0, 0.4) !important;
+  transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+}
+
+.player-avatar:hover {
+  transform: translateY(-2px) rotate(10deg) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.1),
+    0 6px 0 rgba(10, 9, 15, 0.9), 
+    0 8px 15px rgba(0, 0, 0, 0.5) !important;
+}
+
+.player-avatar:active {
+  transform: translateY(4px) scale(0.95) !important;
+  border-top-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.05),
+    0 0px 0 rgba(0, 0, 0, 0),
+    0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 2. Чиним кнопку аудио (3D-панель, плоская иконка) */
+.audio-control-panel {
+  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.8) !important;
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.05),
+    0 4px 0 rgba(10, 9, 15, 0.9), 
+    0 8px 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+#audio-toggle-btn {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  padding: 0 !important;
+}
+
+#audio-toggle-btn:active {
+  transform: scale(0.85) !important;
+}
+
+/* 3. Делаем кнопку безопасности идентичной Gameplay Tips (Темно-серая) */
+#safety-global-btn {
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: var(--text) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.8) !important;
+  box-shadow: 
+    inset 0 2px 3px rgba(255, 255, 255, 0.05),
+    0 5px 0 rgba(10, 9, 15, 0.9), 
+    0 8px 15px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 4. Цвета бейджика "Designed by Human" под стиль нижних кнопок */
+.creator-badge {
+  /* Градиент из синего (Start Game) и розово-оранжевого (Add Player) */
+  background: linear-gradient(124deg, #4d5dff, #7f65ff, #ff6c8d, #ff9d4a, #4d5dff) !important;
+  background-size: 400% 400% !important;
+}

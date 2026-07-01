@@ -208,13 +208,14 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "[ ... ] or [ ... ]," }
+          { text: "[ ... ] or [ ... ]" }
         ]
       },
       {
         options: [
-          { text: "but only when you are", type: "condition" },
-          { text: "and it triggers instantly every time you", type: "action" }
+          { text: ", but only when you are", type: "condition" },
+          { text: ", and it triggers instantly every time you", type: "action" },
+          { text: "", type: "none" }
         ]
       },
       {
@@ -228,7 +229,7 @@ export const questionsDatabase = [
           { text: "get nervous?", requires: ["action"] },
           { text: "start eating?", requires: ["action"] },
           { text: "sneeze?", requires: ["action"], hints: [{ text: "Strong spice", brainstorm: ["Pepper", "Chili", "Cinnamon", "Garlic"] }] },
-          { text: "?" }
+          { text: "?", requires: ["none"] }
         ]
       }
     ],
@@ -349,15 +350,15 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "[ ... ] or [ ... ]," }
+          { text: "[ ... ] or [ ... ]" }
         ]
       },
       {
         options: [
-          { text: "and become incredibly famous, but everyone makes fun of you?" },
-          { text: "but your entire family is forced to participate?" }, 
-          { text: "and you have to bring it up in every single conversation?" },
-          { text: "but you secretly absolutely hate it?" },
+          { text: ", and become incredibly famous, but everyone makes fun of you?" },
+          { text: ", but your entire family is forced to participate?" }, 
+          { text: ", and you have to bring it up in every single conversation?" },
+          { text: ", but you secretly absolutely hate it?" },
           { text: "?" }
         ]
       }
@@ -404,6 +405,6 @@ export const questionsDatabase = [
         ]
       }
     ],
-    hints: [] // Глобальные подсказки убраны, чтобы они не конфликтовали с ветками
+    hints: [] 
   }
 ];
