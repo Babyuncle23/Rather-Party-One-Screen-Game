@@ -78,7 +78,6 @@
       background: none; border: none; color: rgba(255,255,255,0.4);
       cursor: pointer; font-size: 14px; padding: 0 4px;
     }
-    .delete-tag-btn:hover { color: #ff5555; }
 
     .tag-funny { border-color: #50fa7b; }
     .tag-confusing { border-color: #ffb86c; }
@@ -109,11 +108,40 @@
       font-weight: bold; cursor: pointer; color: #fff; font-size: 14px;
     }
     .btn-close { background: rgba(255,255,255,0.1); }
-    .btn-close:hover { background: rgba(255,255,255,0.2); }
     .btn-clear { background: rgba(255, 85, 85, 0.2); color: #ff5555; border: 1px solid rgba(255, 85, 85, 0.4); }
-    .btn-clear:hover { background: rgba(255, 85, 85, 0.4); color: #fff; }
     
     .instruction { font-size: 14px; color: var(--muted); margin-bottom: 20px; text-align: center; line-height: 1.5; }
+
+    /* Стили для панели фильтров */
+    .filter-section {
+      background: var(--card); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; margin-bottom: 20px; overflow: hidden;
+    }
+    .filter-header {
+      padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between;
+      font-weight: bold; font-size: 14px; background: rgba(0,0,0,0.2); transition: background 0.2s;
+    }
+    .filter-header:hover { background: rgba(0,0,0,0.4); }
+    .filter-list {
+      padding: 10px; max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
+    }
+    /* Стилизация скроллбара */
+    .filter-list::-webkit-scrollbar { width: 8px; }
+    .filter-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+    .filter-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+    .filter-item {
+      display: flex; align-items: flex-start; gap: 12px; padding: 10px;
+      background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);
+      transition: border-color 0.2s;
+    }
+    .filter-item:hover { border-color: rgba(255,255,255,0.15); }
+    .filter-item input[type="checkbox"] { 
+      margin-top: 4px; accent-color: var(--accent); width: 18px; height: 18px; cursor: pointer; flex-shrink: 0;
+    }
+    .filter-info { flex: 1; cursor: pointer; user-select: none; }
+    .filter-theme { font-size: 11px; color: var(--accent); text-transform: uppercase; font-weight: 900; margin-bottom: 4px; letter-spacing: 0.05em; }
+    .filter-text { font-size: 13px; color: var(--muted); line-height: 1.4; font-style: italic; }
   </style>
 </head>
 <body>
@@ -124,9 +152,20 @@
     Вы также можете вписать свой комментарий перед нажатием кнопки оценки!
   </div>
 
-  <div class="top-controls {">
+<div class="top-controls">
     <button class="btn-main btn-gen" id="generate-btn">🔄 Generate 10 Questions</button>
     <button class="btn-main btn-report" id="report-btn">📋 Show Report (0)</button>
+  </div>
+
+  <!-- НОВАЯ ПАНЕЛЬ ФИЛЬТРОВ -->
+  <div class="filter-section">
+    <div class="filter-header" id="filter-toggle">
+      <span>⚙️ Выбор вопросов для теста (Активно: <span id="active-q-count">0</span>/<span id="total-q-count">0</span>)</span>
+      <span id="filter-arrow">▼</span>
+    </div>
+    <div class="filter-list" id="filter-list" style="display: none;">
+      <!-- Галочки будут сгенерированы скриптом здесь -->
+    </div>
   </div>
   
   <div id="output"></div>
@@ -153,6 +192,69 @@
     }
     updateReportCounter();
 
+    // === ЛОГИКА ФИЛЬТРА ВОПРОСОВ ===
+    let excludedIds = new Set(JSON.parse(localStorage.getItem('qaExcludedIdsArr') || '[]'));
+
+    function renderFilterList() {
+      const list = document.getElementById('filter-list');
+      const activeCount = document.getElementById('active-q-count');
+      const totalCount = document.getElementById('total-q-count');
+
+      totalCount.innerText = questionsDatabase.length;
+      activeCount.innerText = questionsDatabase.length - excludedIds.size;
+
+      list.innerHTML = '';
+      questionsDatabase.forEach(q => {
+        // Формируем предпросмотр (Текст вопроса + первая опция из первого фрагмента)
+        let preview = q.text + " ";
+        if (q.fragments && q.fragments.length > 0) {
+           preview += q.fragments[0].options[0].text + " ...";
+        }
+
+        const isChecked = !excludedIds.has(q.id);
+        const item = document.createElement('div');
+        item.className = 'filter-item';
+        item.innerHTML = `
+          <input type="checkbox" id="chk-${q.id}" ${isChecked ? 'checked' : ''}>
+          <div class="filter-info">
+            <div class="filter-theme">ID: ${q.id} | ТЕМА: ${q.category}</div>
+            <div class="filter-text">"${preview}"</div>
+          </div>
+        `;
+
+        const chk = item.querySelector('input');
+        
+        // Клик по тексту тоже переключает галочку
+        item.querySelector('.filter-info').onclick = () => { chk.click(); };
+
+        chk.onchange = (e) => {
+          if (e.target.checked) excludedIds.delete(q.id);
+          else excludedIds.add(q.id);
+          
+          localStorage.setItem('qaExcludedIdsArr', JSON.stringify([...excludedIds]));
+          activeCount.innerText = questionsDatabase.length - excludedIds.size;
+        };
+
+        list.appendChild(item);
+      });
+    }
+
+    // Раскрытие/закрытие панели
+    document.getElementById('filter-toggle').onclick = () => {
+      const list = document.getElementById('filter-list');
+      const arrow = document.getElementById('filter-arrow');
+      if (list.style.display === 'none') {
+        list.style.display = 'flex';
+        arrow.innerText = '▲';
+      } else {
+        list.style.display = 'none';
+        arrow.innerText = '▼';
+      }
+    };
+
+    renderFilterList(); // Отрисовываем список при загрузке
+    // ===================================
+
     function getValidOptions(question, fragIndex, currentState) {
       const frag = question.fragments[fragIndex];
       if (fragIndex === 0) return frag.options;
@@ -175,8 +277,16 @@
       return validOptions.length > 0 ? validOptions : frag.options;
     }
 
-    function buildRandomQuestion() {
-      const q = questionsDatabase[Math.floor(Math.random() * questionsDatabase.length)];
+function buildRandomQuestion() {
+      // Фильтруем базу, опираясь на Set исключенных ID
+      let availableQuestions = questionsDatabase.filter(q => !excludedIds.has(q.id));
+      
+      // Защита: если отключили вообще все вопросы, генерируем из всех (чтобы скрипт не упал)
+      if (availableQuestions.length === 0) {
+        availableQuestions = questionsDatabase;
+      }
+
+      const q = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
       
       const currentState = [];
       q.fragments.forEach((frag, i) => {

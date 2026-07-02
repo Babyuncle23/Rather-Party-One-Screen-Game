@@ -20,26 +20,35 @@ export class ScreenController {
     Object.keys(this.screens).forEach(key => {
       if (this.screens[key]) {
         const isTarget = key === screenName;
-        const currentDisplay = this.screens[key].style.display;
         const nextDisplay = key === 'pass' ? (isTarget ? 'flex' : 'none') : (isTarget ? 'block' : 'none');
-        
-        if (currentDisplay !== nextDisplay) {
-          this.screens[key].style.display = nextDisplay;
-          if (isTarget) screenChanged = true;
-        }
+        this.screens[key].classList.toggle('hidden', !isTarget);
+        this.screens[key].style.display = nextDisplay;
+        if (isTarget) screenChanged = true;
       }
     });
     if (screenChanged) {
       window.scrollTo({ top: 0, behavior: 'instant' });
+      // Delay to ensure DOM has updated
+      setTimeout(() => {
+        if (typeof updateStatsBarVisibility === 'function') {
+          updateStatsBarVisibility();
+        }
+      }, 10);
     }
   }
 
   showLoading() {
-    if (this.modals.loading) this.modals.loading.style.display = 'flex';
+    if (this.modals.loading) {
+      this.modals.loading.classList.remove('hidden');
+      this.modals.loading.style.display = 'flex';
+    }
   }
 
   hideLoading() {
-    if (this.modals.loading) this.modals.loading.style.display = 'none';
+    if (this.modals.loading) {
+      this.modals.loading.style.display = 'none';
+      this.modals.loading.classList.add('hidden');
+    }
   }
 
   showAlert(title, message, onConfirm = null) {
@@ -52,6 +61,7 @@ export class ScreenController {
     document.getElementById('custom-alert-title').innerHTML = title;
     document.getElementById('custom-alert-message').innerHTML = message;
     
+    this.modals.customAlert.classList.remove('hidden');
     this.modals.customAlert.style.display = 'flex';
     
     const btn = document.getElementById('custom-alert-btn');
@@ -63,6 +73,7 @@ export class ScreenController {
   }
 
   showPassScreen(player, onConfirm, note = "Only this player should look at the phone. Keep it hidden from others.") {
+    this.screens.pass.classList.remove('hidden');
     this.screens.pass.style.display = 'flex';
     const message = document.getElementById('pass-message');
     const btn = document.getElementById('pass-confirm-btn');
@@ -88,46 +99,33 @@ export class ScreenController {
     };
   }
 
-  setupAudioControl(audioManager) {
+setupAudioControl(audioManager) {
     const panel = document.createElement('div');
-    panel.className = 'audio-control-panel collapsed';
+    panel.className = 'audio-control-panel';
     panel.id = 'audio-control-panel';
+    // Оставляем только кнопку
     panel.innerHTML = `
-      <button id="audio-toggle-btn" title="Toggle sound" aria-label="Toggle sound">🔊</button>
-      <input 
-        id="volume-slider" class="volume-slider" type="range" min="0" max="100" 
-        value="${Math.round(audioManager.getVolume() * 100)}" title="Volume control" aria-label="Volume control">
-      <span class="volume-label" id="volume-label">${Math.round(audioManager.getVolume() * 100)}%</span>
+      <button id="audio-toggle-btn" title="Toggle sound" aria-label="Toggle sound"></button>
     `;
     document.body.appendChild(panel);
 
-    panel.addEventListener('mouseenter', () => panel.classList.remove('collapsed'));
-    panel.addEventListener('mouseleave', () => panel.classList.add('collapsed'));
-    panel.addEventListener('focusin', () => panel.classList.remove('collapsed'));
-    panel.addEventListener('focusout', (event) => {
-      if (!panel.contains(event.relatedTarget)) panel.classList.add('collapsed');
-    });
-
     const toggleBtn = document.getElementById('audio-toggle-btn');
-    const volumeSlider = document.getElementById('volume-slider');
-    const volumeLabel = document.getElementById('volume-label');
 
-    toggleBtn.onclick = (e) => {
-      e.stopPropagation();
-      const enabled = audioManager.toggleEnabled();
+    // Функция обновления иконки
+    const updateIcon = () => {
+      const enabled = audioManager.isEnabled();
       toggleBtn.textContent = enabled ? '🔊' : '🔇';
       toggleBtn.style.opacity = enabled ? '1' : '0.5';
+    };
+
+    // Обычный клик для вкл/выкл
+    toggleBtn.onclick = (e) => {
+      e.stopPropagation();
+      audioManager.toggleEnabled();
+      updateIcon();
       audioManager.play('click');
     };
 
-    volumeSlider.oninput = (e) => {
-      const volume = parseInt(e.target.value) / 100;
-      audioManager.setVolume(volume);
-      volumeLabel.textContent = `${Math.round(volume * 100)}%`;
-    };
-
-    const enabled = audioManager.isEnabled();
-    toggleBtn.textContent = enabled ? '🔊' : '🔇';
-    toggleBtn.style.opacity = enabled ? '1' : '0.5';
+    updateIcon(); // Устанавливаем иконку при старте
   }
 }

@@ -5,20 +5,153 @@ import { AudioManager } from './audio/AudioManager.js';
 import { SIMPLE_COLORS, SIMPLE_MATERIALS, SIMPLE_MOODS, SIMPLE_ERAS, SIMPLE_COUNTRIES, SIMPLE_CITIES, SIMPLE_FOODS } from './data/nerfWords.js';
 
 const PLAYER_EMOJIS = [
-  "🦊", "🐼", "🐸", "🐱", "🐶", "🐰", "🐯", "🐨", "🐷", "🐮", "🐵", "🐙", "🐢", "🦕",
-  "🦋", "🌸", "🌻", "🍄", "🍉", "🍓", "🥑", "🍕", "🍩", "🎲", "👾", "👻", "👽", "🤖",
-  "🤠", "😎", "🤓", "🥳", "🥸", "🤡", "🦄", "🐧", "🦉", "🐝", "🦦", "🦥"
+  // Префиксы статуса и достижений
+  "🔥", "⚠️",
+  
+  // Млекопитающие и наземные животные
+  "🦊", "🐼", "🐱", "🐶", "🐰", "🐯", "🐨", "🐷", "🐮", "🐵", "🐺", "🦁", "🦦", "🦥", "🐿️", "🦇", "🦝",
+  
+  // Птицы
+  "🐧", "🦉", "🐦", "🦅", "🦆", "🐓", "🐤", "🦚", "🕊️", "🦜", "🦩",
+  
+  // Земноводные, рептилии и морские обитатели
+  "🐸", "🐙", "🐢", "🦎", "🦐", "🦀", "🦑", "🦈", "🦞", "🐳", "🐬", "🐡",
+  
+  // Насекомые
+  "🐝", "🕷️",
+  
+  // Динозавры и мифические существа
+  "🦕", "🦖", "🐉", "🦄",
+  
+  // Люди и роли
+  "👶", "👴", "🥋", "🥷", "🦸‍♂️", "🦹", "🧝‍♂️", "🧙‍♂️",
+  
+  // Эмоции и персонажи
+  "🤠", "😎", "🤓", "🥳", "🤡", "😡", "👺", "👹", "💀", "👻",
+  
+  // Фантастика и технологии
+  "👽", "🤖",
+  
+  // Фрукты и еда
+  "🍉", "🍓", "🥑", "🍍", "🥝", "🍊", "🍒", "🍋", "🍎", "🥭", "🥥",
+  
+  // Природа и космос
+  "🌸", "🌻", "🍄", "🌹", "🌝"
 ];
 
 const EMOJI_NAMES = {
-  "🦊": "Fox", "🐼": "Panda", "🐸": "Frog", "🐱": "Cat", "🐶": "Dog", "🐰": "Bunny",
-  "🐯": "Tiger", "🐨": "Koala", "🐷": "Pig", "🐮": "Cow", "🐵": "Monkey", "🐙": "Octopus",
-  "🐢": "Turtle", "🦕": "Dinosaur", "🦋": "Butterfly", "🌸": "Flower", "🌻": "Sunflower",
-  "🍄": "Mushroom", "🍉": "Watermelon", "🍓": "Strawberry", "🥑": "Avocado", "🍕": "Pizza",
-  "🍩": "Donut", "🎲": "Dice", "👾": "Alien", "👻": "Ghost", "👽": "Alien", "🤖": "Robot",
-  "🤠": "Cowboy face", "😎": "Cool face", "🤓": "Nerdy", "🥳": "Party face", "🥸": "Disguise",
-  "🤡": "Clown", "🦄": "Unicorn", "🐧": "Penguin", "🦉": "Owl", "🐝": "Bee", "🦦": "Otter", "🦥": "Sloth"
+  // Префиксы статуса и достижений
+  "🔥": "Fiery",
+  "⚠️": "Dangerous",
+
+  // Млекопитающие и наземные животные
+  "🦊": "Fox",
+  "🐼": "Panda",
+  "🐱": "Cat",
+  "🐶": "Dog",
+  "🐰": "Bunny",
+  "🐯": "Tiger",
+  "🐨": "Koala",
+  "🐷": "Pig",
+  "🐮": "Cow",
+  "🐵": "Monkey",
+  "🐺": "Wolf",
+  "🦁": "Lion",
+  "🦦": "Otter",
+  "🦥": "Sloth",
+  "🐿️": "Chipmunk",
+  "🦇": "Bat",
+  "🦝": "Raccoon",
+
+  // Птицы
+  "🐧": "Penguin",
+  "🦉": "Owl",
+  "🐦": "Bird",
+  "🦅": "Eagle",
+  "🦆": "Duck",
+  "🐓": "Rooster",
+  "🐤": "Baby Chick",
+  "🦚": "Peacock",
+  "🕊️": "Dove",
+  "🦜": "Parrot",
+  "🦩": "Flamingo",
+
+  // Земноводные, рептилии и морские обитатели
+  "🐸": "Frog",
+  "🐙": "Octopus",
+  "🐢": "Turtle",
+  "🦎": "Lizard",
+  "🦐": "Shrimp",
+  "🦀": "Crab",
+  "🦑": "Squid",
+  "🦈": "Shark",
+  "🦞": "Lobster",
+  "🐳": "Whale",
+  "🐬": "Dolphin",
+  "🐡": "Blowfish",
+
+  // Насекомые
+  "🐝": "Bee",
+  "🕷️": "Spider",
+
+  // Динозавры и мифические существа
+  "🦕": "Dino",
+  "🦖": "T-Rex",
+  "🐉": "Dragon",
+  "🦄": "Unicorn",
+
+  // Люди и роли
+  "👶": "Baby",
+  "👴": "Old Man",
+  "🥋": "Sensei",
+  "🥷": "Ninja",
+  "🦸‍♂️": "Super",
+  "🦹": "Supervillain",
+  "🧝‍♂️": "Elf",
+  "🧙‍♂️": "Wizard",
+
+  // Эмоции и персонажи
+  "🤠": "Cowboy",
+  "😎": "Cool",
+  "🤓": "Nerd",
+  "🥳": "Party",
+  "🤡": "Clown",
+  "😡": "Angry",
+  "👺": "Goblin",
+  "👹": "Ogre",
+  "💀": "Skeleton",
+  "👻": "Ghost",
+
+  // Фантастика и технологии
+  "👽": "Alien",
+  "🤖": "Robo",
+
+  // Фрукты и еда
+  "🍉": "Watermelon",
+  "🍓": "Strawberry",
+  "🥑": "Avocado",
+  "🍍": "Pineapple",
+  "🥝": "Kiwi",
+  "🍊": "Tangerine",
+  "🍒": "Cherries",
+  "🍋": "Lemon",
+  "🍎": "Apple",
+  "🥭": "Mango",
+  "🥥": "Coconut",
+
+  // Природа и космос
+  "🌸": "Flower",
+  "🌻": "Sunflower",
+  "🍄": "Mushroom",
+  "🌹": "Rose",
+  "🌝": "Moonface"
 };
+
+function getDefaultEmojiForNewPlayer() {
+  const used = new Set(temporaryPlayersList.map(p => p.emoji));
+  const nextEmoji = PLAYER_EMOJIS.find(emoji => !used.has(emoji));
+  return nextEmoji || PLAYER_EMOJIS[temporaryPlayersList.length % PLAYER_EMOJIS.length] || "🙂";
+}
 
 function passPhoneWithSpeech(player, onConfirm, note, speakNote = false) {
   const emojiName = EMOJI_NAMES[player.emoji] || "";
@@ -78,10 +211,12 @@ const FIXED_REWARD = 50;
 let revealCount = 0; 
 let currentCardIndex = 0;
 let fragmentsHistory = [];
+let questionHistory = [];
 
 let temporaryPlayersList = [];
 let currentFragmentsState = [];
 let safetyDelayedTimer = null; 
+let oralHintUsedThisTurn = false; // <-- НОВЫЙ ФЛАГ
 
 document.addEventListener("DOMContentLoaded", () => {
   try {
@@ -101,6 +236,9 @@ document.addEventListener("DOMContentLoaded", () => {
     setupHelpPanel();
     setupGlobalButtonSounds();
     setupPsychologicalSafetySystem(); 
+    
+    // Hide empty stats on initial load
+    updateStatsBarVisibility(); 
 
     const initAudioPreload = () => {
       audioManager.preloadRevealSounds();
@@ -116,6 +254,33 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+function updateStatsBarVisibility() {
+  const statsBars = document.querySelectorAll('.stats-bar');
+  statsBars.forEach(bar => {
+    const spans = bar.querySelectorAll('span');
+    const hasAnyContent = Array.from(spans).some(span => span.textContent.trim().length > 0);
+    if (hasAnyContent) {
+      bar.classList.remove('stats-bar-empty');
+      bar.style.display = 'flex';
+      bar.style.margin = '4px 0'; 
+      bar.style.visibility = 'visible';
+    } else {
+      bar.classList.add('stats-bar-empty');
+      bar.style.display = 'none';
+    }
+  });
+
+  // Чиним зависающий текст "✨ Letter reveals left"
+  const rollStatus = document.getElementById('ability-roll-status');
+  if (rollStatus) {
+    if (rollStatus.textContent.trim().length === 0) {
+      rollStatus.style.display = 'none';
+    } else {
+      rollStatus.style.display = 'block';
+    }
+  }
+}
+
 function setupInitialEventListeners() {
   const addPlayerBtn = document.getElementById('add-player-btn');
   const singleInput = document.getElementById('single-player-input');
@@ -129,8 +294,7 @@ function setupInitialEventListeners() {
         return;
       }
      
-      const randomEmoji = PLAYER_EMOJIS[Math.floor(Math.random() * PLAYER_EMOJIS.length)];
-      temporaryPlayersList.push({ name: name.toUpperCase(), emoji: randomEmoji });
+      temporaryPlayersList.push({ name: name.toUpperCase(), emoji: getDefaultEmojiForNewPlayer() });
      
       singleInput.value = "";
       renderPlayerBoxes();
@@ -140,6 +304,22 @@ function setupInitialEventListeners() {
   singleInput.onkeydown = (e) => {
     if (e.key === "Enter") addPlayerBtn.click();
   };
+
+  const emojiPickerCloseBtn = document.getElementById('emoji-picker-close-btn');
+  const emojiPickerModal = document.getElementById('emoji-picker-modal');
+
+  if (emojiPickerCloseBtn) {
+    emojiPickerCloseBtn.onclick = (e) => {
+      e.stopPropagation();
+      closeEmojiPicker();
+    };
+  }
+
+  if (emojiPickerModal) {
+    emojiPickerModal.onclick = (e) => {
+      if (e.target === emojiPickerModal) closeEmojiPicker();
+    };
+  }
 
   startGameBtn.onclick = () => {
     const roundsInput = parseInt(document.getElementById('rounds-input').value) || 3;
@@ -162,6 +342,32 @@ function setupInitialEventListeners() {
       "This is your call only. Read the question and choose a prompt."
     );
   };
+
+  const backToSetupBtn = document.getElementById('back-to-setup-btn');
+  if (backToSetupBtn) {
+    backToSetupBtn.onclick = resetToSetupState;
+  }
+}
+
+function resetToSetupState() {
+  if (safetyDelayedTimer) clearTimeout(safetyDelayedTimer);
+  if (audioManager) audioManager.stopSpeech();
+  const stopVoiceBtn = document.getElementById('stop-voice-btn');
+  if (stopVoiceBtn) stopVoiceBtn.style.display = 'none';
+
+  game = null;
+  currentQuestion = null;
+  currentHint = "";
+  shifter = null;
+  responderChoice = "";
+  remainingGuessers = [];
+  currentGuesserIndex = null;
+  revealCount = 0;
+
+  renderPlayerBoxes();
+  const safetyTip = document.getElementById('safety-tip-text');
+  if (safetyTip) safetyTip.innerText = "Recommended for all players to read before starting.";
+  screens.switchScreen('setup');
 }
 
 function renderPlayerBoxes() {
@@ -172,8 +378,11 @@ function renderPlayerBoxes() {
     box.className = "player-box";
     box.innerHTML = `
       <div class="player-box-left">
-        <div class="player-avatar" title="Tap to reroll emoji">${player.emoji}</div>
-        <span>${player.name}</span>
+        <div class="player-avatar" title="Tap to choose or reroll emoji">${player.emoji}</div>
+        <div class="player-name-block">
+          <span>${player.name}</span>
+          <span class="emoji-picker-hint">Tap icon to choose</span>
+        </div>
       </div>
       <button class="delete-box-btn">✕</button>
     `;
@@ -185,14 +394,55 @@ function renderPlayerBoxes() {
    
     box.querySelector('.player-avatar').onclick = (e) => {
       e.stopPropagation();
-      player.emoji = PLAYER_EMOJIS[Math.floor(Math.random() * PLAYER_EMOJIS.length)];
-      if (audioManager) audioManager.play('click'); 
-      renderPlayerBoxes();
+      openEmojiPicker(index);
     };
    
     container.appendChild(box);
   });
   updateHelpTargetText();
+  updateStatsBarVisibility();
+}
+
+let activeEmojiPickerIndex = null;
+
+function renderEmojiPickerGrid(selectedEmoji) {
+  const grid = document.getElementById('emoji-picker-grid');
+  if (!grid) return;
+  grid.innerHTML = "";
+  PLAYER_EMOJIS.forEach((emoji) => {
+    const tile = document.createElement('button');
+    tile.type = 'button';
+    tile.className = 'emoji-picker-tile';
+    tile.innerText = emoji;
+    tile.title = EMOJI_NAMES[emoji] ? `${EMOJI_NAMES[emoji]} (${emoji})` : emoji;
+    if (emoji === selectedEmoji) tile.classList.add('selected');
+    tile.onclick = (e) => {
+      e.stopPropagation();
+      if (activeEmojiPickerIndex === null) return;
+      temporaryPlayersList[activeEmojiPickerIndex].emoji = emoji;
+      renderPlayerBoxes();
+      renderEmojiPickerGrid(emoji);
+    };
+    grid.appendChild(tile);
+  });
+}
+
+function openEmojiPicker(index) {
+  activeEmojiPickerIndex = index;
+  const player = temporaryPlayersList[activeEmojiPickerIndex];
+  const modal = document.getElementById('emoji-picker-modal');
+  if (!modal || !player) return;
+  renderEmojiPickerGrid(player.emoji);
+  modal.classList.remove('hidden');
+  modal.style.display = 'flex';
+}
+
+function closeEmojiPicker() {
+  const modal = document.getElementById('emoji-picker-modal');
+  if (!modal) return;
+  modal.classList.add('hidden');
+  modal.style.display = 'none';
+  activeEmojiPickerIndex = null;
 }
 
 function setupHelpPanel() {
@@ -363,26 +613,76 @@ function setupSafetyHoldTriggers(scrOptions, scrTalk, modal, getMinutesFn) {
   const triggers = scrOptions.querySelectorAll('.safety-hold-trigger');
   triggers.forEach(btn => {
     let holdTimer = null;
+    let pointerId = null;
+    let isHolding = false;
+    let hasTriggered = false;
+
+    const resetHoldState = () => {
+      if (holdTimer) {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+      }
+      isHolding = false;
+      hasTriggered = false;
+      btn.classList.remove('holding');
+      btn.innerText = "Hold for 2s to Confirm";
+      if (pointerId !== null && typeof btn.releasePointerCapture === 'function' && btn.hasPointerCapture(pointerId)) {
+        try {
+          btn.releasePointerCapture(pointerId);
+        } catch (error) {
+          // Ignore release errors on browsers that do not support the capture state.
+        }
+      }
+      pointerId = null;
+    };
 
     const startHold = (e) => {
-      e.preventDefault(); e.stopPropagation();
+      if (e.button !== undefined && e.button !== 0) return;
+      if (isHolding) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      isHolding = true;
+      hasTriggered = false;
+      pointerId = e.pointerId ?? null;
       btn.classList.add('holding');
       btn.innerText = "Holding...";
-      holdTimer = setTimeout(() => {
+
+      if (pointerId !== null && typeof btn.setPointerCapture === 'function') {
+        try {
+          btn.setPointerCapture(pointerId);
+        } catch (error) {
+          // Ignore capture errors and fall back to the standard event flow.
+        }
+      }
+
+      holdTimer = window.setTimeout(() => {
+        if (hasTriggered) return;
+        hasTriggered = true;
         const minutes = typeof getMinutesFn === 'function' ? getMinutesFn() : 0;
         executeSafetyAction(btn.dataset.action, scrOptions, scrTalk, modal, minutes);
-        endHold();
+        resetHoldState();
       }, 2000);
     };
 
-    const endHold = () => {
-      if (holdTimer) clearTimeout(holdTimer);
-      btn.classList.remove('holding');
-      btn.innerText = "Hold for 2s to Confirm";
+    const endHold = (e) => {
+      if (!isHolding) return;
+      if (e && e.pointerId !== undefined && pointerId !== null && e.pointerId !== pointerId) return;
+
+      e?.preventDefault?.();
+      e?.stopPropagation?.();
+      resetHoldState();
     };
 
-    btn.onmousedown = startHold; btn.onmouseup = endHold; btn.onmouseleave = endHold;
-    btn.ontouchstart = startHold; btn.ontouchend = endHold; btn.ontouchcancel = endHold;
+    btn.addEventListener('pointerdown', startHold);
+    btn.addEventListener('pointerup', endHold);
+    btn.addEventListener('pointercancel', endHold);
+    btn.addEventListener('pointerleave', endHold);
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
   });
 }
 
@@ -484,12 +784,6 @@ function getValidFragmentOptions(fragIndex) {
 }
 
 function randomizeCurrentFragments() {
-  if (currentFragmentsState && currentFragmentsState.length > 0) {
-    fragmentsHistory.push([...currentFragmentsState]);
-    const undoBtn = document.getElementById('undo-options-btn');
-    if (undoBtn) undoBtn.style.display = 'inline-block';
-  }
-
   currentFragmentsState = [];
   currentQuestion.fragments.forEach((frag, i) => {
     const validOptions = getValidFragmentOptions(i);
@@ -575,18 +869,30 @@ function initRound() {
 
     currentQuestion = game.getRandomQuestion();
     fragmentsHistory = [];
+    questionHistory = [];
     currentFragmentsState = []; 
     const undoBtn = document.getElementById('undo-options-btn');
     if (undoBtn) {
-      undoBtn.style.display = 'none';
+      undoBtn.disabled = true;
       undoBtn.onclick = () => {
-        if (fragmentsHistory.length > 0) {
-          currentFragmentsState = fragmentsHistory.pop();
+        if (questionHistory.length > 0) {
+          const previousState = questionHistory.pop();
+          currentQuestion = previousState.question;
+          currentFragmentsState = previousState.fragments;
           renderInteractiveQuestion();
+          updatePickerHints();
           audioManager.play('click');
-          if (fragmentsHistory.length === 0) undoBtn.style.display = 'none';
+          if (questionHistory.length === 0) undoBtn.disabled = true;
         }
       };
+      // Show notification when clicking disabled undo button
+      undoBtn.addEventListener('mousedown', (e) => {
+        if (undoBtn.disabled) {
+          e.preventDefault();
+          screens.showAlert('Undo Blocked', '⏸️ Reroll first to enable undo. Then you can switch back to the previous question and options.');
+          audioManager.play('error');
+        }
+      });
     }
 
     randomizeCurrentFragments();
@@ -603,26 +909,27 @@ function initRound() {
     const rerollOptionsBtn = document.getElementById('reroll-options-btn');
     if (rerollOptionsBtn) {
       rerollOptionsBtn.onclick = () => {
-        randomizeCurrentFragments();
-        audioManager.play('click'); 
-      };
-    }
-
-    const rerollBtn = document.getElementById('reroll-question-btn');
-    if (rerollBtn) {
-      rerollBtn.style.display = 'block';
-      rerollBtn.onclick = () => {
+        // Save current state to history
+        if (currentQuestion && currentFragmentsState.length > 0) {
+          questionHistory.push({
+            question: currentQuestion,
+            fragments: [...currentFragmentsState]
+          });
+          const undoBtn = document.getElementById('undo-options-btn');
+          if (undoBtn) undoBtn.disabled = false;
+        }
+        
+        // Change question
         game.shuffledQuestions.unshift(currentQuestion);
         currentQuestion = game.getRandomQuestion();
-       
-        fragmentsHistory = [];
+        
+        // Reset fragments
         currentFragmentsState = [];
-        const undoBtn = document.getElementById('undo-options-btn');
-        if (undoBtn) undoBtn.style.display = 'none';
-       
+        
+        // Reroll options for new question
         randomizeCurrentFragments();
         updatePickerHints();
-        rerollBtn.style.display = 'none';
+        audioManager.play('click');
       };
     }
    
@@ -806,10 +1113,9 @@ function confirmResponderChoice(w1, w2, choice) {
     const plainQuestionText = getCompiledQuestionString("___", "___", false);
     game.saveRoundToHistory(plainQuestionText, currentHint, w1, w2, choice);
    
-    const fullQuestionText = getCompiledQuestionString(w1, w2, true);
+const fullQuestionText = getCompiledQuestionString(w1, w2, true);
     const formattedResultString = `<strong>${responder.name}</strong> chose ` +
-      `<span style="color: #00ffb3; font-weight: bold;">${choice}</span> over ` +
-      `<span style="color: #ff4a4a; font-weight: bold;">${loserWord}</span> in the question:<br>` +
+      `<span style="color: #00ffb3; font-weight: bold;">${choice}</span> in the question:<br>` +
       `<span style="color: var(--muted); font-style: italic;">"${fullQuestionText}"</span>`;
    
     game.history[game.history.length - 1].resultSentence = formattedResultString;
@@ -835,6 +1141,7 @@ function setupNextGuesser() {
     }
    
     currentGuesserIndex = remainingGuessers.shift();
+    oralHintUsedThisTurn = false; // <-- СБРОС ФЛАГА ЗДЕСЬ
     shifter = new WordShifter(shifter.orig1, shifter.orig2, shifter.isNerfed, shifter.isMultiWord);
     revealCount = 0;
    
@@ -1006,7 +1313,7 @@ function updateGuesserUI() {
     const randDesc = shifter.getRandomDescription(intensity);
     const typeDesc = shifter.getLetterTypeDescription(intensity);
 
-    const rollStatusEl = document.getElementById('ability-roll-status');
+const rollStatusEl = document.getElementById('ability-roll-status');
     if (rollStatusEl) {
       const remainingReveals = Math.max(0, 2 - revealCount);
       if (remainingReveals > 0) {
@@ -1015,6 +1322,8 @@ function updateGuesserUI() {
         rollStatusEl.innerHTML = `🔒 No reveals left for this turn`;
       }
     }
+    
+    updateStatsBarVisibility(); // <--- ДОБАВЬТЕ ЕЁ СЮДА
 
     const renderAbility = (btn, type, label, icon, desc) => {
       if (!btn) return;
@@ -1050,14 +1359,28 @@ function updateGuesserUI() {
       }
     };
 
-    renderAbility(posBtn, 'positional', 'Positional', '📍', posDesc);
+renderAbility(posBtn, 'positional', 'Positional', '📍', posDesc);
     renderAbility(randBtn, 'random', 'Random', '🎲', randDesc);
     renderAbility(typeBtn, 'type', 'Letters Type', '🔤', typeDesc);
 
+// --- ПЛАВНОЕ СКРЫТИЕ ПУСТОГО КОНТЕЙНЕРА (УБИРАЕТ ДЫРУ) ---
+    const abilitiesContainer = document.querySelector('.abilities-list-vertical');
+    if (abilitiesContainer) {
+      const remainingReveals = Math.max(0, 2 - revealCount);
+      if (remainingReveals === 0) {
+        // Ждем пока кнопки исчезнут по анимации, затем схлопываем контейнер
+        setTimeout(() => { abilitiesContainer.style.display = 'none'; }, 400); 
+      } else {
+        abilitiesContainer.style.display = 'flex';
+      }
+    }
+
+    // --- ИСПРАВЛЕННАЯ УСТНАЯ ПОДСКАЗКА ---
     const oralBtn = document.getElementById('oral-hint-btn');
     if (oralBtn) {
       const remainingReveals = Math.max(0, 2 - revealCount);
-      if (game && game.players.length === 2 && remainingReveals === 0) {
+      // Кнопка появляется только если остались 2 игрока, лимиты исчерпаны и подсказка ЕЩЕ НЕ бралась
+      if (game && game.players.length === 2 && remainingReveals === 0 && !oralHintUsedThisTurn) {
         oralBtn.style.setProperty('display', 'block', 'important');
        
         oralBtn.onclick = (e) => {
@@ -1070,12 +1393,12 @@ function updateGuesserUI() {
           }
          
           guesser.gold -= 10;
+          oralHintUsedThisTurn = true; // <--- ТЕПЕРЬ МЫ ИСПОЛЬЗУЕМ ФЛАГ ВМЕСТО .remove()
           animateGoldChange(-10);
          
           screens.showAlert("💬 Oral Hint Activated!", `Ask your friend to give you a single honest oral hint or association about their choice.\n\n(For example: "This is a physical object" or "I encounter this at work")`);
          
-          oralBtn.remove();
-          updateGuesserUI();
+          updateGuesserUI(); // Перерисовка сама скроет кнопку
         };
       } else {
         oralBtn.style.setProperty('display', 'none', 'important');
@@ -1084,7 +1407,7 @@ function updateGuesserUI() {
   } catch (err) {
     console.error("Error in updateGuesserUI render loop:", err);
   }
-}
+} // <-- Конец функции updateGuesserUI
 
 function makeGuess(word) {
   try {
@@ -1213,8 +1536,8 @@ async function showFinalScores() {
         if (audioManager.cancelQueue) return;
 
         let placesText = "";
-        leaderboard.forEach((p, index) => {
-          placesText += `Number ${index + 1}: ${p.name}, ${p.gold || 0} points. `;
+        leaderboard.forEach((p) => {
+          placesText += `${p.name}, ${p.gold || 0} points. `;
         });
         await audioManager.speakAsync(placesText);
         if (audioManager.cancelQueue) return;
@@ -1235,20 +1558,7 @@ async function showFinalScores() {
 
     const backBtn = document.getElementById('back-to-setup-btn');
     if (backBtn) {
-      backBtn.onclick = () => {
-        if (safetyDelayedTimer) clearTimeout(safetyDelayedTimer);
-        audioManager.stopSpeech(); // Останавливаем болтовню при выходе
-        stopVoiceBtn.style.display = 'none';
-        
-        game = null; currentQuestion = null; currentHint = "";
-        shifter = null; responderChoice = ""; remainingGuessers = [];
-        currentGuesserIndex = null; revealCount = 0;
-
-        renderPlayerBoxes();
-        const safetyTip = document.getElementById('safety-tip-text');
-        if (safetyTip) safetyTip.innerText = "Recommended for all players to read before starting.";
-        screens.switchScreen('setup');
-      };
+      backBtn.onclick = resetToSetupState;
     }
 
   } catch (err) {
@@ -1264,6 +1574,7 @@ function animateGoldChange(amount, positive = false) {
     if (game && typeof currentGuesserIndex === 'number' && game.players[currentGuesserIndex]) {
       el.innerText = `Points: ${game.players[currentGuesserIndex].gold}`;
     }
+    updateStatsBarVisibility();
     const cls = positive ? 'gold-add' : 'gold-spend';
     el.classList.add(cls);
     setTimeout(() => el.classList.remove(cls), 900);
