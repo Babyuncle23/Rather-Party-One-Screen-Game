@@ -1,3 +1,45 @@
+export const PROMPTS = {
+  // Действия (для вопроса 14)
+  actionWork: { text: "Inappropriate action at work", brainstorm: ["take a nap", "leave early", "ignore the boss", "play games"] },
+  actionIllegal: { text: "Minor illegal act", brainstorm: ["pirate a movie", "jaywalk", "steal a pen", "sneak into a concert"] },
+  actionEmbarrassing: { text: "Embarrassing action", brainstorm: ["trip and fall", "forget a name", "snort while laughing", "wave at a stranger"] },
+  actionParty: { text: "Weird party trick", brainstorm: ["swallow a sword", "juggle apples", "do a backflip", "eat a glass"] },
+  actionChore: { text: "Annoying daily chore", brainstorm: ["wash the dishes", "iron clothes", "vacuum", "take out the trash"] },
+  actionRelax: { text: "Relaxing activity", brainstorm: ["sleep for 10 hours", "take a hot bath", "read a book", "stare at the wall"] },
+  actionExtreme: { text: "Extreme sport action", brainstorm: ["jump from a plane", "surf a huge wave", "climb a mountain", "bungee jump"] },
+  actionAlone: { text: "Something you do when alone", brainstorm: ["sing loudly", "talk to yourself", "dance weirdly", "eat from the fridge"] },
+
+  // Еда и напитки
+  fastFood: { text: "Fast food", brainstorm: ["Burger", "Pizza", "Fries", "Hot Dog"] },
+  snack: { text: "Snack food", brainstorm: ["Skittles", "Doritos", "Jelly beans", "Cheetos"] },
+  sweetLiquid: { text: "Sweet liquid", brainstorm: ["Maple syrup", "Melted chocolate", "Apple juice", "Honey"] },
+  strongFood: { text: "Strong-smelling food", brainstorm: ["Onion", "Garlic", "Fish", "Blue Cheese"] },
+  
+  // Животные и существа
+  animalFunny: { text: "Funny-looking animal", brainstorm: ["Platypus", "Ostrich", "Sloth", "Blobfish"] },
+  animalFarm: { text: "Farm animal", brainstorm: ["Cow", "Pig", "Horse", "Goat"] },
+  fictionalChar: { text: "Fictional character", brainstorm: ["Shrek", "Batman", "Homer Simpson", "Pikachu", "Yoda", "SpongeBob"] },
+  villain: { text: "Horror movie villain", brainstorm: ["Freddy Krueger", "Jason Voorhees", "Michael Myers", "Ghostface"] },
+  
+  // Люди и роли
+  politician: { text: "Famous politician", brainstorm: ["Donald Trump", "Joe Biden", "Boris Johnson", "Kim Jong Un", "Barack Obama", "Winston Churchill"] },
+  historical: { text: "Historical figure", brainstorm: ["Abraham Lincoln", "Cleopatra", "Napoleon", "Julius Caesar"] },
+  singer: { text: "Famous singer", brainstorm: ["Elvis", "Beyonce", "Eminem", "Adele"] },
+  band: { text: "Rock band", brainstorm: ["Queen", "Nirvana", "The Beatles", "Metallica"] },
+  
+  // Вещи и объекты
+  everyday: { text: "Everyday object", isPlural: true, brainstorm: ["Smartphones", "Toasters", "Fidget spinners", "Vinyl records"] },
+  expensive: { text: "Expensive item", isPlural: true, brainstorm: ["Sports cars", "Designer bags", "Fine art", "Statues"] },
+  gadget: { text: "Iconic gadget", brainstorm: ["The first iPhone", "The Game Boy", "The first PC"] },
+  smallObj: { text: "Small object", brainstorm: ["Bottle caps", "Paperclips", "Buttons", "Rubber bands"] },
+  
+  // Технологии и компании
+  techOld: { text: "Outdated technology", brainstorm: ["Fax machines", "Floppy disks", "Wired headphones", "VHS tapes"] },
+  company: { text: "Famous company", brainstorm: ["Blockbuster", "Nokia", "Yahoo", "Toys R Us", "Tesla", "Netflix", "SpaceX"] },
+  app: { text: "Modern app", brainstorm: ["TikTok", "Tinder", "Uber", "Instagram"] },
+  website: { text: "Popular website", brainstorm: ["YouTube", "Wikipedia", "Amazon", "Google"] }
+};
+
 export const questionsDatabase = [
   {
     id: 1,
@@ -38,7 +80,7 @@ export const questionsDatabase = [
       { text: "Famous media personality", brainstorm: ["Kim Kardashian", "Oprah Winfrey", "Gordon Ramsay"] }
     ]
   },
-{
+  {
     id: 2,
     category: "activities",
     text: "Would you rather",
@@ -144,6 +186,7 @@ export const questionsDatabase = [
           { text: "the first person you meet on the street?", requires: ["context"], hints: [{ text: "Superpower", brainstorm: ["Flying", "Invisibility", "Telepathy", "Time travel"] }] },
           { text: "the hiring manager during a job interview?", requires: ["context"], hints: ["Name a professional skill"] },
           { text: "your parents at dinner?", requires: ["context"] },
+          { text: "your parents?", requires: ["context"] },
           { text: "completely hungover?", requires: ["condition"] },
           { text: "in sauna?", requires: ["condition"] },
           { text: "having a bad hair day?", requires: ["condition"] },
@@ -152,7 +195,7 @@ export const questionsDatabase = [
       }
     ]
   },
-{
+  {
     id: 5,
     category: "lifestyle",
     text: "Would you rather",
@@ -182,7 +225,7 @@ export const questionsDatabase = [
     ],
     hints: [] 
   },
-{
+  {
     id: 6,
     category: "body",
     text: "Would you rather",
@@ -211,7 +254,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: ", but only when you are", type: "condition" },
-          { text: ", and it triggers instantly every time you", type: "action" },
+          { text: ", and it triggers every time you", type: "action" },
           { text: "", type: "none" }
         ]
       },
@@ -234,7 +277,7 @@ export const questionsDatabase = [
       { text: "Fruit", brainstorm: ["Banana", "Apple", "Pineapple", "Mango"] }
     ] 
   },
-{
+  {
     id: 7,
     category: "survival",
     text: "Would you rather",
@@ -263,7 +306,6 @@ export const questionsDatabase = [
       },
       {
         options: [
-          // Заменили Modern convenience на предметы выживания, логичные для леса и острова
           { text: "without [ ... ] or without [ ... ]?", hints: [{ text: "Common piece of clothing", brainstorm: ["Sock", "Shoe", "Jacket", "Hat"] }, { text: "Basic survival tool", brainstorm: ["Pocket knife", "Matches", "Flashlight", "Compass"] }] }
         ]
       }
@@ -273,7 +315,7 @@ export const questionsDatabase = [
       { text: "Hygiene product", isPlural: true, brainstorm: ["Soaps", "Toothpastes", "Shampoos", "Deodorants"] }
     ]
   },
-{
+  {
     id: 8,
     category: "lifestyle",
     text: "Would you rather",
@@ -282,7 +324,7 @@ export const questionsDatabase = [
         options: [
           { text: "magically receive an endless supply of", type: "recurring", hints: [{ text: "Large item in a house", isPlural: true, brainstorm: ["Sofas", "Beds", "Fridges", "Tables"] }] },
           { text: "receive a random package every day containing", type: "recurring" },
-          { text: "randomly find a pile of", type: "recurring" },
+          { text: "wake up every morning next to a new pile of", type: "recurring" },
           { text: "get to use only", type: "one-time", hints: [{ text: "Expensive thing", isPlural: true, brainstorm: ["Cars", "Yachts", "Diamonds", "Mansions"] }, { text: "Thing you wear on your head", isPlural: true, brainstorm: ["Hats", "Helmets", "Caps", "Headbands"] }] }
         ]
       },
@@ -306,7 +348,7 @@ export const questionsDatabase = [
       { text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }
     ]
   },
-{
+  {
     id: 9,
     category: "social",
     text: "Would you rather",
@@ -316,7 +358,10 @@ export const questionsDatabase = [
           { text: "be adopted by a family of", type: "adopted", hints: [{ text: "Animal", isPlural: true, brainstorm: ["Wolves", "Monkeys", "Penguins", "Bears"] }, { text: "Type of rich person", isPlural: true, brainstorm: ["Billionaires", "Aristocrats", "Celebrities", "Royals"] }] },
           { text: "be fully accepted into a secret society of", type: "society", hints: [{ text: "Boring profession", isPlural: true, brainstorm: ["Accountants", "Data entry clerks", "Actuaries", "Auditors"] }, { text: "Exciting profession", isPlural: true, brainstorm: ["Astronauts", "Spies", "Stunt doubles", "Detectives"] }] }, 
           { text: "be raised from birth by a pack of", type: "raised", hints: [{ text: "Angry-looking animal", isPlural: true, brainstorm: ["Rhinos", "Bulls", "Eagles", "Hippos"] }] },
-          { text: "be fully accepted into a magic school where the only spell you learn is how to summon", type: "society", hints: [{ text: "Fast food", brainstorm: ["Burgers", "Pizzas", "Fries", "Hot Dogs"] }] }, 
+          { text: "be fully accepted into a magic school where the only spell you learn is how to summon", type: "society", hints: [{ text: "Fast food", brainstorm: ["Burgers", "Pizzas", "Fries", "Hot Dogs"] }] },
+          { text: "have the magic power to turn gold into", type: "society", hints: [{ text: "Fast food", brainstorm: ["Burgers", "Pizzas", "Fries", "Hot Dogs"] }] },
+          { text: "have the magic power to turn water into", type: "society", hints: [{ text: "Fast food", brainstorm: ["Burgers", "Pizzas", "Fries", "Hot Dogs"] }] },
+          { text: "have the magic power to turn dirt into", type: "society", hints: [{ text: "Fast food", brainstorm: ["Burgers", "Pizzas", "Fries", "Hot Dogs"] }] }
         ]
       },
       {
@@ -358,7 +403,6 @@ export const questionsDatabase = [
           { text: ", and become incredibly famous, but everyone makes fun of you?" },
           { text: ", but your entire family is forced to participate?" }, 
           { text: ", and you have to bring it up in every single conversation?" },
-          { text: ", but you secretly absolutely hate it?" },
           { text: "?" }
         ]
       }
@@ -375,51 +419,31 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "travel about 100 years into the past", type: "past_old" },
-          { text: "travel back to the 80s", type: "past_old" },
-          { text: "travel back to the 90s", type: "past_old" },
-          { text: "travel back to the early 2000s", type: "past_old" },
-          { text: "travel back to the 2010s", type: "past_recent" },
-          { text: "travel about 100 years into the future", type: "future" },
-          { text: "pause time for 10 minutes every day", type: "pause" },
-          { text: "go back to your childhood", type: "childhood" }
+          { text: "travel into the past", type: "past" },
+          { text: "travel about 100 years into the future", type: "future" }
         ]
       },
       {
         options: [
-          { text: "and warn people about the terrible future of", requires: ["past_old", "past_recent"], type: "change", hints: [{ text: "Famous company", brainstorm: ["Blockbuster", "Nokia", "Yahoo", "Toys R Us"] }, { text: "Modern technology", brainstorm: ["Social media", "Smartphones", "Artificial Intelligence"] }] },
-          { text: "and destroy the original prototype of", requires: ["past_old"], type: "change_done", hints: [{ text: "Iconic gadget", brainstorm: ["The first iPhone", "The Game Boy", "The first PC"] }, { text: "Popular toy or game", brainstorm: ["Tamagotchi", "Rubik's Cube", "Furby", "Tetris"] }] },
-          // Новая логичная опция для 2010-х годов
-          { text: "and invest all your savings into", requires: ["past_recent"], type: "change_done", hints: [{ text: "Digital currency", brainstorm: ["Bitcoin", "Dogecoin", "Ethereum"] }, { text: "Tech company", brainstorm: ["Tesla", "Zoom", "Netflix", "SpaceX"] }] },
-          { text: "and secretly invent and take credit for", requires: ["past_old", "past_recent"], type: "change", hints: [{ text: "Modern app", brainstorm: ["TikTok", "Tinder", "Uber", "Instagram"] }, { text: "Popular website", brainstorm: ["YouTube", "Wikipedia", "Amazon", "Google"] }] },
-          { text: "and discover that future humans worship", requires: ["future"], type: "worship", hints: [{ text: "Household item", brainstorm: ["Toaster", "Toilet", "Sofa", "Refrigerator"] }, { text: "Fictional character", brainstorm: ["Shrek", "SpongeBob", "Yoda", "Mickey Mouse"] }] },
-          { text: "and discover that future humans use", requires: ["future"], type: "currency", hints: [{ text: "Small object", brainstorm: ["Bottle caps", "Paperclips", "Buttons", "Rubber bands"] }, { text: "Snack food", brainstorm: ["Skittles", "Doritos", "Jelly beans", "Cheetos"] }] },
-          { text: "only to steal", requires: ["pause"], type: "steal", hints: [{ text: "Everyday object", isPlural: true, brainstorm: ["Smartphones", "Toasters", "Fidget spinners", "Vinyl records"] }, { text: "Valuable item", isPlural: true, brainstorm: ["Watches", "Laptops", "Jewelry", "Wallets"] }] },
-          { text: "only to fart on", requires: ["pause"], type: "steal", hints: [{ text: "Everyday object", isPlural: true, brainstorm: ["Smartphones", "Toasters", "Fidget spinners", "Vinyl records"] }, { text: "Expensive item", isPlural: true, brainstorm: ["Sports cars", "Designer bags", "Fine art", "Statues"] }] },
-          { text: "but you are forced to wear a costume of", requires: ["childhood"], type: "costume", hints: [{ text: "Funny-looking animal", brainstorm: ["Platypus", "Ostrich", "Sloth", "Blobfish"] }, { text: "Food item", brainstorm: ["Hot dog", "Banana", "Taco", "Pizza"] }] }
+          { text: "and warn people about the terrible future of", requires: ["past"], type: "change", hints: [PROMPTS.company, { text: "Modern technology", brainstorm: ["Social media", "Smartphones", "Artificial Intelligence"] }] },
+          { text: "and destroy the original prototype of", requires: ["past"], type: "change_done", hints: [PROMPTS.gadget, { text: "Popular toy or game", brainstorm: ["Tamagotchi", "Rubik's Cube", "Furby", "Tetris"] }] },
+          { text: "and invest all your savings into", requires: ["past"], type: "change_done", hints: [{ text: "Digital currency", brainstorm: ["Bitcoin", "Dogecoin", "Ethereum"] }, PROMPTS.company] },
+          { text: "and secretly invent and take credit for", requires: ["past"], type: "change", hints: [PROMPTS.app, PROMPTS.website] },
+          
+          { text: "and discover that future humans worship", requires: ["future"], type: "worship", hints: [{ text: "Household item", brainstorm: ["Toaster", "Toilet", "Sofa", "Refrigerator"] }, PROMPTS.fictionalChar] },
+          { text: "and discover that future humans completely stopped using", requires: ["future"], type: "future_stop", hints: [{ text: "Modern convenience", brainstorm: ["Smartphones", "Wi-Fi", "Toilets", "Beds"] }, { text: "Basic household item", brainstorm: ["Spoons", "Mirrors", "Chairs", "Blankets"] }] },
+          { text: "and discover that future humans still unironically use", requires: ["future"], type: "future_still", hints: [PROMPTS.techOld, { text: "Old school trend", brainstorm: ["Fidget spinners", "Tamagotchis", "Yo-yos", "Pogs"] }] }
         ]
       },
       {
         options: [
-          { text: "[ ... ] or [ ... ]", type: "normal" },
-          { text: "[ ... ] or [ ... ] as their main currency", requires: ["currency"] }
-        ]
-      },
-      {
-        options: [
-          { text: "before returning to the present?", requires: ["change", "steal", "normal"] },
-          { text: "but you are automatically sent back after 24 hours?", requires: ["change", "worship"] },
-          // Новая связка для событий с четким завершением
-          { text: "but you are automatically sent back after it is done?", requires: ["change_done", "change"] },
-          { text: "and they refuse to let you leave?", requires: ["worship", "currency"] },
-          { text: "until you turn 18?", requires: ["costume"] },
-          { text: "?", requires: ["change", "steal", "worship", "change_done"] }
+          { text: "[ ... ] or [ ... ]?" }
         ]
       }
     ],
     hints: [] 
   },
-{
+  {
     id: 12,
     category: "superpowers",
     text: "Would you rather",
@@ -427,12 +451,12 @@ export const questionsDatabase = [
       {
         options: [
           { text: "have the superpower to turn any object into", type: "transform", hints: [{ text: "Food item", brainstorm: ["Pizza", "Cheese", "Cake", "Chocolate"] }, { text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] }] },
-          { text: "have the superpower to instantly turn yourself into", type: "shapeshift", hints: [{ text: "Funny-looking animal", brainstorm: ["Platypus", "Ostrich", "Sloth", "Blobfish"] }, { text: "Inanimate object", brainstorm: ["Chair", "Lamp", "Car", "Tree"] }] },
+          { text: "have the superpower to instantly turn yourself into", type: "shapeshift", hints: [PROMPTS.animalFunny, { text: "Inanimate object", brainstorm: ["Chair", "Lamp", "Car", "Tree"] }] },
           { text: "be able to teleport anywhere, but you always arrive covered in", type: "teleport", hints: [{ text: "Sticky substance", brainstorm: ["Honey", "Mud", "Slime", "Glue"] }, { text: "Sauce", brainstorm: ["Ketchup", "Mayonnaise", "Mustard", "Soy sauce"] }] },
           { text: "become completely invisible while holding", type: "invisible", hints: [{ text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] }, { text: "Exotic animal", brainstorm: ["Panda", "Koala", "Iguana", "Toucan"] }] },
-          { text: "have super strength while singing songs about", type: "strength", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
-          { text: "have super strength while singing songs by", type: "strength", hints: [{ text: "Famous singer", brainstorm: ["Elvis", "Beyonce", "Eminem", "Adele"] }, { text: "Rock band", brainstorm: ["Queen", "Nirvana", "The Beatles", "Metallica"] }] },
-          { text: "be able to fly, but you constantly emit the smell of", type: "fly", hints: [{ text: "Strong-smelling food", brainstorm: ["Garlic", "Onion", "Fish", "Blue cheese"] }, { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] }] },
+          { text: "have super strength, but only while singing songs about", type: "strength", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
+          { text: "have super strength, but only while singing songs by", type: "strength", hints: [PROMPTS.singer, PROMPTS.band] },
+          { text: "be able to fly, but you constantly emit the smell of", type: "fly", hints: [PROMPTS.strongFood, { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] }] },
           { text: "gain the ability to read minds, but you can only hear people's thoughts about", type: "mind", hints: [{ text: "Boring topic", brainstorm: ["Weather", "Taxes", "Traffic", "Grocery lists"] }, { text: "Weird hobby", brainstorm: ["Taxidermy", "Collecting spoons", "Soap carving", "Extreme ironing"] }] }
         ]
       },
@@ -446,7 +470,7 @@ export const questionsDatabase = [
           { text: "whenever you sneeze?", requires: ["shapeshift"] },
           { text: "and suddenly everyone around you knows it?", requires: ["teleport", "shapeshift", "fly"] },
           { text: "but you can't control exactly when it happens?", requires: ["mind", "shapeshift"] },
-          { text: "but the effect only lasts for 60 seconds?", requires: ["transform", "invisible", "strength"] }, 
+          { text: "but the effect only lasts for 60 seconds a day?", requires: ["transform", "invisible", "strength"] }, 
           { text: "and you must loudly announce what you are doing before every use?" },
           { text: "?" },
           { text: "?" } 
@@ -454,5 +478,90 @@ export const questionsDatabase = [
       }
     ],
     hints: []
+  },
+  {
+    id: 13,
+    category: "lifestyle",
+    text: "Would you rather",
+    fragments: [
+      {
+        options: [
+          { 
+            text: "be forced to wear a giant, sweaty costume of", 
+            type: "costume_full", 
+            hints: [PROMPTS.animalFunny, { text: "Food item", brainstorm: ["Hot dog", "Banana", "Taco", "Pizza"] }] 
+          },
+          { 
+            text: "have to permanently wear a cheap plastic mask of", 
+            type: "costume_mask", 
+            hints: [PROMPTS.politician, PROMPTS.villain] 
+          },
+          { 
+            text: "have to physically carry a life-sized statue of", 
+            type: "carry_statue", 
+            hints: [PROMPTS.fictionalChar, PROMPTS.animalFarm] 
+          },
+          { 
+            text: "be forced to dress exactly like", 
+            type: "dress_like", 
+            hints: [PROMPTS.historical, { text: "Weird profession", brainstorm: ["Clown", "Mime", "Pirate", "Astronaut"] }] 
+          }
+        ]
+      },
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]" }
+        ]
+      },
+      {
+        options: [
+          { text: "to every job interview you ever go to?", requires: ["costume_full", "dress_like"] },
+          { text: "on your own wedding day?", requires: ["costume_full", "dress_like"] },
+          { text: "every time you fly on an airplane?", requires: ["costume_full", "carry_statue"] },
+          { text: "every time you use public transport?", requires: ["costume_full", "carry_statue"] },
+          { text: "in all your official ID and passport photos?", requires: ["costume_mask"] },
+          { text: "during every serious conversation with your partner?", requires: ["costume_mask"] },
+          { text: "every time you talk to a police officer?", requires: ["costume_mask", "dress_like"] },
+          { text: "every time you go grocery shopping?", requires: ["carry_statue"] },
+          { text: "through airport security every single time?", requires: ["carry_statue"] },
+          { text: "to every family gathering?", requires: ["costume_full", "dress_like", "carry_statue", "costume_mask"] },
+          { text: "on every single first date?", requires: ["costume_full", "costume_mask", "dress_like"] },
+          { text: "and pretend you don't understand why people are staring?", requires: ["costume_full", "carry_statue", "dress_like"] }
+        ]
+      }
+    ],
+    hints: []
+  },
+{
+    id: 14,
+    category: "superpowers",
+    text: "Would you rather have the ability to",
+    fragments: [
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]" }
+        ]
+      },
+      {
+        options: [
+          { text: "without anyone ever knowing?" },
+          { text: "but you have to loudly announce it before using it?" }, // <-- Исправлено здесь
+          { text: "but it only works when no one is looking at you?" },
+          { text: "but doing it makes you incredibly tired?" },
+          { text: "but instantly forget everything that happened while you were doing it?" },
+          { text: "but it only works once a year?" }
+        ]
+      }
+    ],
+    hints: [
+      PROMPTS.actionWork, 
+      PROMPTS.actionIllegal, 
+      PROMPTS.actionEmbarrassing, 
+      PROMPTS.actionParty, 
+      PROMPTS.actionChore, 
+      PROMPTS.actionRelax, 
+      PROMPTS.actionExtreme, 
+      PROMPTS.actionAlone
+    ]
   }
 ];

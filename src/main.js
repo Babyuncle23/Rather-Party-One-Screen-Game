@@ -975,8 +975,17 @@ function startResponderPhase() {
     screens.switchScreen('responder');
     const responder = game.players[game.getResponderIndex()];
    
-    document.getElementById('responder-name').innerText = `${responder.emoji} ${responder.name}`;
-    document.getElementById('displayed-hint').innerText = currentHint.toUpperCase();
+document.getElementById('responder-name').innerText = `${responder.emoji} ${responder.name}`;
+    
+    // Умная инъекция подсказки для вопроса про способности (id: 14)
+    if (currentQuestion && currentQuestion.id === 14) {
+      document.getElementById('displayed-hint').innerHTML = currentHint.toUpperCase() + 
+        `<br><span style="color: var(--accent); font-size: 0.85em; text-transform: none; display: block; margin-top: 8px; font-weight: 600;">
+          💡 Write an action or activity (e.g., "fly", "eat pizza", "pause time")
+        </span>`;
+    } else {
+      document.getElementById('displayed-hint').innerText = currentHint.toUpperCase();
+    }
 
     const helperBox = document.getElementById('responder-helper-box');
     const helperToggle = document.getElementById('responder-helper-toggle');
