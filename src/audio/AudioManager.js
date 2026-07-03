@@ -164,8 +164,8 @@ export class AudioManager {
     } catch (err) { console.debug("Instant audio combo failed:", err.message); }
   }
 
-  // Обычный вызов с колбэком onstart (для лоадера)
-speak(text, onStartCallback = null) {
+// Обычный вызов с колбэком onstart (для лоадера)
+  speak(text, onStartCallback = null) {
     if (!this.enabled || !window.speechSynthesis || this.isScreenReaderMode) {
       if (onStartCallback) onStartCallback();
       return;
@@ -188,13 +188,33 @@ speak(text, onStartCallback = null) {
         }
       };
 
-      // Лоадер исчезнет строго в момент начала произношения
+      // 1. Стандартное событие API
       utterance.onstart = fireCallback;
-      utterance.onerror = fireCallback;
       
-      // Даем браузеру до 4 секунд на первую загрузку голоса, 
-      // вместо прежних 500 миллисекунд, которые ломали логику.
-      setTimeout(fireCallback, 4000); 
+      // 2. Самый точный индикатор: срабатывает, когда физически начинает звучать первое слово
+      utterance.onboundary = (event) => {
+        if (event.name === 'word' || event.charIndex === 0) {
+          fireCallback();
+        }
+      };
+
+      // Если произойдет системная ошибка (например, пропал интернет для загрузки голоса)
+      // убираем загрузку, чтобы не заблокировать интерфейс навсегда
+      utterance.onerror = fireCallback;
+
+      // 3. Микро-проверка (каждые 50мс) реального состояния динамика
+      const stateCheck = setInterval(() => {
+        if (window.speechSynthesis.speaking) {
+          fireCallback();
+        }
+        if (hasFired) {
+          clearInterval(stateCheck);
+        }
+      }, 50);
+
+      // Технический сброс интервала через 15 секунд, чтобы предотвратить утечку памяти,
+      // если API на устройстве пользователя полностью зависло
+      setTimeout(() => clearInterval(stateCheck), 15000);
     }
     
     window.speechSynthesis.speak(utterance);
