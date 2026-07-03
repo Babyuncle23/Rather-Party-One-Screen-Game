@@ -149,8 +149,13 @@ const EMOJI_NAMES = {
 
 function getDefaultEmojiForNewPlayer() {
   const used = new Set(temporaryPlayersList.map(p => p.emoji));
-  const nextEmoji = PLAYER_EMOJIS.find(emoji => !used.has(emoji));
-  return nextEmoji || PLAYER_EMOJIS[temporaryPlayersList.length % PLAYER_EMOJIS.length] || "🙂";
+  const available = PLAYER_EMOJIS.filter(emoji => !used.has(emoji));
+  
+  if (available.length > 0) {
+    return available[Math.floor(Math.random() * available.length)];
+  }
+  // Если каким-то чудом кончились уникальные
+  return PLAYER_EMOJIS[Math.floor(Math.random() * PLAYER_EMOJIS.length)];
 }
 
 function passPhoneWithSpeech(player, onConfirm, note, speakNote = false) {
@@ -1065,7 +1070,12 @@ function startResponderPhase() {
       const hasSimpleCity = SIMPLE_CITIES.includes(fullWord1) || SIMPLE_CITIES.includes(fullWord2);
       const hasSimpleFood = tokens1.some(t => SIMPLE_FOODS.includes(t)) || tokens2.some(t => SIMPLE_FOODS.includes(t));
 
-      const shouldNerf = hasSimpleColor || hasSimpleMaterialBoth || hasSimpleMoodBoth || hasSimpleEra || hasSimpleCountry || hasSimpleCity || hasSimpleFood;
+      let shouldNerf = hasSimpleColor || hasSimpleMaterialBoth || hasSimpleMoodBoth || hasSimpleEra || hasSimpleCountry || hasSimpleCity || hasSimpleFood;
+
+      // НОВОЕ: Многословные фразы изначально сложны, снимаем с них штрафы
+      if (isMultiWord) {
+        shouldNerf = false;
+      }
 
       shifter = new WordShifter(w1, w2, shouldNerf, isMultiWord);
      

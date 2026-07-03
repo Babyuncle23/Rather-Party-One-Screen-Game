@@ -4,15 +4,15 @@ export class WordShifter {
     this.orig2 = word2.trim();
     this.openedIndices1 = new Set();
     this.openedIndices2 = new Set();
-    this.isNerfed = isNerfed; // Флаг ослабления способностей
-    this.isMultiWord = isMultiWord; // Флаг фраз из нескольких слов
+    this.isNerfed = isNerfed; 
+    this.isMultiWord = isMultiWord; 
   }
 
   getTotalLength() {
     return this.orig1.length + this.orig2.length;
   }
 
-    getWordCount1() {
+  getWordCount1() {
     return this.orig1.split(/\s+/).filter(Boolean).length;
   }
 
@@ -25,7 +25,6 @@ export class WordShifter {
       let html = "";
       let inGap = false;
       
-      // Если скрытые буквы идут в самом начале
       if (word.length > 0 && !openedSet.has(0) && word[0] !== " ") {
         html += '<span class="letter-gap"></span>';
         inGap = true;
@@ -41,7 +40,6 @@ export class WordShifter {
           }
           inGap = false;
         } else {
-          // Если текущий символ скрыт и мы еще не создали разделитель для текущей группы пропусков
           if (!inGap && char !== " ") {
             html += '<span class="letter-gap"></span>';
             inGap = true;
@@ -57,7 +55,6 @@ export class WordShifter {
     };
   }
 
-  // Reveal Type 1: Positional (учитывает длину слов и штрафы баланса)
   revealPositional(intensity = 1) {
     const revealPositions = (word, openedSet) => {
       const len = word.length;
@@ -67,25 +64,41 @@ export class WordShifter {
       const lastIdx = len - 1;
       const middleIdx = Math.floor((len - 1) / 2);
 
-      // Штрафной режим: если активирован nerf или слово слишком короткое
-      if (this.isNerfed || len <= 3) {
-        if (!openedSet.has(middleIdx) && word[middleIdx] !== " ") {
-          openedSet.add(middleIdx);
-        } else if (!openedSet.has(lastIdx) && word[lastIdx] !== " ") {
-          openedSet.add(lastIdx);
-        }
+      const applyNerf = this.isNerfed && intensity === 1;
+
+      if (applyNerf || len <= 3) {
+        openedSet.add(firstIdx);
+        if (len > 4) openedSet.add(lastIdx);
         return;
       }
 
       if (intensity === 1) {
-        // Обычный режим (1-я попытка): первая и средняя буквы
         openedSet.add(firstIdx);
-        if (len > 2) openedSet.add(middleIdx);
+        if (this.isMultiWord) {
+          for (let i = 1; i < len; i++) {
+            if (word[i - 1] === " " && word[i] !== " ") {
+              openedSet.add(i);
+            }
+          }
+          openedSet.add(lastIdx);
+        } else {
+          if (len > 2) openedSet.add(middleIdx);
+        }
       } else {
-        // Обычный режим (2-я попытка): первая, средняя и последняя буквы
         openedSet.add(firstIdx);
         if (len > 1) openedSet.add(lastIdx);
-        if (len > 2) openedSet.add(middleIdx);
+
+        if (this.isMultiWord) {
+          for (let i = 1; i < len; i++) {
+            if (word[i - 1] === " " && word[i] !== " ") openedSet.add(i);
+          }
+        } else {
+          if (len > 6) {
+            openedSet.add(1);
+          } else if (len > 2) {
+            openedSet.add(middleIdx);
+          }
+        }
       }
     };
 
@@ -93,34 +106,34 @@ export class WordShifter {
     revealPositions(this.orig2, this.openedIndices2);
   }
 
-  // Reveal Type 2: Random percentage (с особым правилом для многословных фраз на 2-й попытке)
   revealRandom(intensity = 1) {
-    // Особое правило: на второй попытке для многословных фраз принудительно открываем первые буквы
     if (this.isMultiWord && intensity >= 2) {
       if (this.orig1.length > 0 && this.orig1[0] !== " ") this.openedIndices1.add(0);
       if (this.orig2.length > 0 && this.orig2[0] !== " ") this.openedIndices2.add(0);
     }
 
     const totalLen = this.getTotalLength();
-    
     let percentage = 0;
+    
     if (intensity === 1) {
-      if (totalLen <= 3) percentage = 0.3;
-      else if (totalLen <= 6) percentage = 0.4;
-      // Усиление баланса: для длинных слов и фраз базовый процент на первой попытке увеличен до 40%
-      else percentage = 0.4; 
+      if (totalLen <= 5) percentage = 0.35;
+      else if (totalLen <= 8) percentage = 0.4;
+      else percentage = 0.45; 
     } else if (intensity >= 2) {
-      if (totalLen <= 3) percentage = 0.6;
-      else if (totalLen <= 6) percentage = 0.8;
-      // Усиление баланса: для длинных слов на второй попытке открываем до 60% букв
-      else percentage = 0.6; 
+      if (this.isMultiWord) {
+        percentage = 0.45;
+      } else {
+        // НОВОЕ: Срезаем % для коротких слов на 2-м шаге, чтобы не оголять их полностью
+        if (totalLen <= 5) percentage = 0.55; 
+        else if (totalLen <= 8) percentage = 0.6; 
+        else percentage = 0.6; 
+      }
     }
 
-    // Если активирован штраф или слова слишком короткие — режем силу случайного раскрытия в 2 раза
-    if (this.isNerfed || totalLen <= 3) {
-      percentage = percentage / 2;
+    if (this.isNerfed || totalLen <= 5) {
+      // НОВОЕ: Ослабляем штраф на 1-м шаге до 0.8
+      percentage = (intensity === 1) ? (percentage * 0.8) : (percentage * 0.85);
     }
-
 
     const collectClosed = (word, openedSet) => {
       const arr = [];
@@ -128,15 +141,10 @@ export class WordShifter {
       const ingStartIdx = word.length - 3;
 
       for (let i = 0; i < word.length; i++) {
-        // Если слово заканчивается на ING, исключаем последние 3 индекса из случайного пула
-        if (endsWithIng && i >= ingStartIdx) {
-          continue;
-        }
+        if (endsWithIng && i >= ingStartIdx) continue;
         if (!openedSet.has(i) && word[i] !== " ") arr.push(i);
       }
       
-      // Пограничный сценарий: если ВСЕ оставшиеся буквы в слове — это только ING, 
-      // возвращаем их обратно в пул, чтобы способность не сработала вхолостую
       if (arr.length === 0) {
         for (let i = 0; i < word.length; i++) {
           if (!openedSet.has(i) && word[i] !== " ") arr.push(i);
@@ -150,7 +158,13 @@ export class WordShifter {
     const totalClosed = closed1.length + closed2.length;
     if (totalClosed === 0) return;
 
-    const totalToReveal = Math.max(1, Math.ceil(totalClosed * percentage));
+    let totalToReveal = Math.max(1, Math.ceil(totalClosed * percentage));
+
+    // НОВОЕ: Спасительный минимум. Если на доске 8+ букв, 1-й шаг Random откроет хотя бы 4
+    if (intensity === 1 && totalClosed >= 8) {
+      totalToReveal = Math.max(4, totalToReveal);
+    }
+    totalToReveal = Math.min(totalClosed, totalToReveal);
 
     let toReveal1 = Math.round(totalToReveal * (closed1.length / totalClosed));
     let toReveal2 = totalToReveal - toReveal1;
@@ -168,9 +182,31 @@ export class WordShifter {
 
     pickRandomFrom(closed1, toReveal1, this.openedIndices1);
     pickRandomFrom(closed2, toReveal2, this.openedIndices2);
+
+    if (intensity >= 2) {
+      const fixHoles = (word, openedSet) => {
+        let gapStart = -1;
+        for (let i = 0; i <= word.length; i++) {
+          const isClosed = i < word.length && !openedSet.has(i) && word[i] !== " ";
+          if (isClosed) {
+            if (gapStart === -1) gapStart = i;
+          } else {
+            if (gapStart !== -1) {
+              const gapLength = i - gapStart;
+              if (gapLength >= 4) {
+                const middleOfGap = gapStart + Math.floor(gapLength / 2);
+                openedSet.add(middleOfGap);
+              }
+              gapStart = -1;
+            }
+          }
+        }
+      };
+      fixHoles(this.orig1, this.openedIndices1);
+      fixHoles(this.orig2, this.openedIndices2);
+    }
   }
 
-  // Reveal Type 3: Vowels & Consonants (Умный пословесный лимит с учетом Nerf-системы)
   revealLetterType(intensity = 1) {
     const vowelsList = 'aeiouAEIOU';
     const consonantsList = 'bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
@@ -186,11 +222,11 @@ export class WordShifter {
       return arr;
     };
 
-    // Штрафной симметричный режим: открывает строго по 1 букве нужного типа в каждом поле (W1 и W2)
-    if (this.isNerfed || this.getTotalLength() <= 3) {
+    const applyNerf = this.isNerfed || this.getTotalLength() <= 3;
+
+    if (applyNerf && intensity === 1) {
       const openOneForField = (word, openedSet) => {
         let pool = collectClosedByList(word, openedSet, targetList);
-        // Если букв основного целевого типа (например, согласных) нет, ищем альтернативный тип
         if (pool.length === 0) {
           const altList = (intensity === 1) ? vowelsList : consonantsList;
           pool = collectClosedByList(word, openedSet, altList);
@@ -206,7 +242,6 @@ export class WordShifter {
       return;
     }
 
-    // 2. ОБЫЧНЫЙ УМНЫЙ РЕЖИМ: Гарантированно открывает 2 буквы нужного типа на всё поле
     const processSmartWordReveal = (origWord, openedSet) => {
       const availableClosedIndices = [];
       for (let i = 0; i < origWord.length; i++) {
@@ -215,7 +250,28 @@ export class WordShifter {
         }
       }
       
-      const countToOpen = Math.min(2, availableClosedIndices.length);
+      let countToOpen;
+      if (intensity === 1) {
+        if (origWord.length <= 4) {
+          countToOpen = 1; 
+        } else if (origWord.length >= 8) {
+          countToOpen = Math.max(2, Math.ceil(availableClosedIndices.length * 0.5)); 
+        } else {
+          countToOpen = Math.max(2, Math.ceil(availableClosedIndices.length * 0.35));
+        }
+      } else {
+        // НОВОЕ: Защищаем короткие слова от полного вскрытия гласных на 2-м шаге
+        if (applyNerf) {
+           countToOpen = Math.min(3, availableClosedIndices.length);
+        } else if (origWord.length <= 4) {
+           countToOpen = Math.min(1, availableClosedIndices.length);
+        } else if (origWord.length <= 6) {
+           countToOpen = Math.min(2, availableClosedIndices.length);
+        } else {
+           countToOpen = availableClosedIndices.length;
+        }
+      }
+
       for (let i = 0; i < countToOpen; i++) {
         const randIdx = Math.floor(Math.random() * availableClosedIndices.length);
         openedSet.add(availableClosedIndices[randIdx]);
@@ -227,31 +283,38 @@ export class WordShifter {
     processSmartWordReveal(this.orig2, this.openedIndices2);
   }
 
-  // Динамические описания для интерфейса игрока (с чётким указанием распределения на оба поля)
+  // Descriptions для UI
   getPositionalDescription(intensity = 1) {
-    if (this.isMultiWord) return "Not available for multi-word phrases";
-    
     const getNextRevealsForWord = (word, openedSet) => {
       const len = word.length;
       if (len === 0) return "nothing";
       
-      const firstIdx = 0;
-      const lastIdx = len - 1;
-      const middleIdx = Math.floor((len - 1) / 2);
-      
-      if (this.isNerfed || len <= 3) {
-        if (!openedSet.has(middleIdx) && word[middleIdx] !== " ") return "+middle letter only";
-        if (!openedSet.has(lastIdx) && word[lastIdx] !== " ") return "+last letter only";
-        return "no letters";
+      const applyNerf = this.isNerfed && intensity === 1;
+
+      if (applyNerf || len <= 3) {
+        if (len > 4) return "+1st & last letters";
+        return "+1st letter only";
       }
       
       if (intensity === 1) {
         const reveals = ["1st"];
-        if (len > 2) reveals.push("middle");
+        if (this.isMultiWord) {
+            reveals.push("start of each word", "last");
+        } else {
+            if (len > 2) reveals.push("middle");
+        }
         return `+${reveals.join(" & ")}`;
       } else {
         const reveals = ["1st"];
-        if (len > 2) reveals.push("middle");
+        if (this.isMultiWord) {
+            reveals.push("start of each word");
+        } else {
+            if (len > 6) {
+                reveals.push("2nd");
+            } else if (len > 2) {
+                reveals.push("middle");
+            }
+        }
         if (len > 1) reveals.push("last");
         return `+${reveals.join(", ")}`;
       }
@@ -260,24 +323,25 @@ export class WordShifter {
     return `Will reveal: [<span class="ability-inline-label">ANSWER 1</span>: ${getNextRevealsForWord(this.orig1, this.openedIndices1)}] & [<span class="ability-inline-label">ANSWER 2</span>: ${getNextRevealsForWord(this.orig2, this.openedIndices2)}]`;
   }
 
-
   getRandomDescription(intensity = 1) {
-    // Считаем точное количество скрытых букв, которое сейчас откроет алгоритм revealRandom
     const totalLen = this.getTotalLength();
     let percentage = 0;
     if (intensity === 1) {
-      if (totalLen <= 3) percentage = 0.3;
-      else if (totalLen <= 6) percentage = 0.4;
-      else percentage = 0.4; // Для длинных слов базовый процент равен 40%
+      if (totalLen <= 5) percentage = 0.35;
+      else if (totalLen <= 8) percentage = 0.4;
+      else percentage = 0.45;
     } else if (intensity >= 2) {
-      if (totalLen <= 3) percentage = 0.6;
-      else if (totalLen <= 6) percentage = 0.8;
-      else percentage = 0.6; // Для длинных слов на второй попытке равен 60%
+      if (this.isMultiWord) {
+        percentage = 0.45;
+      } else {
+        if (totalLen <= 5) percentage = 0.55; 
+        else if (totalLen <= 8) percentage = 0.6; 
+        else percentage = 0.6; 
+      }
     }
 
-    // Если активирован штраф или слова слишком короткие — режем силу случайного раскрытия в 2 раза
-    if (this.isNerfed || totalLen <= 3) {
-      percentage = percentage / 2;
+    if (this.isNerfed || totalLen <= 5) {
+      percentage = (intensity === 1) ? (percentage * 0.8) : (percentage * 0.85);
     }
 
     const countClosed = (word, openedSet) => {
@@ -290,7 +354,6 @@ export class WordShifter {
         if (!openedSet.has(i) && word[i] !== " ") count++;
       }
       
-      // Если кроме ING ничего не осталось, считаем их, чтобы не показывать 0
       if (count === 0) {
         for (let i = 0; i < word.length; i++) {
           if (!openedSet.has(i) && word[i] !== " ") count++;
@@ -305,7 +368,13 @@ export class WordShifter {
     
     if (totalClosed === 0) return "No hidden letters left";
     
-    const totalToReveal = Math.min(totalClosed, Math.max(1, Math.ceil(totalClosed * percentage)));
+    let totalToReveal = Math.max(1, Math.ceil(totalClosed * percentage));
+
+    if (intensity === 1 && totalClosed >= 8) {
+      totalToReveal = Math.max(4, totalToReveal);
+    }
+    totalToReveal = Math.min(totalClosed, totalToReveal);
+
     const basePrefix = this.isMultiWord && intensity >= 2 ? "🥇 1st letters guaranteed + " : "";
 
     return `${basePrefix}Will reveal exactly +${totalToReveal} random letter${totalToReveal > 1 ? 's' : ''} total`;
@@ -314,42 +383,56 @@ export class WordShifter {
   getLetterTypeDescription(intensity = 1) {
     const vowelsList = 'aeiouAEIOU';
     const consonantsList = 'bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
-    const targetList = (intensity === 1) ? consonantsList : vowelsList;
     const typeLabel = (intensity === 1) ? "consonants" : "vowels";
 
-    // Отдельный симуляционный подсчет для штрафного симметричного режима
-    if (this.isNerfed || this.getTotalLength() <= 3) {
+    const applyNerf = this.isNerfed || this.getTotalLength() <= 3;
+
+    if (applyNerf && intensity === 1) {
       const countRemainingInField = (word, openedSet) => {
         let count = 0;
         for (let i = 0; i < word.length; i++) {
           if (!openedSet.has(i) && (consonantsList.includes(word[i]) || vowelsList.includes(word[i]))) {
-            count = 1; // Способность гарантированно найдет и откроет 1 букву, если они вообще есть
+            count = 1; 
             break;
           }
         }
         return count;
       };
-    const c1 = countRemainingInField(this.orig1, this.openedIndices1);
-    const c2 = countRemainingInField(this.orig2, this.openedIndices2);
-    return `Reveals ${typeLabel}: [<span class="ability-inline-label">ANSWER 1</span>: +${c1} letters] & [<span class="ability-inline-label">ANSWER 2</span>: +${c2} letters]`;
-  }
-
-  const countRemaining = (word, openedSet, listStr) => {
-    let count = 0;
-    for (let i = 0; i < word.length; i++) {
-      if (!openedSet.has(i) && listStr.includes(word[i])) count++;
+      const c1 = countRemainingInField(this.orig1, this.openedIndices1);
+      const c2 = countRemainingInField(this.orig2, this.openedIndices2);
+      return `Reveals ${typeLabel}: [<span class="ability-inline-label">ANSWER 1</span>: +${c1} letters] & [<span class="ability-inline-label">ANSWER 2</span>: +${c2} letters]`;
     }
-    return count;
-  };
 
-  if (intensity === 1) {
-    const count1 = Math.min(2, countRemaining(this.orig1, this.openedIndices1, consonantsList));
-    const count2 = Math.min(2, countRemaining(this.orig2, this.openedIndices2, consonantsList));
-    return `Reveals ${typeLabel}: [<span class="ability-inline-label">ANSWER 1</span>: +${count1} letters] & [<span class="ability-inline-label">ANSWER 2</span>: +${count2} letters]`;
-  } else {
-    const count1 = Math.min(2, countRemaining(this.orig1, this.openedIndices1, vowelsList));
-    const count2 = Math.min(2, countRemaining(this.orig2, this.openedIndices2, vowelsList));
-    return `Reveals ${typeLabel}: [<span class="ability-inline-label">ANSWER 1</span>: +${count1} letters] & [<span class="ability-inline-label">ANSWER 2</span>: +${count2} letters]`;
-  }
+    const countRemaining = (word, openedSet, listStr) => {
+      let count = 0;
+      for (let i = 0; i < word.length; i++) {
+        if (!openedSet.has(i) && listStr.includes(word[i])) count++;
+      }
+      return count;
+    };
+
+    if (intensity === 1) {
+      const calcCount = (word, count) => {
+        if (word.length <= 4) return Math.min(1, count);
+        if (word.length >= 8) return Math.min(count, Math.max(2, Math.ceil(count * 0.5)));
+        return Math.min(count, Math.max(2, Math.ceil(count * 0.35)));
+      };
+      const count1 = calcCount(this.orig1, countRemaining(this.orig1, this.openedIndices1, consonantsList));
+      const count2 = calcCount(this.orig2, countRemaining(this.orig2, this.openedIndices2, consonantsList));
+      return `Reveals ${typeLabel}: [<span class="ability-inline-label">ANSWER 1</span>: +${count1} letters] & [<span class="ability-inline-label">ANSWER 2</span>: +${count2} letters]`;
+    } else {
+      const getLimit = (word) => {
+        if (applyNerf) return 3;
+        if (word.length <= 4) return 1;
+        if (word.length <= 6) return 2;
+        return 99;
+      };
+      const limit1 = getLimit(this.orig1);
+      const limit2 = getLimit(this.orig2);
+      const count1 = Math.min(limit1, countRemaining(this.orig1, this.openedIndices1, vowelsList));
+      const count2 = Math.min(limit2, countRemaining(this.orig2, this.openedIndices2, vowelsList));
+      const labelPrefix = (limit1 === 99 && limit2 === 99) ? "ALL " : "";
+      return `Reveals ${labelPrefix}${typeLabel}: [<span class="ability-inline-label">ANSWER 1</span>: +${count1} letters] & [<span class="ability-inline-label">ANSWER 2</span>: +${count2} letters]`;
+    }
   }
 }
