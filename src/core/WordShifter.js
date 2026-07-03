@@ -284,19 +284,89 @@ export class WordShifter {
   }
 
 // Descriptions для UI
-  getPositionalDescription(intensity = 1) {
-    const maxLen = Math.max(this.orig1.length, this.orig2.length);
-    const applyNerf = this.isNerfed && intensity === 1;
+getPositionalDescription(intensity = 1) {
+    // Внутренняя функция: проверяет, какие именно новые позиции откроются для конкретного слова
+    const getNewRulesForWord = (word, openedSet) => {
+      const len = word.length;
+      if (len === 0) return [];
+      
+      const firstIdx = 0;
+      const lastIdx = len - 1;
+      const middleIdx = Math.floor((len - 1) / 2);
+      
+      const applyNerf = this.isNerfed && intensity === 1;
+      const rules = new Set();
+      
+      // Хелпер: добавляет правило, только если буква по этому индексу ещё закрыта
+      const checkAndAdd = (idx, ruleName) => {
+        if (!openedSet.has(idx) && word[idx] !== ' ') {
+          rules.add(ruleName);
+        }
+      };
 
-    if (applyNerf || maxLen <= 3) {
-      return maxLen > 4 ? "+1st & last letters" : "+1st letters only";
-    }
+      if (applyNerf || len <= 3) {
+        checkAndAdd(firstIdx, "1st");
+        if (len > 4) checkAndAdd(lastIdx, "last");
+        return Array.from(rules);
+      }
+
+      if (intensity === 1) {
+        checkAndAdd(firstIdx, this.isMultiWord ? "1st of each" : "1st");
+        if (this.isMultiWord) {
+          for (let i = 1; i < len; i++) {
+            if (word[i - 1] === " " && word[i] !== " ") checkAndAdd(i, "1st of each");
+          }
+          checkAndAdd(lastIdx, "last");
+        } else {
+          if (len > 2) checkAndAdd(middleIdx, "middle");
+        }
+      } else {
+        checkAndAdd(firstIdx, this.isMultiWord ? "1st of each" : "1st");
+        if (len > 1) checkAndAdd(lastIdx, "last");
+
+        if (this.isMultiWord) {
+          for (let i = 1; i < len; i++) {
+            if (word[i - 1] === " " && word[i] !== " ") checkAndAdd(i, "1st of each");
+          }
+        } else {
+          if (len > 6) {
+            checkAndAdd(1, "2nd");
+          } else if (len > 2) {
+            checkAndAdd(middleIdx, "middle");
+          }
+        }
+      }
+      return Array.from(rules);
+    };
+
+    const rules1 = getNewRulesForWord(this.orig1, this.openedIndices1);
+    const rules2 = getNewRulesForWord(this.orig2, this.openedIndices2);
+
+    const rulesMap = new Map();
     
-    if (intensity === 1) {
-      return this.isMultiWord ? "+1st letter of each word & last" : "+1st & middle letters";
-    } else {
-      return this.isMultiWord ? "+1st letter of each word" : (maxLen > 6 ? "+1st, 2nd & last letters" : "+1st, middle & last");
-    }
+    const addRules = (rules, wordIndex) => {
+      rules.forEach(rule => {
+        if (!rulesMap.has(rule)) rulesMap.set(rule, []);
+        rulesMap.get(rule).push(wordIndex);
+      });
+    };
+
+    addRules(rules1, 1);
+    addRules(rules2, 2);
+
+    const parts = [];
+    // Строгий порядок вывода для красоты
+    const standardOrder = ["1st", "1st of each", "2nd", "middle", "last"];
+    
+    standardOrder.forEach(rule => {
+      if (rulesMap.has(rule)) {
+        const indices = rulesMap.get(rule).join(',');
+        // Форматируем с маленькими жёлтыми цифрами
+        parts.push(`${rule}<sup style="color: #ffd56b; font-weight: 800;">${indices}</sup>`);
+      }
+    });
+
+    return parts.length > 0 ? parts.join(' ') : "no hidden positions";
   }
 
 getRandomDescription(intensity = 1) {

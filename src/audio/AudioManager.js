@@ -165,7 +165,7 @@ export class AudioManager {
   }
 
   // Обычный вызов с колбэком onstart (для лоадера)
-  speak(text, onStartCallback = null) {
+speak(text, onStartCallback = null) {
     if (!this.enabled || !window.speechSynthesis || this.isScreenReaderMode) {
       if (onStartCallback) onStartCallback();
       return;
@@ -180,9 +180,21 @@ export class AudioManager {
     utterance.rate = 1.0;
     
     if (onStartCallback) {
-      utterance.onstart = () => onStartCallback();
-      // На случай если onstart не сработает в браузере (фоллбэк)
-      setTimeout(onStartCallback, 500); 
+      let hasFired = false;
+      const fireCallback = () => {
+        if (!hasFired) {
+          hasFired = true;
+          onStartCallback();
+        }
+      };
+
+      // Лоадер исчезнет строго в момент начала произношения
+      utterance.onstart = fireCallback;
+      utterance.onerror = fireCallback;
+      
+      // Даем браузеру до 4 секунд на первую загрузку голоса, 
+      // вместо прежних 500 миллисекунд, которые ломали логику.
+      setTimeout(fireCallback, 4000); 
     }
     
     window.speechSynthesis.speak(utterance);
