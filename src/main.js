@@ -1335,11 +1335,26 @@ const rollStatusEl = document.getElementById('ability-roll-status');
     
     updateStatsBarVisibility(); // <--- ДОБАВЬТЕ ЕЁ СЮДА
 
-    const renderAbility = (btn, type, label, icon, desc) => {
+const renderAbility = (btn, type, label, icon, desc) => {
       if (!btn) return;
       const row = btn.closest('.ability-row');
      
-      btn.innerHTML = `<div><strong>${icon} ${label}${costLabel}</strong></div><div style="font-size: 12px; color: var(--muted); font-weight: 400; margin-top: 2px;">${desc}</div>`;
+      const isFree = costLabel.includes('FREE');
+      const isUsed = costLabel.includes('Used');
+      const costBadge = isFree 
+        ? `<span style="color: #37ffe2; font-size: 11px; font-weight: 800; background: rgba(55, 255, 226, 0.1); padding: 2px 6px; border-radius: 4px;">FREE</span>`
+        : `<span style="color: var(--warning); font-size: 11px; font-weight: 800; background: rgba(255, 213, 107, 0.1); padding: 2px 6px; border-radius: 4px;">-15 PTS</span>`;
+
+      btn.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <strong style="font-size: 15px;">${icon} ${label}</strong>
+          ${isUsed ? '' : costBadge}
+        </div>
+        <div style="font-size: 13px; color: var(--text); opacity: 0.8; text-align: left; font-weight: 400; text-transform: lowercase;">
+          ${desc}
+        </div>
+      `;
+      
       const isNotRolled = !activeAbilities.includes(type);
      
       if (isNotRolled || btn.disabled) {

@@ -283,61 +283,35 @@ export class WordShifter {
     processSmartWordReveal(this.orig2, this.openedIndices2);
   }
 
-  // Descriptions для UI
+// Descriptions для UI
   getPositionalDescription(intensity = 1) {
-    const getNextRevealsForWord = (word, openedSet) => {
-      const len = word.length;
-      if (len === 0) return "nothing";
-      
-      const applyNerf = this.isNerfed && intensity === 1;
+    const maxLen = Math.max(this.orig1.length, this.orig2.length);
+    const applyNerf = this.isNerfed && intensity === 1;
 
-      if (applyNerf || len <= 3) {
-        if (len > 4) return "+1st & last letters";
-        return "+1st letter only";
-      }
-      
-      if (intensity === 1) {
-        const reveals = ["1st"];
-        if (this.isMultiWord) {
-            reveals.push("start of each word", "last");
-        } else {
-            if (len > 2) reveals.push("middle");
-        }
-        return `+${reveals.join(" & ")}`;
-      } else {
-        const reveals = ["1st"];
-        if (this.isMultiWord) {
-            reveals.push("start of each word");
-        } else {
-            if (len > 6) {
-                reveals.push("2nd");
-            } else if (len > 2) {
-                reveals.push("middle");
-            }
-        }
-        if (len > 1) reveals.push("last");
-        return `+${reveals.join(", ")}`;
-      }
-    };
-
-    return `Will reveal: [<span class="ability-inline-label">ANSWER 1</span>: ${getNextRevealsForWord(this.orig1, this.openedIndices1)}] & [<span class="ability-inline-label">ANSWER 2</span>: ${getNextRevealsForWord(this.orig2, this.openedIndices2)}]`;
+    if (applyNerf || maxLen <= 3) {
+      return maxLen > 4 ? "+1st & last letters" : "+1st letters only";
+    }
+    
+    if (intensity === 1) {
+      return this.isMultiWord ? "+1st letter of each word & last" : "+1st & middle letters";
+    } else {
+      return this.isMultiWord ? "+1st letter of each word" : (maxLen > 6 ? "+1st, 2nd & last letters" : "+1st, middle & last");
+    }
   }
 
-  getRandomDescription(intensity = 1) {
+getRandomDescription(intensity = 1) {
     const totalLen = this.getTotalLength();
     let percentage = 0;
+    
     if (intensity === 1) {
       if (totalLen <= 5) percentage = 0.35;
       else if (totalLen <= 8) percentage = 0.4;
       else percentage = 0.45;
     } else if (intensity >= 2) {
-      if (this.isMultiWord) {
-        percentage = 0.45;
-      } else {
-        if (totalLen <= 5) percentage = 0.55; 
-        else if (totalLen <= 8) percentage = 0.6; 
-        else percentage = 0.6; 
-      }
+      if (this.isMultiWord) percentage = 0.45;
+      else if (totalLen <= 5) percentage = 0.55; 
+      else if (totalLen <= 8) percentage = 0.6; 
+      else percentage = 0.6; 
     }
 
     if (this.isNerfed || totalLen <= 5) {
@@ -348,12 +322,10 @@ export class WordShifter {
       let count = 0;
       const endsWithIng = word.toUpperCase().endsWith("ING");
       const ingStartIdx = word.length - 3;
-
       for (let i = 0; i < word.length; i++) {
         if (endsWithIng && i >= ingStartIdx) continue;
         if (!openedSet.has(i) && word[i] !== " ") count++;
       }
-      
       if (count === 0) {
         for (let i = 0; i < word.length; i++) {
           if (!openedSet.has(i) && word[i] !== " ") count++;
@@ -362,46 +334,22 @@ export class WordShifter {
       return count;
     };
 
-    const closed1 = countClosed(this.orig1, this.openedIndices1);
-    const closed2 = countClosed(this.orig2, this.openedIndices2);
-    const totalClosed = closed1 + closed2;
-    
+    const totalClosed = countClosed(this.orig1, this.openedIndices1) + countClosed(this.orig2, this.openedIndices2);
     if (totalClosed === 0) return "No hidden letters left";
     
     let totalToReveal = Math.max(1, Math.ceil(totalClosed * percentage));
-
-    if (intensity === 1 && totalClosed >= 8) {
-      totalToReveal = Math.max(4, totalToReveal);
-    }
+    if (intensity === 1 && totalClosed >= 8) totalToReveal = Math.max(4, totalToReveal);
     totalToReveal = Math.min(totalClosed, totalToReveal);
 
-    const basePrefix = this.isMultiWord && intensity >= 2 ? "🥇 1st letters guaranteed + " : "";
-
-    return `${basePrefix}Will reveal exactly +${totalToReveal} random letter${totalToReveal > 1 ? 's' : ''} total`;
+    const basePrefix = this.isMultiWord && intensity >= 2 ? "🥇 1st letters + " : "";
+    return `${basePrefix}${totalToReveal} random letters`;
   }
 
-  getLetterTypeDescription(intensity = 1) {
+getLetterTypeDescription(intensity = 1) {
     const vowelsList = 'aeiouAEIOU';
     const consonantsList = 'bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ';
     const typeLabel = (intensity === 1) ? "consonants" : "vowels";
-
     const applyNerf = this.isNerfed || this.getTotalLength() <= 3;
-
-    if (applyNerf && intensity === 1) {
-      const countRemainingInField = (word, openedSet) => {
-        let count = 0;
-        for (let i = 0; i < word.length; i++) {
-          if (!openedSet.has(i) && (consonantsList.includes(word[i]) || vowelsList.includes(word[i]))) {
-            count = 1; 
-            break;
-          }
-        }
-        return count;
-      };
-      const c1 = countRemainingInField(this.orig1, this.openedIndices1);
-      const c2 = countRemainingInField(this.orig2, this.openedIndices2);
-      return `Reveals ${typeLabel}: [<span class="ability-inline-label">ANSWER 1</span>: +${c1} letters] & [<span class="ability-inline-label">ANSWER 2</span>: +${c2} letters]`;
-    }
 
     const countRemaining = (word, openedSet, listStr) => {
       let count = 0;
@@ -411,15 +359,25 @@ export class WordShifter {
       return count;
     };
 
-    if (intensity === 1) {
+    let count1 = 0, count2 = 0;
+
+    if (applyNerf && intensity === 1) {
+      const countRemainingInField = (word, openedSet) => {
+        for (let i = 0; i < word.length; i++) {
+          if (!openedSet.has(i) && (consonantsList.includes(word[i]) || vowelsList.includes(word[i]))) return 1;
+        }
+        return 0;
+      };
+      count1 = countRemainingInField(this.orig1, this.openedIndices1);
+      count2 = countRemainingInField(this.orig2, this.openedIndices2);
+    } else if (intensity === 1) {
       const calcCount = (word, count) => {
         if (word.length <= 4) return Math.min(1, count);
         if (word.length >= 8) return Math.min(count, Math.max(2, Math.ceil(count * 0.5)));
         return Math.min(count, Math.max(2, Math.ceil(count * 0.35)));
       };
-      const count1 = calcCount(this.orig1, countRemaining(this.orig1, this.openedIndices1, consonantsList));
-      const count2 = calcCount(this.orig2, countRemaining(this.orig2, this.openedIndices2, consonantsList));
-      return `Reveals ${typeLabel}: [<span class="ability-inline-label">ANSWER 1</span>: +${count1} letters] & [<span class="ability-inline-label">ANSWER 2</span>: +${count2} letters]`;
+      count1 = calcCount(this.orig1, countRemaining(this.orig1, this.openedIndices1, consonantsList));
+      count2 = calcCount(this.orig2, countRemaining(this.orig2, this.openedIndices2, consonantsList));
     } else {
       const getLimit = (word) => {
         if (applyNerf) return 3;
@@ -427,12 +385,11 @@ export class WordShifter {
         if (word.length <= 6) return 2;
         return 99;
       };
-      const limit1 = getLimit(this.orig1);
-      const limit2 = getLimit(this.orig2);
-      const count1 = Math.min(limit1, countRemaining(this.orig1, this.openedIndices1, vowelsList));
-      const count2 = Math.min(limit2, countRemaining(this.orig2, this.openedIndices2, vowelsList));
-      const labelPrefix = (limit1 === 99 && limit2 === 99) ? "ALL " : "";
-      return `Reveals ${labelPrefix}${typeLabel}: [<span class="ability-inline-label">ANSWER 1</span>: +${count1} letters] & [<span class="ability-inline-label">ANSWER 2</span>: +${count2} letters]`;
+      count1 = Math.min(getLimit(this.orig1), countRemaining(this.orig1, this.openedIndices1, vowelsList));
+      count2 = Math.min(getLimit(this.orig2), countRemaining(this.orig2, this.openedIndices2, vowelsList));
     }
+
+    const total = count1 + count2;
+    return `+${total} ${typeLabel}`;
   }
 }
