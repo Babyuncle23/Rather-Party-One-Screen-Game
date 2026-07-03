@@ -468,10 +468,10 @@ export const questionsDatabase = [
       {
         options: [
           { text: "whenever you sneeze?", requires: ["shapeshift"] },
-          { text: "and suddenly everyone around you knows it?", requires: ["teleport", "shapeshift", "fly"] },
+          { text: "but suddenly everyone around you knows it?", requires: ["teleport", "shapeshift", "fly"] },
           { text: "but you can't control exactly when it happens?", requires: ["mind", "shapeshift"] },
           { text: "but the effect only lasts for 60 seconds a day?", requires: ["transform", "invisible", "strength"] }, 
-          { text: "and you must loudly announce what you are doing before every use?" },
+          { text: "and you have to loudly annouce that you are doing it before use?" },
           { text: "?" },
           { text: "?" } 
         ]
@@ -487,12 +487,12 @@ export const questionsDatabase = [
       {
         options: [
           { 
-            text: "be forced to wear a giant, sweaty costume of", 
+            text: "be forced to wear a costume of", 
             type: "costume_full", 
             hints: [PROMPTS.animalFunny, { text: "Food item", brainstorm: ["Hot dog", "Banana", "Taco", "Pizza"] }] 
           },
           { 
-            text: "have to permanently wear a cheap plastic mask of", 
+            text: "have to wear a mask of", 
             type: "costume_mask", 
             hints: [PROMPTS.politician, PROMPTS.villain] 
           },
@@ -516,12 +516,14 @@ export const questionsDatabase = [
       {
         options: [
           { text: "to every job interview you ever go to?", requires: ["costume_full", "dress_like"] },
-          { text: "on your own wedding day?", requires: ["costume_full", "dress_like"] },
+          { text: "on wedding days you are invited to?", requires: ["costume_full", "dress_like"] },
           { text: "every time you fly on an airplane?", requires: ["costume_full", "carry_statue"] },
           { text: "every time you use public transport?", requires: ["costume_full", "carry_statue"] },
+          { text: "every time you use public toilet?", requires: ["costume_full", "carry_statue"] },
           { text: "in all your official ID and passport photos?", requires: ["costume_mask"] },
           { text: "during every serious conversation with your partner?", requires: ["costume_mask"] },
           { text: "every time you talk to a police officer?", requires: ["costume_mask", "dress_like"] },
+          { text: "every time you talk to a government official?", requires: ["costume_mask", "dress_like"] },
           { text: "every time you go grocery shopping?", requires: ["carry_statue"] },
           { text: "through airport security every single time?", requires: ["carry_statue"] },
           { text: "to every family gathering?", requires: ["costume_full", "dress_like", "carry_statue", "costume_mask"] },
@@ -545,11 +547,11 @@ export const questionsDatabase = [
       {
         options: [
           { text: "without anyone ever knowing?" },
-          { text: "but you have to loudly announce it before using it?" }, // <-- Исправлено здесь
-          { text: "but it only works when no one is looking at you?" },
-          { text: "but doing it makes you incredibly tired?" },
-          { text: "but instantly forget everything that happened while you were doing it?" },
-          { text: "but it only works once a year?" }
+          { text: ", but you have to loudly announce that you're using it?" }, // <-- Исправлено здесь
+          { text: ", but it only works when no one is looking at you?" },
+          { text: ", but doing it makes you incredibly tired?" },
+          { text: ", but instantly forget everything that happened while you were using  it?" },
+          { text: ", but it only works for a year?" }
         ]
       }
     ],
@@ -562,6 +564,72 @@ export const questionsDatabase = [
       PROMPTS.actionRelax, 
       PROMPTS.actionExtreme, 
       PROMPTS.actionAlone
+    ]
+  },
+  {
+    id: 15,
+    category: "mind",
+    text: "Would you rather",
+    fragments: [
+      {
+        options: [
+          { text: "instantly gain all the life experience of", type: "exp" },
+          { text: "instantly absorb all the memories and skills of", type: "skills" }
+        ]
+      },
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]" }
+        ]
+      },
+      {
+        options: [
+          { text: ", but you permanently speak with their exact voice?" },
+          { text: ", but you also inherit all of their deepest fears?" },
+          { text: ", but you completely forget your own childhood?" },
+          { text: ", but you start looking exactly like them when you get angry?" },
+          { text: "?" }
+        ]
+      }
+    ],
+    hints: [
+      { text: "Tech industry billionaire", brainstorm: ["Elon Musk", "Mark Zuckerberg", "Jeff Bezos", "Bill Gates"] },
+      { text: "Someone with a high-stress job", brainstorm: ["Neurosurgeon", "Bomb disposal expert", "Air traffic controller"] },
+      { text: "Person with dangerous secrets", brainstorm: ["Undercover spy", "Mafia boss", "Cult leader"] },
+      PROMPTS.historical,
+      PROMPTS.singer
+    ]
+  },
+  {
+    id: 16,
+    category: "identity",
+    text: "Would you rather",
+    fragments: [
+{
+        options: [
+          { text: "switch bodies with", type: "switch" }
+        ]
+      },
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]" }
+        ]
+      },
+      {
+        options: [
+          { text: "for the rest of your lives?" },
+          { text: "every single Monday for the rest of your lives?" },
+          { text: "every weekend for the next 10 years?" },
+          { text: "for one random day every month, without warning?" },
+          { text: "for exactly one year, and then return to normal?" }
+        ]
+      }
+    ],
+    hints: [
+      PROMPTS.animalFunny,
+      PROMPTS.politician,
+      PROMPTS.fictionalChar,
+      { text: "Someone with a difficult job", brainstorm: ["Coal miner", "Surgeon", "President", "Deep sea diver"] }
     ]
   }
 ];
