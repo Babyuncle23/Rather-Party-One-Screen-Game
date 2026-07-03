@@ -326,10 +326,9 @@
             
             <div class="meta-tags">${metaTagsHtml}</div>
             
-            <div class="q-context">
-              <div class="q-context-item"><strong>Вопрос:</strong> ${data.questionText}</div>
-              <div class="q-context-item"><strong>Подсказка:</strong> ${data.hintText}</div>
-            </div>
+<div class="q-context">
+  <div class="q-context-item"><strong>Подсказка:</strong> ${data.hintText}</div>
+</div>
 
             <button class="spoiler-btn" onclick="this.nextElementSibling.style.display='block'; this.style.display='none';">👀 Показать оригинальные слова</button>
             <div class="spoiler-content">
@@ -393,7 +392,7 @@
         let markdown = "### ⚖️ WordShifter Step-by-Step Balance Report\n\n";
         window.qaReport3Log.forEach((log, index) => {
           markdown += `**Запись ${index + 1}:** Попытка ${log.attempt} -> \`[${log.label.toUpperCase()}]\`\n`;
-          markdown += `- **Контекст:** ${log.qText} (Тема: *${log.hint}*)\n`;
+          markdown += `- **Подсказка:** *${log.hint}*\n`;
           markdown += `- **Текущий ревил на шаге:** ${log.revealMethod}\n`;
           markdown += `- **Слова:** ${log.w1} | ${log.w2} ${log.meta ? '\`' + log.meta + '\`' : ''}\n`;
           markdown += `- **Полное комбо сценария:** ${log.r1} -> ${log.r2}\n\n`;

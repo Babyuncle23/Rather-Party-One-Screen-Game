@@ -1,6 +1,2 @@
-make testing for third step
-update instruction
-name 2 in step 2 is well?
-чуть лучше объяснения и дизайн в начале
 дать другу затестить
 начать делать версию сетевую
