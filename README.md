@@ -1,6 +1,6 @@
 # 🎭 Rather Party — One Screen Party Game
 
-A modular, zero-dependency "Would You Rather" party game for two or more players on a single shared device. Pass the phone, create prompts, mask answers, and guess choices using a letter-reveal mechanic.
+A modular, zero-dependency "Would You Rather" party game for two or more players on a single shared device. Pass the phone, create prompts, hide your answers, and guess choices using a letter-reveal mechanic.
 
 ## Features
 
