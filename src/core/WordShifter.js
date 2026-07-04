@@ -20,10 +20,14 @@ export class WordShifter {
     return this.orig2.split(/\s+/).filter(Boolean).length;
   }
 
-  getMaskedWords() {
+getMaskedWords() {
     const maskToHtml = (word, openedSet) => {
       let html = "";
+      let wordIndex = 0; // Счетчик слов для чередования цветов
       let inGap = false;
+      
+      // Открываем первую группу с классом цвета (0 = бирюзовый, 1 = розовый)
+      html += `<span class="word-group word-color-${wordIndex % 2}">`;
       
       if (word.length > 0 && !openedSet.has(0) && word[0] !== " ") {
         html += '<span class="letter-gap"></span>';
@@ -32,21 +36,27 @@ export class WordShifter {
       
       for (let i = 0; i < word.length; i++) {
         const char = word[i];
-        if (openedSet.has(i) || char === " ") {
-          if (char === " ") {
-            html += '<span class="word-space"></span>';
-          } else {
-            html += `<span class="revealed-char">${char}</span>`;
-          }
+        
+        if (char === " ") {
+          // Встретили пробел: увеличиваем счетчик, закрываем группу, открываем новую с другим цветом
+          wordIndex++;
+          html += `</span><span class="word-space"></span><span class="word-group word-color-${wordIndex % 2}">`;
+          inGap = false;
+        } else if (openedSet.has(i)) {
+          html += `<span class="revealed-char">${char}</span>`;
           inGap = false;
         } else {
-          if (!inGap && char !== " ") {
+          if (!inGap) {
             html += '<span class="letter-gap"></span>';
             inGap = true;
           }
         }
       }
-      return html;
+      
+      html += '</span>'; // Закрываем последнюю группу
+      
+      // Удаляем пустые группы, если строка начиналась/заканчивалась пробелом
+      return html.replace(/<span class="word-group word-color-\d"><\/span>/g, '');
     };
 
     return {

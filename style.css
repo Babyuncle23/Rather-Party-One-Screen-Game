@@ -1299,6 +1299,23 @@ p {
   padding: 0 1px;
 }
 
+/* Группа букв одного слова */
+.word-group {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap; /* Разрешаем буквам переноситься, если слово не влезает в экран */
+}
+
+/* Чередование цветов раскрытых букв (gaps остаются фиолетовыми) */
+.word-color-0 .revealed-char {
+  color: var(--positive); /* Бирюзовый (#37ffe2) */
+}
+
+.word-color-1 .revealed-char {
+  color: var(--accent-strong); /* Мягкий неоново-розовый (#ff5f7b) */
+}
+
 .letter-gap {
   display: inline-block;
   width: 6px;
@@ -2500,4 +2517,44 @@ button:disabled, .btn:disabled, .btn-action:disabled {
 /* Полностью отключаем слайдер и текст процентов, если они где-то остались */
 .volume-slider, .volume-label {
     display: none !important;
+}
+
+/* =========================================
+   БЛОК ШАРИНГА (QR CODE)
+   ========================================= */
+.share-qr-block {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.share-qr-block p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+  font-weight: 600;
+  max-width: 90%;
+}
+
+.qr-code-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  /* Белая подложка обязательна, чтобы камеры легко читали код на темном фоне */
+  background-color: #ffffff;
+  padding: 6px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.qr-code-image:active {
+  transform: scale(0.95);
 }
