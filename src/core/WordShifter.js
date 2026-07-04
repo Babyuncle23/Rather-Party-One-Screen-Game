@@ -388,31 +388,61 @@ getRandomDescription(intensity = 1) {
       percentage = (intensity === 1) ? (percentage * 0.8) : (percentage * 0.85);
     }
 
-    const countClosed = (word, openedSet) => {
+    // Проверяем, будут ли открыты первые буквы по правилу multi-word + step 2
+    // Исключаем те, которые уже были открыты ранее
+    const w1FirstWillOpen = this.isMultiWord && intensity >= 2 && this.orig1.length > 0 && this.orig1[0] !== " " && !this.openedIndices1.has(0);
+    const w2FirstWillOpen = this.isMultiWord && intensity >= 2 && this.orig2.length > 0 && this.orig2[0] !== " " && !this.openedIndices2.has(0);
+
+    // Подсчет закрытых букв теперь игнорирует те, что гарантированно откроются первыми
+    const countClosed = (word, openedSet, skipFirst) => {
       let count = 0;
       const endsWithIng = word.toUpperCase().endsWith("ING");
       const ingStartIdx = word.length - 3;
       for (let i = 0; i < word.length; i++) {
+        if (skipFirst && i === 0) continue;
         if (endsWithIng && i >= ingStartIdx) continue;
         if (!openedSet.has(i) && word[i] !== " ") count++;
       }
       if (count === 0) {
         for (let i = 0; i < word.length; i++) {
+          if (skipFirst && i === 0) continue;
           if (!openedSet.has(i) && word[i] !== " ") count++;
         }
       }
       return count;
     };
 
-    const totalClosed = countClosed(this.orig1, this.openedIndices1) + countClosed(this.orig2, this.openedIndices2);
-    if (totalClosed === 0) return "No hidden letters left";
+    const closed1 = countClosed(this.orig1, this.openedIndices1, w1FirstWillOpen);
+    const closed2 = countClosed(this.orig2, this.openedIndices2, w2FirstWillOpen);
+    const totalClosed = closed1 + closed2;
     
-    let totalToReveal = Math.max(1, Math.ceil(totalClosed * percentage));
-    if (intensity === 1 && totalClosed >= 8) totalToReveal = Math.max(4, totalToReveal);
-    totalToReveal = Math.min(totalClosed, totalToReveal);
+    // Формируем точный префикс с маленькими желтыми цифрами
+    let basePrefix = "";
+    if (w1FirstWillOpen || w2FirstWillOpen) {
+      const indices = [];
+      if (w1FirstWillOpen) indices.push("1");
+      if (w2FirstWillOpen) indices.push("2");
+      
+      const sup = `<sup style="color: #ffd56b; font-weight: 800;">${indices.join(',')}</sup>`;
+      const letterWord = indices.length > 1 ? "letters" : "letter";
+      basePrefix = `🥇 1st ${letterWord}${sup} & `;
+    }
 
-    const basePrefix = this.isMultiWord && intensity >= 2 ? "🥇 1st letters + " : "";
-    return `${basePrefix}${totalToReveal} random letters`;
+    if (totalClosed === 0 && basePrefix === "") return "No hidden letters left";
+    
+    let totalToReveal = 0;
+    if (totalClosed > 0) {
+      totalToReveal = Math.max(1, Math.ceil(totalClosed * percentage));
+      if (intensity === 1 && totalClosed >= 8) totalToReveal = Math.max(4, totalToReveal);
+      totalToReveal = Math.min(totalClosed, totalToReveal);
+    }
+
+    // Если случайных букв больше не осталось, оставляем только префикс
+    if (totalToReveal === 0) {
+      return basePrefix.replace(" & ", ""); 
+    }
+
+    return `${basePrefix}${totalToReveal} random letters <span style="color: #ffd56b; font-weight: 800;">total</span>`;
   }
 
 getLetterTypeDescription(intensity = 1) {
@@ -460,6 +490,7 @@ getLetterTypeDescription(intensity = 1) {
     }
 
     const total = count1 + count2;
-    return `+${total} ${typeLabel}`;
+    // Убрали знак "+" в начале и добавили слово total жёлтым цветом
+    return `${total} ${typeLabel} <span style="color: #ffd56b; font-weight: 800;">total</span>`;
   }
 }

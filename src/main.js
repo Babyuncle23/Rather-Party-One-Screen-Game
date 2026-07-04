@@ -381,12 +381,13 @@ function renderPlayerBoxes() {
   temporaryPlayersList.forEach((player, index) => {
     const box = document.createElement('div');
     box.className = "player-box";
+    
+    // Убрали <span class="emoji-picker-hint">...</span> из верстки
     box.innerHTML = `
       <div class="player-box-left">
         <div class="player-avatar" title="Tap to choose or reroll emoji">${player.emoji}</div>
         <div class="player-name-block">
           <span>${player.name}</span>
-          <span class="emoji-picker-hint">Tap icon to choose</span>
         </div>
       </div>
       <button class="delete-box-btn">✕</button>
@@ -1537,7 +1538,7 @@ async function showFinalScores() {
     }
 
     // ЛОГИКА ГОЛОСА И ФАНФАР (АСИНХРОННАЯ ОЧЕРЕДЬ)
-    const stopVoiceBtn = document.getElementById('stop-voice-btn');
+const stopVoiceBtn = document.getElementById('stop-voice-btn');
     if (audioManager && !audioManager.isScreenReaderMode) {
       audioManager.stopSpeech(); // Сброс старых реплик
 
@@ -1551,30 +1552,58 @@ async function showFinalScores() {
 
       const topScore = leaderboard[0].gold;
       const winners = leaderboard.filter(p => p.gold === topScore);
+      const losers = leaderboard.filter(p => p.gold !== topScore);
       
       let winnerSpeechText = "";
+      let playFanfares = true;
+
+      // Формируем красивое перечисление имен победителей (например: "Alex, Bob and Charlie")
+      let winnersNamesStr = winners.map(w => w.name).join(", ");
       if (winners.length > 1) {
-        const names = winners.map(w => w.name).join(" and ");
-        winnerSpeechText = `It's a tie! ${names} share the first place with ${topScore} points.`;
+        const lastCommaIndex = winnersNamesStr.lastIndexOf(", ");
+        winnersNamesStr = winnersNamesStr.substring(0, lastCommaIndex) + " and " + winnersNamesStr.substring(lastCommaIndex + 2);
+      }
+
+      // СЦЕНАРИИ ОЗВУЧКИ
+      if (winners.length === leaderboard.length) {
+        // Сценарий: Абсолютная ничья всех игроков
+        if (leaderboard.length === 2) {
+          winnerSpeechText = `It's a draw! Both ${winners[0].name} and ${winners[1].name} finished with ${topScore} points.`;
+          playFanfares = false; // Убираем фанфары для ничьей из двух человек
+        } else {
+          winnerSpeechText = `Unbelievable! Everyone tied. ${winnersNamesStr} all finished with ${topScore} points.`;
+          // Оставляем фанфары, так как групповая ничья 3+ человек это редкость
+        }
+      } else if (winners.length > 1) {
+        // Сценарий: Несколько человек делят первое место, но есть и проигравшие
+        winnerSpeechText = `First place is shared by ${winnersNamesStr} with ${topScore} points!`;
       } else {
-        winnerSpeechText = `The winner is ${winners[0].name}!`;
+        // Сценарий: Один абсолютный победитель
+        winnerSpeechText = `The winner is ${winners[0].name} with ${topScore} points!`;
       }
 
       // Выполняем цепочку событий по очереди
       try {
+        // 1. Объявляем победителей
         await audioManager.speakAsync(winnerSpeechText);
         if (audioManager.cancelQueue) return;
         
-        await audioManager.playAsync('fanfare');
-        if (audioManager.cancelQueue) return;
+        // 2. Играем фанфары (тише на 25%), если нужно
+        if (playFanfares) {
+          await audioManager.playAsync('fanfare', audioManager.getVolume() * 0.75);
+          if (audioManager.cancelQueue) return;
+        }
 
-        let placesText = "";
-        leaderboard.forEach((p) => {
-          placesText += `${p.name}, ${p.gold || 0} points. `;
-        });
-        await audioManager.speakAsync(placesText);
-        if (audioManager.cancelQueue) return;
+        // 3. Объявляем проигравших (если они есть), чтобы не повторять очки победителей
+        if (losers.length > 0) {
+          let losersSpeech = losers.length === 1 ? "Followed by " : "Other scores: ";
+          // Создаем строку "Bob with 30, Alice with 15"
+          losersSpeech += losers.map(p => `${p.name} with ${p.gold || 0}`).join(", ") + " points.";
+          await audioManager.speakAsync(losersSpeech);
+          if (audioManager.cancelQueue) return;
+        }
 
+        // 4. Зачитываем историю
         let historyText = "Here is the history of all choices. ";
         game.history.forEach(h => {
           let cleanSentence = h.resultSentence.replace(/<\/?[^>]+(>|$)/g, "");
