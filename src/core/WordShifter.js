@@ -23,10 +23,9 @@ export class WordShifter {
 getMaskedWords() {
     const maskToHtml = (word, openedSet) => {
       let html = "";
-      let wordIndex = 0; // Счетчик слов для чередования цветов
+      let wordIndex = 0; // 0 = Бирюзовый, 1 = Розовый
       let inGap = false;
       
-      // Открываем первую группу с классом цвета (0 = бирюзовый, 1 = розовый)
       html += `<span class="word-group word-color-${wordIndex % 2}">`;
       
       if (word.length > 0 && !openedSet.has(0) && word[0] !== " ") {
@@ -38,9 +37,9 @@ getMaskedWords() {
         const char = word[i];
         
         if (char === " ") {
-          // Встретили пробел: увеличиваем счетчик, закрываем группу, открываем новую с другим цветом
           wordIndex++;
-          html += `</span><span class="word-space"></span><span class="word-group word-color-${wordIndex % 2}">`;
+          // Закрываем текущее слово и открываем новое, без генерации пробела
+          html += `</span><span class="word-group word-color-${wordIndex % 2}">`;
           inGap = false;
         } else if (openedSet.has(i)) {
           html += `<span class="revealed-char">${char}</span>`;
@@ -53,10 +52,9 @@ getMaskedWords() {
         }
       }
       
-      html += '</span>'; // Закрываем последнюю группу
+      html += '</span>';
       
-      // Удаляем пустые группы, если строка начиналась/заканчивалась пробелом
-      return html.replace(/<span class="word-group word-color-\d"><\/span>/g, '');
+      return html.replace(/<span class="word-group word-color-\d+"><\/span>/g, '');
     };
 
     return {

@@ -1281,62 +1281,74 @@ p {
   100% { background-position: 0% 50%; }
 }
 
+/* Главный контейнер ответа */
 .masked-wrapper {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 0;
-  row-gap: 6px;
+  gap: 6px 14px; /* 6px по вертикали между строками, 14px по горизонтали МЕЖДУ СЛОВАМИ */
 }
 
+/* Стили самой открытой буквы */
 .revealed-char {
   display: inline-block;
   white-space: nowrap;
   font-size: 17px;
   font-weight: 800;
-  color: var(--positive);
+  color: var(--positive); /* Цвет по умолчанию */
   padding: 0 1px;
 }
 
-/* Группа букв одного слова */
+/* Группа одного целого слова */
 .word-group {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap; /* Разрешаем буквам переноситься, если слово не влезает в экран */
+  flex-wrap: wrap; 
+  gap: 6px 0; /* Если гигантское слово ломается само в себе, даем отступ между его кусками */
 }
 
-/* Чередование цветов раскрытых букв (gaps остаются фиолетовыми) */
+/* ЦВЕТ 0: Бирюзовый (#37ffe2) */
+.word-color-0 {
+  --gap-color-low: rgba(55, 255, 226, 0.2);
+  --gap-color-high: rgba(55, 255, 226, 0.65);
+  --gap-shadow: rgba(55, 255, 226, 0.3);
+}
 .word-color-0 .revealed-char {
-  color: var(--positive); /* Бирюзовый (#37ffe2) */
+  color: var(--positive);
 }
 
+/* ЦВЕТ 1: Розовый (#ff5f7b) */
+.word-color-1 {
+  --gap-color-low: rgba(255, 95, 123, 0.2);
+  --gap-color-high: rgba(255, 95, 123, 0.65);
+  --gap-shadow: rgba(255, 95, 123, 0.3);
+}
 .word-color-1 .revealed-char {
-  color: var(--accent-strong); /* Мягкий неоново-розовый (#ff5f7b) */
+  color: var(--accent-strong);
 }
 
+/* Универсальный прочерк (Фиолетовый удален, по умолчанию теперь Бирюзовый) */
 .letter-gap {
   display: inline-block;
   width: 6px;
   height: 18px;
-  background: rgba(140, 108, 255, 0.4);
   border-radius: 2px;
   margin: 0 4px;
-  box-shadow: 0 0 6px rgba(140, 108, 255, 0.3);
-  animation: smoothPulseGap 1.8s ease-in-out infinite;
+  background: var(--gap-color-low, rgba(55, 255, 226, 0.2));
+  box-shadow: 0 0 6px var(--gap-shadow, rgba(55, 255, 226, 0.3));
+  animation: smoothPulseGapDynamic 1.8s ease-in-out infinite;
 }
 
+@keyframes smoothPulseGapDynamic {
+  0%, 100% { opacity: 0.3; background: var(--gap-color-low, rgba(55, 255, 226, 0.2)); }
+  50% { opacity: 0.9; background: var(--gap-color-high, rgba(55, 255, 226, 0.65)); }
+}
+
+/* Удаляем старый класс пробела, он нам больше не нужен */
 .word-space {
-  display: inline-block;
-  width: 20px;
-  height: 1px;
-  vertical-align: middle;
-}
-
-@keyframes smoothPulseGap {
-  0%, 100% { opacity: 0.3; background: rgba(140, 108, 255, 0.2); }
-  50% { opacity: 0.9; background: rgba(140, 108, 255, 0.65); }
+  display: none;
 }
 
 .ability-inline-label {
