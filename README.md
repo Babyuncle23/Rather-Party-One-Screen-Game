@@ -37,7 +37,8 @@ The codebase uses Vanilla JavaScript (ES6+ Modules) with zero external dependenc
     │   └── AudioManager.js     # Audio pools & TTS queue management
     └── data
         ├── nerfWords.js        # Filter lists for balance downscaling
-        └── questions.js        # Database of questions, categories, and brainstorms
+        └── questions.js        # Database of questions, categories, and brainstorms 
+```
 
 ## 🧬 Development Protocol
 
