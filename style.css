@@ -1341,6 +1341,18 @@ p {
   animation: smoothPulseGapDynamic 1.8s ease-in-out infinite;
 }
 
+/* ДОБАВЬ ЭТО: Статичный прочерк, который показывает длину слова */
+.letter-dash {
+  display: inline-block;
+  width: 10px;
+  height: 4px; 
+  border-radius: 2px;
+  margin: 0 3px;
+  background: var(--gap-color-high, rgba(55, 255, 226, 0.65));
+  box-shadow: 0 0 6px var(--gap-shadow, rgba(55, 255, 226, 0.3));
+  vertical-align: middle; 
+}
+
 @keyframes smoothPulseGapDynamic {
   0%, 100% { opacity: 0.3; background: var(--gap-color-low, rgba(55, 255, 226, 0.2)); }
   50% { opacity: 0.9; background: var(--gap-color-high, rgba(55, 255, 226, 0.65)); }

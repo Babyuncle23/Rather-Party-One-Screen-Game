@@ -1,43 +1,1617 @@
 export const PROMPTS = {
   // Действия (для вопроса 14)
-  actionWork: { text: "Inappropriate action at work", brainstorm: ["take a nap", "leave early", "ignore the boss", "play games"] },
-  actionIllegal: { text: "Minor illegal act", brainstorm: ["pirate a movie", "jaywalk", "steal a pen", "sneak into a concert"] },
-  actionEmbarrassing: { text: "Embarrassing action", brainstorm: ["trip and fall", "forget a name", "snort while laughing", "wave at a stranger"] },
-  actionParty: { text: "Weird party trick", brainstorm: ["swallow a sword", "juggle apples", "do a backflip", "eat a glass"] },
-  actionChore: { text: "Annoying daily chore", brainstorm: ["wash the dishes", "iron clothes", "vacuum", "take out the trash"] },
-  actionRelax: { text: "Relaxing activity", brainstorm: ["sleep for 10 hours", "take a hot bath", "read a book", "stare at the wall"] },
-  actionExtreme: { text: "Extreme sport action", brainstorm: ["jump from a plane", "surf a huge wave", "climb a mountain", "bungee jump"] },
-  actionAlone: { text: "Something you do when alone", brainstorm: ["sing loudly", "talk to yourself", "dance weirdly", "eat from the fridge"] },
+  actionWork: { 
+    text: "Inappropriate action at work", 
+    brainstorm: [
+      "take a nap", 
+      "leave early", 
+      "ignore the boss", 
+      "play games",
+      "watch netflix",
+      "sing in the breakroom",
+      "steal coffee",
+      "start a fight",
+      "show up drunk",
+      "scroll tiktok on phone",
+      "cry in the toilet",
+      "delete important database",
+      "insult the main client",
+      "wear pajamas to meeting",
+      "fall asleep during presentation",
+      "liquidate company assets"
+    ] 
+  },
+  actionIllegal: { 
+    text: "Minor illegal act", 
+    brainstorm: [
+      "pirate a movie", 
+      "jaywalk", 
+      "steal a pen", 
+      "sneak into a concert",
+      "shoplift a candy",
+      "vandalize a wall",
+      "speed in a school zone",
+      "ride the train without a ticket",
+      "use a fake name",
+      "jerk the emergency brake",
+      "bribe a parking guard",
+      "steal wifi from neighbors",
+      "forge a doctor note"
+    ] 
+  },
+actionEmbarrassing: { 
+    text: "Embarrassing action", 
+    brainstorm: [
+      "forget a name", 
+      "snort while laughing", 
+      "wave at a stranger",
+      "reply wrong to a text",
+      "have toilet paper on shoe",
+      "forget to zip pants",
+      "call teacher mom",
+      "accidentally like an old post",
+      "have spinach in teeth during date",
+      "walk into a glass door",
+      "forget your own password"
+    ] 
+  },
+  actionParty: { 
+    text: "Weird party trick", 
+    brainstorm: [
+      // Стандартные/классические
+      "swallow a sword", 
+      "juggle apples", 
+      "do a backflip", 
+      "eat a glass",
+      "hold breath for two minutes",
+      "solve a rubiks cube blindfolded",
+      "peel a banana with feet",
+      "guess the secret ingredient in drink",
+      "sing song backwards",
+      "break a wooden board with head",
+      "speak with two voices at once",
+      "wobble eyeballs in different directions",
+      "tie a cherry stem with tongue",
+      "find a needle in a haystack"
+    ] 
+  },
+actionChore: { 
+    text: "Annoying daily chore", 
+    brainstorm: [
+      "wash the dishes", 
+      "iron clothes", 
+      "vacuum", 
+      "take out the trash",
+      "fold the laundry",
+      "make the bed",
+      "dust the shelves",
+      "clean the toilet",
+      "sort out the recycling bin",
+      "change bed sheets",
+      "unload the dishwasher",
+      "wipe all the windows"
+    ] 
+  },
+  actionRelax: { 
+    text: "Relaxing activity", 
+    brainstorm: [
+      "sleep for 10 hours", 
+      "take a hot bath", 
+      "read a book", 
+      "stare at the wall",
+      "watch the sunset",
+      "go for a walk",
+      "meditate",
+      "drink herbal tea",
+      "do absolutely nothing",
+      "lie on the beach",
+      "watch clouds floating by",
+      "take a bubble bath",
+      "listen to ocean",
+      "get a  massage",
+      "breathe deeply",
+      "watch rain hit the window",
+      "paint a canvas"
+    ] 
+  },
+actionExtreme: { 
+    text: "Extreme sport action", 
+    brainstorm: [
+      "surf a huge wave", 
+      "go skydiving",
+      "ride a dirt bike",
+      "climb a rock",
+      "fly in a wingsuit",
+      "do a backflip",
+      "run an ultra marathon",
+      "jump across two buildings",
+      "skate down a massive hill"
+    ] 
+  },  actionAlone: { 
+    text: "Something you do when alone", 
+    brainstorm: [
+      // Стандартные и короткие
+      "sing loudly", 
+      "talk to yourself", 
+      "eat from the fridge",
+      "binge watch cartoons",
+      "search your own name online",
+      "rehearse a fake argument",
+      "dance in front of the mirror",
+      "stare into the fridge for no reason"
+    ] 
+  },
 
   // Еда и напитки
-  fastFood: { text: "Fast food", brainstorm: ["Burger", "Pizza", "Fries", "Hot Dog"] },
-  snack: { text: "Snack food", brainstorm: ["Skittles", "Doritos", "Jelly beans", "Cheetos"] },
-  sweetLiquid: { text: "Sweet liquid", brainstorm: ["Maple syrup", "Melted chocolate", "Apple juice", "Honey"] },
-  strongFood: { text: "Strong-smelling food", brainstorm: ["Onion", "Garlic", "Fish", "Blue Cheese"] },
-  
+fastFood: { 
+    text: "Fast food", 
+    brainstorm: [
+      // Стандартные
+      "burger", 
+      "pizza", 
+      "french fries", 
+      "hot dog",
+      "fried chicken",
+      "taco",
+      "burrito",
+      "onion rings",
+    ] 
+  },
+snack: { 
+    text: "Snack food", 
+    brainstorm: [
+      // Короткие
+      "skittles", 
+      "doritos", 
+      "cheetos", 
+      "popcorn", 
+      "pretzels", 
+      "peanuts", 
+      "cookies",
+      "jerky",
+    ] 
+  },  sweetLiquid: { 
+    text: "Sweet liquid", 
+    brainstorm: [
+      "honey", 
+      "syrup", 
+      "juice", 
+      "soda", 
+      "milk",
+      "nectar",
+      "maple syrup", 
+      "melted chocolate", 
+      "apple juice", 
+      "orange juice",
+      "grape soda",
+      "condensed milk"
+    ] 
+  },
+strongFood: { 
+    text: "Strong-smelling food", 
+    brainstorm: [
+      "onion", 
+      "garlic", 
+      "fish", 
+      "tuna",
+      "kimchi",
+      "curry",
+      "blue cheese", 
+      "pickled herring",
+      "rotten eggs",
+      "canned sardines",
+      "durian fruit",
+    ] 
+  },  
   // Животные и существа
-  animalFunny: { text: "Funny-looking animal", brainstorm: ["Platypus", "Ostrich", "Sloth", "Blobfish"] },
-  animalFarm: { text: "Farm animal", brainstorm: ["Cow", "Pig", "Horse", "Goat"] },
-  fictionalChar: { text: "Fictional character", brainstorm: ["Shrek", "Batman", "Homer Simpson", "Pikachu", "Yoda", "SpongeBob"] },
-  villain: { text: "Horror movie villain", brainstorm: ["Freddy Krueger", "Jason Voorhees", "Michael Myers", "Ghostface"] },
+animalFunny: { 
+    text: "Funny-looking animal", 
+    brainstorm: [
+      "sloth", 
+      "pug", 
+      "frog", 
+      "llama", 
+      "koala",
+      "monkey",
+      "platypus", 
+      "capybara",
+      "fruit bat",
+      "emue"
+    ] 
+  },  animalFarm: { 
+    text: "Farm animal", 
+    brainstorm: [
+      "cow", 
+      "pig", 
+      "horse", 
+      "goat", 
+      "sheep", 
+      "duck", 
+      "hen", 
+      "bull",
+      "ram",
+      "chicken", 
+      "rooster", 
+      "donkey", 
+      "mule", 
+      "turkey"
+    ] 
+  },
+fictionalChar: { 
+    text: "Fictional character", 
+    brainstorm: [
+      "Shrek", 
+      "Yoda", 
+      "Goku", 
+      "Link", 
+      "Mario", 
+      "Thor", 
+      "Stitch",
+      "Elmo",
+      "Batman", 
+      "Homer Simpson", 
+      "Pikachu", 
+      "SpongeBob", 
+      "Darth Vader", 
+      "Harry Potter", 
+      "Sherlock Holmes", 
+      "Mickey Mouse", 
+      "Bugs Bunny", 
+      "Iron Man", 
+      "Peter Pan",
+      "Wonder Woman",
+      "Captain America"
+    ] 
+  }, 
+  villain: { 
+    text: "Horror movie villain", 
+    brainstorm: [
+      "Joker", 
+      "Dracula", 
+      "Pennywise", 
+      "Chucky", 
+      "Hannibal", 
+      "Mummy", 
+      "Alien",
+      "Freddy Krueger", 
+      "Michael Myers", 
+      "Predator", 
+      "Jigsaw"
+    ] 
+  },
   
   // Люди и роли
-  politician: { text: "Famous politician", brainstorm: ["Donald Trump", "Joe Biden", "Boris Johnson", "Kim Jong Un", "Barack Obama", "Winston Churchill"] },
-  historical: { text: "Historical figure", brainstorm: ["Abraham Lincoln", "Cleopatra", "Napoleon", "Julius Caesar"] },
-  singer: { text: "Famous singer", brainstorm: ["Elvis", "Beyonce", "Eminem", "Adele"] },
-  band: { text: "Rock band", brainstorm: ["Queen", "Nirvana", "The Beatles", "Metallica"] },
-  
+
+youtuber: { 
+    text: "Famous YouTuber", 
+    brainstorm: [
+      "PewDiePie", 
+      "MrBeast", 
+      "Logan Paul", 
+      "KSI", 
+      "Ninja",
+      "Hassan Piker",
+      "Johnny Harris"
+    ] 
+  },
+
+politician: { 
+    text: "Famous politician", 
+    brainstorm: [
+      "Putin", 
+      "Macron", 
+      "Merkel", 
+      "Stalin", 
+      "Lenin", 
+      "Hitler", 
+      "Nixon",
+      "Donald Trump", 
+      "Joe Biden", 
+      "Boris Johnson", 
+      "Kim Jong Un", 
+      "Barack Obama", 
+      "Winston Churchill", 
+      "Nelson Mandela", 
+      "Mahatma Gandhi", 
+      "Abraham Lincoln", 
+      "Benjamin Franklin", 
+      "Queen Elizabeth",
+      "Margaret Thatcher"
+    ] 
+  },  historical: { 
+    text: "Historical figure", 
+    brainstorm: [
+      "Nero", 
+      "Plato", 
+      "Dante", 
+      "Galileo", 
+      "Mozart", 
+
+      "Abraham Lincoln", 
+      "Cleopatra", 
+      "Napoleon", 
+      "Julius Caesar", 
+      "Isaac Newton", 
+      "Albert Einstein", 
+      "Joan of Arc", 
+      "Martin Luther King", 
+      "Marco Polo", 
+      "Alexander the Great", 
+      "Genghis Khan"
+    ] 
+  },
+  singer: { 
+    text: "Famous singer", 
+    brainstorm: [
+      "Prince", 
+      "Adele", 
+      "Drake", 
+      "Sia", 
+      "Sting", 
+      "Bowie",
+      "Taylor Swift", 
+      "Michael Jackson", 
+      "Freddie Mercury", 
+      "Beyoncé", 
+      "Lady Gaga", 
+      "Frank Sinatra", 
+      "Elvis Presley", 
+      "Whitney Houston", 
+      "Billie Eilish", 
+      "Justin Bieber", 
+    ] 
+  },
+band: { 
+    text: "Rock band", 
+    brainstorm: [
+      // Короткие
+      "Queen", 
+      "KISS", 
+      "Muse", 
+      "Blur", 
+      "Nirvana", 
+      "The Beatles", 
+      "Metallica", 
+      "Pink Floyd", 
+      "Led Zeppelin", 
+      "Rolling Stones", 
+      "Red Hot Chili Peppers", 
+      "Guns N' Roses", 
+      "Arctic Monkeys", 
+      "Linkin Park", 
+      "Foo Fighters", 
+      "Black Sabbath",
+      "Radiohead"
+    ] 
+  },  
+  actor: { 
+    text: "Famous actor", 
+    brainstorm: [
+      "Brad Pitt", 
+      "Tom Cruise", 
+      "Jim Carrey", 
+      "Tom Hanks", 
+      "Vin Diesel", 
+      "Will Smith",
+      "Leonardo DiCaprio", 
+      "Robert Downey Jr", 
+      "Matthew McConaughey", 
+      "Scarlett Johansson", 
+      "Johnny Depp", 
+      "Christian Bale", 
+      "Morgan Freeman", 
+      "Ryan Reynolds", 
+      "Jennifer Lawrence", 
+      "Samuel L Jackson", 
+      "Joaquin Phoenix"
+    ] 
+  },
+  annoyingHabit: { 
+    text: "Annoying habit", 
+    brainstorm: [
+      "Smoking", 
+      "Snoring", 
+      "Clicking", 
+      "Interrupting", 
+      "Chewing",
+      "Biting fingernails", 
+      "Talking too loud", 
+      "Checking phone constantly", 
+      "Leaving lights on", 
+      "Cracking knuckles", 
+      "Arriving late", 
+      "Playing loud music", 
+      "Interrupting conversations", 
+      "Leaving doors open", 
+    ] 
+  },
+  profession: { 
+    text: "Profession", 
+    brainstorm: [
+      "Chef", 
+      "Pilot", 
+      "Judge", 
+      "Nurse", 
+      "Artist",
+      "Manager",
+      "Software developer", 
+      "Graphic designer", 
+      "Engineer", 
+      "Primary school teacher", 
+      "Financial advisor", 
+      "Professional athlete", 
+      "Surgeon", 
+      "Security guard", 
+      "Construction worker", 
+    ] 
+  },
+//takistetty tähän asti
+  cartoonChar: { 
+    text: "Cartoon character", 
+    brainstorm: [
+      "Popeye", 
+      "Gumball", 
+      "Scooby", 
+      "Stewie",
+      "Bugs Bunny", 
+      "Mickey Mouse", 
+      "Homer Simpson", 
+      "SpongeBob SquarePants", 
+      "Tom Cat", 
+      "Jerry Mouse", 
+      "Charlie Brown", 
+      "Winnie the Pooh", 
+      "Rick Sanchez"
+    ] 
+  },
+  mediaPersonality: { 
+    text: "Famous media personality", 
+    brainstorm: [
+      // Короткие
+      "Oprah", 
+      "Ellen", 
+      "Conan", 
+      "Fallon", 
+      "Kimmel",
+      
+      // Длинные и фразовые
+      "Howard Stern", 
+      "Joe Rogan", 
+      "Ryan Seacrest", 
+      "Larry King", 
+      "David Letterman", 
+      "Gordon Ramsay", 
+      "Tucker Carlson", 
+      "Jimmy Fallon", 
+      "Trevor Noah"
+    ] 
+  },
   // Вещи и объекты
-  everyday: { text: "Everyday object", isPlural: true, brainstorm: ["Smartphones", "Toasters", "Fidget spinners", "Vinyl records"] },
-  expensive: { text: "Expensive item", isPlural: true, brainstorm: ["Sports cars", "Designer bags", "Fine art", "Statues"] },
-  gadget: { text: "Iconic gadget", brainstorm: ["The first iPhone", "The Game Boy", "The first PC"] },
-  smallObj: { text: "Small object", brainstorm: ["Bottle caps", "Paperclips", "Buttons", "Rubber bands"] },
+everyday: { 
+    text: "Everyday object", 
+    isPlural: true, 
+    brainstorm: [
+      // Короткие
+      "Keys", 
+      "Cups", 
+      "Pens", 
+      "Books", 
+      "Lamps", 
+      "Bags", 
+      "Socks",
+      
+      // Длинные и фразовые
+      "Smartphones", 
+      "Toasters", 
+      "Fidget spinners", 
+      "Vinyl records", 
+      "Coffee mugs", 
+      "Wrist watches", 
+      "Sunglasses", 
+      "Power banks", 
+      "Backpacks", 
+      "Headphones", 
+      "Remote controls"
+    ] 
+  },  
+  expensive: { 
+    text: "Expensive item", 
+    isPlural: true, 
+    brainstorm: [
+      // Короткие
+      "Jets", 
+      "Yachts", 
+      "Gold", 
+      "Diamonds", 
+      "Mansions",
+      
+      // Длинные и фразовые
+      "Sports cars", 
+      "Designer bags", 
+      "Fine art", 
+      "Statues", 
+      "Private islands", 
+      "Luxury watches", 
+      "Racing horses", 
+      "Rare coins", 
+      "Super yachts", 
+      "Antique furniture", 
+      "Diamond necklaces"
+    ] 
+  },
+gadget: { 
+    text: "Gadget", 
+    brainstorm: [
+      "iPad", 
+      "iPod", 
+      "Kindle", 
+      "Walkman", 
+      "Pager", 
+      "Camera",
+      "iPhone", 
+      "Game Boy", 
+      "Electric razor", 
+      "Smart speaker", 
+      "Wireless mouse", 
+      "Gaming console", 
+      "Polaroid", 
+      "Computer"
+    ] 
+  },  
+  smallObj: { 
+    text: "Small object", 
+    brainstorm: [
+      // Короткие
+      "Coins", 
+      "Pins", 
+      "Dice", 
+      "Keys", 
+      "Rings", 
+      "Seeds",
+      
+      // Длинные и фразовые
+      "Bottle caps", 
+      "Paperclips", 
+      "Buttons", 
+      "Rubber bands", 
+      "Thumb tacks", 
+      "Earring studs", 
+      "Coffee beans", 
+      "Safety pins", 
+      "Match sticks", 
+      "Guitar picks", 
+      "Memory cards"
+    ] 
+  },
   
   // Технологии и компании
-  techOld: { text: "Outdated technology", brainstorm: ["Fax machines", "Floppy disks", "Wired headphones", "VHS tapes"] },
-  company: { text: "Famous company", brainstorm: ["Blockbuster", "Nokia", "Yahoo", "Toys R Us", "Tesla", "Netflix", "SpaceX"] },
-  app: { text: "Modern app", brainstorm: ["TikTok", "Tinder", "Uber", "Instagram"] },
-  website: { text: "Popular website", brainstorm: ["YouTube", "Wikipedia", "Amazon", "Google"] }
+  techOld: { 
+    text: "Outdated technology", 
+    brainstorm: [
+      // Короткие
+      "Pager", 
+      "Modem", 
+      "Cassette", 
+      "Fax machines", 
+      "Floppy disks", 
+      "VHS tapes", 
+      "Landline phones", 
+      "Typewriters", 
+      "CD players", 
+      "Portable tape recorders"
+    ] 
+  },
+company: { 
+    text: "Famous company", 
+    brainstorm: [
+      // Короткие
+      "Sony", 
+      "Apple", 
+      "Nokia", 
+      "Yahoo", 
+      "Tesla", 
+      "SpaceX", 
+      "Intel", 
+      "Meta",
+      
+      // Длинные и фразовые
+      "Blockbuster", 
+      "Netflix", 
+      "Google", 
+      "Amazon", 
+      "Microsoft", 
+      "Samsung", 
+      "Toyota", 
+      "General Electric", 
+      "Coca Cola Company"
+    ] 
+  },  app: { 
+    text: "Modern app", 
+    brainstorm: [
+      // Короткие
+      "Zoom", 
+      "Uber", 
+      "Slack", 
+      "Tinder", 
+      "Discord", 
+      "Reddit", 
+      "BeReal",
+      
+      // Длинные и фразовые
+      "TikTok", 
+      "Instagram", 
+      "Google Maps", 
+      "Spotify", 
+      "YouTube", 
+      "WhatsApp", 
+      "Twitter", 
+      "Apple Music", 
+      "Netflix", 
+      "Facebook", 
+      "Snapchat"
+    ] 
+  },
+  website: { 
+    text: "Popular website", 
+    brainstorm: [
+      // Короткие
+      "eBay", 
+      "Bing", 
+      "Twitch", 
+      "Reddit", 
+      "Tumblr", 
+      "Github",
+      
+      // Длинные и фразовые
+      "YouTube", 
+      "Wikipedia", 
+      "Amazon", 
+      "Google", 
+      "Facebook", 
+      "Instagram", 
+      "Pinterest", 
+      "LinkedIn", 
+      "Netflix", 
+      "SoundCloud"
+    ] 
+  },
+  videoGame: { 
+    text: "Popular video game", 
+    brainstorm: [
+      // Короткие
+      "Doom", 
+      "Halo", 
+      "Tetris", 
+      "Portal", 
+      "Skyrim",
+      "Fortnite",
+      
+      // Длинные и фразовые
+      "Grand Theft Auto", 
+      "World of Warcraft", 
+      "The Witcher", 
+      "Red Dead Redemption", 
+      "Super Mario Bros", 
+      "Minecraft", 
+      "Elden Ring", 
+      "Call of Duty", 
+      "Final Fantasy", 
+      "League of Legends"
+    ] 
+  },
+  boardGame: { 
+    text: "Popular board game", 
+    brainstorm: [
+      // Короткие
+      "Chess", 
+      "Clue", 
+      "Risk", 
+      "Go", 
+      "Checkers",
+      
+      // Длинные и фразовые
+      "Monopoly", 
+      "Catan", 
+      "Scrabble", 
+      "Ticket to Ride", 
+      "Pandemic", 
+      "Carcassonne", 
+      "Dungeons and Dragons", 
+      "Cards Against Humanity", 
+      "Betrayal at House on the Hill", 
+      "Twilight Imperium"
+    ] 
+  },
+  sport: { 
+    text: "Sport", 
+    brainstorm: [
+      // Короткие
+      "Golf", 
+      "Rugby", 
+      "Tennis", 
+      "Soccer", 
+      "Boxing",
+      
+      // Длинные и фразовые
+      "Basketball", 
+      "Volleyball", 
+      "Ice hockey", 
+      "Table tennis", 
+      "American football", 
+      "Formula one", 
+      "Rock climbing", 
+      "Figure skating", 
+      "Horse racing", 
+      "Ultimate frisbee"
+    ] 
+  },
+  mobileGame: { 
+    text: "Popular mobile game", 
+    brainstorm: [
+      // Короткие
+      "Alto", 
+      "Snake", 
+      "Plague", 
+      "Threes", 
+      "Monument",
+      
+      // Длинные и фразовые
+      "Candy Crush Saga", 
+      "Clash of Clans", 
+      "Subway Surfers", 
+      "Angry Birds", 
+      "Temple Run", 
+      "Among Us", 
+      "Genshin Impact", 
+      "Pokémon GO", 
+      "PUBG Mobile", 
+      "Plants vs Zombies"
+    ] 
+  },
+  chore: { 
+    text: "Household chore", 
+    brainstorm: [
+      // Короткие
+      "Vacuuming", 
+      "Ironing", 
+      "Dusting", 
+      "Mopping", 
+      "Sweeping",
+      
+      // Длинные и фразовые
+      "Washing dishes", 
+      "Doing laundry", 
+      "Making the bed", 
+      "Walking the dog", 
+      "Cleaning the toilet", 
+      "Taking out the trash", 
+      "Unloading the dishwasher", 
+      "Cleaning the litter box", 
+      "Changing bed sheets", 
+      "Scrubbing the bathtub"
+    ] 
+  },
+  instrument: { 
+    text: "Musical instrument", 
+    brainstorm: [
+      // Короткие
+      "Piano", 
+      "Drum", 
+      "Harp", 
+      "Flute", 
+      "Cello",
+      
+      // Длинные и фразовые
+      "Acoustic guitar", 
+      "Electric guitar", 
+      "Grand piano", 
+      "Violin", 
+      "Saxophone", 
+      "Trumpet", 
+      "Clarinet", 
+      "Trombone", 
+      "Bass guitar", 
+      "Synthesizer"
+    ] 
+  },
+  creativeHobby: { 
+    text: "Creative hobby", 
+    brainstorm: [
+      // Короткие
+      "Drawing", 
+      "Painting", 
+      "Sewing", 
+      "Writing", 
+      "Knitting",
+      
+      // Длинные и фразовые
+      "Digital photography", 
+      "Graphic design", 
+      "Playing guitar", 
+      "Oil painting", 
+      "Creative writing", 
+      "Woodworking", 
+      "Pottery making", 
+      "Jewelry making", 
+      "Song writing", 
+      "Video editing"
+    ] 
+  },
+  tvShow: { 
+    text: "Popular TV show", 
+    brainstorm: [
+      // Короткие
+      "Lost", 
+      "Fargo", 
+      "Friends", 
+      "The Wire", 
+      "Succession",
+      
+      // Длинные и фразовые
+      "Breaking Bad", 
+      "Game of Thrones", 
+      "The Sopranos", 
+      "Stranger Things", 
+      "The Office", 
+      "Better Call Saul", 
+      "Black Mirror", 
+      "Chernobyl", 
+      "The Crown", 
+      "House of the Dragon"
+    ] 
+  },
+  humanActivity: { 
+    text: "Basic human activity", 
+    brainstorm: [
+      // Короткие
+      "Sleeping", 
+      "Eating", 
+      "Walking", 
+      "Reading", 
+      "Writing",
+      
+      // Длинные и фразовые
+      "Brushing teeth", 
+      "Drinking water", 
+      "Taking a shower", 
+      "Cooking dinner", 
+      "Driving a car", 
+      "Watching movies", 
+      "Listening to music", 
+      "Exercising daily", 
+      "Talking with friends", 
+      "Working on computer"
+    ] 
+  },
+  conspiracyTheory: { 
+    text: "Weird conspiracy theory", 
+    brainstorm: [
+      // Короткие
+      "Flat Earth", 
+      "Moon landing", 
+      "Chemtrails", 
+      "Area 51", 
+      "Bigfoot",
+      
+      // Длинные и фразовые
+      "Simulation theory", 
+      "Reptilian elite", 
+      "Hollow Earth", 
+      "Birds are drones", 
+      "Phantom time hypothesis", 
+      "Mandela effect", 
+      "New World Order", 
+      "Underground alien base", 
+      "Illuminati control", 
+      "Lost continent of Atlantis"
+    ] 
+  },
+  schoolSubject: { 
+    text: "School subject", 
+    brainstorm: [
+      // Короткие
+      "Math", 
+      "Art", 
+      "Music", 
+      "History", 
+      "Physics",
+      
+      // Длинные и фразовые
+      "Computer science", 
+      "Physical education", 
+      "Foreign language", 
+      "Social studies", 
+      "Political science", 
+      "Environmental science", 
+      "English literature", 
+      "Graphic design", 
+      "Religious studies", 
+      "Business economics"
+    ] 
+  },
+  country: { 
+    text: "Country", 
+    brainstorm: [
+      // Короткие
+      "USA", 
+      "Japan", 
+      "Brazil", 
+      "Egypt", 
+      "Canada",
+      
+      // Длинные и фразовые
+      "United Kingdom", 
+      "South Korea", 
+      "Saudi Arabia", 
+      "New Zealand", 
+      "South Africa", 
+      "Czech Republic", 
+      "United Arab Emirates", 
+      "Dominican Republic", 
+      "Costa Rica", 
+      "Sri Lanka"
+    ] 
+  },
+  complicatedTopic: { 
+    text: "Complicated topic", 
+    brainstorm: [
+      // Короткие
+      "Entropy", 
+      "Inflation", 
+      "Relativity", 
+      "Philosophy", 
+      "Genetics",
+      
+      // Длинные и фразовые
+      "Quantum mechanics", 
+      "Artificial intelligence", 
+      "String theory", 
+      "Macro economics", 
+      "Climate change", 
+      "Human consciousness", 
+      "Global geopolitics", 
+      "Organic chemistry", 
+      "Nuclear fusion", 
+      "Game theory"
+    ] 
+  },
+  chubbyAnimal: { 
+    text: "Chubby animal", 
+    brainstorm: [
+      "Seal", 
+      "Panda", 
+      "Hamster", 
+      "Penguin", 
+      "Bear",
+      "Red panda", 
+      "Chubby rabbit", 
+      "Guinea pig", 
+      "Hippopotamus", 
+      "Groundhog", 
+      "Hedgehog"
+    ] 
+  },
+  fastAnimal: { 
+    text: "Fast animal", 
+    brainstorm: [
+      // Короткие
+      "Lion", 
+      "Hare", 
+      "Hawk", 
+      "Shark", 
+      "Eagle",
+      
+      // Длинные и фразовые
+      "Peregrine falcon", 
+      "Cheetah", 
+      "Sailfish", 
+      "Black marlin", 
+      "Pronghorn antelope", 
+      "Springbok", 
+      "Wildebeest", 
+      "Quarter horse", 
+      "Ostrich", 
+      "Greyhound"
+    ] 
+  },
+  angryAnimal: { 
+    text: "Angry animal", 
+    brainstorm: [
+      // Короткие
+      "Wasp", 
+      "Bull", 
+      "Badger", 
+      "Boar", 
+      "Snake",
+      
+      // Длинные и фразовые
+      "Grizzly bear", 
+      "Silverback gorilla", 
+      "Cape buffalo", 
+      "Honey badger", 
+      "Hippopotamus", 
+      "Wolverine", 
+      "Rhinoceros", 
+      "Angry goose", 
+      "Chihuahua", 
+      "Wild boar"
+    ] 
+  },
+  loudAnimal: { 
+    text: "Very loud animal", 
+    brainstorm: [
+      // Короткие
+      "Lion", 
+      "Wolf", 
+      "Crow", 
+      "Hyena", 
+      "Geese",
+      "Blue whale", 
+      "Peacock", 
+      "Donkey", 
+      "Sea lion", 
+      "Bullfrog"
+    ] 
+  },
+  dangerousAnimal: { 
+    text: "Dangerous animal", 
+    brainstorm: [
+      // Короткие
+      "Lion", 
+      "Shark", 
+      "Cobra", 
+      "Wolf", 
+      "Bear",
+      "Tiger",
+      "Crocodile",
+      "Black mamba", 
+      "Box jellyfish", 
+      "Komodo dragon", 
+      "Poison dart frog", 
+      "Hippopotamus", 
+    ] 
+  },
+  insect: { 
+    text: "Common insect", 
+    brainstorm: [
+      // Короткие
+      "Ant", 
+      "Bee", 
+      "Fly", 
+      "Wasp", 
+      "Flea",
+      
+      // Длинные и фразовые
+      "Honey bee", 
+      "House fly", 
+      "Dragonfly", 
+      "Butterfly", 
+      "Ladybug", 
+      "Grasshopper", 
+      "Cockroach", 
+      "Mosquito", 
+      "Bumblebee", 
+      "Praying mantis"
+    ] 
+  },
+  heavyAnimal: { 
+    text: "Heavy animal", 
+    brainstorm: [
+      // Короткие
+      "Cow", 
+      "Bear", 
+      "Bull", 
+      "Seal", 
+      "Horse",
+      
+      // Длинные и фразовые
+      "Blue whale", 
+      "African elephant", 
+      "White rhinoceros", 
+      "Hippopotamus", 
+      "Walrus", 
+      "Giraffe", 
+      "Bison", 
+      "Gaur", 
+      "Southern elephant seal", 
+      "Asian elephant"
+    ] 
+  },
+  bitingAnimal: { 
+    text: "Animal that bites", 
+    brainstorm: [
+      // Короткие
+      "Dog", 
+      "Cat", 
+      "Ant", 
+      "Wasp", 
+      "Rat",
+      
+      // Длинные и фразовые
+      "German shepherd", 
+      "Snapping turtle", 
+      "Black mamba", 
+      "Komodo dragon", 
+      "Fruit bat", 
+      "Grizzly bear", 
+      "Wild boar", 
+      "Fire ant", 
+      "Mosquito", 
+      "Great white shark"
+    ] 
+  },
+  nocturnalAnimal: { 
+    text: "Nocturnal animal", 
+    brainstorm: [
+      // Короткие
+      "Owl", 
+      "Bat", 
+      "Fox", 
+      "Wolf", 
+      "Mole",
+      
+      // Длинные и фразовые
+      "Raccoon", 
+      "Hedgehog", 
+      "Flying squirrel", 
+      "Badger", 
+      "Opossum", 
+      "Lemur", 
+      "Aye-aye", 
+      "Sugar glider", 
+      "Fruit bat", 
+      "Nightjar"
+    ] 
+  },
+  wildAnimal: { 
+    text: "Wild animal", 
+    brainstorm: [
+      // Короткие
+      "Wolf", 
+      "Bear", 
+      "Lion", 
+      "Deer", 
+      "Fox",
+      
+      // Длинные и фразовые
+      "Bengal tiger", 
+      "African elephant", 
+      "Grizzly bear", 
+      "Red kangaroo", 
+      "Snow leopard", 
+      "Polar bear", 
+      "Bald eagle", 
+      "Grey wolf", 
+      "Mountain gorilla", 
+      "African lion"
+    ] 
+  },
+  dogBreed: { 
+    text: "Dog breed", 
+    brainstorm: [
+      // Короткие
+      "Pug", 
+      "Boxer", 
+      "Husky", 
+      "Beagle", 
+      "Collie",
+      "Poodle",
+      "Akita",
+      "Corgi",
+      "Chow",
+      "Vizsla",
+      
+      // Длинные и фразовые
+      "German shepherd", 
+      "Golden retriever", 
+      "French bulldog", 
+      "Border collie", 
+      "Labrador retriever", 
+      "Siberian husky", 
+      "Great dane", 
+      "Australian shepherd", 
+      "Bernese mountain dog", 
+      "Cavalier king charles spaniel",
+      "Doberman pinscher",
+      "Rottweiler",
+      "Alaskan malamute",
+      "Newfoundland",
+      "Saint bernard"
+    ] 
+  },
+  foreignLanguage: { 
+    text: "Foreign language", 
+    brainstorm: [
+      // Короткие
+      "French", 
+      "German", 
+      "Spanish", 
+      "Italian", 
+      "Arabic",
+      
+      // Длинные и фразовые
+      "Mandarin chinese", 
+      "Japanese", 
+      "Portuguese", 
+      "Russian", 
+      "Korean", 
+      "Hindi", 
+      "Dutch", 
+      "Turkish", 
+      "Swedish", 
+      "Vietnamese"
+    ] 
+  },
+  professionalField: { 
+    text: "Professional field", 
+    brainstorm: [
+      // Короткие
+      "Medicine", 
+      "Law", 
+      "Engineering", 
+      "Finance", 
+      "Design",
+      
+      // Длинные и фразовые
+      "Software development", 
+      "Project management", 
+      "Data science", 
+      "Digital marketing", 
+      "Business administration", 
+      "Human resources", 
+      "Environmental science", 
+      "Graphic design", 
+      "Artificial intelligence", 
+      "Public relations"
+    ] 
+  },
+  martialArt: { 
+    text: "Martial art", 
+    brainstorm: [
+      // Короткие
+      "Judo", 
+      "Karate", 
+      "Aikido", 
+      "Kung fu", 
+      "Sumo",
+      
+      // Длинные и фразовые
+      "Brazilian jiu jitsu", 
+      "Muay thai", 
+      "Mixed martial arts", 
+      "Taekwondo", 
+      "Krav maga", 
+      "Capoeira", 
+      "Jeet kune do", 
+      "Kendo", 
+      "Hapkido", 
+      "Wing chun",
+      "Shorinji Kempo"
+    ] 
+  },
+  superpower: { 
+    text: "Superpower", 
+    brainstorm: [
+      // Короткие
+      "Flight", 
+      "Invisibility", 
+      "Telepathy", 
+      "Super strength", 
+      "Regeneration",
+      
+      // Длинные и фразовые
+      "Time manipulation", 
+      "Telekinetic powers", 
+      "Shape shifting", 
+      "Super speed", 
+      "Elemental control", 
+      "Energy projection", 
+      "Mind control", 
+      "X-ray vision", 
+      "Density control", 
+      "Matter transmutation"
+    ] 
+  },
+  professionalSkill: { 
+    text: "Professional skill", 
+    brainstorm: [
+      // Короткие
+      "Coding", 
+      "Writing", 
+      "Design", 
+      "Selling", 
+      "Analysis",
+      
+      // Длинные и фразовые
+      "Project management", 
+      "Data visualization", 
+      "Public speaking", 
+      "Strategic planning", 
+      "Software development", 
+      "Search engine optimization", 
+      "Technical writing", 
+      "Conflict resolution", 
+      "Financial modeling", 
+      "User interface design"
+    ] 
+  },
+  smallTalkTopic: { 
+    text: "Small talk topic", 
+    brainstorm: [
+      // Короткие
+      "Weather", 
+      "Travel", 
+      "Hobbies", 
+      "Movies", 
+      "Music",
+      
+      // Длинные и фразовые
+      "Weekend plans", 
+      "Favorite local restaurants", 
+      "Current technology trends", 
+      "Recent books read", 
+      "Work life balance", 
+      "Holiday experiences", 
+      "Fitness goals", 
+      "Upcoming local events", 
+      "Cooking experiments", 
+      "Career growth"
+    ] 
+  },
+  sauce: { 
+    text: "Sauce", 
+    brainstorm: [
+      // Короткие
+      "Pesto", 
+      "Salsa", 
+      "Gravy", 
+      "Tahini", 
+      "Hummus",
+      
+      // Длинные и фразовые
+      "Tomato basil sauce", 
+      "Creamy mushroom sauce", 
+      "Spicy barbecue sauce", 
+      "Teriyaki glaze", 
+      "Garlic aioli", 
+      "Honey mustard", 
+      "Classic hollandaise", 
+      "Buffalo hot sauce", 
+      "Sweet chili sauce", 
+      "Blue cheese dressing"
+    ] 
+  },
+  stickyThing: { 
+    text: "Sticky thing", 
+    brainstorm: [
+      // Короткие
+      "Glue", 
+      "Honey", 
+      "Tape", 
+      "Gum", 
+      "Sap",
+      
+      // Длинные и фразовые
+      "Double sided tape", 
+      "Sticky note", 
+      "Molasses", 
+      "Maple syrup", 
+      "Super glue", 
+      "Chewing gum", 
+      "Tree resin", 
+      "Caramel sauce", 
+      "Masking tape", 
+      "Glue stick"
+    ] 
+  },
+  hotDrink: { 
+    text: "Hot drink", 
+    brainstorm: [
+      // Короткие
+      "Tea", 
+      "Coffee", 
+      "Cocoa", 
+      "Latte", 
+      "Chai",
+      
+      // Длинные и фразовые
+      "Hot chocolate", 
+      "Herbal infusion", 
+      "Earl grey tea", 
+      "Green tea", 
+      "Cappuccino", 
+      "Espresso shot", 
+      "Matcha latte", 
+      "Peppermint tea", 
+      "Flat white", 
+      "Warm apple cider"
+    ] 
+  },
+  popularDrink: { 
+    text: "Popular drink", 
+    brainstorm: [
+      // Короткие
+      "Water", 
+      "Coffee", 
+      "Tea", 
+      "Beer", 
+      "Soda",
+      
+      // Длинные и фразовые
+      "Orange juice", 
+      "Coca cola", 
+      "Red wine", 
+      "Iced tea", 
+      "Lemonade", 
+      "Hot chocolate", 
+      "Apple juice", 
+      "Craft beer", 
+      "Energy drink", 
+      "Sparkling water"
+    ] 
+  },
+  kitchenItem: { 
+    text: "Kitchen item", 
+    isPlural: true,
+    brainstorm: [
+      // Короткие
+      "Spoons", 
+      "Plates", 
+      "Blenders", 
+      "Knives", 
+      "Forks",
+      
+      // Длинные и фразовые
+      "Cutting boards", 
+      "Measuring cups", 
+      "Frying pans", 
+      "Mixing bowls", 
+      "Coffee makers", 
+      "Toaster ovens", 
+      "Baking sheets", 
+      "Wooden spoons", 
+      "Dish racks", 
+      "Food processors"
+    ] 
+  },
+  bodyPart: { 
+    text: "Body part", 
+    brainstorm: [
+      // Короткие
+      "Head", 
+      "Arm", 
+      "Leg", 
+      "Hand", 
+      "Foot",
+      
+      // Длинные и фразовые
+      "Index finger", 
+      "Shoulder blade", 
+      "Collar bone", 
+      "Rib cage", 
+      "Lower back", 
+      "Ankle joint", 
+      "Upper arm", 
+      "Knee cap", 
+      "Little toe", 
+      "Forearm"
+    ] 
+  },
+  householdItem: { 
+    text: "Common household item", 
+    brainstorm: [
+      // Короткие
+      "Toaster", 
+      "Lamp", 
+      "Sponge", 
+      "Broom", 
+      "Chair",
+      
+      // Длинные и фразовые
+      "Vacuum cleaner", 
+      "Coffee maker", 
+      "Wall clock", 
+      "Laundry basket", 
+      "Cutting board", 
+      "Remote control", 
+      "Bed sheet", 
+      "Shower curtain", 
+      "Trash can", 
+      "Washing machine"
+    ] 
+  },
+  candyType: { 
+    text: "Type of candy", 
+    isPlural: true,
+    brainstorm: [
+      // Короткие
+      "Gummy bears", 
+      "Chocolate", 
+      "Lollipop", 
+      "Skittles", 
+      "Marshmallow", 
+      "Licorice ", 
+      "Dark chocolate", 
+      "Cotton candy"
+    ] 
+  },
+  strongSpice: { 
+    text: "Strong spice", 
+    brainstorm: [
+      // Короткие
+      "Chili", 
+      "Pepper", 
+      "Clove", 
+      "Ginger", 
+      "Cumin",
+      
+      // Длинные и фразовые
+      "Cayenne pepper", 
+      "Black pepper", 
+      "Ground cinnamon", 
+      "Crushed red pepper", 
+      "Hot paprika", 
+      "Wasabi powder", 
+      "Grated horseradish", 
+      "Cardamom pod", 
+      "Star anise", 
+      "Curry powder"
+    ] 
+  },
+  fruit: { 
+    text: "Fruit", 
+    brainstorm: [
+      // Короткие
+      "Apple", 
+      "Pear", 
+      "Peach", 
+      "Plum", 
+      "Grape",
+      
+      // Длинные и фразовые
+      "Watermelon", 
+      "Strawberry", 
+      "Pineapple", 
+      "Pomegranate", 
+      "Grapefruit", 
+      "Blueberry", 
+      "Raspberry", 
+      "Passion fruit", 
+      "Kiwi fruit", 
+      "Dragon fruit"
+    ] 
+  },
+  clothingItem: { 
+    text: "Common piece of clothing", 
+    brainstorm: [
+      "Shirt", 
+      "Jeans", 
+      "Skirt", 
+      "Dress", 
+      "Hat",
+      "Winter jacket", 
+      "Leather belt", 
+      "Sweater", 
+      "T-shirt",
+      "Rain coat", 
+    ] 
+  },
+  survivalTool: { 
+    text: "Basic survival tool", 
+    brainstorm: [
+      // Короткие
+      "Knife", 
+      "Axe", 
+      "Saw", 
+      "Lighter", 
+      "Rope",
+      "Multi tool", 
+      "First aid kit", 
+      "Flashlight", 
+      "Sleeping bag", 
+      "Compass"
+    ] 
+  },
 };
 
 export const questionsDatabase = [
@@ -54,14 +1628,14 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "on a desert island", requires: ["stranded", "left"], type: "isolated", hints: ["Name a famous singer", "Name an annoying person", "Name a youtuber"] },
-          { text: "in the woods alone", requires: ["stranded", "left"], type: "isolated", hints: [{ text: "Fictional character", brainstorm: ["Harry Potter", "Batman", "Sherlock Holmes", "Darth Vader"] }] },
-          { text: "in a completely unfamiliar city", requires: ["left"], type: "urban", hints: [{ text: "Famous politician", brainstorm: ["Barack Obama", "Winston Churchill", "Abraham Lincoln"] }] },
+          { text: "on a desert island", requires: ["stranded", "left"], type: "isolated" },
+          { text: "in the woods alone", requires: ["stranded", "left"], type: "isolated" },
+          { text: "in a completely unfamiliar city", requires: ["left"], type: "urban" },
         ]
       },
       {
         options: [
-          { text: "for the rest of your life", hints: [{ text: "Famous actor", brainstorm: ["Leonardo DiCaprio", "Brad Pitt", "Tom Cruise", "Johnny Depp"] }] },
+          { text: "for the rest of your life" },
           { text: "for 5 years" },
           { text: "for 10 years" },
           { text: "for one day" },
@@ -71,24 +1645,25 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "accompanied by [ ... ] or by [ ... ]?", hints: ["Name a type of person you find annoying", "Name a profession"] }
+          { text: "accompanied by [ ... ] or by [ ... ]?" }
         ]
       }
     ],
     hints: [
-      { text: "Cartoon character", brainstorm: ["Mickey Mouse", "Homer Simpson", "SpongeBob", "Bugs Bunny"] },
-      { text: "Famous media personality", brainstorm: ["Kim Kardashian", "Oprah Winfrey", "Gordon Ramsay"] }
+      PROMPTS.singer, PROMPTS.youtuber, 
+      PROMPTS.fictionalChar, PROMPTS.politician, PROMPTS.profession, 
+      PROMPTS.cartoonChar, PROMPTS.mediaPersonality, PROMPTS.actor
     ]
   },
-  {
+{
     id: 2,
     category: "activities",
     text: "Would you rather",
     fragments: [
       {
         options: [
-          { text: "spend 1000 hours", type: "time", hints: [{ text: "Popular video game", brainstorm: ["Minecraft", "GTA V", "Fortnite", "Skyrim"] }] },
-          { text: "enter a world championship for", type: "compete", hints: ["Name a board game", { text: "Sport", brainstorm: ["Football", "Basketball", "Tennis", "Golf"] }] },
+          { text: "spend 1000 hours", type: "time" },
+          { text: "enter a world championship for", type: "compete" },
           { text: "dedicate your entire future to", type: "future" },
           { text: "sacrifice all your free time to", type: "sacrifice" },
           { text: "spend all your weekends", type: "weekends" },
@@ -97,12 +1672,13 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "playing", requires: ["time", "compete", "sacrifice", "weekends", "curse"], hints: ["Name a mobile game", { text: "Classic board game", brainstorm: ["Monopoly", "Chess", "Scrabble", "Catan"] }] },
-          { text: "doing", requires: ["sacrifice", "weekends", "curse"], hints: [{ text: "Annoying habit", brainstorm: ["Biting nails", "Chewing loudly", "Interrupting", "Snoring", "Complaining"] }, { text: "Household chore", brainstorm: ["Washing dishes", "Vacuuming", "Doing laundry", "Ironing"] }] },
-          { text: "mastering", requires: ["future", "sacrifice", "time", "weekends"], hints: [{ text: "Musical instrument", brainstorm: ["Guitar", "Piano", "Violin", "Drums"] }, { text: "Creative hobby", brainstorm: ["Painting", "Writing", "Photography", "Knitting", "Beatmaking", "Sculpting", "Composing"] }] },
-          { text: "watching", requires: ["time", "weekends", "curse"], hints: [{ text: "Popular TV show", brainstorm: ["Breaking Bad", "Game of Thrones", "Friends", "The Office"] }, { text: "Basic human activity", brainstorm: ["Sleeping", "Eating", "Walking", "Breathing"] }] },
-          { text: "obsessively analyzing", requires: ["future", "curse", "time"], hints: [{ text: "Weird conspiracy theory", brainstorm: ["Flat earth", "Birds aren't real", "Lizard people", "Faked moon landing"] }, { text: "School subject", brainstorm: ["Math", "History", "Physics", "Literature"] }] },
-          { text: "aggressively teaching people about", requires: ["curse", "future", "weekends"], hints: ["Name a random country", { text: "Complicated topic", brainstorm: ["Quantum physics", "Cryptocurrency", "Taxes", "Veganism"] }] }
+          // Фикс QA 22-24, 27-28: Привязываем подсказки строго к подходящим глаголам
+          { text: "playing", requires: ["time", "compete", "sacrifice", "weekends", "curse"], hints: [PROMPTS.videoGame, PROMPTS.boardGame, PROMPTS.sport, PROMPTS.mobileGame, PROMPTS.instrument] },
+          { text: "doing", requires: ["sacrifice", "weekends", "curse"], hints: [PROMPTS.annoyingHabit, PROMPTS.chore, PROMPTS.humanActivity, PROMPTS.creativeHobby] },
+          { text: "mastering", requires: ["future", "sacrifice", "time", "weekends"], hints: [PROMPTS.professionalSkill, PROMPTS.creativeHobby, PROMPTS.instrument, PROMPTS.foreignLanguage] },
+          { text: "watching", requires: ["time", "weekends", "curse"], hints: [PROMPTS.tvShow, PROMPTS.youtuber, PROMPTS.sport] },
+          { text: "obsessively analyzing", requires: ["future", "curse", "time"], hints: [PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical, PROMPTS.country, PROMPTS.mediaPersonality] },
+          { text: "aggressively teaching people about", requires: ["curse", "future", "weekends"], hints: [PROMPTS.schoolSubject, PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical] }
         ]
       },
       {
@@ -113,61 +1689,51 @@ export const questionsDatabase = [
         ]
       }
     ],
-    hints: []
+    hints: [] // Очищено, подсказки теперь выдаются на основе глагола
   },
-  {
+{
     id: 3,
     category: "animals",
     text: "Would you rather",
     fragments: [
       {
         options: [
-          { text: "have a pet", type: "possession", hints: ["Name a chubby animal", { text: "Farm animal", brainstorm: ["Cow", "Pig", "Chicken", "Sheep"] }] },
-          { text: "be chased by a", type: "threat_run", hints: [{ text: "Fast animal", brainstorm: ["Cheetah", "Horse", "Ostrich", "Greyhound"] }, { text: "Angry animal", brainstorm: ["Bull", "Wolverine", "Hornet", "Boar"] }, { text: "Weird-looking animal", brainstorm: ["Platypus", "Sloth", "Pug", "Emu"] }] },
-          { text: "be trapped alone with a", type: "threat_close", hints: ["Name a very loud animal"] },
-          { text: "have to play with a", type: "threat_close", hints: [{ text: "Dangerous animal", brainstorm: ["Tiger", "Shark", "Crocodile", "Bear"] }] }
+          { text: "have a pet", type: "possession", hints: [PROMPTS.animalFarm, PROMPTS.dogBreed, PROMPTS.chubbyAnimal, PROMPTS.animalFunny] },
+          { text: "be chased by a", type: "threat_run", hints: [PROMPTS.fastAnimal, PROMPTS.angryAnimal, PROMPTS.dangerousAnimal, PROMPTS.wildAnimal, PROMPTS.heavyAnimal] },
+          // Фикс QA 13-18: Разделяем опасных животных и безобидных для сценариев с лесом и лифтом
+          { text: "be trapped alone with a", type: "threat_close", hints: [PROMPTS.dangerousAnimal, PROMPTS.angryAnimal, PROMPTS.bitingAnimal, PROMPTS.loudAnimal] },
+          { text: "have to play with a", type: "threat_close", hints: [PROMPTS.insect, PROMPTS.animalFunny, PROMPTS.dogBreed, PROMPTS.nocturnalAnimal] }
         ]
       },
       {
         options: [
           { text: "[ ... ] or [ ... ]", type: "normal" },
-          { text: "giant [ ... ] or giant [ ... ]", type: "giant", hints: [{ text: "Common insect", brainstorm: ["Ant", "Spider", "Fly", "Mosquito"] }] },
-          { text: "tiny [ ... ] or tiny [ ... ]", type: "tiny", hints: [{ text: "Heavy animal", brainstorm: ["Elephant", "Rhino", "Hippo", "Whale"] }] },
-          { text: "invisible [ ... ] or invisible [ ... ]", type: "invisible", hints: ["Name an animal that bites"] }
+          { text: "giant [ ... ] or giant [ ... ]", type: "giant" },
+          { text: "tiny [ ... ] or tiny [ ... ]", type: "tiny" },
+          { text: "invisible [ ... ] or invisible [ ... ]", type: "invisible" }
         ]
       },
       {
         options: [
           { text: "for the next ten years?", requires: ["possession"] },
           { text: "in a tiny studio apartment?", requires: ["possession", "threat_run", "threat_close"] },
-          { text: "in a dark forest?", requires: ["threat_run", "threat_close"], hints: [{ text: "Nocturnal animal", brainstorm: ["Owl", "Bat", "Raccoon", "Moth"] }] },
+          { text: "in a dark forest?", requires: ["threat_run", "threat_close"] },
           { text: "in an empty mall?", requires: ["threat_run", "threat_close"] },
           { text: "inside a small elevator?", requires: ["threat_close"] },
           { text: "?" } 
         ]
       }
     ],
-    hints: [
-      { text: "Wild animal", brainstorm: ["Wolf", "Fox", "Lion", "Zebra"] },
-      { text: "Dog breed", brainstorm: ["Pug", "Bulldog", "Husky", "Golden Retriever"] }
-    ]
+    hints: [] 
   },
-  {
+{
     id: 4,
     category: "skills",
     text: "Would you rather",
     fragments: [
       {
         options: [
-          { 
-            text: "instantly become a world-class expert in", 
-            type: "positive", 
-            hints: [
-              { text: "Foreign language", brainstorm: ["Spanish", "Mandarin", "French", "Japanese"] },
-              { text: "Professional field", brainstorm: ["Medicine", "Law", "Engineering", "Finance"] },
-              { text: "Martial art", brainstorm: ["Karate", "Judo", "Boxing", "Taekwondo"] }
-            ] 
-          },
+          { text: "instantly become a world-class expert in", type: "positive", hints: [PROMPTS.foreignLanguage, PROMPTS.martialArt, PROMPTS.creativeHobby, PROMPTS.instrument] }
         ]
       },
       {
@@ -183,29 +1749,30 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "the first person you meet on the street?", requires: ["context"], hints: [{ text: "Superpower", brainstorm: ["Flying", "Invisibility", "Telepathy", "Time travel"] }] },
-          { text: "the hiring manager during a job interview?", requires: ["context"], hints: ["Name a professional skill"] },
+          { text: "the first person you meet on the street?", requires: ["context"] },
+          { text: "the hiring manager during a job interview?", requires: ["context"] },
           { text: "your parents at dinner?", requires: ["context"] },
           { text: "your parents?", requires: ["context"] },
           { text: "completely hungover?", requires: ["condition"] },
           { text: "in sauna?", requires: ["condition"] },
           { text: "having a bad hair day?", requires: ["condition"] },
-          { text: "on a first date?", requires: ["condition"], hints: ["Name a topic for small talk"] }
+          { text: "on a first date?", requires: ["condition"] }
         ]
       }
-    ]
+    ],
+    hints: []
   },
-  {
+{
     id: 5,
     category: "lifestyle",
     text: "Would you rather",
     fragments: [
       {
         options: [
-          { text: "have to brush your teeth with", type: "hygiene", hints: [{ text: "Sauce", brainstorm: ["Ketchup", "Mayo", "Mustard", "Soy Sauce"] }, { text: "Sticky thing", brainstorm: ["Honey", "Glue", "Syrup", "Melted cheese"] }] },
-          { text: "have to wash your clothes in", type: "hygiene", hints: [{ text: "Sauce", brainstorm: ["Ketchup", "Mayo", "Mustard", "Soy Sauce"] }, { text: "Sticky thing", brainstorm: ["Honey", "Glue", "Syrup", "Melted cheese"] }] },
-          { text: "have to drink a full glass of", type: "utility", hints: [{ text: "Hot drink", brainstorm: ["Coffee", "Tea", "Hot Chocolate", "Mulled Wine"] }, { text: "Popular drink", brainstorm: ["Cola", "Juice", "Beer", "Milk"] }] },
-          { text: "fill your bed pillows with", type: "storage", hints: [{ text: "Crunchy snack", isPlural: true, brainstorm: ["Chips", "Nuts", "Pretzels", "Crackers"] }, { text: "Kitchen item", isPlural: true, brainstorm: ["Spoons", "Plates", "Blenders", "Knives"] }] }
+          { text: "have to brush your teeth with", type: "hygiene", hints: [PROMPTS.sauce, PROMPTS.stickyThing, PROMPTS.sweetLiquid, { text: "Strong-smelling food", brainstorm: ["onion", "garlic", "blue cheese", "rotten eggs"] }] },
+          { text: "have to wash your clothes in", type: "hygiene", hints: [PROMPTS.sauce, PROMPTS.sweetLiquid, PROMPTS.hotDrink, PROMPTS.popularDrink] },
+          { text: "have to drink a full glass of", type: "utility", hints: [PROMPTS.sauce, PROMPTS.sweetLiquid, PROMPTS.hotDrink] },
+          { text: "fill your bed pillows with", type: "storage", hints: [PROMPTS.snack, PROMPTS.kitchenItem, PROMPTS.smallObj, PROMPTS.everyday, PROMPTS.candyType] }
         ]
       },
       {
@@ -223,27 +1790,27 @@ export const questionsDatabase = [
         ]
       }
     ],
-    hints: [] 
+    hints: []
   },
-  {
+{
     id: 6,
     category: "body",
     text: "Would you rather",
     fragments: [
       {
         options: [
-          { text: "instantly sweat a puddle that", type: "sweat", hints: [{ text: "Sweet liquid", brainstorm: ["Maple syrup", "Melted chocolate", "Apple juice", "Honey"] }, { text: "Strong-smelling food", brainstorm: ["Onion", "Garlic", "Fish", "Blue Cheese"] }] },
-          { text: "breathe out a cloud that", type: "breath", hints: [{ text: "Fast food", brainstorm: ["Burger", "Pizza", "Fries", "Hot Dog"] }] },
-          { text: "produce saliva that", type: "saliva", hints: [{ text: "Type of candy", brainstorm: ["Gummy bears", "Chocolate", "Lollipop", "Skittles"] }] },
-          { text: "have a face that", type: "face", hints: [{ text: "Funny-looking animal", brainstorm: ["Pug", "Sloth", "Monkey", "Frog"] }] },
-          { text: "have a head that", type: "head", hints: [{ text: "Body part", brainstorm: ["Foot", "Ear", "Knee", "Elbow"] }, { text: "Common household item", brainstorm: ["Toaster", "Lamp", "Sponge", "Broom"] }] }
+          { text: "instantly sweat a puddle that", type: "sweat" },
+          { text: "breathe out a cloud that", type: "breath" },
+          { text: "produce saliva that", type: "saliva" },
+          { text: "have a face that", type: "face" },
+          { text: "have a head that", type: "head" }
         ]
       },
       {
         options: [
-          { text: "smells exactly like", requires: ["sweat", "breath"] },
-          { text: "tastes exactly like", requires: ["sweat", "saliva"] },
-          { text: "looks exactly like a", requires: ["face", "head"] }
+          { text: "smells exactly like", requires: ["sweat", "breath"], hints: [PROMPTS.strongFood, PROMPTS.fastFood, PROMPTS.sweetLiquid, PROMPTS.candyType, PROMPTS.fruit, { text: "Thing that smells bad", brainstorm: ["Garbage", "Skunk", "Rotten egg", "Mud"] }] },
+          { text: "tastes exactly like", requires: ["sweat", "saliva"], hints: [PROMPTS.strongFood, PROMPTS.fastFood, PROMPTS.sweetLiquid, PROMPTS.candyType, PROMPTS.fruit, PROMPTS.snack] },
+          { text: "looks exactly like a", requires: ["face", "head"], hints: [PROMPTS.animalFunny, PROMPTS.chubbyAnimal] }
         ]
       },
       {
@@ -262,20 +1829,18 @@ export const questionsDatabase = [
         options: [
           { text: "in a bad mood?", requires: ["condition"] },
           { text: "in a great mood?", requires: ["condition"] },
-          { text: "feeling guilty?", requires: ["condition"], hints: [{ text: "Junk food", brainstorm: ["Chips", "Donuts", "Ice cream", "Nachos"] }] },
+          { text: "feeling guilty?", requires: ["condition"] },
           { text: "trying to sleep?", requires: ["condition"] },
           { text: "sit still?", requires: ["action"] },
           { text: "start laughing?", requires: ["action"] },
           { text: "get nervous?", requires: ["action"] },
           { text: "start eating?", requires: ["action"] },
-          { text: "sneeze?", requires: ["action"], hints: [{ text: "Strong spice", brainstorm: ["Pepper", "Chili", "Cinnamon", "Garlic"] }] },
+          { text: "sneeze?", requires: ["action"] },
           { text: "?", requires: ["none"] }
         ]
       }
     ],
-    hints: [
-      { text: "Fruit", brainstorm: ["Banana", "Apple", "Pineapple", "Mango"] }
-    ] 
+    hints: [] 
   },
   {
     id: 7,
@@ -306,26 +1871,28 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "without [ ... ] or without [ ... ]?", hints: [{ text: "Common piece of clothing", brainstorm: ["Sock", "Shoe", "Jacket", "Hat"] }, { text: "Basic survival tool", brainstorm: ["Pocket knife", "Matches", "Flashlight", "Compass"] }] }
+          { text: "without [ ... ] or without [ ... ]?" }
         ]
       }
     ],
     hints: [
-      { text: "Small pocket item", brainstorm: ["Keys", "Phone", "Wallet", "Chapstick"] },
-      { text: "Hygiene product", isPlural: true, brainstorm: ["Soaps", "Toothpastes", "Shampoos", "Deodorants"] }
+      PROMPTS.clothingItem, 
+      PROMPTS.survivalTool, 
+      { text: "Small pocket item", brainstorm: ["Keys", "Phone", "Wallet", "Chapstick"] }, 
+      { text: "Hygiene product", isPlural: false, brainstorm: ["Soap", "Toothpaste", "Shampoo", "Deodorant"] }
     ]
   },
-  {
+{
     id: 8,
     category: "lifestyle",
     text: "Would you rather",
     fragments: [
       {
         options: [
-          { text: "magically receive an endless supply of", type: "recurring", hints: [{ text: "Large item in a house", isPlural: true, brainstorm: ["Sofas", "Beds", "Fridges", "Tables"] }] },
-          { text: "receive a random package every day containing", type: "recurring" },
-          { text: "wake up every morning next to a new pile of", type: "recurring" },
-          { text: "get to use only", type: "one-time", hints: [{ text: "Expensive thing", isPlural: true, brainstorm: ["Cars", "Yachts", "Diamonds", "Mansions"] }, { text: "Thing you wear on your head", isPlural: true, brainstorm: ["Hats", "Helmets", "Caps", "Headbands"] }] }
+          { text: "magically receive an endless supply of", type: "recurring", hints: [{ text: "Large item in a house", isPlural: true, brainstorm: ["Sofas", "Beds", "Fridges", "Tables"] }, { text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive, { text: "Thing you wear on your head", isPlural: true, brainstorm: ["Hats", "Helmets", "Caps", "Headbands"] }, PROMPTS.candyType] },
+          { text: "receive a random package every day containing", type: "recurring", hints: [{ text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive, PROMPTS.candyType] },
+          { text: "wake up every morning next to a new pile of", type: "recurring", hints: [{ text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }, PROMPTS.everyday, PROMPTS.smallObj, { text: "Thing that smells bad", brainstorm: ["Garbage", "Skunk", "Rotten egg", "Mud"] }, PROMPTS.strongFood] },
+          { text: "get to use only", type: "one-time", hints: [PROMPTS.gadget, PROMPTS.app] }
         ]
       },
       {
@@ -337,31 +1904,30 @@ export const questionsDatabase = [
         options: [
           { text: "appear out of thin air, but you have no control over when it happens?", requires: ["recurring"] }, 
           { text: "except it completely disappears on weekends?", requires: ["recurring"] }, 
-          { text: "but it always emits a terrible, rotten smell?", requires: ["recurring"], hints: [{ text: "Thing that smells bad", brainstorm: ["Garbage", "Skunk", "Rotten egg", "Mud"] }] },
+          { text: "but it always emits a terrible, rotten smell?", requires: ["recurring"] },
           { text: "for the rest of your life?", requires: ["one-time"] },
           { text: "but you are forced to share it with a total stranger?" }, 
           { text: "?" }
         ]
       }
     ],
-    hints: [
-      { text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }
-    ]
+    hints: []
   },
-  {
+{
     id: 9,
     category: "social",
     text: "Would you rather",
     fragments: [
       {
         options: [
-          { text: "be adopted by a family of", type: "adopted", hints: [{ text: "Animal", isPlural: true, brainstorm: ["Wolves", "Monkeys", "Penguins", "Bears"] }, { text: "Type of rich person", isPlural: true, brainstorm: ["Billionaires", "Aristocrats", "Celebrities", "Royals"] }] },
-          { text: "be fully accepted into a secret society of", type: "society", hints: [{ text: "Boring profession", isPlural: true, brainstorm: ["Accountants", "Data entry clerks", "Actuaries", "Auditors"] }, { text: "Exciting profession", isPlural: true, brainstorm: ["Astronauts", "Spies", "Stunt doubles", "Detectives"] }] }, 
-          { text: "be raised from birth by a pack of", type: "raised", hints: [{ text: "Angry-looking animal", isPlural: true, brainstorm: ["Rhinos", "Bulls", "Eagles", "Hippos"] }] },
-          { text: "be fully accepted into a magic school where the only spell you learn is how to summon", type: "society", hints: [{ text: "Fast food", brainstorm: ["Burgers", "Pizzas", "Fries", "Hot Dogs"] }] },
-          { text: "have the magic power to turn gold into", type: "society", hints: [{ text: "Fast food", brainstorm: ["Burgers", "Pizzas", "Fries", "Hot Dogs"] }] },
-          { text: "have the magic power to turn water into", type: "society", hints: [{ text: "Fast food", brainstorm: ["Burgers", "Pizzas", "Fries", "Hot Dogs"] }] },
-          { text: "have the magic power to turn dirt into", type: "society", hints: [{ text: "Fast food", brainstorm: ["Burgers", "Pizzas", "Fries", "Hot Dogs"] }] }
+          // Фикс QA 25-26: Разделяем подсказки по логике действия (Adopted by oil / Sauce — невозможно)
+          { text: "be adopted by a family of", type: "adopted", hints: [{ text: "Animal", isPlural: true, brainstorm: ["Wolves", "Monkeys", "Penguins", "Bears"] }, { text: "Type of rich person", isPlural: true, brainstorm: ["Billionaires", "Aristocrats", "Celebrities", "Royals"] }, { text: "Group of people", isPlural: true, brainstorm: ["Tourists", "Teenagers", "Politicians", "Clowns"] }] },
+          { text: "be fully accepted into a secret society of", type: "society", hints: [{ text: "Type of rich person", isPlural: true, brainstorm: ["Billionaires", "Aristocrats", "Celebrities", "Royals"] }, { text: "Group of people", isPlural: true, brainstorm: ["Tourists", "Teenagers", "Politicians", "Clowns"] }] }, 
+          { text: "be raised from birth by a pack of", type: "raised", hints: [{ text: "Animal", isPlural: true, brainstorm: ["Wolves", "Monkeys", "Penguins", "Bears"] }, { text: "Angry-looking animal", isPlural: true, brainstorm: ["Rhinos", "Bulls", "Eagles", "Hippos"] }, { text: "Pet", isPlural: true, brainstorm: ["Dogs", "Cats", "Parrots", "Hamsters"] }] },
+          { text: "be fully accepted into a magic school where the only spell you learn is how to summon", type: "society", hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
+          { text: "have the magic power to turn gold into", type: "society", hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.snack, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
+          { text: "have the magic power to turn water into", type: "society", hints: [PROMPTS.sweetLiquid, PROMPTS.sauce, PROMPTS.hotDrink] },
+          { text: "have the magic power to turn dirt into", type: "society", hints: [PROMPTS.expensive, { text: "Valuable resource", brainstorm: ["Gold", "Silver", "Diamonds", "Oil"] }, PROMPTS.fastFood, PROMPTS.candyType] }
         ]
       },
       {
@@ -370,27 +1936,25 @@ export const questionsDatabase = [
         ]
       }
     ],
-    hints: [
-      { text: "Group of people", isPlural: true, brainstorm: ["Tourists", "Teenagers", "Politicians", "Clowns"] },
-      { text: "Pet", isPlural: true, brainstorm: ["Dogs", "Cats", "Parrots", "Hamsters"] }
-    ]
+    hints: []
   },
-  {
+{
     id: 10,
     category: "career",
     text: "Would you rather",
     fragments: [
       {
         options: [
-          { text: "start a successful business that only sells", type: "business", hints: [{ text: "Cheap item", isPlural: true, brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] }] },
-          { text: "found a popular new cult based entirely on the use of", type: "cult" },
-          { text: "start a massive social movement focused on", type: "movement", hints: [{ text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }] },
-          { text: "open a fancy restaurant where everything tastes like", type: "restaurant", hints: [{ text: "Thing you find in a bathroom", brainstorm: ["Soap", "Shampoo", "Toothpaste", "Toilet paper"] }] },
-          { text: "host a daily podcast that obsessively discusses", type: "podcast", hints: [{ text: "Disease", isPlural: true, brainstorm: ["Flus", "Colds", "Headaches", "Allergies"] }] },
-          { text: "run a massive YouTube channel dedicated to", type: "podcast" },
-          { text: "become the CEO of a company that produces", type: "business" },
-          { text: "form a popular musical band where all instruments are replaced by", type: "band", hints: [{ text: "Tool", isPlural: true, brainstorm: ["Hammers", "Saws", "Drills", "Wrenches"] }] },
-          { text: "start a feared criminal gang that exclusively steals", type: "gang", hints: [{ text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }] }
+          // Фикс QA 19-21: Движения не могут основываться на канцелярских скрепках, а бизнес на теориях заговора
+          { text: "start a successful business that only sells", type: "business", hints: [{ text: "Cheap item", isPlural: true, brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] }, PROMPTS.expensive, PROMPTS.techOld, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
+          { text: "found a popular new cult based entirely on the use of", type: "cult", hints: [PROMPTS.everyday, PROMPTS.techOld, { text: "Thing you find in a bathroom", brainstorm: ["Soap", "Shampoo", "Toothpaste", "Toilet paper"] }, { text: "Random thing in your room", isPlural: true, brainstorm: ["Books", "Cables", "Pillows", "Cups"] }] },
+          { text: "start a massive social movement focused on", type: "movement", hints: [PROMPTS.conspiracyTheory, { text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }, PROMPTS.annoyingHabit] },
+          { text: "open a fancy restaurant where everything tastes like", type: "restaurant", hints: [PROMPTS.strongFood, { text: "Disease", isPlural: true, brainstorm: ["Flus", "Colds", "Headaches", "Allergies"] }] },
+          { text: "host a daily podcast that obsessively discusses", type: "podcast", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, { text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }] },
+          { text: "run a massive YouTube channel dedicated to", type: "podcast", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, PROMPTS.annoyingHabit] },
+          { text: "become the CEO of a company that produces", type: "business", hints: [{ text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }, { text: "Office supply", isPlural: true, brainstorm: ["Staplers", "Pens", "Sticky notes", "Folders"] }, PROMPTS.techOld] },
+          { text: "form a popular musical band where all instruments are replaced by", type: "band", hints: [{ text: "Tool", isPlural: true, brainstorm: ["Hammers", "Saws", "Drills", "Wrenches"] }, { text: "Office supply", isPlural: true, brainstorm: ["Staplers", "Pens", "Sticky notes", "Folders"] }, { text: "Cheap item", isPlural: true, brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] }] },
+          { text: "start a feared criminal gang that exclusively steals", type: "gang", hints: [PROMPTS.everyday, PROMPTS.smallObj, { text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }] }
         ]
       },
       {
@@ -407,10 +1971,7 @@ export const questionsDatabase = [
         ]
       }
     ],
-    hints: [
-      { text: "Random thing in your room", isPlural: true, brainstorm: ["Books", "Cables", "Pillows", "Cups"] },
-      { text: "Office supply", isPlural: true, brainstorm: ["Staplers", "Pens", "Sticky notes", "Folders"] }
-    ]
+    hints: []
   },
 {
     id: 11,
@@ -425,14 +1986,14 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "and warn people about the terrible future of", requires: ["past"], type: "change", hints: [PROMPTS.company, { text: "Modern technology", brainstorm: ["Social media", "Smartphones", "Artificial Intelligence"] }] },
-          { text: "and destroy the original prototype of", requires: ["past"], type: "change_done", hints: [PROMPTS.gadget, { text: "Popular toy or game", brainstorm: ["Tamagotchi", "Rubik's Cube", "Furby", "Tetris"] }] },
-          { text: "and invest all your savings into", requires: ["past"], type: "change_done", hints: [{ text: "Digital currency", brainstorm: ["Bitcoin", "Dogecoin", "Ethereum"] }, PROMPTS.company] },
-          { text: "and secretly invent and take credit for", requires: ["past"], type: "change", hints: [PROMPTS.app, PROMPTS.website] },
+          { text: "and warn people about the terrible future of", requires: ["past"], type: "change", hints: [PROMPTS.company, { text: "Modern technology", brainstorm: ["Social media", "Smartphones", "Artificial Intelligence"] }, PROMPTS.app, PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic] },
+          { text: "and destroy the original prototype of", requires: ["past"], type: "change_done", hints: [PROMPTS.gadget, { text: "Modern technology", brainstorm: ["Social media", "Smartphones", "Artificial Intelligence"] }, PROMPTS.videoGame, PROMPTS.app] },
+          { text: "and invest all your savings into", requires: ["past"], type: "change_done", hints: [PROMPTS.company, PROMPTS.app] },
+          { text: "and secretly invent and take credit for", requires: ["past"], type: "change", hints: [PROMPTS.gadget, PROMPTS.app, PROMPTS.videoGame, { text: "Popular toy or game", brainstorm: ["Tamagotchi", "Rubik's Cube", "Furby", "Tetris"] }] },
           
-          { text: "and discover that future humans worship", requires: ["future"], type: "worship", hints: [{ text: "Household item", brainstorm: ["Toaster", "Toilet", "Sofa", "Refrigerator"] }, PROMPTS.fictionalChar] },
-          { text: "and discover that future humans completely stopped using", requires: ["future"], type: "future_stop", hints: [{ text: "Modern convenience", brainstorm: ["Smartphones", "Wi-Fi", "Toilets", "Beds"] }, { text: "Basic household item", brainstorm: ["Spoons", "Mirrors", "Chairs", "Blankets"] }] },
-          { text: "and discover that future humans still unironically use", requires: ["future"], type: "future_still", hints: [PROMPTS.techOld, { text: "Old school trend", brainstorm: ["Fidget spinners", "Tamagotchis", "Yo-yos", "Pogs"] }] }
+          { text: "and discover that future humans worship", requires: ["future"], type: "worship", hints: [PROMPTS.youtuber, PROMPTS.mediaPersonality, PROMPTS.cartoonChar, PROMPTS.fictionalChar, PROMPTS.company] },
+          { text: "and discover that future humans completely stopped using", requires: ["future"], type: "future_stop", hints: [PROMPTS.everyday, { text: "Household item", brainstorm: ["Toaster", "Toilet", "Sofa", "Refrigerator"] }, PROMPTS.gadget, { text: "Modern convenience", brainstorm: ["Smartphones", "Wi-Fi", "Toilets", "Beds"] }] },
+          { text: "and discover that future humans still unironically use", requires: ["future"], type: "future_still", hints: [PROMPTS.techOld, { text: "Old school trend", brainstorm: ["Fidget spinners", "Tamagotchis", "Yo-yos", "Pogs"] }, PROMPTS.conspiracyTheory] }
         ]
       },
       {
@@ -450,14 +2011,14 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "have the superpower to turn any object into", type: "transform", hints: [{ text: "Food item", brainstorm: ["Pizza", "Cheese", "Cake", "Chocolate"] }, { text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] }] },
-          { text: "have the superpower to instantly turn yourself into", type: "shapeshift", hints: [PROMPTS.animalFunny, { text: "Inanimate object", brainstorm: ["Chair", "Lamp", "Car", "Tree"] }] },
-          { text: "be able to teleport anywhere, but you always arrive covered in", type: "teleport", hints: [{ text: "Sticky substance", brainstorm: ["Honey", "Mud", "Slime", "Glue"] }, { text: "Sauce", brainstorm: ["Ketchup", "Mayonnaise", "Mustard", "Soy sauce"] }] },
-          { text: "become completely invisible while holding", type: "invisible", hints: [{ text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] }, { text: "Exotic animal", brainstorm: ["Panda", "Koala", "Iguana", "Toucan"] }] },
-          { text: "have super strength, but only while singing songs about", type: "strength", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
+          { text: "have the superpower to turn any object into", type: "transform", hints: [{ text: "Food item", brainstorm: ["Pizza", "Cheese", "Cake", "Chocolate"] }, { text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] }, PROMPTS.animalFunny, { text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] }] },
+          { text: "have the superpower to instantly turn yourself into", type: "shapeshift", hints: [PROMPTS.animalFunny, { text: "Exotic animal", brainstorm: ["Panda", "Koala", "Iguana", "Toucan"] }, { text: "Inanimate object", brainstorm: ["Chair", "Lamp", "Car", "Tree"] }] },
+          { text: "be able to teleport anywhere, but you always arrive covered in", type: "teleport", hints: [{ text: "Sticky substance", brainstorm: ["Honey", "Mud", "Slime", "Glue"] }, { text: "Sauce", brainstorm: ["Ketchup", "Mayonnaise", "Mustard", "Soy sauce"] }, { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] }, PROMPTS.strongFood] },
+          { text: "become completely invisible while holding", type: "invisible", hints: [{ text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] }, { text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] }, { text: "Food item", brainstorm: ["Pizza", "Cheese", "Cake", "Chocolate"] }] },
+          { text: "have super strength, but only while singing songs about", type: "strength", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, PROMPTS.schoolSubject, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
           { text: "have super strength, but only while singing songs by", type: "strength", hints: [PROMPTS.singer, PROMPTS.band] },
-          { text: "be able to fly, but you constantly emit the smell of", type: "fly", hints: [PROMPTS.strongFood, { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] }] },
-          { text: "gain the ability to read minds, but you can only hear people's thoughts about", type: "mind", hints: [{ text: "Boring topic", brainstorm: ["Weather", "Taxes", "Traffic", "Grocery lists"] }, { text: "Weird hobby", brainstorm: ["Taxidermy", "Collecting spoons", "Soap carving", "Extreme ironing"] }] }
+          { text: "be able to fly, but you constantly emit the smell of", type: "fly", hints: [{ text: "Sauce", brainstorm: ["Ketchup", "Mayonnaise", "Mustard", "Soy sauce"] }, PROMPTS.strongFood, { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] }, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
+          { text: "gain the ability to read minds, but you can only hear people's thoughts about", type: "mind", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, PROMPTS.fastFood, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] }
         ]
       },
       {
@@ -468,7 +2029,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: "whenever you sneeze?", requires: ["shapeshift"] },
-          { text: "but suddenly everyone around you knows it?", requires: ["teleport", "shapeshift", "fly"] },
+          { text: "but suddenly everyone around you knows it?", requires: ["teleport", "shapeshift"] },
           { text: "but you can't control exactly when it happens?", requires: ["mind", "shapeshift"] },
           { text: "but the effect only lasts for 60 seconds a day?", requires: ["transform", "invisible", "strength"] }, 
           { text: "and you have to loudly annouce that you are doing it before use?" },
@@ -486,26 +2047,10 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { 
-            text: "be forced to wear a costume of", 
-            type: "costume_full", 
-            hints: [PROMPTS.animalFunny, { text: "Food item", brainstorm: ["Hot dog", "Banana", "Taco", "Pizza"] }] 
-          },
-          { 
-            text: "have to wear a mask of", 
-            type: "costume_mask", 
-            hints: [PROMPTS.politician, PROMPTS.villain] 
-          },
-          { 
-            text: "have to physically carry a life-sized statue of", 
-            type: "carry_statue", 
-            hints: [PROMPTS.fictionalChar, PROMPTS.animalFarm] 
-          },
-          { 
-            text: "be forced to dress exactly like", 
-            type: "dress_like", 
-            hints: [PROMPTS.historical, { text: "Weird profession", brainstorm: ["Clown", "Mime", "Pirate", "Astronaut"] }] 
-          }
+          { text: "be forced to wear a costume of", type: "costume_full", hints: [PROMPTS.animalFunny, { text: "Food item", brainstorm: ["Hot dog", "Banana", "Taco", "Pizza"] }, { text: "Weird profession", brainstorm: ["Clown", "Mime", "Pirate", "Astronaut"] }, PROMPTS.fictionalChar, PROMPTS.cartoonChar] },
+          { text: "have to wear a mask of", type: "costume_mask", hints: [PROMPTS.politician, PROMPTS.villain, PROMPTS.actor, PROMPTS.mediaPersonality] },
+          { text: "have to physically carry a life-sized statue of", type: "carry_statue", hints: [PROMPTS.politician, PROMPTS.historical, PROMPTS.actor, PROMPTS.mediaPersonality] },
+          { text: "be forced to dress exactly like", type: "dress_like", hints: [PROMPTS.villain, { text: "Weird profession", brainstorm: ["Clown", "Mime", "Pirate", "Astronaut"] }, PROMPTS.cartoonChar] }
         ]
       },
       {
@@ -534,10 +2079,10 @@ export const questionsDatabase = [
     ],
     hints: []
   },
-{
+  {
     id: 14,
     category: "superpowers",
-    text: "Would you rather have the ability to",
+    text: "Would you rather have the magical ability to instantly",
     fragments: [
       {
         options: [
@@ -547,26 +2092,19 @@ export const questionsDatabase = [
       {
         options: [
           { text: "without anyone ever knowing?" },
-          { text: ", but you have to loudly announce that you're using it?" }, // <-- Исправлено здесь
+          { text: ", but you have to loudly announce that you're using it?" },
           { text: ", but it only works when no one is looking at you?" },
           { text: ", but doing it makes you incredibly tired?" },
-          { text: ", but instantly forget everything that happened while you were using  it?" },
+          { text: ", but you instantly forget everything that happened while you were using it?" },
           { text: ", but it only works for a year?" }
         ]
       }
     ],
     hints: [
-      PROMPTS.actionWork, 
-      PROMPTS.actionIllegal, 
-      PROMPTS.actionEmbarrassing, 
-      PROMPTS.actionParty, 
-      PROMPTS.actionChore, 
-      PROMPTS.actionRelax, 
-      PROMPTS.actionExtreme, 
-      PROMPTS.actionAlone
+      PROMPTS.actionParty, PROMPTS.actionExtreme
     ]
   },
-  {
+{
     id: 15,
     category: "mind",
     text: "Would you rather",
@@ -592,22 +2130,20 @@ export const questionsDatabase = [
         ]
       }
     ],
+    // Фикс QA 10: Убраны абстрактные/сбивающие с толку категории вроде "Cult leader" и "Tech billionaire"
     hints: [
-      { text: "Tech industry billionaire", brainstorm: ["Elon Musk", "Mark Zuckerberg", "Jeff Bezos", "Bill Gates"] },
-      { text: "Someone with a high-stress job", brainstorm: ["Neurosurgeon", "Bomb disposal expert", "Air traffic controller"] },
-      { text: "Person with dangerous secrets", brainstorm: ["Undercover spy", "Mafia boss", "Cult leader"] },
-      PROMPTS.historical,
-      PROMPTS.singer
+      PROMPTS.historical, PROMPTS.singer, PROMPTS.actor, PROMPTS.politician
     ]
   },
-  {
+
+{
     id: 16,
     category: "identity",
     text: "Would you rather",
     fragments: [
-{
+      {
         options: [
-          { text: "switch bodies with", type: "switch" }
+          { text: "switch bodies with", type: "switch", hints: [PROMPTS.youtuber, { text: "Someone with a difficult job", brainstorm: ["Coal miner", "Surgeon", "President", "Deep sea diver"] }, PROMPTS.mediaPersonality, PROMPTS.profession] }
         ]
       },
       {
@@ -625,11 +2161,6 @@ export const questionsDatabase = [
         ]
       }
     ],
-    hints: [
-      PROMPTS.animalFunny,
-      PROMPTS.politician,
-      PROMPTS.fictionalChar,
-      { text: "Someone with a difficult job", brainstorm: ["Coal miner", "Surgeon", "President", "Deep sea diver"] }
-    ]
+    hints: []
   }
 ];

@@ -5,19 +5,18 @@ constructor(playerNames, totalRounds) {
     this.players = playerNames.map((data, index) => {
       const playerName = typeof data === 'string' ? data : data.name;
       const playerEmoji = typeof data === 'string' ? '' : data.emoji;
-      return { id: index + 1, name: playerName.toUpperCase(), emoji: playerEmoji, gold: 50 };
+      // ДОБАВЛЕНО: lastGuessCorrect: true (чтобы в 1-м раунде не было бонусов за проигрыш)
+      return { id: index + 1, name: playerName.toUpperCase(), emoji: playerEmoji, gold: 50, lastGuessCorrect: true };
     });
     this.totalRounds = totalRounds;
     this.currentRound = 1;
     this.pickerIndex = 0; 
     this.history = [];
     
-    // Создаем массив доступных вопросов и перемешиваем его на старте
     this.shuffledQuestions = [];
     this.resetAndShuffleQuestions();
   }
 
-  // Метод, который создает копию вопросов и перемешивает их (Алгоритм Фишера-Йетса)
   resetAndShuffleQuestions() {
     this.shuffledQuestions = [...questionsDatabase];
     for (let i = this.shuffledQuestions.length - 1; i > 0; i--) {
@@ -26,13 +25,10 @@ constructor(playerNames, totalRounds) {
     }
   }
 
-  // ИСПРАВЛЕНО: Теперь достаем уникальный вопрос без риска повторения
   getRandomQuestion() {
-    // Если по каким-то причинам вопросы закончились (игра длится дольше, чем есть вопросов)
     if (this.shuffledQuestions.length === 0) {
       this.resetAndShuffleQuestions();
     }
-    // Метод .pop() забирает вопрос из конца массива и навсегда удаляет его оттуда
     return this.shuffledQuestions.pop();
   }
 
@@ -59,7 +55,7 @@ constructor(playerNames, totalRounds) {
       hint: hintText,
       words: [input1.toUpperCase(), input2.toUpperCase()],
       chosenByResponder: finalChoice.toUpperCase(),
-      resultSentence: "" // Будет заполнено динамически в main.js
+      resultSentence: ""
     });
   }
 
