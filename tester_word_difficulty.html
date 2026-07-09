@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QA Tester - Word Difficulty & Balance</title>
+  <style>
+    :root {
+      --bg: #08080d; 
+      --card: rgba(255, 255, 255, 0.04);
+      --text: #e8e9f1; 
+      --muted: #a5a1c8;
+      --accent: #8c6cff; 
+      --warning: #ffd56b;
+      --danger: #ff6f7a; 
+      --positive: #37ffe2;
+    }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: 20px; max-width: 900px; margin: 0 auto;
+    }
+    h1 { text-align: center; margin-bottom: 20px; font-weight: 800; }
+    
+    .instruction { font-size: 14px; color: var(--muted); margin-bottom: 24px; text-align: center; line-height: 1.6; }
+    
+    .top-controls {
+      display: flex; gap: 12px; margin-bottom: 24px;
+      position: sticky; top: 10px; z-index: 100;
+    }
+    .btn-main {
+      flex: 1; padding: 14px; border: none; border-radius: 14px;
+      font-size: 15px; font-weight: 800; cursor: pointer; color: #fff;
+      transition: transform 0.1s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .btn-main:active { transform: scale(0.97); }
+    .btn-gen { background: linear-gradient(135deg, #7f65ff, #4d5dff); }
+    .btn-report { background: linear-gradient(135deg, #ff6c8d, #ff9d4a); }
+    
+    .q-card {
+      background: var(--card); border: 1px solid rgba(255,255,255,0.08);
+      padding: 24px; margin-bottom: 24px; border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .q-context {
+      background: rgba(0,0,0,0.4); padding: 16px; border-radius: 12px;
+      margin-bottom: 16px; border-left: 4px solid var(--accent);
+    }
+    .q-context-item { font-size: 15px; line-height: 1.5; color: #fff; }
+    .q-context-item strong { color: var(--warning); }
+    .q-meta { margin-top: 8px; font-size: 12px; color: var(--muted); font-family: monospace; }
+    
+    .spoiler-btn {
+      width: 100%; background: rgba(255,255,255,0.06); border: 1px dashed rgba(255,255,255,0.2);
+      color: var(--text); padding: 12px; border-radius: 12px; cursor: pointer;
+      font-size: 14px; font-weight: 700; margin-bottom: 20px; transition: 0.2s;
+    }
+    .spoiler-btn:hover { background: rgba(255,255,255,0.1); }
+    .spoiler-content {
+      display: none; font-size: 16px; color: #fff; margin-bottom: 20px; text-align: center;
+      padding: 14px; background: rgba(55, 255, 226, 0.08); border-radius: 12px;
+      border: 1px solid rgba(55, 255, 226, 0.2);
+    }
+    .spoiler-content strong { color: var(--positive); font-weight: 800; letter-spacing: 0.05em; font-size: 18px; }
+
+    .reveal-step {
+      background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.05); margin-bottom: 16px;
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+    .step-header {
+      font-size: 14px; color: var(--muted); font-weight: 800; margin-bottom: 16px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .step-header span.attempt-badge {
+      background: rgba(255,255,255,0.1); color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 11px;
+    }
+    
+    .masked-wrapper {
+      display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 14px; margin-bottom: 20px;
+    }
+    .revealed-char { font-size: 18px; font-weight: 800; color: var(--positive); padding: 0 1px; }
+    .letter-gap { 
+      display: inline-block; width: 6px; height: 18px; border-radius: 2px; margin: 0 4px; 
+      background: rgba(55, 255, 226, 0.2); box-shadow: 0 0 6px rgba(55, 255, 226, 0.3); 
+    }
+    .word-group { display: inline-flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px 0; }
+    .word-color-0 .revealed-char { color: var(--positive); }
+    .word-color-1 .revealed-char { color: var(--danger); }
+    .word-color-1 .letter-gap { background: rgba(255, 95, 123, 0.2); box-shadow: 0 0 6px rgba(255, 95, 123, 0.3); }
+
+    .eval-section {
+      border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 16px;
+    }
+    .comment-input {
+      width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.5); color: #fff; margin-bottom: 12px; font-size: 14px;
+      outline: none; transition: border-color 0.2s ease; box-sizing: border-box;
+    }
+    .comment-input:focus { border-color: var(--accent); }
+
+    .eval-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-eval {
+      flex: 1; min-width: 120px; padding: 10px 8px; border: 1px solid transparent; border-radius: 10px;
+      font-size: 12px; font-weight: 800; cursor: pointer; color: #111;
+      transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.02em;
+    }
+    .btn-eval:active { transform: scale(0.95); }
+    .btn-eval.selected { box-shadow: 0 0 0 3px rgba(255,255,255,0.3); transform: translateY(-2px); }
+    
+    .btn-lvl-1 { background: #50fa7b; } 
+    .btn-lvl-2 { background: #8be9fd; } 
+    .btn-lvl-3 { background: #bd93f9; color: #fff; } 
+    .btn-lvl-4 { background: #ffb86c; } 
+    .btn-lvl-5 { background: #ff5555; color: #fff; } 
+
+    .active-eval-badge {
+      display: none; margin-top: 12px; padding: 10px 14px; border-radius: 10px;
+      font-size: 13px; font-weight: bold; color: #fff; text-align: center;
+      background: rgba(255,255,255,0.1);
+    }
+
+    #report-modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); padding: 20px; box-sizing: border-box; z-index: 1000;
+    }
+    .modal-content {
+      background: #12121a; max-width: 800px; margin: 20px auto; padding: 24px;
+      border-radius: 20px; height: 85vh; display: flex; flex-direction: column;
+      border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    textarea {
+      flex: 1; width: 100%; background: #08080d; color: #e8e9f1; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 16px; font-family: 'Courier New', Courier, monospace; font-size: 14px; 
+      resize: none; box-sizing: border-box; margin-bottom: 16px;
+    }
+    .modal-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+    .modal-btn { 
+      flex: 1; min-width: 150px; border: none; padding: 14px; border-radius: 12px; 
+      font-weight: 800; cursor: pointer; color: #fff; font-size: 14px; transition: 0.15s;
+    }
+    .modal-btn:active { transform: scale(0.97); }
+    .btn-close { background: rgba(255,255,255,0.1); }
+    .btn-close:hover { background: rgba(255,255,255,0.15); }
+    .btn-copy { background: linear-gradient(135deg, #37ffe2, #4d5dff); color: #000; }
+    .btn-clear { display: none; background: rgba(255, 85, 85, 0.15); color: #ff5555; border: 1px solid rgba(255, 85, 85, 0.3); }
+    .btn-clear:hover { background: rgba(255, 85, 85, 0.25); }
+  </style>
+</head>
+<body>
+
+  <h1>🔬 Сложность слов & Баланс</h1>
+  <div class="instruction">
+    Тестер имитирует новые правила игры: <strong>Шаг 1</strong> (Авто-раскрытие) и <strong>Шаг 2</strong> (Дополнительный Random Reveal).<br>
+    Оцените сложность угадывания на каждом шаге. Если вы измените мнение и нажмете другую кнопку, старая оценка будет перезаписана!<br>
+    Не забудьте оставить комментарий, если слово ведет себя странно.
+  </div>
+
+  <div class="top-controls">
+    <button class="btn-main btn-gen" id="generate-btn">🔄 Сгенерировать 10 сценариев</button>
+    <button class="btn-main btn-report" id="report-btn">📋 Показать отчет (0)</button>
+  </div>
+
+  <div id="output"></div>
+
+  <div id="report-modal">
+    <div class="modal-content">
+      <h2 style="margin-top: 0; color: var(--positive);">Отчет по балансу:</h2>
+      <textarea id="report-text" readonly></textarea>
+      <div class="modal-buttons">
+        <button class="modal-btn btn-close" onclick="document.getElementById('report-modal').style.display='none'">Закрыть окно</button>
+        <button class="modal-btn btn-copy" id="copy-report-btn">📄 Скопировать отчет</button>
+        <button class="modal-btn btn-clear" id="clear-report-btn">🗑 Удалить скопированные данные</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { WordShifter } from './src/core/WordShifter.js';
+    import { questionsDatabase } from './src/data/questions.js';
+    import { 
+      SIMPLE_COLORS, SIMPLE_MATERIALS, SIMPLE_MOODS, SIMPLE_ERAS, 
+      SIMPLE_COUNTRIES, SIMPLE_CITIES, SIMPLE_FOODS,
+      SIMPLE_SPORTS, SIMPLE_PROFESSIONS, SIMPLE_VEGETABLES, SIMPLE_FRUITS, SIMPLE_CLOTHES 
+    } from './src/data/nerfWords.js';
+
+    window.qaWordBalanceLog = JSON.parse(localStorage.getItem('qaWordBalanceLog')) || {};
+
+    function updateReportCounter() {
+      const count = Object.keys(window.qaWordBalanceLog).length;
+      document.getElementById('report-btn').innerText = `📋 Показать отчет (${count})`;
+    }
+    updateReportCounter();
+
+    let brainstormPool = [];
+    questionsDatabase.forEach(q => {
+      const extractBrainstorm = (hints) => {
+        if (!hints) return;
+        hints.forEach(h => {
+           if (h.brainstorm && h.brainstorm.length >= 2) {
+             let hText = typeof h === 'object' ? h.text : h;
+             brainstormPool.push({ hintText: hText, words: h.brainstorm });
+           }
+        });
+      };
+      extractBrainstorm(q.hints);
+      if (q.fragments) {
+        q.fragments.forEach(f => f.options.forEach(o => extractBrainstorm(o.hints)));
+      }
+    });
+
+    function checkNerf(w1, w2) {
+      const tokens1 = w1.split(/\s+/).filter(Boolean);
+      const tokens2 = w2.split(/\s+/).filter(Boolean);
+      
+      const sports = typeof SIMPLE_SPORTS !== 'undefined' ? SIMPLE_SPORTS : [];
+      const profs = typeof SIMPLE_PROFESSIONS !== 'undefined' ? SIMPLE_PROFESSIONS : [];
+      const veg = typeof SIMPLE_VEGETABLES !== 'undefined' ? SIMPLE_VEGETABLES : [];
+      const fruit = typeof SIMPLE_FRUITS !== 'undefined' ? SIMPLE_FRUITS : [];
+      const cloth = typeof SIMPLE_CLOTHES !== 'undefined' ? SIMPLE_CLOTHES : [];
+      
+      const hasSimpleColor = tokens1.some(t => SIMPLE_COLORS.includes(t)) || tokens2.some(t => SIMPLE_COLORS.includes(t));
+      const hasSimpleMaterialBoth = tokens1.some(t => SIMPLE_MATERIALS.includes(t)) && tokens2.some(t => SIMPLE_MATERIALS.includes(t));
+      const hasSimpleMoodBoth = tokens1.some(t => SIMPLE_MOODS.includes(t)) && tokens2.some(t => SIMPLE_MOODS.includes(t));
+      const hasSimpleEra = tokens1.some(t => SIMPLE_ERAS.includes(t)) || tokens2.some(t => SIMPLE_ERAS.includes(t));
+      const hasSimpleCountry = tokens1.some(t => SIMPLE_COUNTRIES.includes(t)) || tokens2.some(t => SIMPLE_COUNTRIES.includes(t));
+      const hasSimpleCity = SIMPLE_CITIES.includes(w1) || SIMPLE_CITIES.includes(w2);
+      const hasSimpleFood = tokens1.some(t => SIMPLE_FOODS.includes(t)) || tokens2.some(t => SIMPLE_FOODS.includes(t));
+      
+      const hasSport = tokens1.some(t => sports.includes(t)) || tokens2.some(t => sports.includes(t));
+      const hasProf = tokens1.some(t => profs.includes(t)) || tokens2.some(t => profs.includes(t));
+      const hasVeg = tokens1.some(t => veg.includes(t)) || tokens2.some(t => veg.includes(t));
+      const hasFruit = tokens1.some(t => fruit.includes(t)) || tokens2.some(t => fruit.includes(t));
+      const hasCloth = tokens1.some(t => cloth.includes(t)) || tokens2.some(t => cloth.includes(t));
+
+      return hasSimpleColor || hasSimpleMaterialBoth || hasSimpleMoodBoth || hasSimpleEra || 
+             hasSimpleCountry || hasSimpleCity || hasSimpleFood || 
+             hasSport || hasProf || hasVeg || hasFruit || hasCloth;
+    }
+
+    const EVAL_LEVELS = {
+      'lvl1': { label: '[TRIVIAL]', text: '1. Элементарно', color: '#50fa7b' },
+      'lvl2': { label: '[EASY]', text: '2. Легко', color: '#8be9fd' },
+      'lvl3': { label: '[BALANCED]', text: '3. Идеально', color: '#bd93f9' },
+      'lvl4': { label: '[HARD]', text: '4. Сложно', color: '#ffb86c' },
+      'lvl5': { label: '[IMPOSSIBLE]', text: '5. Невозможно', color: '#ff5555' }
+    };
+
+    window.evaluateStep = function(cardId, stepNum, levelKey, btnEl) {
+      const stepContainer = btnEl.closest('.reveal-step');
+      const commentInput = stepContainer.querySelector('.comment-input');
+      const badge = stepContainer.querySelector('.active-eval-badge');
+      const buttons = stepContainer.querySelectorAll('.btn-eval');
+      
+      const card = document.getElementById(cardId);
+      const w1 = card.dataset.w1;
+      const w2 = card.dataset.w2;
+      const hint = card.dataset.hint;
+      const isNerfed = card.dataset.nerfed === 'true';
+      const isMulti = card.dataset.multi === 'true';
+
+      const levelData = EVAL_LEVELS[levelKey];
+      const comment = commentInput.value.trim();
+      const logId = cardId + '_' + stepNum;
+
+      window.qaWordBalanceLog[logId] = {
+        cardId, stepNum,
+        w1, w2, hint, isNerfed, isMulti,
+        evalKey: levelKey,
+        evalLabel: levelData.label,
+        comment: comment
+      };
+
+      localStorage.setItem('qaWordBalanceLog', JSON.stringify(window.qaWordBalanceLog));
+      updateReportCounter();
+
+      buttons.forEach(b => b.classList.remove('selected'));
+      btnEl.classList.add('selected');
+
+      stepContainer.style.borderColor = levelData.color;
+      stepContainer.style.background = 'rgba(0,0,0,0.5)';
+      
+      badge.style.display = 'block';
+      badge.style.backgroundColor = levelData.color;
+      badge.style.color = (levelKey === 'lvl1' || levelKey === 'lvl2' || levelKey === 'lvl4') ? '#000' : '#fff';
+      
+      let badgeText = `Оценено: ${levelData.text} ${levelData.label}`;
+      if (comment) badgeText += `<br><span style="font-weight: 400; font-size: 12px; margin-top: 4px; display: block;">💬 "${comment}"</span>`;
+      badge.innerHTML = badgeText;
+      
+      if (stepNum === 2) {
+        const spoilerBtn = card.querySelector('.spoiler-btn');
+        if (spoilerBtn && spoilerBtn.style.display !== 'none') spoilerBtn.click();
+      }
+    };
+
+    document.getElementById('generate-btn').onclick = () => {
+      const out = document.getElementById('output');
+      out.innerHTML = '';
+      
+      for(let i = 0; i < 10; i++) {
+        const scenario = brainstormPool[Math.floor(Math.random() * brainstormPool.length)];
+        const pool = scenario.words;
+        let w1 = pool[Math.floor(Math.random() * pool.length)].toUpperCase();
+        let w2 = pool[Math.floor(Math.random() * pool.length)].toUpperCase();
+        while(w1 === w2 && pool.length > 1) { w2 = pool[Math.floor(Math.random() * pool.length)].toUpperCase(); }
+
+        const isNerfed = checkNerf(w1, w2);
+        const tokenCount = w1.split(/\s+/).length + w2.split(/\s+/).length;
+        const isMulti = tokenCount >= 3; 
+
+        const shifter = new WordShifter(w1, w2, isNerfed);
+        
+        shifter.autoReveal(false); 
+        const masksStep1 = shifter.getMaskedWords();
+
+        shifter.revealExtraRandom();
+        const masksStep2 = shifter.getMaskedWords();
+
+        const cardId = 'card_' + Date.now().toString(36) + '_' + i;
+        
+        let metaString = [];
+        if (isNerfed) metaString.push('NERFED');
+        if (isMulti) metaString.push(`MULTI-WORD (${tokenCount} words)`);
+        if (metaString.length === 0) metaString.push('STANDARD');
+
+        out.innerHTML += `
+          <div class="q-card" id="${cardId}" data-w1="${w1}" data-w2="${w2}" data-hint="${scenario.hintText}" data-nerfed="${isNerfed}" data-multi="${isMulti}">
+            
+            <div class="q-context">
+              <div class="q-context-item"><strong>Подсказка:</strong> ${scenario.hintText}</div>
+              <div class="q-meta">Атрибуты: ${metaString.join(', ')}</div>
+            </div>
+
+            <button class="spoiler-btn" onclick="this.nextElementSibling.style.display='block'; this.style.display='none';">👀 Показать оригинальные слова</button>
+            <div class="spoiler-content">
+              Скрытые слова: <strong>${w1}</strong> и <strong>${w2}</strong>
+            </div>
+
+            <!-- ШАГ 1 -->
+            <div class="reveal-step">
+              <div class="step-header">
+                <span>Шаг 1: Авто-раскрытие</span>
+                <span class="attempt-badge" style="background: rgba(55, 255, 226, 0.2); color: var(--positive);">Первый ход</span>
+              </div>
+              <div class="masked-wrapper">${masksStep1.w1}</div>
+              <div class="masked-wrapper">${masksStep1.w2}</div>
+              
+              <div class="eval-section">
+                <input type="text" class="comment-input" placeholder="Комментарий к Шагу 1 (опционально)...">
+                <div class="eval-controls">
+                  <button class="btn-eval btn-lvl-1" onclick="window.evaluateStep('${cardId}', 1, 'lvl1', this)">1. Элементарно</button>
+                  <button class="btn-eval btn-lvl-2" onclick="window.evaluateStep('${cardId}', 1, 'lvl2', this)">2. Легко</button>
+                  <button class="btn-eval btn-lvl-3" onclick="window.evaluateStep('${cardId}', 1, 'lvl3', this)">3. Идеально</button>
+                  <button class="btn-eval btn-lvl-4" onclick="window.evaluateStep('${cardId}', 1, 'lvl4', this)">4. Сложно</button>
+                  <button class="btn-eval btn-lvl-5" onclick="window.evaluateStep('${cardId}', 1, 'lvl5', this)">5. Невозможно</button>
+                </div>
+                <div class="active-eval-badge"></div>
+              </div>
+            </div>
+
+            <!-- ШАГ 2 -->
+            <div class="reveal-step">
+              <div class="step-header">
+                <span>Шаг 2: Дополнительный Random Reveal</span>
+                <span class="attempt-badge" style="background: rgba(255, 213, 107, 0.2); color: var(--warning);">Платная подсказка</span>
+              </div>
+              <div class="masked-wrapper">${masksStep2.w1}</div>
+              <div class="masked-wrapper">${masksStep2.w2}</div>
+              
+              <div class="eval-section">
+                <input type="text" class="comment-input" placeholder="Комментарий к Шагу 2 (опционально)...">
+                <div class="eval-controls">
+                  <button class="btn-eval btn-lvl-1" onclick="window.evaluateStep('${cardId}', 2, 'lvl1', this)">1. Элементарно</button>
+                  <button class="btn-eval btn-lvl-2" onclick="window.evaluateStep('${cardId}', 2, 'lvl2', this)">2. Легко</button>
+                  <button class="btn-eval btn-lvl-3" onclick="window.evaluateStep('${cardId}', 2, 'lvl3', this)">3. Идеально</button>
+                  <button class="btn-eval btn-lvl-4" onclick="window.evaluateStep('${cardId}', 2, 'lvl4', this)">4. Сложно</button>
+                  <button class="btn-eval btn-lvl-5" onclick="window.evaluateStep('${cardId}', 2, 'lvl5', this)">5. Невозможно</button>
+                </div>
+                <div class="active-eval-badge"></div>
+              </div>
+            </div>
+            
+          </div>
+        `;
+      }
+    };
+
+    document.getElementById('report-btn').onclick = () => {
+      const modal = document.getElementById('report-modal');
+      const textarea = document.getElementById('report-text');
+      const clearBtn = document.getElementById('clear-report-btn');
+      const copyBtn = document.getElementById('copy-report-btn');
+      
+      clearBtn.style.display = 'none'; 
+      copyBtn.innerText = '📄 Скопировать отчет';
+
+      const logs = Object.values(window.qaWordBalanceLog);
+      
+      if (logs.length === 0) {
+        textarea.value = "Нет оценок для формирования отчета.";
+      } else {
+        const grouped = {};
+        logs.forEach(log => {
+          if (!grouped[log.cardId]) grouped[log.cardId] = [];
+          grouped[log.cardId].push(log);
+        });
+
+        let markdown = "### ⚖️ Word Difficulty & Balance Report (V3)\n\n";
+        
+        Object.keys(grouped).forEach((cardId, index) => {
+          const cardLogs = grouped[cardId].sort((a, b) => a.stepNum - b.stepNum);
+          const baseData = cardLogs[0]; 
+          
+          markdown += `**Сценарий ${index + 1}:**\n`;
+          markdown += `- **Подсказка:** "${baseData.hint}"\n`;
+          markdown += `- **Слова:** ${baseData.w1} | ${baseData.w2}\n`;
+          
+          let attributes = [];
+          if (baseData.isNerfed) attributes.push("Nerfed");
+          if (baseData.isMulti) attributes.push("Multi-word");
+          if (attributes.length > 0) markdown += `- **Атрибуты:** [${attributes.join(', ')}]\n`;
+          
+          markdown += `- **Оценки:**\n`;
+          cardLogs.forEach(log => {
+            const stepName = log.stepNum === 1 ? "Шаг 1 (Авто)" : "Шаг 2 (Дополнительный Random)";
+            markdown += `  - ${stepName}: **${log.evalLabel}**\n`;
+            if (log.comment) {
+              markdown += `    *Комментарий:* "${log.comment}"\n`;
+            }
+          });
+          markdown += `\n---\n\n`;
+        });
+        
+        textarea.value = markdown;
+      }
+      
+      modal.style.display = 'block';
+    };
+
+    document.getElementById('copy-report-btn').onclick = () => {
+      const textarea = document.getElementById('report-text');
+      if (!textarea.value || textarea.value === "Нет оценок для формирования отчета.") return;
+      
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        const copyBtn = document.getElementById('copy-report-btn');
+        const clearBtn = document.getElementById('clear-report-btn');
+        
+        copyBtn.innerText = '✅ Скопировано в буфер!';
+        clearBtn.style.display = 'block'; 
+      }).catch(err => {
+        alert("Не удалось скопировать: " + err);
+      });
+    };
+
+    document.getElementById('clear-report-btn').onclick = () => {
+      if(confirm("Удалить все сохраненные оценки из памяти?")) {
+        window.qaWordBalanceLog = {};
+        localStorage.removeItem('qaWordBalanceLog');
+        updateReportCounter();
+        
+        document.getElementById('report-text').value = "Память очищена.";
+        document.getElementById('clear-report-btn').style.display = 'none';
+        document.getElementById('copy-report-btn').innerText = '📄 Скопировать отчет';
+        
+        document.querySelectorAll('.active-eval-badge').forEach(b => b.style.display = 'none');
+        document.querySelectorAll('.btn-eval').forEach(b => b.classList.remove('selected'));
+        document.querySelectorAll('.reveal-step').forEach(c => {
+          c.style.borderColor = 'rgba(255,255,255,0.05)';
+          c.style.background = 'rgba(0,0,0,0.3)';
+        });
+      }
+    };
+
+    document.getElementById('generate-btn').click();
+  </script>
+</body>
+</html>

@@ -199,7 +199,7 @@
         </div>
 <div class="help-step" data-step="3">
   <p><strong>Step 3: The Guessers</strong></p>
-  <p>Guess the choice! Some letters open automatically (hard words get first-letter hints). You can spend 15 pts for one extra reveal: Length or Random.</p>
+  <p>Guess the choice! You can spend 15 pts for a word reveal: Length or Random (you can use only one reveal per round).</p>
   <div class="tip-visual tip-visual--spaced">
     <div class="tip-label">GUESSERS SEE:</div>
     <div class="tip-highlight tip-strong">ANSWER 1 <span class="tip-subtext">(1 word)</span></div>
@@ -334,10 +334,14 @@ Choose questions and find out how others have answered them.</p>
         <div id="guesser-displayed-hint" class="guesser-info-title hint-highlight"></div>
       </div>
 
-      <!-- БЛОК СЕКРЕТНОГО ВОПРОСА С УЛУЧШЕННОЙ ЧИТАЕМОСТЬЮ -->
+<!-- БЛОК СЕКРЕТНОГО ВОПРОСА С УЛУЧШЕННОЙ ЧИТАЕМОСТЬЮ -->
       <div class="guesser-info-block border-top-dashed">
         <div class="guesser-info-subtitle">SECRET QUESTION</div>
-        <div id="guesser-question-display" class="guesser-info-title question-highlight"></div>
+        <!-- Интерактивная обертка -->
+        <div id="guesser-question-wrapper" class="question-interactive-wrapper">
+          <div id="guesser-question-display" class="guesser-info-title question-highlight question-collapsed"></div>
+          <div id="guesser-question-expand-hint" class="expand-icon">▼ Tap to expand</div>
+        </div>
       </div>
       
       <!-- КНОПКИ ВЫБОРА (В ОДИН РЯД ДЛЯ КОМПАКТНОСТИ) -->

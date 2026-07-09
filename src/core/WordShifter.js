@@ -5,11 +5,23 @@ export class WordShifter {
     this.openedIndices1 = new Set();
     this.openedIndices2 = new Set();
     this.isNerfed = isNerfed; 
-    this.isMultiWord = isMultiWord;
-    this.isLengthRevealed = false; // Флаг для разделения черточек
+    this.isLengthRevealed = false; 
+
+    // Автоматически открываем знаки препинания со старта
+    const revealPunctuation = (word, openedSet) => {
+      for (let i = 0; i < word.length; i++) {
+        if (word[i] === '-' || word[i] === "'") {
+          openedSet.add(i);
+        }
+      }
+    };
+    revealPunctuation(this.orig1, this.openedIndices1);
+    revealPunctuation(this.orig2, this.openedIndices2);
   }
 
   getTotalLength() { return this.orig1.length + this.orig2.length; }
+  
+  // Для UI оставляем разделение только по пробелам, чтобы "T-SHIRT" считалось 1 словом визуально
   getWordCount1() { return this.orig1.split(/\s+/).filter(Boolean).length; }
   getWordCount2() { return this.orig2.split(/\s+/).filter(Boolean).length; }
 
@@ -32,12 +44,10 @@ export class WordShifter {
           html += `<span class="revealed-char">${char}</span>`;
           inGap = false;
         } else {
-          // Если куплено раскрытие длины — выводим отдельную черточку для каждой буквы
           if (this.isLengthRevealed) {
             html += '<span class="letter-dash"></span>';
-            inGap = false; // Сбрасываем, чтобы черточки не слипались
+            inGap = false;
           } else {
-            // Иначе объединяем скрытые буквы в один пульсирующий прямоугольник
             if (!inGap) {
               html += '<span class="letter-gap"></span>';
               inGap = true;
@@ -57,82 +67,104 @@ export class WordShifter {
   }
 
   autoReveal(isCatchUp = false) {
-    // 1. Позиционное открытие первой буквы (если слово сложное или это фраза)
-    if (!this.isNerfed || this.isMultiWord) {
-      const revealFirst = (word, openedSet) => {
-        if (word.length > 0 && word[0] !== ' ') openedSet.add(0);
-        if (this.isMultiWord) {
-          for (let i = 1; i < word.length; i++) {
-            if (word[i - 1] === " " && word[i] !== " ") openedSet.add(i);
-          }
-        }
-      };
-      revealFirst(this.orig1, this.openedIndices1);
-      revealFirst(this.orig2, this.openedIndices2);
-    }
-
-    // 2. Случайное открытие (ЗАДЕБАФАНО НА ~25%)
-    let percentage = 0.26; // Было 0.35
-    if (this.getTotalLength() > 8) percentage = 0.30; // Было 0.40
-    
-    // Если игрок ошибся в прошлом раунде, даем ему +15% к буквам (Catch-up)
-    if (isCatchUp) percentage += 0.15; // Было 0.20
-
-    this._revealRandomInternal(percentage, true);
+    this._applyRevealLogic(0.20, true, isCatchUp); // Базовый шанс 1 шага урезан для сложности
   }
 
   revealExtraRandom() {
-    // ЗАДЕБАФАНО НА 25% (Было 0.40)
-    this._revealRandomInternal(0.30, false);
+    this._applyRevealLogic(0.30, false, false); // Базовый шанс 2 шага
   }
 
   revealLength() {
     this.isLengthRevealed = true;
   }
 
-  _revealRandomInternal(percentage, isFirstStep) {
-    const collectClosed = (word, openedSet) => {
-      const arr = [];
-      const endsWithIng = word.toUpperCase().endsWith("ING");
-      const ingStartIdx = word.length - 3;
+  _applyRevealLogic(basePercentage, isFirstStep, isCatchUp) {
+    const totalWords = this.getWordCount1() + this.getWordCount2();
 
-      for (let i = 0; i < word.length; i++) {
-        if (isFirstStep && endsWithIng && i >= ingStartIdx) continue;
-        if (!openedSet.has(i) && word[i] !== " ") arr.push(i);
-      }
-      if (arr.length === 0) {
-        for (let i = 0; i < word.length; i++) {
-          if (!openedSet.has(i) && word[i] !== " ") arr.push(i);
+    const processWord = (wordStr, openedSet) => {
+      // Разбиваем строку на слова, разделяя по пробелам, тире и апострофам для честной логики букв
+      let words = [];
+      let currentWord = { start: -1, text: "" };
+      
+      for (let i = 0; i < wordStr.length; i++) {
+        let char = wordStr[i];
+        if (char === ' ' || char === '-' || char === "'") {
+          if (currentWord.text.length > 0) {
+            words.push(currentWord);
+            currentWord = { start: -1, text: "" };
+          }
+        } else {
+          if (currentWord.start === -1) currentWord.start = i;
+          currentWord.text += char;
         }
       }
-      return arr;
+      if (currentWord.text.length > 0) words.push(currentWord);
+
+      // Применяем логику к каждому отдельному слову
+      words.forEach(w => {
+        let len = w.text.length;
+        let pool = [];
+        let localPercentage = basePercentage;
+
+        if (isFirstStep && isCatchUp) localPercentage += 0.15;
+
+        // Бафф 10% для длинных фраз (3+ слов), но не для коротких и не для nerfed
+        if (totalWords >= 3 && len > 3 && !this.isNerfed) {
+          localPercentage += 0.10;
+        }
+
+        let blockFirstLetter = false;
+        
+        if (len <= 3) {
+          blockFirstLetter = true; // Навсегда блокируем первую букву для 3 и менее символов
+        } else if (len >= 4 && len <= 6 && isFirstStep) {
+          blockFirstLetter = true; // Блокируем первую букву на 1 шаге для 4-6 символов
+        }
+
+        // Форсированное открытие первой буквы только для слов >= 7 на первом шаге
+        if (isFirstStep && len >= 7 && !this.isNerfed) {
+          openedSet.add(w.start);
+        }
+
+        const endsWithIng = w.text.toUpperCase().endsWith("ING");
+        const ingStartIdx = w.start + len - 3;
+
+        // Собираем доступный пул индексов
+        for (let i = 0; i < len; i++) {
+          let globalIdx = w.start + i;
+
+          if (openedSet.has(globalIdx)) continue;
+          if (i === 0 && blockFirstLetter) continue;
+          if (isFirstStep && endsWithIng && globalIdx >= ingStartIdx) continue; // Прячем окончания на 1 шаге
+
+          pool.push(globalIdx);
+        }
+
+        // Фолбэк, если из-за ING пул оказался пустым
+        if (pool.length === 0) {
+           for (let i = 0; i < len; i++) {
+              let globalIdx = w.start + i;
+              if (openedSet.has(globalIdx)) continue;
+              if (i === 0 && blockFirstLetter) continue;
+              pool.push(globalIdx);
+           }
+        }
+
+        if (pool.length === 0) return; 
+
+        // Математика раскрытия (минимум 1 буква, если пул позволяет)
+        let toReveal = Math.ceil(pool.length * localPercentage);
+        toReveal = Math.min(pool.length, Math.max(1, toReveal));
+
+        for (let k = 0; k < toReveal && pool.length > 0; k++) {
+          let rand = Math.floor(Math.random() * pool.length);
+          openedSet.add(pool[rand]);
+          pool.splice(rand, 1);
+        }
+      });
     };
 
-    const closed1 = collectClosed(this.orig1, this.openedIndices1);
-    const closed2 = collectClosed(this.orig2, this.openedIndices2);
-    const totalClosed = closed1.length + closed2.length;
-    if (totalClosed === 0) return;
-
-    let totalToReveal = Math.max(1, Math.ceil(totalClosed * percentage));
-    // Снижен минимальный хардкап с 3 до 2, чтобы нерф процентов корректно работал для средних слов
-    if (isFirstStep && totalClosed >= 8) totalToReveal = Math.max(2, totalToReveal); 
-    totalToReveal = Math.min(totalClosed, totalToReveal);
-
-    let toReveal1 = Math.round(totalToReveal * (closed1.length / totalClosed));
-    let toReveal2 = totalToReveal - toReveal1;
-    if (closed1.length === 0) { toReveal1 = 0; toReveal2 = totalToReveal; }
-    if (closed2.length === 0) { toReveal2 = 0; toReveal1 = totalToReveal; }
-
-    const pickRandomFrom = (arr, count, openedSet) => {
-      const pool = arr.slice();
-      for (let i = 0; i < count && pool.length > 0; i++) {
-        const rand = Math.floor(Math.random() * pool.length);
-        openedSet.add(pool[rand]);
-        pool.splice(rand, 1);
-      }
-    };
-
-    pickRandomFrom(closed1, toReveal1, this.openedIndices1);
-    pickRandomFrom(closed2, toReveal2, this.openedIndices2);
+    processWord(this.orig1, this.openedIndices1);
+    processWord(this.orig2, this.openedIndices2);
   }
 }

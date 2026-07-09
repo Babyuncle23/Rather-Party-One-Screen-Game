@@ -31,3 +31,28 @@ export const SIMPLE_FOODS = [
   "WATER", "SALT", "SUGAR", "BREAD", "MEAT", "FISH", "MILK", "EGG", "EGGS", "APPLE", "ICE", "SOUP",
   "PIZZA", "RICE", "CAKE", "FRUIT", "TEA", "COFFEE", "CHEESE", "PASTA" // Добавлены самые частые тривиальные ответы для раунда про еду
 ];
+
+export const SIMPLE_SPORTS = [
+  "SOCCER", "FOOTBALL", "BASKETBALL", "TENNIS", "BASEBALL", "GOLF", "RUNNING", "SWIMMING", 
+  "VOLLEYBALL", "BOXING", "RUGBY", "CRICKET", "HOCKEY", "SKATING", "CYCLING", "SURFING"
+];
+
+export const SIMPLE_PROFESSIONS = [
+  "DOCTOR", "NURSE", "POLICE", "TEACHER", "CHEF", "PILOT", "FARMER", "LAWYER", "ARTIST", 
+  "SINGER", "ACTOR", "BUILDER", "ENGINEER", "MANAGER", "DRIVER", "WRITER"
+];
+
+export const SIMPLE_VEGETABLES = [
+  "POTATO", "CARROT", "ONION", "TOMATO", "BROCCOLI", "CABBAGE", "GARLIC", "CORN", "PEA", 
+  "CUCUMBER", "PEPPER", "MUSHROOM", "SALAD"
+];
+
+export const SIMPLE_FRUITS = [
+  "APPLE", "BANANA", "ORANGE", "GRAPE", "PEAR", "PEACH", "PLUM", "CHERRY", "LEMON", "MELON", 
+  "BERRY", "MANGO", "KIWI", "LIME"
+];
+
+export const SIMPLE_CLOTHES = [
+  "SHIRT", "PANTS", "JEANS", "SOCKS", "SHOES", "HAT", "COAT", "JACKET", "DRESS", "SKIRT", 
+  "GLOVES", "BOOTS", "SUIT", "TIE", "SCARF", "T-SHIRT"
+];

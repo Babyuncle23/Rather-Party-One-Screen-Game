@@ -2582,3 +2582,60 @@ button:disabled, .btn:disabled, .btn-action:disabled {
 .qr-code-image:active {
   transform: scale(0.95);
 }
+
+.pulse-warning-text {
+  color: #ffd56b;
+  font-size: 0.9em;
+  text-transform: none;
+  display: block;
+  margin-top: 10px;
+  font-weight: 700;
+  animation: pulseWarning 2s ease-in-out infinite;
+}
+
+@keyframes pulseWarning {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 10px rgba(255, 213, 107, 0.4); }
+}
+
+/* --- ИНТЕРАКТИВНЫЙ БЛОК ВОПРОСА --- */
+.question-interactive-wrapper {
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(140, 108, 255, 0.3);
+  margin-top: 6px;
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.question-interactive-wrapper:active {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(140, 108, 255, 0.6);
+  transform: scale(0.98);
+}
+
+.question-collapsed {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1rem !important; /* Делаем текст меньше, как просил */
+  opacity: 0.85;
+}
+
+.question-expanded {
+  white-space: normal;
+  font-size: 1rem !important;
+  opacity: 1;
+}
+
+.expand-icon {
+  font-size: 0.75rem;
+  color: var(--accent);
+  font-weight: 700;
+  margin-top: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}

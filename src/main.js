@@ -2,7 +2,7 @@ import { Match } from './core/Match.js';
 import { WordShifter } from './core/WordShifter.js';
 import { ScreenController } from './ui/ScreenController.js';
 import { AudioManager } from './audio/AudioManager.js';
-import { SIMPLE_COLORS, SIMPLE_MATERIALS, SIMPLE_MOODS, SIMPLE_ERAS, SIMPLE_COUNTRIES, SIMPLE_CITIES, SIMPLE_FOODS } from './data/nerfWords.js';
+import { SIMPLE_COLORS, SIMPLE_MATERIALS, SIMPLE_MOODS, SIMPLE_ERAS, SIMPLE_COUNTRIES, SIMPLE_CITIES, SIMPLE_FOODS, SIMPLE_SPORTS, SIMPLE_PROFESSIONS, SIMPLE_VEGETABLES, SIMPLE_FRUITS, SIMPLE_CLOTHES } from './data/nerfWords.js';
 
 const PLAYER_EMOJIS = [
   "🔥", "⚠️",
@@ -822,14 +822,20 @@ function startResponderPhase() {
    
     document.getElementById('responder-name').innerText = `${responder.emoji} ${responder.name}`;
     
+const in1 = document.getElementById('word-input-1');
+    const in2 = document.getElementById('word-input-2');
+
     if (currentQuestion && currentQuestion.id === 14) {
       document.getElementById('displayed-hint').innerHTML = currentHint.toUpperCase() + 
-        `<br><span style="color: var(--accent); font-size: 0.85em; text-transform: none; display: block; margin-top: 8px; font-weight: 600;">
-          💡 Write an action or activity (e.g., "fly", "eat pizza", "pause time")
+        `<br><span class="pulse-warning-text">
+          ⚠️ Use the base form of the verb: "eat pizza" (NOT "to eat" or "eating")
         </span>`;
     } else {
       document.getElementById('displayed-hint').innerText = currentHint.toUpperCase();
     }
+    
+    in1.placeholder = "First answer";
+    in2.placeholder = "Second answer";
 
     const helperBox = document.getElementById('responder-helper-box');
     const helperToggle = document.getElementById('responder-helper-toggle');
@@ -865,9 +871,7 @@ function startResponderPhase() {
       }
     }
    
-    const in1 = document.getElementById('word-input-1');
-    const in2 = document.getElementById('word-input-2');
-    const counter1 = document.getElementById('word-counter-1');
+const counter1 = document.getElementById('word-counter-1');
     const counter2 = document.getElementById('word-counter-2');
    
     in1.value = ""; in2.value = "";
@@ -913,7 +917,7 @@ function startResponderPhase() {
       const tokens2 = w2.split(/\s+/).filter(Boolean);
       const isMultiWord = tokens1.length > 1 || tokens2.length > 1;
 
-      const hasSimpleColor = tokens1.some(t => SIMPLE_COLORS.includes(t)) || tokens2.some(t => SIMPLE_COLORS.includes(t));
+const hasSimpleColor = tokens1.some(t => SIMPLE_COLORS.includes(t)) || tokens2.some(t => SIMPLE_COLORS.includes(t));
       const hasSimpleMaterialBoth = tokens1.some(t => SIMPLE_MATERIALS.includes(t)) && tokens2.some(t => SIMPLE_MATERIALS.includes(t));
       const hasSimpleMoodBoth = tokens1.some(t => SIMPLE_MOODS.includes(t)) && tokens2.some(t => SIMPLE_MOODS.includes(t));
       const hasSimpleEra = tokens1.some(t => SIMPLE_ERAS.includes(t)) || tokens2.some(t => SIMPLE_ERAS.includes(t));
@@ -922,8 +926,14 @@ function startResponderPhase() {
       const hasSimpleCountry = tokens1.some(t => SIMPLE_COUNTRIES.includes(t)) || tokens2.some(t => SIMPLE_COUNTRIES.includes(t));
       const hasSimpleCity = SIMPLE_CITIES.includes(fullWord1) || SIMPLE_CITIES.includes(fullWord2);
       const hasSimpleFood = tokens1.some(t => SIMPLE_FOODS.includes(t)) || tokens2.some(t => SIMPLE_FOODS.includes(t));
+      
+      const hasSimpleSport = tokens1.some(t => SIMPLE_SPORTS.includes(t)) || tokens2.some(t => SIMPLE_SPORTS.includes(t));
+      const hasSimpleProf = tokens1.some(t => SIMPLE_PROFESSIONS.includes(t)) || tokens2.some(t => SIMPLE_PROFESSIONS.includes(t));
+      const hasSimpleVeggie = tokens1.some(t => SIMPLE_VEGETABLES.includes(t)) || tokens2.some(t => SIMPLE_VEGETABLES.includes(t));
+      const hasSimpleFruit = tokens1.some(t => SIMPLE_FRUITS.includes(t)) || tokens2.some(t => SIMPLE_FRUITS.includes(t));
+      const hasSimpleClothes = tokens1.some(t => SIMPLE_CLOTHES.includes(t)) || tokens2.some(t => SIMPLE_CLOTHES.includes(t));
 
-      let shouldNerf = hasSimpleColor || hasSimpleMaterialBoth || hasSimpleMoodBoth || hasSimpleEra || hasSimpleCountry || hasSimpleCity || hasSimpleFood;
+      let shouldNerf = hasSimpleColor || hasSimpleMaterialBoth || hasSimpleMoodBoth || hasSimpleEra || hasSimpleCountry || hasSimpleCity || hasSimpleFood || hasSimpleSport || hasSimpleProf || hasSimpleVeggie || hasSimpleFruit || hasSimpleClothes;
 
       if (isMultiWord) {
         shouldNerf = false;
@@ -1115,16 +1125,42 @@ function updateGuesserUI() {
     }
 
     const masks = shifter.getMaskedWords();
-    const displayStaticQuestion = getCompiledQuestionString("[ ANSWER 1 ]", "[ ANSWER 2 ]", false);
+const displayStaticQuestion = getCompiledQuestionString("[ ANSWER 1 ]", "[ ANSWER 2 ]", false);
     const hintEl = document.getElementById('guesser-displayed-hint');
     const questionEl = document.getElementById('guesser-question-display');
+    const questionWrapper = document.getElementById('guesser-question-wrapper');
+    const expandHint = document.getElementById('guesser-question-expand-hint');
     const scoreEl = document.getElementById('potential-score');
     const balanceEl = document.getElementById('gold-balance');
     const guess1Btn = document.getElementById('guess-word-1');
     const guess2Btn = document.getElementById('guess-word-2');
 
     if (hintEl) hintEl.innerText = currentHint;
-    if (questionEl) questionEl.innerText = displayStaticQuestion;
+    
+    // Сбрасываем вопрос в свернутое состояние для каждого нового угадывающего
+    if (questionEl) {
+      questionEl.innerText = displayStaticQuestion;
+      questionEl.classList.remove('question-expanded');
+      questionEl.classList.add('question-collapsed');
+    }
+    if (expandHint) expandHint.innerText = '▼ Tap to expand';
+
+    // Обработчик клика для разворачивания/сворачивания
+    if (questionWrapper) {
+      questionWrapper.onclick = (e) => {
+        e.stopPropagation();
+        if (questionEl.classList.contains('question-collapsed')) {
+          questionEl.classList.remove('question-collapsed');
+          questionEl.classList.add('question-expanded');
+          expandHint.innerText = '▲ Tap to collapse';
+        } else {
+          questionEl.classList.remove('question-expanded');
+          questionEl.classList.add('question-collapsed');
+          expandHint.innerText = '▼ Tap to expand';
+        }
+        if (audioManager) audioManager.play('click');
+      };
+    }
     if (scoreEl) scoreEl.innerText = `Win: +${FIXED_REWARD} points`;
     if (balanceEl) balanceEl.innerText = `Points: ${game.players[currentGuesserIndex].gold}`;
    
@@ -1138,16 +1174,12 @@ function updateGuesserUI() {
     const randBtn = document.getElementById('ability-extra-rand-btn');
     const lengthBtn = document.getElementById('ability-length-btn');
 
-    const rollStatusEl = document.getElementById('ability-roll-status');
+const rollStatusEl = document.getElementById('ability-roll-status');
     if (rollStatusEl) {
-      const guesser = game.players[currentGuesserIndex];
-      const isCatchUp = guesser.lastGuessCorrect === false;
-      
       if (revealCount === 1) {
-        let autoText = isCatchUp ? `🎁 Auto-reveal applied (+ bonus)` : `✨ Auto-reveal applied`;
-        rollStatusEl.innerHTML = `${autoText}. You can buy one extra help:`;
+        rollStatusEl.innerHTML = `💡 You can buy one word reveal:`;
       } else {
-        rollStatusEl.innerHTML = `🔒 No reveals left for this turn`;
+        rollStatusEl.innerHTML = `🔒 Reveal already used`;
       }
     }
     
@@ -1190,7 +1222,7 @@ function updateGuesserUI() {
       }
     };
 
-    renderAbility(randBtn, 'Extra Random', '🎲', 'Opens more random letters inside the words.');
+    renderAbility(randBtn, 'Random Letters', '🎲', 'Opens random letters inside the words.');
     renderAbility(lengthBtn, 'Reveal Word Length', '📏', 'Replaces the blinking gap with exact letter counts.');
 
     const abilitiesContainer = document.querySelector('.abilities-list-vertical');
