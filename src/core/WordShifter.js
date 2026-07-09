@@ -1,5 +1,5 @@
 export class WordShifter {
-  constructor(word1, word2, isNerfed = false, isMultiWord = false) {
+  constructor(word1, word2, isNerfed = false) {
     this.orig1 = word1.trim();
     this.orig2 = word2.trim();
     this.openedIndices1 = new Set();
@@ -10,9 +10,7 @@ export class WordShifter {
     // Автоматически открываем знаки препинания со старта
     const revealPunctuation = (word, openedSet) => {
       for (let i = 0; i < word.length; i++) {
-        if (word[i] === '-' || word[i] === "'") {
-          openedSet.add(i);
-        }
+        if (word[i] === '-' || word[i] === "'") openedSet.add(i);
       }
     };
     revealPunctuation(this.orig1, this.openedIndices1);
@@ -66,21 +64,38 @@ export class WordShifter {
     };
   }
 
-  autoReveal(isCatchUp = false) {
-    this._applyRevealLogic(0.20, true, isCatchUp); // Базовый шанс 1 шага урезан для сложности
+autoReveal(isCatchUp = false) {
+    this._applyRevealLogic(0.45, true, isCatchUp); 
   }
 
   revealExtraRandom() {
-    this._applyRevealLogic(0.30, false, false); // Базовый шанс 2 шага
+    this._applyRevealLogic(0.55, false, false); 
   }
 
   revealLength() {
     this.isLengthRevealed = true;
+    
+    // Открываем первую букву каждого слова
+    const openFirst = (wordStr, openedSet) => {
+      let isNewWord = true;
+      for (let i = 0; i < wordStr.length; i++) {
+        let char = wordStr[i];
+        if (char === ' ' || char === '-' || char === "'") {
+          isNewWord = true;
+        } else {
+          if (isNewWord) {
+            openedSet.add(i);
+            isNewWord = false;
+          }
+        }
+      }
+    };
+    
+    openFirst(this.orig1, this.openedIndices1);
+    openFirst(this.orig2, this.openedIndices2);
   }
 
   _applyRevealLogic(basePercentage, isFirstStep, isCatchUp) {
-    const totalWords = this.getWordCount1() + this.getWordCount2();
-
     const processWord = (wordStr, openedSet) => {
       // Разбиваем строку на слова, разделяя по пробелам, тире и апострофам для честной логики букв
       let words = [];
@@ -106,25 +121,7 @@ export class WordShifter {
         let pool = [];
         let localPercentage = basePercentage;
 
-        if (isFirstStep && isCatchUp) localPercentage += 0.15;
-
-        // Бафф 10% для длинных фраз (3+ слов), но не для коротких и не для nerfed
-        if (totalWords >= 3 && len > 3 && !this.isNerfed) {
-          localPercentage += 0.10;
-        }
-
-        let blockFirstLetter = false;
-        
-        if (len <= 3) {
-          blockFirstLetter = true; // Навсегда блокируем первую букву для 3 и менее символов
-        } else if (len >= 4 && len <= 6 && isFirstStep) {
-          blockFirstLetter = true; // Блокируем первую букву на 1 шаге для 4-6 символов
-        }
-
-        // Форсированное открытие первой буквы только для слов >= 7 на первом шаге
-        if (isFirstStep && len >= 7 && !this.isNerfed) {
-          openedSet.add(w.start);
-        }
+        if (isFirstStep && isCatchUp) localPercentage += 0.10;
 
         const endsWithIng = w.text.toUpperCase().endsWith("ING");
         const ingStartIdx = w.start + len - 3;
@@ -134,25 +131,14 @@ export class WordShifter {
           let globalIdx = w.start + i;
 
           if (openedSet.has(globalIdx)) continue;
-          if (i === 0 && blockFirstLetter) continue;
-          if (isFirstStep && endsWithIng && globalIdx >= ingStartIdx) continue; // Прячем окончания на 1 шаге
+          if (i === 0) continue; // ЖЕЛЕЗНО прячем первую букву слова
+          if (isFirstStep && endsWithIng && globalIdx >= ingStartIdx) continue;
 
           pool.push(globalIdx);
         }
 
-        // Фолбэк, если из-за ING пул оказался пустым
-        if (pool.length === 0) {
-           for (let i = 0; i < len; i++) {
-              let globalIdx = w.start + i;
-              if (openedSet.has(globalIdx)) continue;
-              if (i === 0 && blockFirstLetter) continue;
-              pool.push(globalIdx);
-           }
-        }
-
         if (pool.length === 0) return; 
 
-        // Математика раскрытия (минимум 1 буква, если пул позволяет)
         let toReveal = Math.ceil(pool.length * localPercentage);
         toReveal = Math.min(pool.length, Math.max(1, toReveal));
 

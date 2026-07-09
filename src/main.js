@@ -1222,8 +1222,8 @@ const rollStatusEl = document.getElementById('ability-roll-status');
       }
     };
 
-    renderAbility(randBtn, 'Random Letters', '🎲', 'Opens random letters inside the words.');
-    renderAbility(lengthBtn, 'Reveal Word Length', '📏', 'Replaces the blinking gap with exact letter counts.');
+renderAbility(randBtn, 'Extra Random Letters', '🎲', 'Opens ~40-45% of the remaining letters inside the words.');
+    renderAbility(lengthBtn, 'Length & 1st Letters', '📏', 'Shows word length AND opens the first letter of every word.');
 
     const abilitiesContainer = document.querySelector('.abilities-list-vertical');
     if (abilitiesContainer) {
