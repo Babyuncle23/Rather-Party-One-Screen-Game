@@ -1306,7 +1306,13 @@ p {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap; 
-  gap: 6px 0; /* Если гигантское слово ломается само в себе, даем отступ между его кусками */
+  gap: 6px 0;
+  
+  /* Граница слова чёрточкой */
+  border: 1px dashed rgba(255, 255, 255, 0.25); 
+  border-radius: 8px;
+  padding: 4px 6px;
+  margin: 0 4px;
 }
 
 /* ЦВЕТ 0: Бирюзовый (#37ffe2) */
@@ -1321,12 +1327,12 @@ p {
 
 /* ЦВЕТ 1: Розовый (#ff5f7b) */
 .word-color-1 {
-  --gap-color-low: rgba(255, 95, 123, 0.2);
-  --gap-color-high: rgba(255, 95, 123, 0.65);
-  --gap-shadow: rgba(255, 95, 123, 0.3);
+  --gap-color-low: rgba(55, 255, 226, 0.2);
+  --gap-color-high: rgba(55, 255, 226, 0.65);
+  --gap-shadow: rgba(55, 255, 226, 0.3);
 }
 .word-color-1 .revealed-char {
-  color: var(--accent-strong);
+  color: var(--positive);
 }
 
 /* Универсальный прочерк (Фиолетовый удален, по умолчанию теперь Бирюзовый) */
