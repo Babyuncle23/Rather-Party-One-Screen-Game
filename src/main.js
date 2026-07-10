@@ -1196,9 +1196,6 @@ const rollStatusEl = document.getElementById('ability-roll-status');
           <strong style="font-size: 15px;">${icon} ${label}</strong>
           ${isUsed ? '' : costBadge}
         </div>
-        <div style="font-size: 13px; color: var(--text); opacity: 0.8; text-align: left; font-weight: 400; text-transform: lowercase;">
-          ${desc}
-        </div>
       `;
      
       if (btn.disabled) {
@@ -1222,8 +1219,8 @@ const rollStatusEl = document.getElementById('ability-roll-status');
       }
     };
 
-renderAbility(randBtn, 'Extra Random Letters', '🎲', 'Opens ~40-45% of the remaining letters inside the words.');
-    renderAbility(lengthBtn, 'Length & 1st Letters', '📏', 'Shows word length AND opens the first letter of every word.');
+renderAbility(randBtn, 'Random & ❌ 1st LTRs', '🎲');
+    renderAbility(lengthBtn, 'Length & 1st LTRs', '📏');
 
     const abilitiesContainer = document.querySelector('.abilities-list-vertical');
     if (abilitiesContainer) {
