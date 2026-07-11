@@ -64,12 +64,12 @@ export class WordShifter {
     };
   }
 
-autoReveal(isCatchUp = false) {
-    this._applyRevealLogic(0.40, true, isCatchUp); 
+  autoReveal(isCatchUp = false) {
+    this._applyRevealLogic(0.40, true, isCatchUp);
   }
 
   revealExtraRandom() {
-    this._applyRevealLogic(0.40, false, false); 
+    this._applyRevealLogic(0.40, false, false);
   }
 
   revealLength() {

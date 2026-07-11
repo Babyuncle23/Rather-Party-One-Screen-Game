@@ -344,16 +344,16 @@ function setupHelpPanel() {
     if (indexDisplay) indexDisplay.innerText = `Step ${currentHelpStep} / 3`;
   }
 
-  helpToggle.onclick = () => {
+helpToggle.onclick = () => {
     const isOpen = helpPanel.style.display === 'block';
     if (!isOpen) {
       currentHelpStep = determineCurrentStep();
       renderHelpCarousel();
       helpPanel.style.display = 'block';
-      helpToggle.innerText = 'Hide gameplay tips';
+      helpToggle.innerText = 'Hide tips'; // Обновленный текст
     } else {
       helpPanel.style.display = 'none';
-      helpToggle.innerText = 'Show compact gameplay tips';
+      helpToggle.innerText = 'Tips'; // Обновленный текст
     }
     audioManager.play('click');
   };
@@ -372,7 +372,7 @@ function setupHelpPanel() {
   }
 
   helpPanel.style.display = 'none';
-  helpToggle.innerText = 'Show compact gameplay tips';
+  helpToggle.innerText = 'Tips'; // Обновленный текст
   updateHelpTargetText();
 }
 
@@ -1164,12 +1164,8 @@ const displayStaticQuestion = getCompiledQuestionString("[ ANSWER 1 ]", "[ ANSWE
     if (scoreEl) scoreEl.innerText = `Win: +${FIXED_REWARD} points`;
     if (balanceEl) balanceEl.innerText = `Points: ${game.players[currentGuesserIndex].gold}`;
    
-    const count1 = shifter.getWordCount1();
-    const count2 = shifter.getWordCount2();
-    const wordLabel1 = count1 === 1 ? "1 word" : `${count1} words`;
-    const wordLabel2 = count2 === 1 ? "1 word" : `${count2} words`;
-    if (guess1Btn) guess1Btn.innerHTML = `<span style="font-size: 10px; opacity: 0.5; font-weight: 700; margin-right: 8px; display: block; margin-bottom: 2px; letter-spacing: 0.05em;">ANSWER <span style="color: #ffd56b; opacity: 1; font-size: 12px; font-weight: 900;">1</span></span><span style="font-size: 9px; color: #ffd56b; opacity: 1; font-weight: 800; display: block; margin-bottom: 6px; letter-spacing: 0.04em;">(${wordLabel1})</span><div class="masked-wrapper">${masks.w1}</div>`;
-    if (guess2Btn) guess2Btn.innerHTML = `<span style="font-size: 10px; opacity: 0.5; font-weight: 700; margin-right: 8px; display: block; margin-bottom: 2px; letter-spacing: 0.05em;">ANSWER <span style="color: #ffd56b; opacity: 1; font-size: 12px; font-weight: 900;">2</span></span><span style="font-size: 9px; color: #ffd56b; opacity: 1; font-weight: 800; display: block; margin-bottom: 6px; letter-spacing: 0.04em;">(${wordLabel2})</span><div class="masked-wrapper">${masks.w2}</div>`;
+if (guess1Btn) guess1Btn.innerHTML = `<span style="font-size: 10px; opacity: 0.5; font-weight: 700; margin-right: 8px; display: block; margin-bottom: 6px; letter-spacing: 0.05em; text-align: left;">ANSWER <span style="color: #ffd56b; opacity: 1; font-size: 12px; font-weight: 900;">1</span></span><div class="masked-wrapper">${masks.w1}</div>`;
+    if (guess2Btn) guess2Btn.innerHTML = `<span style="font-size: 10px; opacity: 0.5; font-weight: 700; margin-right: 8px; display: block; margin-bottom: 6px; letter-spacing: 0.05em; text-align: left;">ANSWER <span style="color: #ffd56b; opacity: 1; font-size: 12px; font-weight: 900;">2</span></span><div class="masked-wrapper">${masks.w2}</div>`;
 
     const randBtn = document.getElementById('ability-extra-rand-btn');
     const lengthBtn = document.getElementById('ability-length-btn');

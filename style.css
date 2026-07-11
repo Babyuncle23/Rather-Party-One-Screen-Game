@@ -385,6 +385,7 @@ h2 {
   #responder-screen input.input-field {
     padding-right: 20px;
   }
+  
 }
 
 .game-container > div:not(.modal-overlay) {
@@ -875,6 +876,7 @@ p {
 .double-choice-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr; /* Добавлено */
   gap: 8px;
   width: 100%;
 }
@@ -1285,9 +1287,9 @@ p {
 .masked-wrapper {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start; /* Было center */
   align-items: center;
-  gap: 6px 14px; /* 6px по вертикали между строками, 14px по горизонтали МЕЖДУ СЛОВАМИ */
+  gap: 6px 14px;
 }
 
 /* Стили самой открытой буквы */
@@ -2523,6 +2525,11 @@ button:disabled, .btn:disabled, .btn-action:disabled {
     .input-container-with-counter .input-field {
         padding-right: 65px !important;
     }
+.choice-buttons-grid,
+  .double-choice-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 1fr; /* Добавлено */
+  }
 }
 
 /* --- УБИРАЕМ ЛИШНЮЮ ВНЕШНЮЮ КОРОБКУ ВОКРУГ ИСТОРИИ --- */
@@ -2644,4 +2651,19 @@ button:disabled, .btn:disabled, .btn-action:disabled {
   margin-top: 8px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+
+/* Делаем кнопки flex-контейнерами */
+#guess-word-1, #guess-word-2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Центрируем блок со словами по вертикали в оставшемся пространстве */
+#guess-word-1 .masked-wrapper,
+#guess-word-2 .masked-wrapper {
+  margin-top: auto;
+  margin-bottom: auto;
+  width: 100%;
 }
