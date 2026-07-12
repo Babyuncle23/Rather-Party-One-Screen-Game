@@ -897,6 +897,7 @@ const undoBtn = document.getElementById('undo-options-btn');
     updateHelpTargetText();
 
     // --- ЛОГИКА ТРЕХЗОННОГО РЕДАКТИРОВАНИЯ ---
+// --- ОБНОВЛЕННАЯ ЛОГИКА РЕДАКТИРОВАНИЯ ---
     const editToggleBtn = document.getElementById('edit-question-toggle-btn');
     const editBlock = document.getElementById('edit-question-block');
     const editPart1 = document.getElementById('edit-q-part1');
@@ -908,43 +909,45 @@ const undoBtn = document.getElementById('undo-options-btn');
     const btnGroup = document.getElementById('picker-btn-group');
 
     if (editToggleBtn && editBlock) {
-      // Сбрасываем интерфейс при загрузке нового раунда
       editBlock.style.display = 'none';
       secretTextDisplay.style.display = 'block';
       if (btnGroup) btnGroup.style.display = 'flex';
 
-      editToggleBtn.onclick = () => {
-        // Достаем актуальный текст вопроса и разбиваем его на 3 части по маркерам
-        const rawQuestion = getCompiledQuestionString("[ ... ]", "[ ... ]", false);
-        const parts = rawQuestion.split("[ ... ]");
-        
-        editPart1.value = (parts[0] || "").trim();
-        editPart2.value = (parts[1] || "").trim();
-        editPart3.value = (parts[2] || "").trim();
-        
-        editBlock.style.display = 'block';
-        secretTextDisplay.style.display = 'none';
-        if (btnGroup) btnGroup.style.display = 'none';
+      const toggleEdit = () => {
+        const isEditing = editBlock.style.display === 'block';
+        if (!isEditing) {
+          // Открываем режим редактирования
+          const rawQuestion = getCompiledQuestionString("[ ... ]", "[ ... ]", false);
+          const parts = rawQuestion.split("[ ... ]");
+          editPart1.value = (parts[0] || "").trim();
+          editPart2.value = (parts[1] || "").trim();
+          editPart3.value = (parts[2] || "").trim();
+          
+          editBlock.style.display = 'block';
+          secretTextDisplay.style.display = 'none';
+          if (btnGroup) btnGroup.style.display = 'none';
+          editToggleBtn.innerHTML = "✖"; // Можно заменить иконку на крестик при открытии
+        } else {
+          // Закрываем режим редактирования
+          editBlock.style.display = 'none';
+          secretTextDisplay.style.display = 'block';
+          if (btnGroup) btnGroup.style.display = 'flex';
+          editToggleBtn.innerHTML = "✏️";
+        }
       };
 
-      editCancelBtn.onclick = () => {
-        editBlock.style.display = 'none';
-        secretTextDisplay.style.display = 'block';
-        if (btnGroup) btnGroup.style.display = 'flex';
-      };
+      editToggleBtn.onclick = toggleEdit;
+      editCancelBtn.onclick = toggleEdit; // Кнопка Cancel теперь просто вызывает ту же функцию закрытия
 
       editSaveBtn.onclick = () => {
         const p1 = editPart1.value.trim();
         const p2 = editPart2.value.trim();
         const p3 = editPart3.value.trim();
 
-        // Сохраняем в кастомное свойство
         currentQuestion.customCompiledText = `${p1} [ ... ] ${p2} [ ... ] ${p3}`;
         renderInteractiveQuestion();
         
-        editBlock.style.display = 'none';
-        secretTextDisplay.style.display = 'block';
-        if (btnGroup) btnGroup.style.display = 'flex';
+        toggleEdit(); // Автоматически закрываем после сохранения
       };
     }
 
