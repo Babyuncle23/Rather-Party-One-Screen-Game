@@ -263,14 +263,20 @@
         </div>
 
         <div class="inputs-combined-wrapper">
-          <div class="input-container-with-counter">
-            <input id="word-input-1" type="text" placeholder="First answer" maxlength="25" class="input-field">
-            <span id="word-counter-1" class="floating-counter"><span class="counter-text">0/25</span></span>
-          </div>
-          <div class="input-container-with-counter">
-            <input id="word-input-2" type="text" placeholder="Second answer" maxlength="25" class="input-field">
-            <span id="word-counter-2" class="floating-counter"><span class="counter-text">0/25</span></span>
-          </div>
+<div class="input-container-with-counter">
+  <input id="word-input-1" type="text" placeholder="First answer" maxlength="25" class="input-field">
+  <span id="word-counter-1" class="floating-counter">
+    <span class="counter-text">0/25</span>
+    <span class="lock-icon" style="display: none;">🔒</span>
+  </span>
+</div>
+<div class="input-container-with-counter">
+  <input id="word-input-2" type="text" placeholder="First answer" maxlength="25" class="input-field">
+  <span id="word-counter-2" class="floating-counter">
+    <span class="counter-text">0/25</span>
+    <span class="lock-icon" style="display: none;">🔒</span>
+  </span>
+</div>
         </div>
 
         <button id="submit-words-btn" class="btn btn-primary spaced-button">Submit Answers</button>
