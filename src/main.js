@@ -1099,7 +1099,7 @@ const counter1 = document.getElementById('word-counter-1');
     const choiceBlock = document.getElementById('responder-choice-block');
     choiceBlock.style.display = 'none';
    
-    submitWordsBtn.onclick = () => {
+submitWordsBtn.onclick = () => {
       const w1 = in1.value.trim().toUpperCase();
       const w2 = in2.value.trim().toUpperCase();
      
@@ -1136,19 +1136,21 @@ const hasSimpleColor = tokens1.some(t => SIMPLE_COLORS.includes(t)) || tokens2.s
 
       shifter = new WordShifter(w1, w2, shouldNerf, isMultiWord);
      
+// БЛОКИРОВКА ПОЛЕЙ И ОБНОВЛЕНИЕ СЧЕТЧИКОВ
       in1.disabled = true;
       in2.disabled = true;
 
-      const lockCounter = (counterEl) => {
+      // Находим элементы счетчиков для каждого поля
+      const updateCounterToLocked = (counterEl) => {
         const txt = counterEl.querySelector('.counter-text');
         const lock = counterEl.querySelector('.lock-icon');
         if (txt && lock) {
-          txt.style.display = "none";
-          lock.style.display = "inline";
+          txt.style.display = "none";  // Скрываем цифры (например, "5/25")
+          lock.style.display = "inline"; // Показываем иконку замка
         }
       };
-      lockCounter(counter1);
-      lockCounter(counter2);
+updateCounterToLocked(counter1);
+      updateCounterToLocked(counter2);
 
       choiceBlock.style.display = 'block';
 
