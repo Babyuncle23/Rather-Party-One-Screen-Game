@@ -79,6 +79,111 @@ let game = null;
 let screens = null;
 let audioManager = null;
 
+// --- ЛОГИКА РАСПОЗНАВАНИЯ СВАЙПОВ И АНИМАЦИИ ---
+let touchStartX = 0;
+let touchStartY = 0;
+let currentSwipeDeltaX = 0;
+let isSwiping = false;
+
+document.addEventListener('touchstart', (e) => { 
+    const guesserScreen = document.getElementById('guesser-screen');
+    if (!guesserScreen || guesserScreen.classList.contains('hidden') || guesserScreen.style.display === 'none') return;
+    
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+    isSwiping = true;
+    currentSwipeDeltaX = 0;
+    
+    // Отключаем CSS-анимации возврата, чтобы кнопка четко следовала за пальцем
+    const btn1 = document.getElementById('guess-word-1');
+    const btn2 = document.getElementById('guess-word-2');
+    if(btn1) btn1.style.transition = 'none';
+    if(btn2) btn2.style.transition = 'none';
+}, { passive: true });
+
+document.addEventListener('touchmove', (e) => {
+    if (!isSwiping || !shifter) return;
+    
+    const touchCurrentX = e.changedTouches[0].screenX;
+    const touchCurrentY = e.changedTouches[0].screenY;
+    const deltaX = touchCurrentX - touchStartX;
+    const deltaY = touchCurrentY - touchStartY;
+
+    // Если движение больше похоже на вертикальный скролл, отменяем свайп
+    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 20) {
+        resetSwipeVisuals();
+        isSwiping = false;
+        return;
+    }
+
+    currentSwipeDeltaX = deltaX;
+    const btn1 = document.getElementById('guess-word-1');
+    const btn2 = document.getElementById('guess-word-2');
+    
+    // Настройки физики свайпа
+    const maxDrag = 35; // Максимальное смещение кнопки
+    const pullDistance = Math.abs(deltaX);
+    
+    // Прогрессивное свечение: растет по мере оттягивания свайпа
+    const glowIntensity = Math.min(0.9, 0.2 + (pullDistance / 100)); // Прозрачность от 0.2 до 0.9
+    const glowRadius = pullDistance * 0.4; // Радиус размытия плавно увеличивается
+
+    if (deltaX < -15 && btn1) { 
+        // Тянем ВЛЕВО (выбираем первую кнопку)
+        const pull = Math.max(-maxDrag, deltaX * 0.4);
+        btn1.style.transform = `translateX(${pull}px) scale(0.98)`;
+        btn1.style.boxShadow = `0 0 ${10 + glowRadius}px rgba(55, 255, 226, ${glowIntensity})`;
+        btn1.style.borderColor = `rgba(55, 255, 226, ${glowIntensity})`;
+        // Подсвечиваем сами буквы и прочерки
+        btn1.style.textShadow = `0 0 ${5 + glowRadius * 0.5}px rgba(55, 255, 226, ${glowIntensity + 0.1})`;
+    } else if (deltaX > 15 && btn2) { 
+        // Тянем ВПРАВО (выбираем вторую кнопку)
+        const pull = Math.min(maxDrag, deltaX * 0.4);
+        btn2.style.transform = `translateX(${pull}px) scale(0.98)`;
+        btn2.style.boxShadow = `0 0 ${10 + glowRadius}px rgba(55, 255, 226, ${glowIntensity})`;
+        btn2.style.borderColor = `rgba(55, 255, 226, ${glowIntensity})`;
+        // Подсвечиваем сами буквы и прочерки
+        btn2.style.textShadow = `0 0 ${5 + glowRadius * 0.5}px rgba(55, 255, 226, ${glowIntensity + 0.1})`;
+    }
+}, { passive: true });
+
+document.addEventListener('touchend', (e) => {
+    if (!isSwiping) return;
+    isSwiping = false;
+    
+    const threshold = 75; // Комфортный порог: сколько пикселей нужно протянуть для выбора
+    
+    if (currentSwipeDeltaX < -threshold) {
+        makeGuess(shifter.orig1);
+    } else if (currentSwipeDeltaX > threshold) {
+        makeGuess(shifter.orig2);
+    }
+    
+    // Плавно возвращаем кнопки на место
+    resetSwipeVisuals();
+}, { passive: true });
+
+function resetSwipeVisuals() {
+    const btn1 = document.getElementById('guess-word-1');
+    const btn2 = document.getElementById('guess-word-2');
+    const transitionStyle = 'transform 0.3s ease-out, box-shadow 0.3s ease-out, border-color 0.3s ease-out, text-shadow 0.3s ease-out';
+    
+    if (btn1) {
+        btn1.style.transition = transitionStyle;
+        btn1.style.transform = '';
+        btn1.style.boxShadow = '';
+        btn1.style.borderColor = '';
+        btn1.style.textShadow = '';
+    }
+    if (btn2) {
+        btn2.style.transition = transitionStyle;
+        btn2.style.transform = '';
+        btn2.style.boxShadow = '';
+        btn2.style.borderColor = '';
+        btn2.style.textShadow = '';
+    }
+}
+
 let currentQuestion = null;
 let roundScoresSnapshot = null;
 let currentHint = "";
@@ -206,11 +311,11 @@ function setupInitialEventListeners() {
     game = new Match(temporaryPlayersList, roundsInput);
     window.game = game; 
    
-    const safetyBtn = document.getElementById('safety-global-btn');
+const safetyBtn = document.getElementById('safety-global-btn');
     if (safetyBtn) safetyBtn.style.display = 'block';
    
     const safetyTip = document.getElementById('safety-tip-text');
-    if (safetyTip) safetyTip.innerText = "Open without showing other players if needed.";
+    if (safetyTip) safetyTip.style.display = 'none'; // Прячем курсив во время игры
 
     passPhoneWithSpeech(
       game.players[game.pickerIndex],
@@ -379,8 +484,11 @@ helpToggle.onclick = () => {
 function setupGlobalButtonSounds() {
   document.addEventListener('click', (e) => {
     const button = e.target.closest('button');
-    if (button) {
-      if (button.id === 'safety-global-btn' || button.closest('#safety-modal')) return;
+    // Добавляем проверку, чтобы звук работал и при тапе по экранам передачи/алертов:
+    const isTapScreen = e.target.closest('#pass-screen') || e.target.closest('#custom-alert-modal');
+    
+    if (button || isTapScreen) {
+      if (button && (button.id === 'safety-global-btn' || button.closest('#safety-modal'))) return;
       audioManager.play('click');
     }
   }, true);
@@ -402,21 +510,25 @@ function setupPsychologicalSafetySystem() {
 
   globalBtn.onclick = (e) => {
     e.stopPropagation();
-    scrPrivacy.style.display = 'block';
-    scrOptions.style.display = 'none';
-    scrTalk.style.display = 'none';
+    if (scrPrivacy) scrPrivacy.style.display = 'block';
+    if (scrOptions) scrOptions.style.display = 'none';
+    if (scrTalk) scrTalk.style.display = 'none';
     modal.style.display = 'flex';
   };
 
-  proceedBtn.onclick = () => {
-    scrPrivacy.style.display = 'none';
-    scrOptions.style.display = 'block';
-  };
+  if (proceedBtn) {
+    proceedBtn.onclick = () => {
+      if (scrPrivacy) scrPrivacy.style.display = 'none';
+      if (scrOptions) scrOptions.style.display = 'block';
+    };
+  }
 
   const closeSafety = () => { modal.style.display = 'none'; };
-  closeBtn1.onclick = () => { closeSafety(); resetSafetyButtonsState(scrOptions); };
-  closeBtn2.onclick = () => { closeSafety(); resetSafetyButtonsState(scrOptions); };
-  resumeMatchBtn.onclick = () => { closeSafety(); resetSafetyButtonsState(scrOptions); };
+  
+  // Безопасная привязка кликов: вешаем событие, только если кнопка есть в HTML
+  if (closeBtn1) closeBtn1.onclick = () => { closeSafety(); resetSafetyButtonsState(scrOptions); };
+  if (closeBtn2) closeBtn2.onclick = () => { closeSafety(); resetSafetyButtonsState(scrOptions); };
+  if (resumeMatchBtn) resumeMatchBtn.onclick = () => { closeSafety(); resetSafetyButtonsState(scrOptions); };
 
   let safetySelectedMinutes = 0;
   const timerMinus = document.getElementById('safety-timer-minus');
@@ -557,6 +669,10 @@ function executeSafetyAction(action, scrOptions, scrTalk, modal, minutes) {
     screens.showAlert("🛡️ Safety", "Current round was canceled. All scores earned during this round have been rolled back, and a new question is loaded.");
 
   } else if (action === 'talk') {
+    if (scrOptions) scrOptions.style.display = 'none';
+    if (scrTalk) scrTalk.style.display = 'block';
+
+  } else if (action === 'stop-direct') {
     scrOptions.style.display = 'none';
     scrTalk.style.display = 'block';
 
@@ -569,8 +685,11 @@ function executeSafetyAction(action, scrOptions, scrTalk, modal, minutes) {
       "🛑 Match Stopped", 
       `The session has been explicitly halted. Current player scores have been preserved successfully:\n\n${progressReport}\n\nReturning to the main lobby.`,
       () => {
-        const safetyTip = document.getElementById('safety-tip-text');
-        if (safetyTip) safetyTip.innerText = "Recommended for all players to read before starting.";
+const safetyTip = document.getElementById('safety-tip-text');
+        if (safetyTip) {
+            safetyTip.style.display = 'block'; // Возвращаем видимость на главном экране
+            safetyTip.innerText = "Recommended to read before starting.";
+        }
         game = null;
         renderPlayerBoxes();
         screens.switchScreen('setup');
@@ -693,22 +812,34 @@ function updatePickerHints() {
 
 function renderInteractiveQuestion() {
   const container = document.getElementById('secret-question-text');
-  container.innerHTML = currentQuestion.text + " ";
- 
-  currentQuestion.fragments.forEach((frag, i) => {
-    const optText = frag.options[currentFragmentsState[i]].text;
-    const span = document.createElement('span');
-    span.innerText = optText + " ";
-    container.appendChild(span);
-  });
+  
+  // Если вопрос был отредактирован вручную
+  if (currentQuestion.customCompiledText) {
+      container.innerHTML = currentQuestion.customCompiledText;
+  } else {
+      // Иначе собираем из модульных фрагментов
+      container.innerHTML = currentQuestion.text + " ";
+      currentQuestion.fragments.forEach((frag, i) => {
+        const optText = frag.options[currentFragmentsState[i]].text;
+        const span = document.createElement('span');
+        span.innerText = optText + " ";
+        container.appendChild(span);
+      });
+  }
   updatePickerHints();
 }
 
 function getCompiledQuestionString(w1 = "[ ... ]", w2 = "[ ... ]", useHtml = false) {
-  let str = currentQuestion.text + " ";
-  currentQuestion.fragments.forEach((frag, i) => {
-    str += frag.options[currentFragmentsState[i]].text + " ";
-  });
+  let str = "";
+  
+  if (currentQuestion.customCompiledText) {
+      str = currentQuestion.customCompiledText;
+  } else {
+      str = currentQuestion.text + " ";
+      currentQuestion.fragments.forEach((frag, i) => {
+        str += frag.options[currentFragmentsState[i]].text + " ";
+      });
+  }
  
   if (useHtml) {
     str = str.replace("[ ... ]", `<span style="color: #00ffb3; font-weight: bold;">${w1}</span>`);
@@ -726,10 +857,11 @@ function initRound() {
     }
 
     currentQuestion = game.getRandomQuestion();
+    currentQuestion.customCompiledText = null;
     fragmentsHistory = [];
     questionHistory = [];
     currentFragmentsState = []; 
-    const undoBtn = document.getElementById('undo-options-btn');
+const undoBtn = document.getElementById('undo-options-btn');
     if (undoBtn) {
       undoBtn.disabled = true;
       undoBtn.onclick = () => {
@@ -737,6 +869,7 @@ function initRound() {
           const previousState = questionHistory.pop();
           currentQuestion = previousState.question;
           currentFragmentsState = previousState.fragments;
+          currentQuestion.customCompiledText = previousState.customText; // <-- ДОБАВИТЬ ЭТУ СТРОКУ
           renderInteractiveQuestion();
           updatePickerHints();
           audioManager.play('click');
@@ -763,13 +896,66 @@ function initRound() {
    
     updateHelpTargetText();
 
-    const rerollOptionsBtn = document.getElementById('reroll-options-btn');
+    // --- ЛОГИКА ТРЕХЗОННОГО РЕДАКТИРОВАНИЯ ---
+    const editToggleBtn = document.getElementById('edit-question-toggle-btn');
+    const editBlock = document.getElementById('edit-question-block');
+    const editPart1 = document.getElementById('edit-q-part1');
+    const editPart2 = document.getElementById('edit-q-part2');
+    const editPart3 = document.getElementById('edit-q-part3');
+    const editCancelBtn = document.getElementById('edit-q-cancel-btn');
+    const editSaveBtn = document.getElementById('edit-q-save-btn');
+    const secretTextDisplay = document.getElementById('secret-question-text');
+    const btnGroup = document.getElementById('picker-btn-group');
+
+    if (editToggleBtn && editBlock) {
+      // Сбрасываем интерфейс при загрузке нового раунда
+      editBlock.style.display = 'none';
+      secretTextDisplay.style.display = 'block';
+      if (btnGroup) btnGroup.style.display = 'flex';
+
+      editToggleBtn.onclick = () => {
+        // Достаем актуальный текст вопроса и разбиваем его на 3 части по маркерам
+        const rawQuestion = getCompiledQuestionString("[ ... ]", "[ ... ]", false);
+        const parts = rawQuestion.split("[ ... ]");
+        
+        editPart1.value = (parts[0] || "").trim();
+        editPart2.value = (parts[1] || "").trim();
+        editPart3.value = (parts[2] || "").trim();
+        
+        editBlock.style.display = 'block';
+        secretTextDisplay.style.display = 'none';
+        if (btnGroup) btnGroup.style.display = 'none';
+      };
+
+      editCancelBtn.onclick = () => {
+        editBlock.style.display = 'none';
+        secretTextDisplay.style.display = 'block';
+        if (btnGroup) btnGroup.style.display = 'flex';
+      };
+
+      editSaveBtn.onclick = () => {
+        const p1 = editPart1.value.trim();
+        const p2 = editPart2.value.trim();
+        const p3 = editPart3.value.trim();
+
+        // Сохраняем в кастомное свойство
+        currentQuestion.customCompiledText = `${p1} [ ... ] ${p2} [ ... ] ${p3}`;
+        renderInteractiveQuestion();
+        
+        editBlock.style.display = 'none';
+        secretTextDisplay.style.display = 'block';
+        if (btnGroup) btnGroup.style.display = 'flex';
+      };
+    }
+
+const rerollOptionsBtn = document.getElementById('reroll-options-btn');
     if (rerollOptionsBtn) {
       rerollOptionsBtn.onclick = () => {
         if (currentQuestion && currentFragmentsState.length > 0) {
           questionHistory.push({
             question: currentQuestion,
-            fragments: [...currentFragmentsState]
+            fragments: [...currentFragmentsState],
+            customText: currentQuestion.customCompiledText // <-- ДОБАВИТЬ ЭТУ СТРОКУ
           });
           const undoBtn = document.getElementById('undo-options-btn');
           if (undoBtn) undoBtn.disabled = false;
@@ -777,6 +963,7 @@ function initRound() {
         
         game.shuffledQuestions.unshift(currentQuestion);
         currentQuestion = game.getRandomQuestion();
+        currentQuestion.customCompiledText = null; // <-- ДОБАВИТЬ ЭТУ СТРОКУ
         currentFragmentsState = [];
         randomizeCurrentFragments();
         updatePickerHints();
@@ -837,15 +1024,16 @@ const in1 = document.getElementById('word-input-1');
     in1.placeholder = "First answer";
     in2.placeholder = "Second answer";
 
-    const helperBox = document.getElementById('responder-helper-box');
-    const helperToggle = document.getElementById('responder-helper-toggle');
+const helperToggle = document.getElementById('responder-helper-toggle');
+    // Ищем коробку по ID, а если её нет — берем родителя кнопки
+    const helperBox = document.getElementById('responder-helper-box') || (helperToggle ? helperToggle.parentElement : null);
     const helperContent = document.getElementById('responder-helper-content');
     const helperText = document.getElementById('responder-helper-text');
    
-    if (helperBox && helperToggle && helperContent && helperText) {
-      helperBox.style.display = 'none';
+    if (helperToggle && helperContent && helperText) {
+      if (helperBox) helperBox.style.display = 'none';
       helperContent.style.display = 'none';
-      helperToggle.innerText = '[ 💡 Need ideas? Tap to brainstorm ]';
+      helperToggle.innerText = '💡 Ideas'; // Короткий текст по умолчанию
      
       let ideas = [];
       if (!isCustomHintActive && currentHintObject && typeof currentHintObject === 'object' && Array.isArray(currentHintObject.brainstorm)) {
@@ -853,20 +1041,24 @@ const in1 = document.getElementById('word-input-1');
       }
 
       if (ideas.length > 0) {
+        // Берем 4 случайные идеи из базы
         const randomIdeas = [...ideas].sort(() => Math.random() - 0.5).slice(0, 4);
         helperText.innerText = randomIdeas.join(', ');
-        helperBox.style.display = 'block';
+        
+        if (helperBox) helperBox.style.display = 'block';
        
+        // Вешаем логику сворачивания/разворачивания
         helperToggle.onclick = (e) => {
           e.stopPropagation();
           const isCollapsed = helperContent.style.display === 'none';
           if (isCollapsed) {
             helperContent.style.display = 'block';
-            helperToggle.innerText = '[ 🔼 Hide brainstorm ideas ]';
+            helperToggle.innerText = '🔼 Hide ideas';
           } else {
             helperContent.style.display = 'none';
-            helperToggle.innerText = '[ 💡 Need ideas? Tap to brainstorm ]';
+            helperToggle.innerText = '💡 Ideas';
           }
+          if (audioManager) audioManager.play('click');
         };
       }
     }
@@ -1054,8 +1246,20 @@ function startGuesserPhase() {
     const btn1 = document.getElementById('guess-word-1');
     const btn2 = document.getElementById('guess-word-2');
    
-    if (btn1 && shifter) btn1.onclick = () => makeGuess(shifter.orig1);
-    if (btn2 && shifter) btn2.onclick = () => makeGuess(shifter.orig2);
+if (btn1 && shifter) {
+      btn1.onclick = (e) => {
+        // Если палец сдвинулся больше чем на 15 пикселей (был свайп или скролл) — блокируем обычный клик
+        if (typeof currentSwipeDeltaX !== 'undefined' && Math.abs(currentSwipeDeltaX) > 15) return; 
+        makeGuess(shifter.orig1);
+      };
+    }
+    if (btn2 && shifter) {
+      btn2.onclick = (e) => {
+        // Аналогичная защита для второй кнопки
+        if (typeof currentSwipeDeltaX !== 'undefined' && Math.abs(currentSwipeDeltaX) > 15) return; 
+        makeGuess(shifter.orig2);
+      };
+    }
   } catch (err) {
     console.error("Error inside startGuesserPhase:", err);
   }
@@ -1114,83 +1318,83 @@ function useReveal(revealType, cost) {
 
 function updateGuesserUI() {
   try {
-    const progressEl = document.getElementById('guesser-round-progress');
+const progressEl = document.getElementById('guesser-round-progress');
     if (progressEl && game) {
       const currentGuesserStep = totalGuessersThisRound - remainingGuessers.length;
-      progressEl.innerHTML = `
-        <span>ROUND ${game.currentRound}/${game.totalRounds}</span>
-        <span style="color: rgba(255,255,255,0.15)">|</span>
-        <span>GUESSER ${currentGuesserStep} OF ${totalGuessersThisRound}</span>
-      `;
+      let elements = [];
+      
+      // Показываем счетчик раундов только если их больше 1
+      if (game.totalRounds > 1) {
+        elements.push(`<span>ROUND ${game.currentRound}/${game.totalRounds}</span>`);
+      }
+      
+      // Показываем счетчик угадывающих только если игроков больше 2
+      if (game.players.length > 2) {
+        elements.push(`<span>GUESSER ${currentGuesserStep} OF ${totalGuessersThisRound}</span>`);
+      }
+      
+      // Если есть что показывать — выводим на экран, если нет — скрываем контейнер
+      if (elements.length > 0) {
+        progressEl.innerHTML = elements.join(' <span style="color: rgba(255,255,255,0.15)">|</span> ');
+        progressEl.style.display = 'flex';
+      } else {
+        progressEl.innerHTML = '';
+        progressEl.style.display = 'none';
+      }
     }
 
     const masks = shifter.getMaskedWords();
-const displayStaticQuestion = getCompiledQuestionString("[ ANSWER 1 ]", "[ ANSWER 2 ]", false);
-    const hintEl = document.getElementById('guesser-displayed-hint');
-    const questionEl = document.getElementById('guesser-question-display');
-    const questionWrapper = document.getElementById('guesser-question-wrapper');
-    const expandHint = document.getElementById('guesser-question-expand-hint');
+const hintEl = document.getElementById('guesser-displayed-hint');
     const scoreEl = document.getElementById('potential-score');
     const balanceEl = document.getElementById('gold-balance');
     const guess1Btn = document.getElementById('guess-word-1');
     const guess2Btn = document.getElementById('guess-word-2');
 
     if (hintEl) hintEl.innerText = currentHint;
-    
-    // Сбрасываем вопрос в свернутое состояние для каждого нового угадывающего
-    if (questionEl) {
-      questionEl.innerText = displayStaticQuestion;
-      questionEl.classList.remove('question-expanded');
-      questionEl.classList.add('question-collapsed');
-    }
-    if (expandHint) expandHint.innerText = '▼ Tap to expand';
-
-    // Обработчик клика для разворачивания/сворачивания
-    if (questionWrapper) {
-      questionWrapper.onclick = (e) => {
-        e.stopPropagation();
-        if (questionEl.classList.contains('question-collapsed')) {
-          questionEl.classList.remove('question-collapsed');
-          questionEl.classList.add('question-expanded');
-          expandHint.innerText = '▲ Tap to collapse';
-        } else {
-          questionEl.classList.remove('question-expanded');
-          questionEl.classList.add('question-collapsed');
-          expandHint.innerText = '▼ Tap to expand';
-        }
-        if (audioManager) audioManager.play('click');
-      };
-    }
     if (scoreEl) scoreEl.innerText = `Win: +${FIXED_REWARD} points`;
     if (balanceEl) balanceEl.innerText = `Points: ${game.players[currentGuesserIndex].gold}`;
-   
-if (guess1Btn) guess1Btn.innerHTML = `<span style="font-size: 10px; opacity: 0.5; font-weight: 700; margin-right: 8px; display: block; margin-bottom: 6px; letter-spacing: 0.05em; text-align: left;">ANSWER <span style="color: #ffd56b; opacity: 1; font-size: 12px; font-weight: 900;">1</span></span><div class="masked-wrapper">${masks.w1}</div>`;
-    if (guess2Btn) guess2Btn.innerHTML = `<span style="font-size: 10px; opacity: 0.5; font-weight: 700; margin-right: 8px; display: block; margin-bottom: 6px; letter-spacing: 0.05em; text-align: left;">ANSWER <span style="color: #ffd56b; opacity: 1; font-size: 12px; font-weight: 900;">2</span></span><div class="masked-wrapper">${masks.w2}</div>`;
+
+    // Разбиваем вопрос на 3 части (До 1 ответа, между, и после 2 ответа)
+    const rawQuestion = getCompiledQuestionString("[ ... ]", "[ ... ]", false);
+    const parts = rawQuestion.split("[ ... ]");
+    
+    const part1El = document.getElementById('guesser-q-part1');
+    const part2El = document.getElementById('guesser-q-part2');
+    const part3El = document.getElementById('guesser-q-part3');
+    
+    if (part1El) part1El.innerText = parts[0] ? parts[0].trim() : "";
+    if (part2El) part2El.innerText = parts[1] ? parts[1].trim() : "";
+    if (part3El) part3El.innerText = parts[2] ? parts[2].trim() : "";
+
+// Вставляем маски с кружочками-номерами
+   if (guess1Btn) guess1Btn.innerHTML = `<div class="masked-wrapper" style="margin: 0; justify-content: center;">${masks.w1}</div>`;
+    if (guess2Btn) guess2Btn.innerHTML = `<div class="masked-wrapper" style="margin: 0; justify-content: center;">${masks.w2}</div>`;
+
 
     const randBtn = document.getElementById('ability-extra-rand-btn');
     const lengthBtn = document.getElementById('ability-length-btn');
 
-const rollStatusEl = document.getElementById('ability-roll-status');
+    const rollStatusEl = document.getElementById('ability-roll-status');
     if (rollStatusEl) {
       if (revealCount === 1) {
+        rollStatusEl.style.display = 'block';
         rollStatusEl.innerHTML = `💡 You can buy one word reveal:`;
       } else {
+        rollStatusEl.style.display = 'block';
         rollStatusEl.innerHTML = `🔒 Reveal already used`;
       }
     }
     
     updateStatsBarVisibility();
 
-    const renderAbility = (btn, label, icon, desc) => {
+const renderAbility = (btn, label, icon, desc) => {
       if (!btn) return;
       const row = btn.closest('.ability-row');
       const isUsed = revealCount >= 2;
-      const costBadge = `<span style="color: var(--warning); font-size: 11px; font-weight: 800; background: rgba(255, 213, 107, 0.1); padding: 2px 6px; border-radius: 4px;">-15 PTS</span>`;
 
       btn.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+        <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 4px;">
           <strong style="font-size: 15px;">${icon} ${label}</strong>
-          ${isUsed ? '' : costBadge}
         </div>
       `;
      
@@ -1215,8 +1419,8 @@ const rollStatusEl = document.getElementById('ability-roll-status');
       }
     };
 
-renderAbility(randBtn, 'Random & ❌ 1st LTRs', '🎲');
-    renderAbility(lengthBtn, 'Length & 1st LTRs', '📏');
+renderAbility(randBtn, 'Open random letters', '🎲');
+    renderAbility(lengthBtn, "Show words' length and first letters", '📏');
 
     const abilitiesContainer = document.querySelector('.abilities-list-vertical');
     if (abilitiesContainer) {
@@ -1272,20 +1476,17 @@ function makeGuess(word) {
       audioManager.play('lose', audioManager.getVolume() * 0.75);
     }
 
-    const lastRoundData = game.history[game.history.length - 1];
-    let cleanSentence = lastRoundData.resultSentence.replace(/<\/?[^>]+(>|$)/g, "");
+const lastRoundData = game.history[game.history.length - 1];
+    // Берем красивую строку с HTML (с жирным шрифтом и цветами), а не голый текст
+    const formattedSentence = lastRoundData.resultSentence; 
 
     const statusIcon = isCorrect ? "🎉 CORRECT!" : "❌ WRONG!";
-    const pointsEarned = isCorrect ? `${FIXED_REWARD} points` : "0 points";
-    const goldChange = isCorrect ? `+${FIXED_REWARD}` : "0";
     const finalWallet = guesser.gold;
+    const guessColor = isCorrect ? 'var(--positive)' : 'var(--danger)';
 
-    const alertMessage =
-      `You earned: ${pointsEarned}\n` +
-      `Score: ${goldBefore} → ${finalWallet} points (${goldChange})\n\n` +
-      `--- CHOICE SCHEME ---\n` +
-      `${cleanSentence}\n\n` +
-      `• Your guess was: "${word}"`;
+    // Собираем компактную карточку с результатами
+// Собираем компактную карточку с результатами (в одну строку, чтобы pre-wrap не добавлял лишние пробелы)
+    const alertMessage = `<div style="text-align: center; margin-bottom: 10px;"><span style="font-size: 1.1rem; font-weight: 800; color: #ffd56b;">Score: ${goldBefore} ➔ ${finalWallet}</span></div><div style="background: rgba(255,255,255,0.04); padding: 14px; border-radius: 14px; border: 1px dashed rgba(255,255,255,0.15); font-size: 0.95rem; text-align: center; white-space: normal;"><div style="margin-bottom: 10px; font-weight: 700;">Your guess: <span style="color: ${guessColor}; text-transform: uppercase;">"${word}"</span></div><div style="line-height: 1.5; color: #e8e9f1;">${formattedSentence}</div></div>`;
 
     screens.showAlert(statusIcon, alertMessage, () => {
       setupNextGuesser();

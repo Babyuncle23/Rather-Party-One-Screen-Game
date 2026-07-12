@@ -9,7 +9,7 @@
 </head>
 <body>
 
-<!-- ЭКРАН ЗАГРУЗКИ ГОЛОСА -->
+  <!-- ЭКРАН ЗАГРУЗКИ ГОЛОСА -->
   <div id="loading-screen" class="modal-overlay hidden">
     <div class="modal-content loading-modal-content">
       <h2 class="loading-message">Loading...</h2>
@@ -17,22 +17,23 @@
   </div>
 
   <!-- КАСТОМНОЕ ОКНО ВМЕСТО СИСТЕМНОГО ALERT -->
-  <div id="custom-alert-modal" class="modal-overlay hidden">
+  <div id="custom-alert-modal" class="modal-overlay hidden" style="cursor: pointer;">
     <div class="modal-content">
       <h2 id="custom-alert-title" class="modal-title">Notice</h2>
       <p id="custom-alert-message" class="modal-message"></p>
-      <button id="custom-alert-btn" class="btn btn-primary">OK</button>
+      <p class="tap-anywhere-text">👇 Tap to continue</p>
     </div>
   </div>
 
   <!-- КРАСИВОЕ МОДАЛЬНОЕ ОКНО ПЕРЕДАЧИ ТЕЛЕФОНА -->
-  <div id="pass-screen" class="modal-overlay hidden">
-    <div class="modal-content">
+  <div id="pass-screen" class="modal-overlay hidden" style="cursor: pointer;">
+    <div class="modal-content fullscreen-pass-content">
       <h1 id="pass-message">PASS PHONE</h1>
-      <button id="pass-confirm-btn" class="btn btn-primary">I AM READY</button>
+      <p class="tap-anywhere-text">👇 Tap to continue</p>
     </div>
   </div>
 
+  <!-- ОКНО ВЫБОРА ЭМОДЗИ -->
   <div id="emoji-picker-modal" class="modal-overlay hidden">
     <div class="modal-content emoji-picker-content">
       <h2>Choose an emoji</h2>
@@ -44,83 +45,66 @@
     </div>
   </div>
 
-   <!-- МОДАЛЬНОЕ ОКНО ПСИХОЛОГИЧЕСКОЙ БЕЗОПАСНОСТИ -->
+  <!-- МОДАЛЬНОЕ ОКНО ПСИХОЛОГИЧЕСКОЙ БЕЗОПАСНОСТИ -->
+<!-- ЗАМЕНИ ВЕСЬ БЛОК <div id="safety-modal"...> НА ЭТОТ КОД -->
+
   <div id="safety-modal" class="modal-overlay hidden">
     <div class="modal-content safety-modal-content">
       
-      <!-- ЭКРАН 1: ТАЙНЫЙ ВХОД (ПРИВАТНОСТЬ И SAFER SPACE) -->
       <div id="safety-screen-privacy">
         <h2 class="safety-title">🌱 Safety Timeout</h2>
         <p class="safety-description">
           Nothing happened yet. The game is on pause.<br>Only you can see this screen.
         </p>
-        
-        <!-- БЛОК ПРИНЦИПОВ SAFER SPACE (ВИЗУАЛЬНО МИМИКРИРУЕТ ПОД ИНСТРУКЦИЮ) -->
         <div class="rules-dropdown-box safety-info-panel">
           <div class="safety-info-heading">SAFER SPACE PRINCIPLES:</div>
-          • <strong>Right to Stop:</strong> Personal boundaries matter more than any game points.<br>
-          • <strong>Respect & Comfort:</strong> Players don't judge or force anyone to view, discuss, or process uncomfortable topics in any form.<br>
-          • <strong>Privacy:</strong> You can preview all safety options now or completely privatly during the game.
+          • <strong>Right to Stop:</strong> Personal boundaries matter more than game points.<br>
+          • <strong>Respect & Comfort:</strong> Players don't judge or force anyone to view uncomfortable topics.<br>
+          • <strong>Privacy:</strong> You can preview safety options privately.
         </div>
-        <!-- КНОПКИ НАВИГАЦИИ ДЛЯ ЭКРАНА 1 -->
         <div class="safety-actions-row">
           <button id="safety-close-btn-1" class="btn btn-small">← Return</button>
           <button id="safety-proceed-btn" class="btn btn-primary">Next ➜</button>
         </div>
       </div>
 
-      <!-- ЭКРАН 2: ПРЕДПРОСМОТР ОПЦИЙ -->
       <div id="safety-screen-options" class="hidden">
         <h2 class="safety-title">Safety Options</h2>
-        <p class="prompt-intro">Tap any option for a safe preview. No actions will trigger instantly.</p>
-        
         <div class="safety-options-column">
-          <!-- ОПЦИЯ 1: СКИП РАУНДА -->
+          <!-- ОПЦИЯ 1 -->
           <div class="safety-option-card">
             <div class="safety-option-header highlight-gold">
               <span>🔄 Skip This Round</span>
-              <span class="safe-preview-badge">[ ℹ️ Safe Preview ]</span>
             </div>
-            <div class="safety-desc-text">
-              This round is instantly canceled. No one scores or loses points. The game draws a completely new question and restarts the turn for the same chooser.
-            </div>
-            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="skip">Hold for 2s to Confirm</button>
+            <div class="safety-desc-text">Round is canceled. Game draws a new question.</div>
+            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="skip">Hold 2s to Confirm</button>
           </div>
 
-          <!-- ОПЦИЯ 2: ОТКРЫТЫЙ ДИАЛОГ -->
+          <!-- ОПЦИЯ 2 -->
           <div class="safety-option-card">
             <div class="safety-option-header">
               <span>💬 Open Circle (Let's Talk)</span>
-              <span class="safe-preview-badge">[ ℹ️ Safe Preview ]</span>
             </div>
-            <div class="safety-desc-text">
-              Pauses the game and opens a friendly text screen for the whole company to safely talk through the uncomfortable moment or clear the air together.
-            </div>
-            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="talk">Hold for 2s to Confirm</button>
+            <div class="safety-desc-text">Pauses the game and opens a friendly text screen for the whole company.</div>
+            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="talk">Hold 2s to Confirm</button>
           </div>
 
-          <!-- ОПЦИЯ 3: ПРЯМАЯ ОТКРЫТАЯ ОСТАНОВКА -->
+          <!-- ОПЦИЯ 3 -->
           <div class="safety-option-card safety-option-card--danger">
             <div class="safety-option-header">
               <span>🛑 Stop Match & Talk Openly</span>
-              <span class="safe-preview-badge">[ ℹ️ Safe Preview ]</span>
             </div>
-            <div class="safety-desc-text">
-              Stops the match instantly and saves your current points. Use this if you want to explicitly tell the company that the game needs to stop right now.
-            </div>
-            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="stop-direct">Hold for 2s to Confirm</button>
+            <div class="safety-desc-text">Stops match instantly and saves points.</div>
+            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="stop-direct">Hold 2s to Confirm</button>
           </div>
 
-          <!-- ОПЦИЯ 4: АНОНИМНЫЙ ТАЙМЕР ВЫХОДА (СТИЛИЗОВАН ПОД GAMEPLAY TIPS) -->
+          <!-- ОПЦИЯ 4 -->
           <div class="safety-option-card safety-option-card--muted">
             <div class="safety-option-header">
               <span>⏳ Set Anonymous Exit Timer</span>
-              <span class="safe-preview-badge">[ ℹ️ Safe Preview ]</span>
             </div>
             <div class="safety-desc-text">
-              If you feel uncomfortable due to the question, topics, or behavior of other players, use this to trigger a natural game close. Choose a delay below, and the match will end automatically later under the guise of a standard session limit break. No one will know you triggered it.
-              
-              <!-- КНОПКИ УПРАВЛЕНИЯ ТАЙМЕРОМ В СТИЛЕ TIP-VISUAL -->
+              Choose a delay below, and the match will end automatically later.
               <div class="tip-visual safety-timer-box">
                 <div class="safety-timer-label">FLOW CONFIG:</div>
                 <div class="safety-timer-row">
@@ -129,120 +113,77 @@
                   <span id="safety-timer-display" class="safety-timer-display">Current: 0 min</span>
                 </div>
               </div>
-
-              <!-- ВРЕМЕННАЯ ПРИПИСКА О БЕТА-ТЕСТЕ -->
-              <p class="safety-beta-note">
-                ⚠️ Note: This automated safety module is currently under development and beta-testing. It may not always function as expected on all hardware setups.
-              </p>
             </div>
-            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="stop-delayed">Hold for 2s to Confirm</button>
+            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="stop-delayed">Hold 2s to Confirm</button>
           </div>
         </div>
-        <!-- ФИКСИРОВАННЫЙ ВЫХОД ИЗ ОКНА БЕЗОПАСНОСТИ -->
         <div class="safety-close-row">
           <button id="safety-close-btn-2" class="btn btn-small">← Return to Game</button>
         </div>
       </div>
 
-      <!-- ЭКРАН 3: ФАСИЛИТАЦИЯ ДИАЛОГА -->
+      <!-- ЭКРАН 3 -->
       <div id="safety-screen-talk" class="hidden">
         <h2 class="safety-title">Open Circle</h2>
-        <p class="safety-talk-message">
-          This game is made for fun, connection, and good times — never for causing genuine distress or making anyone feel unsafe.
-        </p>
-        <p class="safety-talk-note">
-          Take a deep breath. Use this timeout to check in with each other, talk openly, or simply shift the conversation. Your friendship matters more than any points.
-        </p>
+        <p class="safety-talk-message">This game is made for fun, connection, and good times.</p>
         <button id="safety-resume-match-btn" class="btn btn-primary btn-success">We Are Ready to Continue</button>
       </div>
 
-    </div> <!-- Закрылся .modal-content -->
-  </div> <!-- Закрылся #safety-modal -->
+    </div> 
+  </div>
 
   <!-- ГЛАВНЫЙ КОНТЕЙНЕР ИГРЫ -->
   <div class="game-container">
     
     <!-- ВЕРХНЯЯ СТРОКА УПРАВЛЕНИЯ -->
     <div class="help-section">
-<div class="help-header-row">
+      <div class="help-header-row">
         <button id="safety-global-btn" class="btn btn-small">Safety</button>
         <button id="help-toggle-btn" class="btn btn-small">Tips</button>
       </div>
-      <!-- ДИНАМИЧЕСКАЯ ПОДПИСЬ БЕЗОПАСНОСТИ -->
-      <div id="safety-tip-text" class="safety-tip-text">
-        Recommended to read before starting.
-      </div>
+      <div id="safety-tip-text" class="safety-tip-text">Recommended to read before starting.</div>
       
-      <!-- ВЫПАДАЮЩАЯ ПАНЕЛЬ СЛОВАРИКА ПРАВИЛ -->
       <div id="help-panel" class="rules-dropdown-box hidden">
-        <p class="help-panel-title"><strong>How to play (Easy Guide)</strong></p>
-        
+        <p class="help-panel-title"><strong>How to play</strong></p>
         <div class="help-step" data-step="1">
-          <p><strong>Step 1: The Picker</strong></p>
-          <p>Read the secret question. Choose 1 pre-made prompt or write a custom one for the next player.</p>
-          <div class="tip-visual tip-visual--spaced">
-            <div class="tip-label">PLAYER 1 SEES:</div>
-            <div class="tip-highlight">Question: Would you rather eat <strong>___</strong> or <strong>___</strong>?</div>
-            <div class="tip-positive">[Select Prompt] ➜ "Name 2 fast foods"</div>
-          </div>
+          <p><strong>Step 1: Picker</strong></p>
+          <p>Choose a prompt for the next player.</p>
         </div>
-
-        <div class="help-step" data-step="2">
-          <p><strong>Step 2: The Responder</strong></p>
-          <p>You see ONLY the prompt. Type 2 different answers, then secretly select your preferred option.</p>
-          <div class="tip-visual tip-visual--spaced">
-            <div class="tip-label">PLAYER 2 SEES:</div>
-            <div>Prompt: "Name 2 fast foods"</div>
-            <div class="tip-accent">Input 1: PIZZA | Input 2: BURGER</div>
-            <div class="tip-positive">[Secret Choice] ➜ I prefer: PIZZA</div>
-          </div>
+        <div class="help-step" data-step="2" style="display:none;">
+          <p><strong>Step 2: Responder</strong></p>
+          <p>Type 2 answers and secretly select one.</p>
         </div>
-<div class="help-step" data-step="3">
-  <p><strong>Step 3: The Guessers</strong></p>
-  <p>Guess the choice! You can spend 15 pts for a word reveal: Length or Random (you can use only one reveal per round).</p>
-  <div class="tip-visual tip-visual--spaced">
-    <div class="tip-label">GUESSERS SEE:</div>
-    <div class="tip-highlight tip-strong">ANSWER 1 <span class="tip-subtext">(1 word)</span></div>
-    <div class="tip-positive">P <span class="tip-accent">||</span> Z <span class="tip-accent">||</span></div>
-    <div class="tip-positive">[Tap your guess] ➜ Win +50 points!</div>
-  </div>
-</div>
-
+        <div class="help-step" data-step="3" style="display:none;">
+          <p><strong>Step 3: Guessers</strong></p>
+          <p>Guess the choice! <em>Tip: Tap 👁️ to peek at the secret question!</em></p>
+        </div>
         <div class="carousel-controls">
-          <button id="help-prev-btn" class="carousel-btn">← Back</button>
+          <button id="help-prev-btn" class="carousel-btn">←</button>
           <span id="carousel-index">Step 1 / 3</span>
-          <button id="help-next-btn" class="carousel-btn">Next →</button>
+          <button id="help-next-btn" class="carousel-btn">→</button>
         </div>
-
-        <p class="tip-note">
-          ℹ️ 2 Players: You play with each other.<br>
-          ℹ️ 3+ Players: The phone passes to the next person in a circle.
-        </p>
       </div>
     </div>
+
     <!-- НАСТРОЙКА ИГРЫ -->
-<div id="setup-screen">
+    <div id="setup-screen">
       <div class="setup-intro">
-        <div class="creator-badge">Desgned by Human</div>
+        <div class="creator-badge">Designed by Human</div>
         <div class="creator-subtitle">coded by ai 😬</div>
       </div>
-      <!-- Настройка доступности (Screen Reader) -->
       <div class="sr-access-row">
         <input type="checkbox" id="sr-mode-toggle">
         <label for="sr-mode-toggle">Screen Reader Compatibility<br><span>(Mutes in-game auto-voice)</span></label>
       </div>
       <h2>Rather Party</h2>
-      <p class="setup-lead-text">
-Choose questions and find out how others have answered them.</p>
+      <p class="setup-lead-text">Choose questions and find out how others have answered them.</p>
 
       <div class="add-player-block">
         <input id="single-player-input" type="text" placeholder="Enter player name" class="input-field">
         <button id="add-player-btn" class="btn btn-accent spaced-button">+ Add Player</button>
       </div>
 
-      <!-- Контейнер для "коробочек" игроков -->
       <div id="players-boxes-container" class="boxes-container"></div>
-      <p class="emoji-help-text">Tap an avatar to choose your emoji.</p>
 
       <div class="spaced-section">
         <label for="rounds-input" class="field-label">Number of rounds:</label>
@@ -250,139 +191,162 @@ Choose questions and find out how others have answered them.</p>
       </div>
       
       <button id="start-game-btn" class="btn btn-primary spaced-button">Start Game</button>
+      
       <div class="share-qr-block">
         <p>Liked this one-screen game? Share the link with others via QR 😊</p>
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://babyuncle23.github.io/Rather-Party-One-Screen-Game/" alt="Share Game QR" class="qr-code-image">
       </div>
     </div>
 
-    <!-- ХОД ИГРОКА 1 (ВЫБОР ПОДСКАЗКИ И РЕДАКТИРОВАНИЕ ВОПРОСА) -->
+    <!-- ХОД ИГРОКА 1 (ВЫБОР ПОДСКАЗКИ) -->
     <div id="picker-screen" class="hidden">
       <h2><span id="picker-name" class="player-name-game-slow"></span>'s Turn</h2>
-<div class="card-question">
-        <p>Your secret question:</p>
-        <!-- Текст теперь просто белый и без лишних стилей -->
-        <p id="secret-question-text" class="highlight-text text-center spaced-bottom"></p>
-
-        <!-- Блок с кнопками по центру -->
-        <div class="btn-inline-group">
-          <button id="reroll-options-btn" class="btn btn-small">🎲 Reroll</button>
-          <button id="undo-options-btn" class="btn btn-small" disabled title="Use Reroll first to randomize options, then you can undo">↩ Undo</button>
-        </div>
-      </div>
-<p class="prompt-summary">Pick a topic for <span id="responder-target-name"></span> to name 2 things:</p>
-      <button id="hint-btn-1" class="btn btn-secondary spaced-button"></button>
-      <button id="hint-btn-2" class="btn btn-secondary spaced-button"></button>
       
-      <div class="custom-hint-block spaced-section">
-        <p>Or type a custom prompt for the next player:</p>
-        <input id="custom-hint-input" type="text" placeholder="e.g. Name 2 things you love..." class="input-field">
-        <button id="custom-hint-btn" class="btn btn-accent">Use Custom Hint</button>
+      <div class="gameplay-zone">
+<div class="card-question">
+          <!-- Заголовок и иконка карандаша в одной строке -->
+          <div style="display: flex; justify-content: center; align-items: center; gap: 8px;">
+            <p style="margin-bottom: 0;">Secret question* for <span id="responder-target-name"></span></p>
+            <button id="edit-question-toggle-btn" style="background: none; border: none; padding: 4px; font-size: 16px; cursor: pointer; -webkit-tap-highlight-color: transparent; opacity: 0.8; transition: opacity 0.2s;" title="Edit Question">✏️</button>
+          </div>
+          
+          <p id="secret-question-text" class="highlight-text text-center spaced-bottom" style="margin-top: 16px;"></p>
+          
+<!-- ТРИ ПОЛЯ РЕДАКТИРОВАНИЯ (СКРЫТЫ ПО УМОЛЧАНИЮ) -->
+          <div id="edit-question-block" style="display: none; margin-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px;">
+            <textarea id="edit-q-part1" class="input-field" rows="2" style="margin-bottom: 8px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4;"></textarea>
+            
+            <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;">[ ___ ANSWER 1 ___ ]</div>
+            
+            <textarea id="edit-q-part2" class="input-field" rows="2" style="margin-bottom: 8px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4;"></textarea>
+            
+            <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;">[ ___ ANSWER 2 ___ ]</div>
+            
+            <textarea id="edit-q-part3" class="input-field" rows="2" style="margin-bottom: 12px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4;"></textarea>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button id="edit-q-cancel-btn" class="btn btn-small" style="background: rgba(255,111,122,0.1); color: var(--danger); border: 1px solid rgba(255,111,122,0.2);">Cancel</button>
+              <button id="edit-q-save-btn" class="btn btn-small" style="background: rgba(55,255,226,0.1); color: var(--positive); border: 1px solid rgba(55,255,226,0.2);">Save</button>
+            </div>
+          </div>
+
+          <div class="btn-inline-group" id="picker-btn-group">
+            <button id="reroll-options-btn" class="btn btn-small">🎲 Reroll</button>
+            <button id="undo-options-btn" class="btn btn-small" disabled>↩ Undo</button>
+          </div>
+          <br>
+          <p><i>* Visible for next player only after they answered the prompt</i></p>
+        </div>
+        <p class="prompt-summary">Prompt:</p>
+        <button id="hint-btn-1" class="btn btn-secondary spaced-button"></button>
+        <button id="hint-btn-2" class="btn btn-secondary spaced-button"></button>
+        <div class="custom-hint-block spaced-section">
+          <input id="custom-hint-input" type="text" placeholder="Custom prompt..." class="input-field">
+          <button id="custom-hint-btn" class="btn btn-accent">Use Custom Hint</button>
+        </div>
       </div>
     </div>
 
     <!-- ХОД ИГРОКА 2 (ВВОД СЛОВ И ВЫБОР) -->
     <div id="responder-screen" class="hidden">
       <h2><span id="responder-name" class="player-name-game-slow"></span>'s Turn</h2>
-      <p class="prompt-summary text-center">
-        Your prompt is: <span id="displayed-hint" class="highlight-subtext"></span>
-      </p>
       
-      <!-- ИНТЕРАКТИВНЫЙ СПОЙЛЕР ДЛЯ ШПАРГАЛКИ -->
-      <div id="responder-helper-box" class="hidden helper-box-full">
-        <button id="responder-helper-toggle" class="text-link-btn">[ 💡 Need ideas? Tap to brainstorm ]</button>
-        <div id="responder-helper-content" class="responder-helper-content hidden">
-          <span id="responder-helper-text" class="responder-helper-text"></span>
+      <div class="gameplay-zone">
+<p class="prompt-summary text-center">Prompt: <span id="displayed-hint" class="highlight-subtext"></span></p>
+        
+        <!-- ИНТЕРАКТИВНЫЙ СПОЙЛЕР ДЛЯ ШПАРГАЛКИ -->
+        <div id="responder-helper-box" style="text-align: center; margin-bottom: 14px;">
+          <button id="responder-helper-toggle" class="btn-small icon-btn-small" style="width: auto; padding: 6px 16px;">💡 Ideas</button>
+          <div id="responder-helper-content" class="responder-helper-content hidden" style="margin-top: 8px;">
+            <span id="responder-helper-text" class="responder-helper-text"></span>
+          </div>
         </div>
-      </div>
 
-      <div class="input-container-with-counter">
-        <input id="word-input-1" type="text" placeholder="First answer" maxlength="25" class="input-field">
-        <span id="word-counter-1" class="floating-counter">
-          <span class="counter-text">0/25</span><span class="lock-icon">🔒</span>
-        </span>
-      </div>
-      <div class="input-container-with-counter">
-        <input id="word-input-2" type="text" placeholder="Second answer" maxlength="25" class="input-field">
-        <span id="word-counter-2" class="floating-counter">
-          <span class="counter-text">0/25</span><span class="lock-icon">🔒</span>
-        </span>
-      </div>
+        <div class="inputs-combined-wrapper">
+          <div class="input-container-with-counter">
+            <input id="word-input-1" type="text" placeholder="First answer" maxlength="25" class="input-field">
+            <span id="word-counter-1" class="floating-counter"><span class="counter-text">0/25</span></span>
+          </div>
+          <div class="input-container-with-counter">
+            <input id="word-input-2" type="text" placeholder="Second answer" maxlength="25" class="input-field">
+            <span id="word-counter-2" class="floating-counter"><span class="counter-text">0/25</span></span>
+          </div>
+        </div>
 
-      <button id="submit-words-btn" class="btn btn-primary spaced-button">Submit Answers</button>
+        <button id="submit-words-btn" class="btn btn-primary spaced-button">Submit Answers</button>
 
-      <div id="responder-choice-block" class="hidden spaced-section">
-        <h3>Now choose:</h3>
-        <p id="responder-final-question" class="card-question highlight-text"></p>
-        <div class="choice-buttons-grid">
-          <button id="opt-btn-1" class="btn btn-choice"></button>
-          <button id="opt-btn-2" class="btn btn-choice"></button>
+        <div id="responder-choice-block" class="hidden spaced-section">
+          <h3>Now choose:</h3>
+          <p id="responder-final-question" class="card-question highlight-text"></p>
+          <div class="choice-buttons-grid">
+            <button id="opt-btn-1" class="btn btn-choice"></button>
+            <button id="opt-btn-2" class="btn btn-choice"></button>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- ЭКРАН УГАДЫВАНИЯ -->
     <div id="guesser-screen" class="hidden">
-      <!-- МИНИ-ДИСПЛЕЙ ПРОГРЕССА РАУНДА И ОЧЕРЕДИ -->
-      <div id="guesser-round-progress" class="guesser-progress-row"></div>
+      <div class="sticky-header" id="sticky-header">
+        <div id="guesser-round-progress" class="guesser-progress-row"></div>
+        <div class="stats-bar"><span id="gold-balance" class="gold-balance"></span></div>
+      </div>
 
       <h2><span id="guesser-name" class="player-name-game-slow"></span>, Guess!</h2>
       
-      <!-- БЛОК ПРОМПТА С УЛУЧШЕННОЙ ЧИТАЕМОСТЬЮ -->
-      <div class="guesser-info-block">
-        <div class="guesser-info-subtitle">THE PROMPT WAS</div>
-        <div id="guesser-displayed-hint" class="guesser-info-title hint-highlight"></div>
-      </div>
-
-<!-- БЛОК СЕКРЕТНОГО ВОПРОСА С УЛУЧШЕННОЙ ЧИТАЕМОСТЬЮ -->
-      <div class="guesser-info-block border-top-dashed">
-        <div class="guesser-info-subtitle">SECRET QUESTION</div>
-        <!-- Интерактивная обертка -->
-        <div id="guesser-question-wrapper" class="question-interactive-wrapper">
-          <div id="guesser-question-display" class="guesser-info-title question-highlight question-collapsed"></div>
-          <div id="guesser-question-expand-hint" class="expand-icon">▼ Tap to expand</div>
+<div class="gameplay-zone">
+        <!-- Подсказка-тема -->
+        <div class="guesser-info-block">
+          <div class="guesser-info-subtitle">THE PROMPT WAS</div>
+          <div id="guesser-displayed-hint" class="guesser-info-title hint-highlight"></div>
         </div>
-      </div>
-      
-      <!-- КНОПКИ ВЫБОРА (В ОДИН РЯД ДЛЯ КОМПАКТНОСТИ) -->
-      <div class="final-guess-section">
-        <p>Tap your final guess:</p>
-        <div class="double-choice-grid">
-          <button id="guess-word-1" class="btn btn-choice"></button>
-          <button id="guess-word-2" class="btn btn-choice"></button>
+
+        <!-- ИНТЕГРИРОВАННЫЙ ВОПРОС И ОТВЕТЫ -->
+        <div class="integrated-question-flow">
+          <div id="guesser-q-part1" class="question-part"></div>
+          
+          <button id="guess-word-1" class="btn btn-choice guess-answer-block"></button>
+          
+          <div id="guesser-q-part2" class="question-part"></div>
+          
+          <button id="guess-word-2" class="btn btn-choice guess-answer-block"></button>
+          
+          <div id="guesser-q-part3" class="question-part"></div>
         </div>
+
+<!-- Подсказка для свайпа -->
+<!-- Подсказка для свайпа -->
+        <div class="swipe-hint-text">- SWIPE TO CHOOSE -</div>
+        <!-- Секция абилок -->
+        <div class="reveals-section">
+          <p class="reveals-title">Buy reveals - 15 PTS:</p>
+          <p id="ability-roll-status" class="ability-roll-status" style="display:none;"></p>
+          <br>
+          
+          <div class="guesser-abilities-row">
+            <div class="ability-wrapper">
+              <button id="ability-extra-rand-btn" class="btn-action ability-inline-btn"></button>
+            </div>
+            <div class="ability-wrapper">
+              <button id="ability-length-btn" class="btn-action ability-inline-btn"></button>
+            </div>
+          </div>
+
+<span id="potential-score" style="display:none;"></span>
+        <button id="oral-hint-btn" class="btn btn-small orally-hint-btn">💬 Ask for oral hint (-10 pts)</button>
       </div>
+    </div> <!-- Закрываем .gameplay-zone -->
+  </div> <!-- Закрываем #guesser-screen -->
 
-      <div class="stats-bar">
-        <span id="potential-score"></span>
-        <span id="gold-balance" class="gold-balance"></span>
-      </div>
-
-      <!-- КНОПКА ДЛЯ УСТНОЙ ПОДСКАЗКИ -->
-      <button id="oral-hint-btn" class="btn btn-small orally-hint-btn">💬 Ask for oral hint (-10 pts)</button>
-      
-      <!-- ДИНАМИЧЕСКИЙ ЗАГОЛОВОК ДЛЯ ИНТУИТИВНОГО ПОНИМАНИЯ РОЛЛА -->
-      <p id="ability-roll-status" class="ability-roll-status"></p>
-
-<div class="abilities-list-vertical">
-        <div class="ability-row">
-          <button id="ability-extra-rand-btn" class="btn-action"></button>
-        </div>
-        
-        <div class="ability-row">
-          <button id="ability-length-btn" class="btn-action"></button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ФИНАЛЬНЫЙ ЭКРАН -->
-    <div id="final-screen" class="hidden">
+  <!-- ФИНАЛЬНЫЙ ЭКРАН -->
+  <div id="final-screen" class="hidden">
       <h2>Game Over!</h2>
       <h3>Leaderboard</h3>
       <ol id="final-scores-list" class="leaderboard-list"></ol>
       
       <h3>Match History</h3>
-      <button id="stop-voice-btn" class="btn btn-small hidden danger-small-btn">⏹ Stop Voice Announcer</button>
+      <button id="stop-voice-btn" class="btn btn-small hidden danger-small-btn">⏹ Stop Voice</button>
       <div id="history-player-list" class="history-player-list"></div>
       <div id="final-history-window" class="history-window-container"></div>
 
@@ -392,7 +356,6 @@ Choose questions and find out how others have answered them.</p>
         <p>Liked this one-screen game? Share the link with others via QR 😊</p>
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://babyuncle23.github.io/Rather-Party-One-Screen-Game/" alt="Share Game QR" class="qr-code-image">
       </div>
-
     </div>
 
   </div> <!-- ЗАКРЫЛСЯ .game-container -->

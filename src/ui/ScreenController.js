@@ -51,7 +51,7 @@ export class ScreenController {
     }
   }
 
-  showAlert(title, message, onConfirm = null) {
+showAlert(title, message, onConfirm = null) {
     if (!this.modals.customAlert) {
       alert(message); // Fallback if HTML is missing
       if (onConfirm) onConfirm();
@@ -64,19 +64,18 @@ export class ScreenController {
     this.modals.customAlert.classList.remove('hidden');
     this.modals.customAlert.style.display = 'flex';
     
-    const btn = document.getElementById('custom-alert-btn');
-    btn.onclick = null; // Clear previous listener
-    btn.onclick = () => {
+    // Вешаем клик на всю модалку вместо кнопки
+    this.modals.customAlert.onclick = null; 
+    this.modals.customAlert.onclick = () => {
       this.modals.customAlert.style.display = 'none';
       if (onConfirm) onConfirm();
     };
   }
 
-  showPassScreen(player, onConfirm, note = "Only this player should look at the phone. Keep it hidden from others.") {
+showPassScreen(player, onConfirm, note = "Only this player should look at the phone. Keep it hidden from others.") {
     this.screens.pass.classList.remove('hidden');
     this.screens.pass.style.display = 'flex';
     const message = document.getElementById('pass-message');
-    const btn = document.getElementById('pass-confirm-btn');
     
     const highlightedTargetName = `<span class="player-name-pass-fade">${player.emoji || ''} ${player.name.toUpperCase()}</span>`;
     
@@ -92,8 +91,9 @@ export class ScreenController {
     message.innerHTML = `PASS THE PHONE TO:<br>${highlightedTargetName}<br><br><span style="font-size: 1.2rem; font-weight: 400; color: var(--muted);">${cleanNote}</span>`;
     window.scrollTo({ top: 0, behavior: 'instant' });
 
-    btn.onclick = null;
-    btn.onclick = () => {
+    // Вешаем клик на весь экран передачи телефона
+    this.screens.pass.onclick = null;
+    this.screens.pass.onclick = () => {
       this.screens.pass.style.display = 'none';
       onConfirm();
     };

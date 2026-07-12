@@ -2667,3 +2667,592 @@ button:disabled, .btn:disabled, .btn-action:disabled {
   margin-bottom: auto;
   width: 100%;
 }
+
+#pass-screen, 
+#custom-alert-modal {
+  cursor: pointer;
+}
+
+.tap-anywhere-text {
+  color: var(--muted);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 24px;
+  margin-bottom: 0;
+  animation: pulseWarning 2.5s ease-in-out infinite; /* Используем уже существующую анимацию пульсации */
+  pointer-events: none; /* Запрещаем тексту перехватывать клик у самой модалки */
+  text-align: center;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+/* --- УДАЛЕНИЕ ЛИШНИХ ФОНОВЫХ БЛОКОВ-КОНТЕЙНЕРОВ --- */
+
+/* 1. Снимаем общие стили-коробки со всех прямых дочерних div-контейнеров на всех экранах */
+#setup-screen > div,
+#picker-screen > div,
+#responder-screen > div,
+#guesser-screen > div,
+#final-screen > div {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* 2. Снимаем коробки с конкретных классов, которые тоже служили видимыми контейнерами */
+.help-section,
+.card-question,
+.sr-access-row,
+.leaderboard-list,
+.history-window,
+.guesser-info-block {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* 3. Убираем тяжелый 3D эффект с обертки чекбокса скринридера */
+#setup-screen > div:has(#sr-mode-toggle) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* 4. Восстанавливаем аккуратные отступы между элементами (так как внутренний padding удален) */
+.card-question { margin: 12px 0 !important; }
+.help-section { margin-bottom: 12px !important; }
+.spaced-section, .add-player-block, .custom-hint-block, .share-qr-block { margin-top: 16px !important; }
+.leaderboard-list li { padding: 8px 0 !important; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+
+/* --- СЖИМАЕМ ВЕРХНЮЮ ЧАСТЬ ЭКРАНА (КОМПАКТНОСТЬ) --- */
+
+/* 1. Делаем кнопки Safety и Tips меньше по высоте и компактнее */
+.help-header-row .btn-small {
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+    min-height: auto !important;
+}
+
+/* 2. Максимально ужимаем зазоры в самом блоке с кнопками и текстом */
+.help-section {
+    gap: 4px !important;
+    margin-bottom: 8px !important; /* Придвигаем контент ниже (имя игрока/раунд) вплотную к шапке */
+}
+
+/* 3. Уменьшаем отступы вокруг курсивного текста-подсказки (сохраняя сам текст) */
+.safety-tip-text {
+    margin-top: 2px !important;
+    margin-bottom: 0 !important;
+    line-height: 1.2 !important;
+}
+
+/* 4. Убираем лишние невидимые отступы (margin-top: 18px), которые остались от старых контейнеров */
+#setup-screen > div:first-child,
+#picker-screen > div:first-child,
+#responder-screen > div:first-child,
+#guesser-screen > div:first-child,
+#final-screen > div:first-child {
+    margin-top: 0 !important;
+}
+
+/* 5. Ужимаем строку с прогрессом раунда (ROUND 1/1) */
+#guesser-round-progress,
+.guesser-progress-row,
+.stats-bar {
+    margin-bottom: 6px !important;
+    margin-top: 0 !important;
+}
+
+/* 6. Уменьшаем отступ под главными заголовками (h2 - Имя игрока) */
+h2 {
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
+}
+
+/* --- ПЛОСКОЕ РАЗДЕЛЕНИЕ ЭКРАНА (БЕЗ МАТРЁШЕК) --- */
+
+#picker-screen .gameplay-zone,
+#responder-screen .gameplay-zone,
+#guesser-screen .gameplay-zone {
+    /* Делаем фон нижней части визуально отличным от верха */
+    background: rgba(0, 0, 0, 0.4) !important;
+    
+    /* Тонкая и четкая линия разделения от края до края */
+    border: none !important;
+    border-top: 1px solid rgba(140, 108, 255, 0.25) !important; 
+    border-radius: 0 0 32px 32px !important; /* Закругляем только низ под главный контейнер */
+    
+    /* Растягиваем блок до самых краев главного окна (компенсируем padding родителя) */
+    margin-top: 16px !important;
+    margin-left: -32px !important;
+    margin-right: -32px !important;
+    margin-bottom: -32px !important;
+    padding: 24px 32px 32px 32px !important; /* Внутренние отступы для контента */
+    
+    box-shadow: none !important; /* Никакого объема или эффекта карточки */
+}
+
+/* Убираем декоративный блик из прошлого шага */
+#picker-screen .gameplay-zone::before,
+#responder-screen .gameplay-zone::before,
+#guesser-screen .gameplay-zone::before {
+    display: none !important;
+}
+
+/* Адаптация под мобильные экраны (где отступы контейнера 22px вместо 32px) */
+@media (max-width: 620px) {
+    #picker-screen .gameplay-zone,
+    #responder-screen .gameplay-zone,
+    #guesser-screen .gameplay-zone {
+        margin-left: -22px !important;
+        margin-right: -22px !important;
+        margin-bottom: -22px !important;
+        padding: 24px 22px 22px 22px !important;
+        border-radius: 0 0 20px 20px !important;
+    }
+}
+
+/* --- ИНТЕГРИРОВАННЫЙ ПОТОК ВОПРОСА В GUESSER --- */
+.integrated-question-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.question-part {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    line-height: 1.5;
+    padding: 0 10px;
+    letter-spacing: 0.02em;
+}
+
+.question-part:empty {
+    display: none;
+}
+
+/* Оформление блоков с ответами */
+.guess-answer-block {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    padding: 14px 20px !important;
+    width: 100%;
+    min-height: 64px;
+}
+
+.answer-num-indicator {
+    font-size: 18px;
+    font-weight: 900;
+    color: #ffd56b;
+    background: rgba(255, 213, 107, 0.15);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 213, 107, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.swipe-hint-text {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    margin: 24px 0 16px;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+/* Секция способностей и анимаций */
+.reveals-section {
+    width: 100%;
+    margin-top: 10px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+}
+
+.reveals-title {
+    color: #a0a0b2;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.guesser-abilities-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.ability-wrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+}
+
+.ability-inline-btn {
+    width: 100% !important;
+}
+
+/* Кнопка вопроса (демо) */
+.demo-toggle-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: linear-gradient(135deg, #4d5dff, #7f65ff);
+    border: 2px solid rgba(20, 19, 29, 0.95);
+    color: white;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    transition: transform 0.2s ease, filter 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.demo-toggle-btn:active {
+    transform: scale(0.9);
+    filter: brightness(1.2);
+}
+
+/* Контейнер анимации */
+.demo-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(140, 108, 255, 0.3);
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 16px;
+    text-align: center;
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.demo-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+}
+
+.demo-label strong {
+    color: #fff;
+}
+
+.demo-anim-container {
+    position: relative;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.demo-step {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+}
+
+/* Логика анимации (смена каждые 2 секунды) */
+.step-1 { animation: showFirst 4s infinite; }
+.step-2 { animation: showSecond 4s infinite; }
+
+@keyframes showFirst {
+    0%, 45% { opacity: 1; transform: scale(1); }
+    50%, 100% { opacity: 0; transform: scale(0.96); }
+}
+
+@keyframes showSecond {
+    0%, 45% { opacity: 0; transform: scale(0.96); }
+    50%, 95% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.96); }
+}
+
+/* --- ИСПРАВЛЕНИЕ КНОПОК ВОПРОСИКОВ (ДЕМО) --- */
+
+/* Делаем обертку вертикальной, чтобы кнопки выстроились друг под другом */
+.ability-wrapper {
+    flex-direction: column !important;
+    gap: 6px !important;
+}
+
+/* Превращаем маленькую круглую кнопку в удобную широкую плашку под основной кнопкой */
+.demo-toggle-btn {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    height: 30px !important;
+    border-radius: 10px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px dashed rgba(140, 108, 255, 0.3) !important;
+    color: var(--muted) !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    box-shadow: none !important;
+    letter-spacing: 0.05em !important;
+}
+
+/* Добавляем текст "How it works" прямо через CSS */
+.demo-toggle-btn::after {
+    content: ' HOW IT WORKS';
+    color: rgba(255, 255, 255, 0.6);
+    margin-left: 4px;
+}
+
+.demo-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.demo-toggle-btn:active {
+    transform: scale(0.96) !important;
+    background: rgba(140, 108, 255, 0.15) !important;
+}
+
+/* --- ОРГАНИЧНЫЕ КНОПКИ ОТВЕТОВ В ТЕКСТЕ --- */
+.integrated-question-flow {
+    gap: 12px !important;
+}
+
+.guess-answer-block {
+    background: rgba(255, 255, 255, 0.03) !important; /* Почти невидимый фон */
+    border: 1px dashed rgba(255, 255, 255, 0.2) !important; /* Легкий пунктир как намек на кликабельность */
+    box-shadow: none !important;
+    padding: 8px 16px !important;
+    min-height: auto !important;
+    width: auto !important; /* Кнопка облегает контент, а не тянется на весь экран */
+    border-radius: 12px !important;
+    justify-content: center !important;
+    gap: 8px !important;
+}
+
+.guess-answer-block:active {
+    background: rgba(140, 108, 255, 0.15) !important;
+    border-color: rgba(140, 108, 255, 0.5) !important;
+    transform: scale(0.97) !important;
+}
+
+/* Скрываем старые кружочки, если они где-то остались */
+.answer-num-indicator {
+    display: none !important;
+}
+
+/* Стиль для органичных цифр "1:" и "2:" */
+.organic-num {
+    font-weight: 800;
+    color: #ffd56b;
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* --- УБИРАЕМ "МАТРЁШКИ" ВОКРУГ СЛОВ И КНОПОК --- */
+
+/* 1. Убираем пунктирную рамку вокруг самих слов, чтобы они сливались с фоном */
+.word-group {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 4px !important;
+}
+
+/* 2. Делаем кнопки ответов абсолютно плоскими и органичными (как часть текста) */
+.guess-answer-block {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    min-height: auto !important;
+    padding: 6px 12px !important;
+    margin: 0 !important;
+}
+
+/* Легкий эффект при нажатии, чтобы было понятно, что элемент кликабельный */
+.guess-answer-block:active {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 12px !important;
+    transform: scale(0.97) !important;
+}
+
+/* 3. Опускаем прочерки длины вниз (на базовую линию текста) */
+.letter-dash {
+    vertical-align: bottom !important;
+    transform: translateY(-4px) !important; /* Прижимаем к низу строки */
+    height: 3px !important;
+    border-radius: 1px !important;
+}
+
+/* На всякий случай скрываем старые фоны у индикаторов цифр, делая их текстом */
+.answer-num-indicator {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #ffd56b !important;
+    font-size: 1.15rem !important;
+    width: auto !important;
+    height: auto !important;
+}
+.answer-num-indicator::after {
+    content: ":";
+}
+
+.word-group .letter-gap,
+.word-group .letter-dash {
+    align-self: flex-end !important;
+    transform: none !important; /* Отключаем старые сдвиги по оси Y */
+    margin-bottom: 6px !important; /* Настраиваем высоту отступа под базовую линию текста */
+}
+
+/* Обводка для слов, если их больше одного */
+.word-group:not(:only-child) {
+    border: 1px dashed rgba(255, 255, 255, 0.25) !important;
+    padding: 4px 8px !important;
+    border-radius: 8px !important;
+}
+
+/* Запрет переноса букв на новую строку внутри одного слова */
+.word-group {
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+}
+
+/* Опускаем чёрточки ровно на уровень базовой линии букв */
+.word-group .letter-gap,
+.word-group .letter-dash {
+    align-self: flex-end !important;
+    margin-bottom: 2px !important; /* Расстояние от нижнего края контейнера */
+    transform: none !important;
+}
+
+/* Разрешаем иконкам выходить за границы кнопок */
+#guess-word-1, #guess-word-2 {
+    position: relative !important;
+    overflow: visible !important; 
+}
+
+/* Иконка справа от ПЕРВОЙ кнопки (свайп влево) */
+/* Кнопка адаптируется под размер слова (shrink-wrap) */
+.guess-answer-block {
+    width: fit-content !important; 
+    max-width: 100% !important;
+    margin: 0 auto !important; /* Держим по центру */
+    min-width: 140px; /* Чтобы одиночные буквы не смотрелись слишком куцо */
+    position: relative !important;
+    overflow: visible !important; /* Разрешаем PNG выходить за края самой кнопки */
+}
+
+/* Отключаем старые иконки, чтобы они не дублировались с новыми */
+#guess-word-1::after { content: none !important; }
+#guess-word-2::before { content: none !important; }
+
+/* НОВОЕ ПОЛОЖЕНИЕ: Иконка СЛЕВА от ПЕРВОЙ кнопки (свайп влево) */
+#guess-word-1::before {
+    content: "";
+    position: absolute;
+    left: -45px; /* Сдвиг влево от кнопки (настрой отступ, если нужно ближе/дальше) */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45px;
+    height: 45px;
+    background-image: url('src/ui/swipeLeft.png'); /* Укажи свой файл */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+    filter: invert(1) opacity(0.35);
+    z-index: 5;
+}
+
+/* НОВОЕ ПОЛОЖЕНИЕ: Иконка СПРАВА от ВТОРОЙ кнопки (свайп вправо) */
+#guess-word-2::after {
+    content: "";
+    position: absolute;
+    right: -45px; /* Сдвиг вправо от кнопки */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45px;
+    height: 45px;
+    background-image: url('src/ui/swipeRight.png'); /* Укажи свой файл */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+    filter: invert(1) opacity(0.35);
+    z-index: 5;
+}
+
+/* Жестко ограничиваем ширину кнопок и их внутреннего контейнера */
+.guess-answer-block {
+    width: fit-content !important;
+    align-self: center !important; /* Не дает кнопке растягиваться во flex-колонке */
+    max-width: 90% !important;
+}
+
+.guess-answer-block .masked-wrapper {
+    width: fit-content !important;
+    margin: 0 auto !important;
+    justify-content: center !important;
+}
+
+/* Убираем черную тень у слов при свайпе, чтобы неоновое свечение лучше читалось */
+.guess-answer-block * {
+    transition: text-shadow 0.1s ease-out;
+}
+
+/* --- ВОССТАНАВЛИВАЕМ ВИДИМОСТЬ ИСТОРИИ НА ФИНАЛЬНОМ ЭКРАНЕ --- */
+
+/* Контейнер окна истории */
+#final-screen #final-history-window {
+    display: block !important;
+    background: rgba(25, 23, 35, 0.95) !important;
+    border: 1px solid rgba(140, 108, 255, 0.3) !important;
+    border-radius: 20px !important;
+    padding: 18px !important;
+    margin-top: 16px !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Карточки самих ответов внутри истории */
+.game-container .history-card {
+    display: block !important;
+    background: rgba(255, 255, 255, 0.05) !important; 
+    border: 1px solid rgba(255, 255, 255, 0.1) !important; 
+    border-radius: 14px !important;
+    padding: 16px !important; 
+    margin: 0 0 12px 0 !important;
+}
+
+/* Убираем линию-разделитель у последней карточки (которую мы добавляли ранее) */
+.game-container .history-card {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Делаем список кнопок игроков видимым */
+#final-screen #history-player-list {
+    display: flex !important;
+    padding: 10px 0 !important;
+}
