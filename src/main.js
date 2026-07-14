@@ -41,16 +41,24 @@ function getDefaultEmojiForNewPlayer() {
 
 function passPhoneWithSpeech(player, onConfirm, note, speakNote = false) {
   const emojiName = EMOJI_NAMES[player.emoji] || "";
-  const handoverPhrases = [
-    `Pass the phone to ${emojiName} ${player.name}.`,
-    `Hand the device over to ${emojiName} ${player.name}.`,
-    `It is ${emojiName} ${player.name}'s turn now.`,
-    `Give the phone to ${emojiName} ${player.name}.`,
-    `Time for ${emojiName} ${player.name} to play.`,
-    `Next up is ${emojiName} ${player.name}.`
-  ];
+let randomPhrase = "";
   
-  const randomPhrase = handoverPhrases[Math.floor(Math.random() * handoverPhrases.length)];
+  if (audioManager && audioManager.isRallyEnglish) {
+    // В режиме Finglish используем только одну каноничную фразу
+    randomPhrase = `Pass the phone to ${emojiName} ${player.name}.`;
+  } else {
+    // В английском оставляем разнообразие
+    const handoverPhrases = [
+      `Pass the phone to ${emojiName} ${player.name}.`,
+      `Hand the device over to ${emojiName} ${player.name}.`,
+      `It is ${emojiName} ${player.name}'s turn now.`,
+      `Give the phone to ${emojiName} ${player.name}.`,
+      `Time for ${emojiName} ${player.name} to play.`,
+      `Next up is ${emojiName} ${player.name}.`
+    ];
+    randomPhrase = handoverPhrases[Math.floor(Math.random() * handoverPhrases.length)];
+  }
+  
   let spokenText = randomPhrase;
   
   if (note && speakNote) {
@@ -215,6 +223,30 @@ document.addEventListener("DOMContentLoaded", () => {
     const srToggle = document.getElementById('sr-mode-toggle');
     if (srToggle) {
       srToggle.onchange = (e) => audioManager.setScreenReaderMode(e.target.checked);
+    }
+
+const rallyToggle = document.getElementById('rally-english-toggle');
+    if (rallyToggle) {
+      rallyToggle.checked = false;
+      
+      rallyToggle.onchange = async (e) => {
+        if (e.target.checked) {
+          screens.showLoading(); // Включаем экран загрузки
+          const hasFinnish = await audioManager.checkFinnishVoiceExistsAsync();
+          screens.hideLoading(); // Выключаем загрузку
+          
+          if (!hasFinnish) {
+            screens.showAlert(
+              "Missing Voice 🇫🇮", 
+              "Rally English mode requires a Finnish text-to-speech voice, which is not installed on your device or browser. The game will proceed with a standard voice."
+            );
+            e.target.checked = false;
+            audioManager.setRallyEnglishMode(false);
+            return;
+          }
+        }
+        audioManager.setRallyEnglishMode(e.target.checked);
+      };
     }
 
     setupInitialEventListeners();

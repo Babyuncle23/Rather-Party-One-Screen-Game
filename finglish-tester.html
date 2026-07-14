@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finglish Native Tester</title>
+  <style>
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
+      background: #08080d; 
+      color: #e8e9f1; 
+      padding: 24px; 
+      max-width: 650px; 
+      margin: 0 auto; 
+    }
+    textarea { 
+      width: 100%; 
+      height: 120px; 
+      background: rgba(255, 255, 255, 0.04); 
+      color: #fff; 
+      border: 1px solid rgba(255, 255, 255, 0.08); 
+      border-radius: 12px;
+      padding: 14px; 
+      font-size: 16px; 
+      margin-bottom: 14px; 
+      outline: none;
+      box-sizing: border-box;
+      resize: vertical;
+    }
+    textarea:focus {
+      border-color: rgba(140, 108, 255, 0.55);
+    }
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    button { 
+      border: none; 
+      padding: 14px 20px; 
+      font-size: 15px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      border-radius: 12px; 
+      flex: 1;
+      transition: transform 0.2s ease;
+    }
+    button:active { 
+      transform: scale(0.98); 
+    }
+    #playBtn {
+      background: linear-gradient(135deg, #37ffe2, #4d5dff); 
+      color: #08080d; 
+    }
+    #generateBtn {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .output-container {
+      margin-top: 10px;
+    }
+    .output-label {
+      color: #a5a1c8;
+      font-size: 14px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .output { 
+      background: rgba(20, 19, 29, 0.92); 
+      border: 1px dashed rgba(140, 108, 255, 0.4); 
+      padding: 16px; 
+      border-radius: 12px; 
+      font-size: 18px; 
+      white-space: pre-wrap; 
+      min-height: 50px;
+      line-height: 1.5;
+    }
+    h1 { 
+      color: #37ffe2; 
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🇫🇮 Native Finglish Tester</h1>
+  <p style="color: #a5a1c8; line-height: 1.5; margin-bottom: 20px;">
+    This tester directly imports your real <code>questions.js</code> and <code>AudioManager.js</code>. 
+    It builds genuine game scenarios to test the exact phonetics.
+  </p>
+  
+  <textarea id="inputText" placeholder="Generated story will appear here..."></textarea>
+  
+  <div class="btn-group">
+    <button id="generateBtn">🎲 Gen Story from questions.js</button>
+    <button id="playBtn">▶ Play via AudioManager</button>
+  </div>
+  
+  <div class="output-container">
+    <div class="output-label">Parsed text (Directly from toFinglish):</div>
+    <div class="output" id="outputText">...</div>
+  </div>
+
+  <!-- Используем type="module", чтобы импортировать твои реальные игровые файлы -->
+  <script type="module">
+    import { questionsDatabase } from './src/data/questions.js';
+    import { AudioManager } from './src/audio/AudioManager.js';
+
+    // Инициализируем твой реальный менеджер звука
+    const audioManager = new AudioManager();
+    audioManager.setRallyEnglishMode(true); // Включаем финглиш принудительно
+
+    // Кастомные дженерик-имена
+    const names = ["Pekka", "Matti", "Teemu", "Laura", "Anna", "Jari"];
+
+    // Логика сборки рандомного вопроса, скопированная из твоего main.js
+    function generateGenuineStory() {
+      // 1. Берем рандомный вопрос из реальной базы
+      const q = questionsDatabase[Math.floor(Math.random() * questionsDatabase.length)];
+      
+      let activeTypes = [];
+      let compiledQuestion = q.text + " ";
+      let collectedHints = [...(q.hints || [])];
+
+      // 2. Проходим по фрагментам и собираем строку
+      q.fragments.forEach((frag) => {
+        const validOptions = frag.options.filter(opt => {
+          if (!opt.requires || opt.requires.length === 0) return true;
+          return opt.requires.some(req => activeTypes.includes(req));
+        });
+        
+        const finalValid = validOptions.length > 0 ? validOptions : frag.options;
+        const chosenOpt = finalValid[Math.floor(Math.random() * finalValid.length)];
+        
+        if (chosenOpt.type) activeTypes.push(chosenOpt.type);
+        if (chosenOpt.hints) collectedHints.push(...chosenOpt.hints);
+        
+        compiledQuestion += chosenOpt.text + " ";
+      });
+
+      // 3. Достаем реальные слова из хинтов (brainstorm)
+      let w1 = "apple", w2 = "banana"; // Фолбеки, если нет брейншторма
+      if (collectedHints.length > 0) {
+        const h1 = collectedHints[Math.floor(Math.random() * collectedHints.length)];
+        const h2 = collectedHints[Math.floor(Math.random() * collectedHints.length)];
+        
+        if (h1 && h1.brainstorm) w1 = h1.brainstorm[Math.floor(Math.random() * h1.brainstorm.length)];
+        if (h2 && h2.brainstorm) w2 = h2.brainstorm[Math.floor(Math.random() * h2.brainstorm.length)];
+      }
+
+      // Если слова совпали, немного меняем второе
+      if (w1 === w2) w2 = "something else";
+
+      // 4. Подставляем слова вместо [ ... ]
+      let finalQ = compiledQuestion.trim();
+      finalQ = finalQ.replace("[ ... ]", w1);
+      finalQ = finalQ.replace("[ ... ]", w2);
+      
+      // 5. Собираем финальную историю
+      const choice = Math.random() > 0.5 ? w1 : w2;
+      const name = names[Math.floor(Math.random() * names.length)];
+
+      return `${name} chose ${choice} in the question:\n"${finalQ}"`;
+    }
+
+    // Слушатели кнопок
+    document.getElementById('generateBtn').addEventListener('click', () => {
+      document.getElementById('inputText').value = generateGenuineStory();
+    });
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+      const rawText = document.getElementById('inputText').value;
+      if (!rawText.trim()) return;
+      
+      // Вызываем твой настоящий метод toFinglish из файла AudioManager.js
+      const finglishText = audioManager.toFinglish(rawText).toLowerCase();
+      document.getElementById('outputText').innerText = finglishText;
+
+      window.speechSynthesis.cancel();
+      
+      // Читаем напрямую через синтезатор с настройками финглиша
+      const utterance = new SpeechSynthesisUtterance(finglishText);
+      utterance.lang = 'fi-FI';
+      utterance.rate = 0.75;
+      utterance.volume = 1.0;
+      
+      window.speechSynthesis.speak(utterance);
+    });
+  </script>
+</body>
+</html>

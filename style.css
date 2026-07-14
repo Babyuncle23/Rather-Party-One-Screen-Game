@@ -752,7 +752,7 @@ p {
   margin-bottom: 20px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   gap: 10px;
   background: rgba(255,255,255,0.03);
   padding: 10px 14px;

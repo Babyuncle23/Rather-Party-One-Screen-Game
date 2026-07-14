@@ -6,6 +6,7 @@ export class AudioManager {
     this.isScreenReaderMode = false; // Режим доступности
     this.isVoiceWarmedUp = false;    // Прогрев TTS
     this.cancelQueue = false;        // Флаг прерывания очереди TTS
+    this.isRallyEnglish = false;     // Режим финского акцента
     
     this.audioPool.click = this.createAudioPool('src/audio/click.mp3', 3);
     this.audioPool.win = this.createAudioPool('src/audio/win.mp3', 2);
@@ -105,10 +106,415 @@ export class AudioManager {
     this.isScreenReaderMode = isSR;
     if (isSR) this.stopSpeech();
   }
+toFinglish(text) {
+    if (!text) return text;
+    
+    // 1. Словарь частых исключений, системных фраз и всех эмодзи
+    const dict = {
+      // Фразы
+      "would you rather": "vud ju raater",
+      "pass the phone to": "paas tö foun tuu,",
+      "choose an emoji": "tšuus en emoji",
+      "only this player": "onli tis pleijer",
+      "should look at the phone": "šuud luuk ät tö foun",
+      "keep it hidden from others": "kiip it hidden from aatörs",
+      "time to play": "taim tu plei",
+      "next up is": "nekst ap is",
+      "hand the device over to": "händ tö divais över tu",
+      "it is": "it is",
+      "world": "vorld",
+      "pizza": "pizza",
+      "sauce": "soos",
+      "be": "bii",
+      "able": "ebl",
+      "anywhere": "eniver",
+      "k-pop":"kei-pop",
+      "the":"te",
+      "question":"kvesson",
+      "mandatory ":"mandatori ",
+      "history":"histori",
+      "heavy":"hevi",
+      "alongside": "alongsaid",
+      "your":"jor",
+      "capybara":"kapibara",
+      "pug":"pag",
+      "destroy": "destroi", 
+      "every": "evri",
+      "copy": "kopi",
+      "frends": "frendit",
+      "have": "hev",
+      "dirt": "dört",
+      "watch": "vots",
+      "chocolate": "tsokolat",
+      "doritos": "dorios",
+      "dutch": "dats", 
+      "bad": "bed",
+      " mud ": " mad ",
+      "huge": "huge",
+      "teeth": "tiis",
+      "silent": "sailent",
+      "johnson": "jonsson", 
+      " belt " : " belt ",
+      " leather ": "leatser",
+      "instantly": "instantli", 
+      " all ": " ool ", 
+      "small": "smol",
+      "fortnit": "fortnait",
+      "you": "juu", 
+      "switch": "svits",
+      "bodies": "boodis",
+      "down": "daun",
+      "appear": "apiar",
+      "body": "boodi",
+      " no " : " nou ",
+      "role" : "rol",
+      "know" : "nou",
+      " one " : " van ",
+      " tom ": " tom ",
+      " cruise " : "crus",
+      "when": "ven",
+      "only": "onli",
+      "but": ", bat",
+      "end": "end",
+      "and": "änd",
+      "fries": "frais",
+      "power": "pover",
+      "bag ": "bägi ",
+      "bags ": "bägit",
+      "chased": "tseist", 
+      "lose": "luus",
+      "fine": "fain",
+      "hours": "avers",
+      " a ": " e ", 
+      " tie ": " tai ",
+      " fallon " : " fellon ",
+      "rock" : "rok",
+      "climb": "klaimb", 
+      "during": "djuring",
+      "toilet": "toilet", 
+      "forced": "forsd", 
+      "curry": "karri",
+      " sacrifice ": "sakrifais",
+      "synthesizer": "syntikka",
+      "swallow": "svolou",
+      "carry": "kerri",
+      " us ": "aas",
+      "laughing": "lafing",
+      "company": "kompani",
+      "light": "lait", 
+      "newfoundland": "njufaundland", 
+      " out ": " aut ",
+      "always": "olveis",
+      "arrive": "eraiv",
+      "exactly": "eksaktli",
+      "like": "laik",
+      "pirate": "pairat", 
+      "teemu": "teemu",
+      "larry": "larry",
+      "desert": "desört",
+      "island": "ailand",
+      "lighter": "laiter",
+      "game": "geim",
+      "package": "pakkaus",
+      " that": " ,teet", 
+      "rope": "roup",
+      "duty": "djuti",
+      "needle": "nidl",
+      "pager": "peiger",
+      " the ": " tee ",
+      "while": "vail",
+      "police": "poliisi",
+      "metallica": "metalikka",
+      "youtube": "jutub",
+      "face": "feis",
+      "elevator": "elevator",
+      "sweat": "sveat",
+      "cassette": "kasset", 
+      "life": "laif",
+      "tiny": "taini",
+      "teenager": "tineiger", 
+      "society":  "sosaeti",
+      "high": "hai",
+      "critique" : "kritik", 
+      " mime ": "maim", 
+      "without": "wisaut",
+      "twilight": "tvailait",
+      "year ": "jiir",
+      "two": "tuu",
+      "run": "ran",
+      "back": "bäk", 
+      "where": "ver",
+      "phone": "foun",
+      "toothpaste": "toospeist",
+      "saw": "sau",
+      "key": "kii",
+      " keys ": " kiijs ",
+      "popeye": "popai",
+      "brown" : "braun",
+      "samuel": "samuli",
+      "chose": "tsos",
+      "puddle": "padl",
+      "voice": "vois",
+      " or ": " , oor , ",
+      "doing": "duuing",
+      " do ": " du ",
+      "cucumber": "kukamber",
+      "karate": "karate",
+      "4-hour": "for-aver",
+      "strength": "strengt",
+      "once": "vans",
+      " are ": " ar ",
+      "for": "for" ,
+      "flashlight": "fleslait",
+      "were": "wjör",
+      "using": "jusing",
+      "sized": "saisd",
+      "ksi": "kei-es-ai",
+      "writers": "vraiters",
+      "type": "taip",
+      "shampoo": "sampuu",
+      "cotton": "kotton",
+      "head": "heed",
+      " unironically ": " anaironikali ", 
+      "stick": "stik",
+      "genghis khan": "gengis kan",
+      "million": "million", 
+      " it ": " , iit ",
+      "stares": "steires",
+      "swedish": "swidish", 
+      "astronaut": "astranaut",
+      "single" : "singl", 
+      "fly" : "flai",
+      "raised": "reist",
+      " beyoncé ": " biijonse ", 
+      "gang": "geng",
+      "conversation": "konversation",
+      "vely ": "vli",
+      "nervous": "nervös",
+      "terrible": "terribl",
+      "magically": "magikali", 
+      "supply": "saplai", 
+      "analyzing": "analaising",
+      "become ": "biikam ",
+      "low-budget": "lou-budget",
+      "diver": "daiver",
+      "biden": "baiden",
+      "shopping": "sopping",
+      "cally": "calli",
+      "black": "blek",
+      "cry": "krai",
+      "swallow": "svolou",
+      " by": " bai",
+      "birth": "börs",
+      "rush": "ras",
+      "channel": "tsannel",
+      "create": "kriieit",
+      "something": "somting" ,
+      "else": "els",
+      "axe ": "aks ",
+      "joe": "juuso",
+      "queen": "kvin",
+      "elizabeth": "elisabet",
+      "mind": "maint",
+      "year": "jiar",
+      "turn" : "tjörn",
+      "smartphones": "smartfons", 
+      "sticky": "stiki",
+      "share": "seir", 
+      " teach ": " tiats",
+      "knife": "naif",
+      "johnny": "jonni",
+      " page ": ",page", 
+      "physically": "fisikali",
+      " monkey " : " monki ",
+      " breath " : " briit ",
+      "gum": "gam",
+      " cloud ": "klaud",
+      " invited ": "invaited",
+      " jump " : " ,jump ",
+      "first": "fjörst",
+      "interview": "intervju",
+      "receive": "resiv",
+      " any ": " eni ",
+      "harry potter": "harri potteri",
+      
+      /*"":"",
+      "":"",
+      "":"", */
+
+      "turn now": "törn nau",
+      "this is your call only": "tis is joor kool ounli",
+      "read the question and choose a prompt": "riid tö kvestion änd tšuus a prompt",
+      "can watch the guessing process": "kän vats tö gessing prosess",
+      "it's a draw": "its a droo",
+      "finished with": "finist vit",
+      "points": "points",
+      "unbelievable": "anbiliivöböl",
+      "first place is shared by": "föörst pleis is šääred bai",
+      "the winner is": "tö vinner is",
+      "other scores": "aatör skoors",
+      "followed by": "folloud bai",
+      "here is the history of all choices": "hiir is tö histori of ool tšoises",
+      "creation": "kreation", 
+      "rally english": "rälli englanti",
+      " to ": " tuu ",
+      " anyone ": " enivan ",
+      // Эмодзи (Животные и существа)
+      "fiery": "fajeri", "dangerous": "deintsörös",
+      "fox": "foks", "panda": "panda", "cat": "kät", "dog": "dog", 
+      "bunny": "bunni", "tiger": "taiger", "koala": "koala", "pig": "pig", 
+      "cow": "kau", "monkey": "manki", "wolf": "volf", "lion": "laion", 
+      "otter": "oottör", "sloth": "sloot", "chipmunk": "tšipmank", 
+      "bat": "bät", "raccoon": "rakkuun", "penguin": "pengvin", 
+      "owl": "aul", "bird": "böörd", "eagle": "iigöl", "duck": "dak", 
+      "rooster": "ruustör", "baby chick": "beibi tšik", "peacock": "piikok", 
+      "dove": "dove", "parrot": "parrot", "flamingo": "flamingo",
+      "frog": "frog", "octopus": "oktopus", "turtle": "törtöl", 
+      "lizard": "lisaard", "shrimp": "šrimp", "crab": "krab", 
+      "squid": "skvid", "shark": "saark", "lobster": "lobster", 
+      "whale": "veil", "dolphin": "dolfin", "blowfish": "bloufiš",
+      "bee": "bii", "spider": "spaider",
+      "dino": "dino", "t-rex": "tii-reks", "dragon": "dragon", "unicorn": "unikorn",
+      // Эмодзи (Люди и роли)
+      "baby": "beibi", "old man": "old män", "sensei": "sensei", 
+      "ninja": "ninja", "super": "super", "supervillain": "supervillön", 
+      "elf": "elf", "wizard": "visard", "cowboy": "kauboi", "cool": "kuul", 
+      "nerd": "nörtti", "party": "paarti", "clown": "klaun", "angry": "ängri", 
+      "goblin": "goblin", "ogre": "ogre", "skeleton": "skeleton", 
+      "ghost": "gost", "alien": "alieni", "robo": "robo",
+      // Эмодзи (Еда и растения)
+      "watermelon": "votörmelon", "strawberry": "strooberi", "avocado": "avokado", 
+      "pineapple": "painäppöl", "kiwi": "kiivi", "tangerine": "tändžöriin", 
+      "cherries": "tšerriis", "lemon": "lemon", "apple": "aple", 
+      "mango": "mango", "coconut": "kokonat", "flower": "flauör", 
+      "sunflower": "sanflauör", "mushroom": "masruum", "rose": "rose", 
+      "moonface": "muunfeis",
+      "alone": "eloun", "strawberry" : "strouberri",
+      "great": "greit",
+      "to?": "tuu?"
+      
+    
+    };
+
+    let processedText = text.toLowerCase();
+    const maskedPhrases = [];
+
+    // Маскируем фразы из словаря
+    for (const [eng, fin] of Object.entries(dict)) {
+      if (processedText.includes(eng)) {
+        const mask = `__MASK${maskedPhrases.length}__`;
+        maskedPhrases.push({ mask, fin });
+        processedText = processedText.split(eng).join(mask);
+      }
+    }
+
+    // Изолируем слово "to", чтобы не читалось как "torstai"
+    processedText = processedText.replace(/\bto\b/g, 'tu');
+
+    // 2. Удаление немых букв
+    processedText = processedText.replace(/\bkn/g, 'n');
+    processedText = processedText.replace(/\bwr/g, 'r');
+    processedText = processedText.replace(/mb\b/g, 'm');
+    processedText = processedText.replace(/igh/g, 'ai');
+    
+
+    // 3. Гласные (Дифтонги)
+    processedText = processedText.replace(/ay|ey|ai/g, 'ei');
+    processedText = processedText.replace(/ee|ea/g, 'ii');
+    processedText = processedText.replace(/oo/g, 'uu');
+    processedText = processedText.replace(/ou|ow/g, 'au');
+    processedText = processedText.replace(/aw|au/g, 'oo');
+
+// 4. Согласные и суффиксы
+    processedText = processedText.replace(/sh/g, 's');
+    processedText = processedText.replace(/ph/g, 'f');
+    processedText = processedText.replace(/ch/g, 'ts');
+    processedText = processedText.replace(/z/g, 'ts');
+    processedText = processedText.replace(/th/g, 't'); 
+    processedText = processedText.replace(/w/g, 'v');
+    
+    // Твои специфические правила суффиксов
+    processedText = processedText.replace(/alyzing\b/g, 'alaising');
+    processedText = processedText.replace(/izing\b/g, 'aising');
+    processedText = processedText.replace(/ize\b/g, 'ais');
+    processedText = processedText.replace(/ise\b/g, 'ais');
+    processedText = processedText.replace(/ape\b/g, 'eip');
+    processedText = processedText.replace(/ire\b/g, 'air');
+    processedText = processedText.replace(/ate\b/g, 'eit');
+    processedText = processedText.replace(/ew\b/g, 'ju');
+    processedText = processedText.replace(/ime\b/g, 'aim');
+    
+    // Правила ing/ly и ck
+    processedText = processedText.replace(/ly\b/g, 'li ');
+    
+    processedText = processedText.replace(/ck\b/g, 'k');
+    
+    // Обработка c и x
+    processedText = processedText.replace(/c(?=[eiy])/g, 's');
+    processedText = processedText.replace(/c/g, 'k');
+    processedText = processedText.replace(/x/g, 'ks');
+    processedText = processedText.replace(/ct\b/g, 'kt');
+    
+    // Остальные
+    processedText = processedText.replace(/tion/g, 'šon');
+    processedText = processedText.replace(/tial/g, 'šial');
+    processedText = processedText.replace(/q/g, 'kv');
+    processedText = processedText.replace(/dy\b/g, 'di');
+
+
+    // Размаскировываем сохраненные словарные фразы
+    maskedPhrases.forEach(({ mask, fin }) => {
+      processedText = processedText.split(mask).join(fin);
+    });
+
+    return processedText;
+  }
 
   saveSettings() {
     localStorage.setItem('audioVolume', this.volume.toString());
     localStorage.setItem('audioEnabled', this.enabled.toString());
+  }
+
+  setRallyEnglishMode(isRally) {
+    this.isRallyEnglish = isRally;
+  }
+
+  checkFinnishVoiceExists() {
+    if (!window.speechSynthesis) return false;
+    const voices = window.speechSynthesis.getVoices();
+    // Проверяем разные форматы написания языкового кода
+    return voices.some(v => v.lang === 'fi-FI' || v.lang === 'fi_FI');
+  }
+
+  checkFinnishVoiceExistsAsync() {
+    return new Promise((resolve) => {
+      if (!window.speechSynthesis) {
+        resolve(false);
+        return;
+      }
+      
+      let voices = window.speechSynthesis.getVoices();
+      // Если голоса уже загружены
+      if (voices.length > 0) {
+        const hasFi = voices.some(v => v.lang === 'fi-FI' || v.lang === 'fi_FI');
+        resolve(hasFi);
+        return;
+      }
+
+      // Если массив пуст (браузер еще их подтягивает), ждем события
+      window.speechSynthesis.onvoiceschanged = () => {
+        voices = window.speechSynthesis.getVoices();
+        const hasFi = voices.some(v => v.lang === 'fi-FI' || v.lang === 'fi_FI');
+        resolve(hasFi);
+      };
+
+      // Страховочный таймаут (3 секунды) на случай, если событие не сработает
+      setTimeout(() => {
+        voices = window.speechSynthesis.getVoices();
+        const hasFi = voices.some(v => v.lang === 'fi-FI' || v.lang === 'fi_FI');
+        resolve(hasFi);
+      }, 3000);
+    });
   }
 
   loadSettings() {
@@ -174,10 +580,18 @@ export class AudioManager {
     window.speechSynthesis.cancel();
     this.cancelQueue = false;
     
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.volume = this.volume;
-    utterance.lang = 'en-US';
-    utterance.rate = 1.0;
+// Принудительно опускаем в нижний регистр для финского, чтобы избежать чтения по буквам
+    const finalVoiceText = this.isRallyEnglish ? this.toFinglish(text).toLowerCase() : text;
+    const utterance = new SpeechSynthesisUtterance(finalVoiceText);
+    if (this.isRallyEnglish) {
+      utterance.volume = Math.min(this.volume * 2, 1.0); // Громче в 2 раза, но не больше максимума (1.0)
+      utterance.lang = 'fi-FI';
+      utterance.rate = 0.75; // На 25% медленнее
+    } else {
+      utterance.volume = this.volume;
+      utterance.lang = 'en-US';
+      utterance.rate = 1.0;
+    }
     
     if (onStartCallback) {
       let hasFired = false;
@@ -216,10 +630,18 @@ export class AudioManager {
         return;
       }
       
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.volume = this.volume;
-      utterance.lang = 'en-US';
-      utterance.rate = 1.0;
+// Принудительно опускаем в нижний регистр для финского
+      const finalVoiceText = this.isRallyEnglish ? this.toFinglish(text).toLowerCase() : text;
+      const utterance = new SpeechSynthesisUtterance(finalVoiceText);
+      if (this.isRallyEnglish) {
+        utterance.volume = Math.min(this.volume * 2, 1.0);
+        utterance.lang = 'fi-FI';
+        utterance.rate = 0.75;
+      } else {
+        utterance.volume = this.volume;
+        utterance.lang = 'en-US';
+        utterance.rate = 1.0;
+      }
       
       utterance.onend = () => resolve();
       utterance.onerror = () => resolve();
@@ -235,3 +657,4 @@ export class AudioManager {
     }
   }
 }
+
