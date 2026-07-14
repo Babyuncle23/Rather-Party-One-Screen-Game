@@ -184,6 +184,7 @@
       </div>
 
       <div id="players-boxes-container" class="boxes-container"></div>
+      <p class="emoji-help-text" style="text-align: center; font-size: 13px; color: var(--muted); margin-top: 8px;">Tap an avatar to change it.</p>
 
       <div class="spaced-section">
         <label for="rounds-input" class="field-label">Number of rounds:</label>
@@ -242,7 +243,7 @@
         <button id="hint-btn-2" class="btn btn-secondary spaced-button"></button>
         <div class="custom-hint-block spaced-section">
           <input id="custom-hint-input" type="text" placeholder="Custom prompt..." class="input-field">
-          <button id="custom-hint-btn" class="btn btn-accent">Use Custom Hint</button>
+          <button id="custom-hint-btn" class="btn btn-accent">Use Custom Prompt</button>
         </div>
       </div>
     </div>
@@ -300,11 +301,10 @@
       </div>
 
       <h2><span id="guesser-name" class="player-name-game-slow"></span>, Guess!</h2>
-      
-<div class="gameplay-zone">
+<div class="swipe-hint-text" style="margin: 4px 0 12px;">- SWIPE / TAP TO CHOOSE -</div>
+      <div class="gameplay-zone">
         <!-- Подсказка-тема -->
-        <div class="guesser-info-block">
-          <div class="guesser-info-subtitle">THE PROMPT WAS</div>
+<div class="guesser-info-block" style="border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 16px; margin-top: -10px;">          <div class="guesser-info-subtitle">THE PROMPT WAS:</div>
           <div id="guesser-displayed-hint" class="guesser-info-title hint-highlight"></div>
         </div>
 
@@ -323,7 +323,6 @@
 
 <!-- Подсказка для свайпа -->
 <!-- Подсказка для свайпа -->
-        <div class="swipe-hint-text">- SWIPE TO CHOOSE -</div>
         <!-- Секция абилок -->
         <div class="reveals-section">
           <p class="reveals-title">Buy reveals - 15 PTS:</p>

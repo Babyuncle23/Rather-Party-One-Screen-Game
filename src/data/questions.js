@@ -1612,6 +1612,64 @@ company: {
       "Compass"
     ] 
   },
+  movie: { 
+    text: "Famous movie", 
+    brainstorm: [
+      "Titanic", 
+      "Star Wars", 
+      "The Matrix", 
+      "Shrek", 
+      "Harry Potter", 
+      "Jurassic Park", 
+      "Avatar", 
+      "The Lord of the Rings",
+      "The Avengers",
+      "Spider-Man"
+    ] 
+  },
+  movieGenre: { 
+    text: "Movie genre", 
+    brainstorm: [
+      "Horror", 
+      "Romantic Comedy", 
+      "Sci-Fi", 
+      "Musical", 
+      "Western", 
+      "Silent film", 
+      "True crime",
+      "Action",
+      "Fantasy"
+    ] 
+  }
+  ,
+  artGenre: { 
+    text: "Art genre", 
+    brainstorm: [
+      "Surrealism", 
+      "Cyberpunk", 
+      "Abstract expressionism", 
+      "Gothic horror", 
+      "High fantasy", 
+      "True crime", 
+      "Musical theater", 
+      "Anime",
+      "Steampunk"
+    ] 
+  },
+  musicGenre: { 
+    text: "Music genre", 
+    brainstorm: [
+      "Heavy metal", 
+      "Classical", 
+      "K-pop", 
+      "Jazz", 
+      "Country", 
+      "Dubstep", 
+      "Opera", 
+      "Punk rock",
+      "Techno"
+    ] 
+  },
 };
 
 export const questionsDatabase = [
@@ -2029,7 +2087,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: "whenever you sneeze?", requires: ["shapeshift"] },
-          { text: "but suddenly everyone around you knows it?", requires: ["teleport", "shapeshift"] },
+          { text: "but suddenly everyone you know knows it?", requires: ["teleport", "shapeshift"] },
           { text: "but you can't control exactly when it happens?", requires: ["mind", "shapeshift"] },
           { text: "but the effect only lasts for 60 seconds a day?", requires: ["transform", "invisible", "strength"] }, 
           { text: "and you have to loudly annouce that you are doing it before use?" },
@@ -2162,5 +2220,80 @@ export const questionsDatabase = [
       }
     ],
     hints: []
-  }
+  },
+{
+  "id": 17,
+  "category": "entertainment",
+  "text": "Would you rather",
+  "fragments": [
+    {
+      "options": [
+        // Активные действия
+        { "text": "watch a terrible, low-budget 4-hour remake of", "type": "watch", "hints": [PROMPTS.movie, PROMPTS.tvShow] },
+        { "text": "spend an entire weekend deeply analyzing", "type": "analyze", "hints": [PROMPTS.movie, PROMPTS.tvShow] },
+        { "text": "destroy every existing copy of", "type": "destroy", "hints": [PROMPTS.movie, PROMPTS.tvShow] },
+        { "text": "create an extremely awkward fan-film based on", "type": "create", "hints": [PROMPTS.movie, PROMPTS.videoGame] },
+       
+        // Потребление контента
+        { "text": "binge-watch every single episode of", "type": "watch", "hints": [PROMPTS.tvShow, PROMPTS.movie] },
+        { "text": "consume media exclusively from the genre of", "type": "consume_genre", "hints": [PROMPTS.artGenre, PROMPTS.movieGenre] },
+       
+        // Образование и манифесты
+        { "text": "teach a mandatory 4-hour college course on the history of", "type": "teach", "hints": [PROMPTS.musicGenre, PROMPTS.artGenre] },
+        { "text": "pass a global law permanently banning", "type": "ban", "hints": [PROMPTS.musicGenre, PROMPTS.movieGenre] },
+        { "text": "create a 1000-page manifesto aggressively defending", "type": "defend", "hints": [PROMPTS.movieGenre, PROMPTS.conspiracyTheory] }
+      ]
+    },
+    {
+      "options": [
+        { "text": "[ ... ] or [ ... ]" }
+      ]
+    },
+    {
+      "options": [
+        // Контекст для "создания" (create)
+        { "text": "and show it to your family", "requires": ["create"], "type": "create_family" },
+        { "text": "and show it to your colleagues", "requires": ["create"], "type": "create_colleagues" },
+        { "text": "and show it to your friends", "requires": ["create"], "type": "create_friends" },
+        { "text": "and show it to your boss", "requires": ["create"], "type": "create_boss" },
+
+        // Контекст для "смотра/анализа" (watch/analyze)
+        { "text": "with your family", "requires": ["watch"], "type": "watch_family" },
+        { "text": "surrounded by colleagues", "requires": ["watch"], "type": "watch_colleagues" },
+        { "text": "alongside your friends", "requires": ["watch"], "type": "watch_friends" },
+        { "text": "alongside your boss", "requires": ["watch", "teach"], "type": "watch_boss" },
+        { "text": "alongside your mom", "requires": ["watch", "teach"], "type": "watch_mom" },
+        { "text": "", "requires": ["watch", "teach"], "type": "watch_none" },
+       
+        // Контекст для "уничтожения/манифестов" (destroy/ban/defend)
+        { "text": "and no one will ever know about your role in this", "requires": ["destroy", "ban"], "type": "secret_action" },
+        { "text": "and everyone will find out about it right away", "requires": ["destroy", "ban", "defend"], "type": "public_action" },
+        { "text": "alone in your room", "requires": ["analyze", "defend"], "type": "alone_action" },
+        { "text": "on a live television broadcast", "requires": ["teach", "destroy"], "type": "live_broadcast" },
+        
+        // Разделенные пустые строки для точечной логики концовок
+        { "text": "", "requires": ["consume_genre"], "type": "consume_none" },
+        { "text": "", "requires": ["destroy", "ban", "defend", "analyze"], "type": "silent_none" }
+      ]
+    },
+    {
+      "options": [
+        // Длинные концовки
+        { "text": ", and pause every few minutes to explain the deep meaning?", "requires": ["watch_family", "watch_friends"] },
+        { "text": ", and nervously wait for honest critique when you finish?", "requires": ["create_family", "create_colleagues", "create_friends", "create_boss", "watch_boss", "watch_mom"] },
+        
+        // Убрали "live_broadcast" из условий. Теперь стримить в интернет можно только то, что создано, или домашний просмотр
+        { "text": ", livestreaming it to thousands?", "requires": ["create_boss", "watch_none"] },
+        { "text": ", and cry afterwards?", "requires": ["watch_family", "watch_friends", "watch_mom", "watch_none"] },
+        { "text": ", and cry everytime you are done?", "requires": ["consume_none"] },
+       
+        // КОРОТКИЕ концовки (Знак вопроса)
+        { "text": "?", "requires": ["create_family", "create_colleagues", "create_friends", "create_boss", "watch_family", "watch_colleagues", "watch_friends", "watch_boss", "watch_mom", "watch_none", "secret_action", "public_action", "alone_action", "live_broadcast", "consume_none", "silent_none"] },
+        { "text": "?", "requires": ["create_family", "create_colleagues", "create_friends", "create_boss", "watch_family", "watch_colleagues", "watch_friends", "watch_boss", "watch_mom", "watch_none", "secret_action", "public_action", "alone_action", "live_broadcast", "consume_none", "silent_none"] },
+        { "text": "?", "requires": ["create_family", "create_colleagues", "create_friends", "create_boss", "watch_family", "watch_colleagues", "watch_friends", "watch_boss", "watch_mom", "watch_none", "secret_action", "public_action", "alone_action", "live_broadcast", "consume_none", "silent_none"] }
+      ]
+    }
+  ],
+  "hints": []
+}
 ];

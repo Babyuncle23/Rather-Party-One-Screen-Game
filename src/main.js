@@ -1357,7 +1357,7 @@ const hintEl = document.getElementById('guesser-displayed-hint');
 
     if (hintEl) hintEl.innerText = currentHint;
     if (scoreEl) scoreEl.innerText = `Win: +${FIXED_REWARD} points`;
-    if (balanceEl) balanceEl.innerText = `Points: ${game.players[currentGuesserIndex].gold}`;
+    if (balanceEl) balanceEl.innerText = `${game.players[currentGuesserIndex].name}'s score: ${game.players[currentGuesserIndex].gold}`;
 
     // Разбиваем вопрос на 3 части (До 1 ответа, между, и после 2 ответа)
     const rawQuestion = getCompiledQuestionString("[ ... ]", "[ ... ]", false);
@@ -1640,7 +1640,7 @@ function animateGoldChange(amount, positive = false) {
     const el = document.getElementById('gold-balance');
     if (!el) return;
     if (game && typeof currentGuesserIndex === 'number' && game.players[currentGuesserIndex]) {
-      el.innerText = `Points: ${game.players[currentGuesserIndex].gold}`;
+      el.innerText = `${game.players[currentGuesserIndex].name}'s score: ${game.players[currentGuesserIndex].gold}`;
     }
     updateStatsBarVisibility();
     const cls = positive ? 'gold-add' : 'gold-spend';

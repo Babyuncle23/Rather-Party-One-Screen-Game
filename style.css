@@ -12,6 +12,8 @@
   --danger: #ff6f7a;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Blinker:wght@100;200;300;400;600;700;800;900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 * {
   box-sizing: border-box;
 }
@@ -74,34 +76,6 @@ body::before {
   padding: 0;
 }
 
-h2, h3 {
-  margin: 0 0 16px;
-  font-weight: 800;
-  color: var(--text);
-  text-align: center;
-  letter-spacing: 0.04em;
-}
-
-h2 {
-  font-size: clamp(2rem, 2.4vw, 2.7rem);
-}
-
-.btn {
-  width: 100%;
-  padding: 16px 18px;
-  border-radius: 18px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  letter-spacing: 0.02em;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.btn:active {
-  transform: scale(0.98);
-}
-
 .btn-secondary,
 .btn-small,
 .btn-action,
@@ -112,44 +86,17 @@ h2 {
   color: var(--text);
 }
 
-.rules-dropdown-box,
-.help-section,
-.card-question,
-.abilities-list-vertical,
-.history-card,
-.history-window,
-.player-box,
-#setup-screen > div,
-#picker-screen > div,
-#responder-screen > div,
-#guesser-screen > div,
-#final-screen > div {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 24px;
-  padding: 18px;
-}
-
-#setup-screen > div,
-#picker-screen > div,
-#responder-screen > div,
-#guesser-screen > div,
-#final-screen > div {
-  margin-top: 18px;
+#setup-screen > div, #picker-screen > div, #responder-screen > div, #guesser-screen > div, #final-screen > div {
+  margin-top: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 #help-panel {
   margin-top: 0;
-}
-
-.help-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding: 18px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .help-toggle-row {
@@ -160,66 +107,6 @@ h2 {
 
 .help-toggle-row button {
   white-space: nowrap;
-}
-
-.rules-dropdown-box {
-  padding: 18px;
-  line-height: 1.7;
-}
-
-.tip-visual {
-  display: grid;
-  gap: 10px;
-  margin-top: 12px;
-  padding: 16px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.card-question {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 18px 20px;
-  border-radius: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
-  margin: 16px 0;
-}
-
-.highlight-text {
-  color: #ffffff;
-  font-weight: 700;
-  line-height: 1.7;
-  display: block;
-}
-
-.player-box {
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.05));
-  border: 1px solid rgba(140, 108, 255, 0.22);
-}
-
-.player-avatar {
-  font-size: 20px;
-  width: 42px;
-  height: 42px;
-  background: rgba(255, 255, 255, 0.07);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-}
-
-.creator-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 18px;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: white;
-  background: linear-gradient(135deg, rgba(124, 93, 255, 0.9), rgba(87, 197, 255, 0.95));
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
-  box-shadow: 0 16px 40px rgba(90, 76, 191, 0.22);
 }
 
 #responder-screen .input-container-with-counter,
@@ -252,16 +139,6 @@ h2 {
   padding-right: 90px;
 }
 
-#responder-screen #word-counter-1,
-#responder-screen #word-counter-2 {
-  position: absolute;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 13px;
-  color: var(--muted);
-  opacity: 0.85;
-}
 
 #responder-screen #responder-helper-box {
   margin-bottom: 14px;
@@ -306,43 +183,6 @@ h2 {
   letter-spacing: 0.08em;
 }
 
-.stats-bar {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin: 14px 0;
-  color: var(--muted);
-  font-weight: 700;
-  flex-wrap: wrap;
-  align-items: center;
-  border: none;
-  outline: none;
-  box-shadow: none;
-  padding: 0;
-  min-height: auto;
-}
-
-.stats-bar-empty {
-  display: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  height: 0 !important;
-  min-height: 0 !important;
-  visibility: hidden !important;
-  overflow: hidden !important;
-  border: none !important;
-}
-
-.stats-bar:has(span:only-child) {
-  display: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  height: 0 !important;
-  min-height: 0 !important;
-  visibility: hidden !important;
-  overflow: hidden !important;
-}
-
 .gold-balance {
   color: #ffd56b;
   font-weight: 900;
@@ -352,14 +192,6 @@ h2 {
 .history-card,
 .history-window {
   background: rgba(255, 255, 255, 0.04);
-}
-
-.carousel-controls {
-  margin-top: 18px;
-}
-
-.carousel-btn {
-  background: rgba(255,255,255,0.05);
 }
 
 @media (max-width: 620px) {
@@ -393,16 +225,13 @@ h2 {
 }
 
 h2, h3 {
-  margin: 0 0 16px;
   font-weight: 800;
   color: var(--text);
   text-align: center;
   letter-spacing: 0.04em;
 }
 
-h2 {
-  font-size: clamp(1.8rem, 2.2vw, 2.5rem);
-}
+h2 { margin: 0 0 10px; font-size: clamp(1.8rem, 2.2vw, 2.5rem); }
 
 h3 {
   font-size: 1.3rem;
@@ -749,35 +578,6 @@ p {
   text-align: center;
 }
 
-.tip-visual--spaced {
-  margin-bottom: 16px;
-}
-
-.tip-label {
-  font-size: 0.85rem;
-  color: var(--muted);
-  font-weight: 700;
-}
-
-.tip-highlight {
-  border-left: 3px solid var(--accent);
-  padding-left: 10px;
-  font-weight: 700;
-}
-
-.tip-accent {
-  color: var(--accent);
-}
-
-.tip-positive {
-  color: var(--positive);
-}
-
-.tip-subtext {
-  font-size: 0.85rem;
-  opacity: 0.65;
-  margin-left: 8px;
-}
 
 .creator-subtitle {
   font-size: 15px;
@@ -825,17 +625,6 @@ p {
   padding: 8px 16px;
 }
 
-.text-link-btn {
-  background: none;
-  border: none;
-  padding: 4px 12px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
 .prompt-summary {
   margin-bottom: 8px;
   color: #c0bfe2;
@@ -855,7 +644,7 @@ p {
 
 .floating-counter {
   position: absolute;
-  right: 18px;
+  right: 28px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 14px;
@@ -868,18 +657,6 @@ p {
   display: none;
 }
 
-.btn-stack {
-  display: grid;
-  gap: 10px;
-}
-
-.double-choice-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-rows: 1fr; /* Добавлено */
-  gap: 8px;
-  width: 100%;
-}
 
 .guesser-progress-row,
 .stats-bar {
@@ -894,13 +671,7 @@ p {
   letter-spacing: 0.05em;
 }
 
-.stats-bar.stats-bar-empty {
-  display: none !important;
-  margin: 0 !important;
-  margin-bottom: 0 !important;
-  padding: 0 !important;
-  height: 0 !important;
-}
+
 
 .final-guess-section {
   margin-top: 14px;
@@ -908,11 +679,6 @@ p {
   border-top: none;
   padding-top: 0;
   width: 100%;
-}
-
-/* Ensure no extra spacing from hidden elements */
-.final-guess-section ~ .stats-bar.stats-bar-empty ~ .orally-hint-btn[style*="display: none"] ~ .spaced-section[style*="display: none"] ~ #ability-roll-status[style*="display: none"] {
-  margin-top: 0;
 }
 
 .abilities-list-vertical {
@@ -1035,51 +801,11 @@ p {
   color: #a0a0b2;
 }
 
-.picker-control-row {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-}
-
 .picker-buttons-row {
   display: flex;
   gap: 8px;
   justify-content: center;
   width: 100%;
-}
-
-.picker-inline-button {
-  width: auto;
-  padding: 8px 16px;
-}
-
-.text-button {
-  background: none;
-  border: none;
-  padding: 4px 12px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.hint-instruction {
-  margin-bottom: 8px;
-  color: #c0bfe2;
-}
-
-.hint-button {
-  margin-bottom: 10px;
-}
-
-.prompt-intro {
-  text-align: center;
-  font-size: 1.05rem;
-  color: var(--muted);
-  line-height: 1.5;
-  margin-bottom: 12px;
 }
 
 .responder-helper-toggle {
@@ -1122,13 +848,6 @@ p {
   opacity: 0.7;
 }
 
-.choice-button {
-  margin-bottom: 0;
-  padding: 10px 6px;
-  width: 100%;
-  font-size: 15px;
-  min-height: 44px;
-}
 
 .oral-hint-btn {
   margin-top: 12px;
@@ -1187,12 +906,6 @@ p {
   margin-top: 18px;
 }
 
-.help-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 18px;
-}
 
 .help-toggle-row {
   display: flex;
@@ -1237,15 +950,7 @@ p {
   padding: 0 6px;
 }
 
-.card-question {
-  background: rgba(255, 255, 255, 0.04);
-  padding: 14px 16px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
-  margin: 10px 0;
-  font-size: 0.95rem;
-}
+
 
 .highlight-text {
   color: #ffffff; /* Обычный чистый белый цвет */
@@ -1309,12 +1014,9 @@ p {
   justify-content: center;
   flex-wrap: wrap; 
   gap: 6px 0;
-  
-  /* Граница слова чёрточкой */
-  border: 1px dashed rgba(255, 255, 255, 0.25); 
   border-radius: 8px;
-  padding: 4px 6px;
-  margin: 0 4px;
+  flex-wrap: nowrap; 
+  white-space: nowrap;
 }
 
 /* ЦВЕТ 0: Бирюзовый (#37ffe2) */
@@ -1358,17 +1060,14 @@ p {
   margin: 0 3px;
   background: var(--gap-color-high, rgba(55, 255, 226, 0.65));
   box-shadow: 0 0 6px var(--gap-shadow, rgba(55, 255, 226, 0.3));
-  vertical-align: middle; 
+  vertical-align: bottom; 
+  transform: translateY(-4px); 
+  height: 3px; border-radius: 1px;
 }
 
 @keyframes smoothPulseGapDynamic {
   0%, 100% { opacity: 0.3; background: var(--gap-color-low, rgba(55, 255, 226, 0.2)); }
   50% { opacity: 0.9; background: var(--gap-color-high, rgba(55, 255, 226, 0.65)); }
-}
-
-/* Удаляем старый класс пробела, он нам больше не нужен */
-.word-space {
-  display: none;
 }
 
 .ability-inline-label {
@@ -1481,13 +1180,10 @@ p {
   border-bottom: none;
 }
 
-.history-card {
-  background: rgba(255, 255, 255, 0.04);
-  padding: 22px;
-  border-radius: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  min-height: 140px;
-  margin: 16px 0;
+
+.game-container .history-card:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .history-card-header {
@@ -1675,72 +1371,10 @@ p {
   text-transform: uppercase;
 }
 
-.btn-info-circle {
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: 14px;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 4px 0;
-  display: block;
-  width: 100%;
-  text-align: left;
-}
-
 #reroll-question-btn:active {
   transform: scale(0.97);
 }
 
-.rules-dropdown-box {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 18px;
-  padding: 16px;
-  margin-top: 10px;
-  font-size: 0.95rem;
-  line-height: 1.7;
-  color: var(--muted);
-}
-
-.rules-dropdown-box p {
-  margin: 6px 0;
-}
-
-.rules-dropdown-box ul {
-  margin: 8px 0;
-  padding-left: 22px;
-}
-
-.rules-dropdown-box li {
-  margin: 4px 0;
-}
-
-.audio-control-panel {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: rgba(20, 19, 29, 0.95);
-  border: 1px solid rgba(140, 108, 255, 0.3);
-  border-radius: 999px;
-  padding: 12px 16px;
-  z-index: 100;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  transition: width 0.3s ease, padding 0.3s ease, gap 0.3s ease, border-radius 0.3s ease;
-}
-
-.audio-control-panel.collapsed {
-  width: 46px;
-  padding: 10px;
-  gap: 0;
-  border-radius: 50%;
-  justify-content: center;
-  overflow: hidden;
-}
 
 .audio-control-panel.collapsed .volume-slider,
 .audio-control-panel.collapsed .volume-label {
@@ -1755,52 +1389,6 @@ p {
   padding: 0;
   transition: opacity 0.2s ease, transform 0.2s ease;
   color: var(--accent);
-}
-
-.audio-control-panel:focus-within {
-  width: auto;
-  padding: 12px 16px;
-  gap: 12px;
-  border-radius: 999px;
-}
-
-.volume-slider {
-  width: 120px;
-  height: 6px;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.1);
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-}
-
-.volume-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--accent);
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(140, 108, 255, 0.3);
-}
-
-.volume-slider::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--accent);
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 2px 6px rgba(140, 108, 255, 0.3);
-}
-
-.volume-label {
-  font-size: 12px;
-  color: var(--muted);
-  min-width: 24px;
-  text-align: right;
 }
 
 @media (max-width: 480px) {
@@ -1942,74 +1530,6 @@ p {
   margin-bottom: 8px;
 }
 
-.creator-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(140, 108, 255, 0.25);
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 10.5px;
-  font-weight: 800;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-
-.creator-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px 22px;
-  
-  /* Максимально абсурдный шрифт */
-  font-family: "Comic Sans MS", "Comic Sans", cursive, sans-serif !important;
-  font-size: 15px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #fff;
-  
-  /* Агрессивная переливающаяся радуга */
-  background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
-  background-size: 400% 400%;
-  animation: rainbowBadge 3s ease infinite;
-  
-  /* 3D Объем, белая рамка и глубокие тени */
-  border: 3px solid #ffffff;
-  border-radius: 50px;
-  box-shadow: 
-    0 8px 0px #8c6cff, /* Толстая 3D-основа */
-    0 15px 20px rgba(0,0,0,0.6), /* Внешняя тень */
-    inset 0 4px 10px rgba(255,255,255,0.7); /* Внутренний блик */
-    
-  /* Жирная черная обводка текста */
-  text-shadow: 
-    2px 2px 0 #000, 
-    -2px -2px 0 #000, 
-    2px -2px 0 #000, 
-    -2px 2px 0 #000,
-    0 4px 0 #000;
-    
-  /* Слегка наклонено для комичности */
-  transform: rotate(-3deg);
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  margin: 10px 0 20px 0;
-  cursor: pointer;
-}
-
-
-/* Анимация радуги */
-@keyframes rainbowBadge {
-    0% { background-position: 0% 82%; }
-    50% { background-position: 100% 19%; }
-    100% { background-position: 0% 82%; }
-}
-
 /* --- СТИЛИ ДЛЯ АВАТАРОК ИГРОКОВ --- */
 .player-box-left {
   display: flex;
@@ -2125,169 +1645,6 @@ p {
 }
 
 /* =========================================
-   UNIFIED 3D BUTTONS (Оригинальные цвета + Объём)
-   ========================================= */
-
-/* 1. Общая форма и физика для всех кнопок */
-button, .btn, .btn-primary, .btn-secondary, .btn-accent, .btn-action, .btn-small, .btn-choice,
-.safety-hold-trigger, .delete-box-btn, .history-player-btn, 
-.player-avatar, #audio-toggle-btn, #safety-global-btn {
-  position: relative;
-  border: none;
-  outline: none;
-  font-family: inherit;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: #ffffff;
-  border-radius: 16px;
-  transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* 2. БАЗОВЫЕ / ВТОРИЧНЫЕ КНОПКИ (Темный элегантный фон) */
-button, .btn, .btn-secondary, .btn-small {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.8);
-  box-shadow: 
-    inset 0 2px 3px rgba(255, 255, 255, 0.05),
-    0 5px 0 rgba(10, 9, 15, 0.9), 
-    0 8px 15px rgba(0, 0, 0, 0.4);
-  color: #f7f7ff;
-}
-
-/* 3. ОСНОВНАЯ КНОПКА (Start Game - Оригинальный сине-фиолетовый) */
-.btn-primary {
-  background: linear-gradient(135deg, #7f65ff, #4d5dff) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
-  box-shadow: 
-    inset 0 2px 3px rgba(255, 255, 255, 0.3),
-    0 5px 0 #3a45c2, /* Темно-синяя грань для объема */
-    0 8px 20px rgba(93, 75, 255, 0.4) !important;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
-}
-
-/* 4. КНОПКА АКЦЕНТА (Add Player - Оригинальный розово-оранжевый) */
-.btn-accent {
-  background: linear-gradient(135deg, #ff6c8d, #ff9d4a) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
-  box-shadow: 
-    inset 0 2px 3px rgba(255, 255, 255, 0.3),
-    0 5px 0 #c24b64, /* Темно-розовая грань для объема */
-    0 8px 20px rgba(255, 108, 141, 0.4) !important;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
-}
-
-/* 5. ИГРОВЫЕ ДЕЙСТВИЯ (Оставляем в стиле темных карточек с бирюзовым текстом) */
-.btn-action, #guess-word-1, #guess-word-2, #hint-btn-1, #hint-btn-2 {
-  background: linear-gradient(180deg, rgba(30, 28, 42, 0.95) 0%, rgba(20, 18, 28, 0.98) 100%) !important;
-  border: 1px solid rgba(140, 108, 255, 0.3);
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  border-bottom: 2px solid rgba(0, 0, 0, 0.8);
-  box-shadow: 
-    inset 0 2px 3px rgba(255, 255, 255, 0.05),
-    0 5px 0 rgba(10, 9, 15, 0.9), 
-    0 8px 15px rgba(0, 0, 0, 0.4) !important;
-  color: var(--positive) !important;
-}
-
-/* 6. КНОПКА БЕЗОПАСНОСТИ (Успокаивающий мятный) */
-#safety-global-btn {
-  background: linear-gradient(135deg, rgba(80, 255, 150, 0.15) 0%, rgba(40, 150, 90, 0.05) 100%) !important;
-  border: 1px solid rgba(80, 255, 150, 0.3);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.6);
-  box-shadow: 
-    inset 0 2px 3px rgba(255, 255, 255, 0.2),
-    0 5px 0 rgba(20, 80, 50, 0.9), 
-    0 8px 15px rgba(80, 255, 150, 0.15) !important;
-  color: #a8ffd2 !important;
-}
-
-/* 7. ФИЗИКА НАЖАТИЯ (Утапливаем кнопку, скрывая её 3D-грань) */
-button:active:not(:disabled), .btn:active:not(:disabled), 
-.btn-primary:active:not(:disabled), .btn-accent:active:not(:disabled), .btn-action:active:not(:disabled), 
-.btn-danger:active:not(:disabled), .history-player-btn.active, 
-.history-player-btn:active, .safety-hold-trigger.holding, #safety-global-btn:active {
-  transform: translateY(5px) !important;
-  border-top-color: rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 
-    inset 0 1px 3px rgba(0, 0, 0, 0.4),
-    0 0px 0 rgba(0, 0, 0, 0), /* Прячем нижнюю грань */
-    0 2px 4px rgba(0, 0, 0, 0.4) !important;
-}
-
-button:disabled, .btn:disabled, .btn-action:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: translateY(5px);
-  box-shadow: 
-    inset 0 1px 2px rgba(255, 255, 255, 0.1),
-    0 0px 0 rgba(0, 0, 0, 0),
-    0 2px 4px rgba(0, 0, 0, 0.3) !important;
-  filter: grayscale(0.5);
-}
-
-/* =========================================
-   ОБЪЕМНЫЕ ОКНА И КАРТОЧКИ (3D Containers)
-   ========================================= */
-.game-container, .modal-content, .player-box, .rules-dropdown-box, .history-card, .q-card, .history-window {
-  background: linear-gradient(180deg, rgba(25, 23, 35, 0.95) 0%, rgba(15, 14, 22, 0.98) 100%);
-  border: 1px solid rgba(140, 108, 255, 0.2);
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  border-bottom: 2px solid rgba(0, 0, 0, 0.8);
-  box-shadow: 
-    inset 0 2px 3px rgba(255, 255, 255, 0.05), /* Блик сверху */
-    0 6px 0 rgba(10, 9, 15, 0.9),              /* 3D Толщина */
-    0 15px 40px rgba(0, 0, 0, 0.6);            /* Падающая тень */
-  border-radius: 24px;
-  margin-bottom: 6px; 
-}
-
-.player-box {
-  border-radius: 16px;
-  box-shadow: 
-    inset 0 1px 2px rgba(255, 255, 255, 0.05),
-    0 4px 0 rgba(10, 9, 15, 0.9),
-    0 6px 15px rgba(0, 0, 0, 0.4);
-}
-
-/* =========================================
-   ВДАВЛЕННЫЕ ПОЛЯ ВВОДА (Reverse Volumetric)
-   ========================================= */
-.input-field {
-  background: rgba(5, 5, 8, 0.7); /* Очень темный фон углубления */
-  border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15); /* Блик на нижней фаске */
-  border-top: 2px solid rgba(0, 0, 0, 0.9);           /* Глубокая тень на верхней фаске */
-  border-radius: 16px;
-  color: var(--text);
-  font-family: inherit;
-  font-weight: 600;
-  box-shadow: 
-    inset 0 6px 12px rgba(0, 0, 0, 0.8), /* Темнота внутри отверстия */
-    inset 0 2px 4px rgba(0, 0, 0, 0.9), 
-    0 1px 2px rgba(255, 255, 255, 0.05); /* Легкий свет снаружи */
-  transition: all 0.2s ease;
-}
-
-.input-field:focus {
-  background: rgba(15, 12, 25, 0.9);
-  outline: none;
-  border-bottom: 1px solid rgba(140, 108, 255, 0.5);
-  box-shadow: 
-    inset 0 6px 12px rgba(0, 0, 0, 0.8),
-    inset 0 0 0 1px var(--accent),
-    0 0 15px rgba(140, 108, 255, 0.2);
-}
-
-/* =========================================
    БЕЙДЖ "DESIGNED BY HUMAN" (Редизайн)
    ========================================= */
 .creator-badge {
@@ -2335,92 +1692,10 @@ button:disabled, .btn:disabled, .btn-action:disabled {
 }
 
 /* =========================================
-   ПАНЕЛИ УТИЛИТ (Скринридер и нижние блоки навигации)
-   Превращаем плоские инлайн-контейнеры в 3D
-   ========================================= */
-#setup-screen > div:has(#sr-mode-toggle),
-#safety-screen-privacy > div:last-child,
-#safety-screen-options > div:last-child {
-  background: linear-gradient(180deg, rgba(25, 23, 35, 0.8) 0%, rgba(15, 14, 22, 0.95) 100%) !important;
-  border: 1px solid rgba(140, 108, 255, 0.2) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.8) !important;
-  box-shadow: 
-    inset 0 2px 3px rgba(255, 255, 255, 0.03),
-    0 4px 0 rgba(10, 9, 15, 0.6),
-    0 8px 15px rgba(0, 0, 0, 0.3) !important;
-  border-radius: 16px !important;
-}
-
-/* Делаем сам квадратик чекбокса скринридера вдавленным ("reverse 3D") */
-#sr-mode-toggle {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 22px !important;
-  height: 22px !important;
-  background: rgba(5, 5, 8, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-top: 2px solid rgba(0, 0, 0, 0.9);
-  border-radius: 6px;
-  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(255, 255, 255, 0.05);
-  position: relative;
-  cursor: pointer;
-}
-
-#sr-mode-toggle:checked {
-  background: var(--accent);
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 0 10px rgba(140, 108, 255, 0.4);
-  border-top: 1px solid rgba(0,0,0,0.5);
-}
-
-#sr-mode-toggle:checked::after {
-  content: '✔';
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 900;
-}
-
-/* =========================================
    ФИНАЛЬНАЯ ПОЛИРОВКА (Аватары, Аудио, Бейдж, Безопасность)
    ========================================= */
 
-/* 1. Возвращаем 3D-объем аватаркам (перезаписываем старый плоский стиль) */
-.player-avatar {
-  width: 44px !important;
-  height: 44px !important;
-  background: rgba(255, 255, 255, 0.04) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.8) !important;
-  border-radius: 50% !important;
-  box-shadow: 
-    inset 0 2px 3px rgba(255, 255, 255, 0.05),
-    0 4px 0 rgba(10, 9, 15, 0.9), 
-    0 6px 10px rgba(0, 0, 0, 0.4) !important;
-  transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
-}
 
-.player-avatar:active {
-  transform: translateY(4px) scale(0.95) !important;
-  border-top-color: rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 
-    inset 0 1px 2px rgba(255, 255, 255, 0.05),
-    0 0px 0 rgba(0, 0, 0, 0),
-    0 2px 4px rgba(0, 0, 0, 0.3) !important;
-}
-
-/* 2. Чиним кнопку аудио (3D-панель, плоская иконка) */
-.audio-control-panel {
-  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.8) !important;
-  box-shadow: 
-    inset 0 2px 3px rgba(255, 255, 255, 0.05),
-    0 4px 0 rgba(10, 9, 15, 0.9), 
-    0 8px 20px rgba(0, 0, 0, 0.5) !important;
-}
 
 #audio-toggle-btn {
   background: transparent !important;
@@ -2432,35 +1707,6 @@ button:disabled, .btn:disabled, .btn-action:disabled {
 
 #audio-toggle-btn:active {
   transform: scale(0.85) !important;
-}
-
-/* 3. Делаем кнопку безопасности идентичной Gameplay Tips (Темно-серая) */
-#safety-global-btn {
-  background: rgba(255, 255, 255, 0.04) !important;
-  color: var(--text) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.8) !important;
-  box-shadow: 
-    inset 0 2px 3px rgba(255, 255, 255, 0.05),
-    0 5px 0 rgba(10, 9, 15, 0.9), 
-    0 8px 15px rgba(0, 0, 0, 0.4) !important;
-}
-
-/* 4. Цвета бейджика "Designed by Human" под стиль нижних кнопок */
-.creator-badge {
-  /* Градиент из синего (Start Game) и розово-оранжевого (Add Player) */
-  background: linear-gradient(124deg, #4d5dff, #7f65ff, #ff6c8d, #ff9d4a, #4d5dff) !important;
-  background-size: 400% 400% !important;
-}
-
-/* --- ТОТАЛЬНЫЙ ФИКС ПУСТОТЫ НА ЭКРАНЕ УГАДЫВАНИЯ --- */
-#guesser-screen .final-guess-section {
-    margin-bottom: 0 !important;
-}
-
-#guesser-screen .abilities-list-vertical {
-    margin-top: 0 !important;
 }
 
 /* Схлопываем в ноль все скрытые или пустые элементы-призраки между ними */
@@ -2483,22 +1729,6 @@ button:disabled, .btn:disabled, .btn-action:disabled {
     margin: 4px 0 !important;
 }
 
-/* --- ИСПРАВЛЕНИЕ ДИЗАЙНА ИСТОРИИ (Делаем карточки вдавленными, убираем 3D) --- */
-.game-container .history-card {
-    background: transparent !important; /* Убираем фон */
-    border: none !important; /* Убираем все рамки */
-    box-shadow: none !important; /* Убираем тени */
-    border-radius: 0 !important;
-    padding: 16px 0 !important; /* Оставляем отступы только сверху и снизу */
-    margin: 0 !important;
-    min-height: auto !important;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.1) !important; /* Легкая линия-разделитель между раундами */
-}
-
-.game-container .history-card:last-child {
-    border-bottom: none !important;
-    padding-bottom: 0 !important;
-}
 
 /* --- СКРЫТИЕ ПУСТОГО ПОЛЯ ИГРОКОВ И ПОДСКАЗКИ --- */
 #players-boxes-container:empty {
@@ -2541,14 +1771,23 @@ button:disabled, .btn:disabled, .btn-action:disabled {
     margin-top: 16px !important;
 }
 
-/* --- ПРЕВРАЩАЕМ ПАНЕЛЬ АУДИО В ПРОСТУЮ КРУГЛУЮ КНОПКУ --- */
 .audio-control-panel {
-    width: 46px !important;
-    height: 46px !important;
-    padding: 0 !important;
-    border-radius: 50% !important;
-    justify-content: center !important;
-    gap: 0 !important;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  background: rgba(20, 19, 29, 0.95);
+  border: 1px solid rgba(140, 108, 255, 0.3);
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border-radius: 50%;
+  justify-content: center;
+  gap: 0;
 }
 
 /* Полностью отключаем слайдер и текст процентов, если они где-то остались */
@@ -2611,48 +1850,6 @@ button:disabled, .btn:disabled, .btn-action:disabled {
   50% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 10px rgba(255, 213, 107, 0.4); }
 }
 
-/* --- ИНТЕРАКТИВНЫЙ БЛОК ВОПРОСА --- */
-.question-interactive-wrapper {
-  cursor: pointer;
-  padding: 10px 14px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px dashed rgba(140, 108, 255, 0.3);
-  margin-top: 6px;
-  transition: all 0.2s ease;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.question-interactive-wrapper:active {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(140, 108, 255, 0.6);
-  transform: scale(0.98);
-}
-
-.question-collapsed {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 1rem !important; /* Делаем текст меньше, как просил */
-  opacity: 0.85;
-}
-
-.question-expanded {
-  white-space: normal;
-  font-size: 1rem !important;
-  opacity: 1;
-}
-
-.expand-icon {
-  font-size: 0.75rem;
-  color: var(--accent);
-  font-weight: 700;
-  margin-top: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
 /* Делаем кнопки flex-контейнерами */
 #guess-word-1, #guess-word-2 {
   display: flex;
@@ -2687,33 +1884,6 @@ button:disabled, .btn:disabled, .btn-action:disabled {
   opacity: 0.7;
 }
 
-/* --- УДАЛЕНИЕ ЛИШНИХ ФОНОВЫХ БЛОКОВ-КОНТЕЙНЕРОВ --- */
-
-/* 1. Снимаем общие стили-коробки со всех прямых дочерних div-контейнеров на всех экранах */
-#setup-screen > div,
-#picker-screen > div,
-#responder-screen > div,
-#guesser-screen > div,
-#final-screen > div {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    border-radius: 0 !important;
-}
-
-/* 2. Снимаем коробки с конкретных классов, которые тоже служили видимыми контейнерами */
-.help-section,
-.card-question,
-.sr-access-row,
-.leaderboard-list,
-.history-window,
-.guesser-info-block {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-}
 
 /* 3. Убираем тяжелый 3D эффект с обертки чекбокса скринридера */
 #setup-screen > div:has(#sr-mode-toggle) {
@@ -2724,7 +1894,6 @@ button:disabled, .btn:disabled, .btn-action:disabled {
 
 /* 4. Восстанавливаем аккуратные отступы между элементами (так как внутренний padding удален) */
 .card-question { margin: 12px 0 !important; }
-.help-section { margin-bottom: 12px !important; }
 .spaced-section, .add-player-block, .custom-hint-block, .share-qr-block { margin-top: 16px !important; }
 .leaderboard-list li { padding: 8px 0 !important; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 
@@ -2737,11 +1906,6 @@ button:disabled, .btn:disabled, .btn-action:disabled {
     min-height: auto !important;
 }
 
-/* 2. Максимально ужимаем зазоры в самом блоке с кнопками и текстом */
-.help-section {
-    gap: 4px !important;
-    margin-bottom: 8px !important; /* Придвигаем контент ниже (имя игрока/раунд) вплотную к шапке */
-}
 
 /* 3. Уменьшаем отступы вокруг курсивного текста-подсказки (сохраняя сам текст) */
 .safety-tip-text {
@@ -2767,43 +1931,32 @@ button:disabled, .btn:disabled, .btn-action:disabled {
     margin-top: 0 !important;
 }
 
-/* 6. Уменьшаем отступ под главными заголовками (h2 - Имя игрока) */
-h2 {
-    margin-top: 0 !important;
-    margin-bottom: 10px !important;
-}
 
 /* --- ПЛОСКОЕ РАЗДЕЛЕНИЕ ЭКРАНА (БЕЗ МАТРЁШЕК) --- */
 
 #picker-screen .gameplay-zone,
 #responder-screen .gameplay-zone,
 #guesser-screen .gameplay-zone {
-    /* Делаем фон нижней части визуально отличным от верха */
-    background: rgba(0, 0, 0, 0.4) !important;
-    
-    /* Тонкая и четкая линия разделения от края до края */
-    border: none !important;
-    border-top: 1px solid rgba(140, 108, 255, 0.25) !important; 
-    border-radius: 0 0 32px 32px !important; /* Закругляем только низ под главный контейнер */
-    
-    /* Растягиваем блок до самых краев главного окна (компенсируем padding родителя) */
-    margin-top: 16px !important;
-    margin-left: -32px !important;
-    margin-right: -32px !important;
-    margin-bottom: -32px !important;
-    padding: 24px 32px 32px 32px !important; /* Внутренние отступы для контента */
-    
-    box-shadow: none !important; /* Никакого объема или эффекта карточки */
+    background: rgba(0, 0, 0, 0.4);
+    border: none;
+    border-top: 1px solid rgba(140, 108, 255, 0.25); 
+    border-radius: 0 0 32px 32px; 
+    margin-top: 16px;
+    margin-left: -32px;
+    margin-right: -32px;
+    margin-bottom: -32px;
+    /* Увеличенные поля для ПК: возвращают текст и кнопки ближе к центру, оставляя красивый темный фон по краям */
+    padding: 12px 48px 40px 48px !important;
+    box-shadow: none; 
 }
 
-/* Убираем декоративный блик из прошлого шага */
 #picker-screen .gameplay-zone::before,
 #responder-screen .gameplay-zone::before,
 #guesser-screen .gameplay-zone::before {
     display: none !important;
 }
 
-/* Адаптация под мобильные экраны (где отступы контейнера 22px вместо 32px) */
+/* Адаптация под мобильные экраны */
 @media (max-width: 620px) {
     #picker-screen .gameplay-zone,
     #responder-screen .gameplay-zone,
@@ -2811,7 +1964,8 @@ h2 {
         margin-left: -22px !important;
         margin-right: -22px !important;
         margin-bottom: -22px !important;
-        padding: 24px 22px 22px 22px !important;
+        /* Аккуратные поля для телефона, чтобы элементы не касались краев */
+        padding: 8px 22px 32px 22px !important;
         border-radius: 0 0 20px 20px !important;
     }
 }
@@ -2820,9 +1974,13 @@ h2 {
 .integrated-question-flow {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    /* СЕКРЕТ СИНХРОНИЗАЦИИ: ОБЕ СТРЕЛКИ ТЯНУТСЯ ВМЕСТЕ */
+    align-items: stretch !important; 
+    width: max-content !important;   
+    min-width: 280px;
+    max-width: 100%;                 
+    margin: 18px auto 0;
     gap: 14px;
-    margin-top: 18px;
 }
 
 .question-part {
@@ -2839,32 +1997,69 @@ h2 {
     display: none;
 }
 
-/* Оформление блоков с ответами */
+/* --- СТРЕЛКИ ДЛЯ ОТВЕТОВ (ЕДИНЫЙ БЛОК) --- */
 .guess-answer-block {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    min-height: 85px !important;
+    height: auto !important;
+    
+    /* Ширина диктуется родительским контейнером */
+    width: auto !important; 
+    max-width: none !important; 
+    
+    margin: 0 !important;
     display: flex !important;
-    flex-direction: row !important;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 16px;
-    padding: 14px 20px !important;
-    width: 100%;
-    min-height: 64px;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    overflow: visible !important;
 }
 
-.answer-num-indicator {
-    font-size: 18px;
-    font-weight: 900;
-    color: #ffd56b;
-    background: rgba(255, 213, 107, 0.15);
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border: 1px solid rgba(255, 213, 107, 0.3);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+/* --- УБРАЛИ КОРОБКУ, ОСТАВИЛИ ТОЛЬКО ПРОЗРАЧНУЮ ОБЕРТКУ --- */
+.guess-answer-block .masked-wrapper {
+    background: transparent !important; 
+    border: none !important; 
+    padding: 0 !important; 
+    width: 100% !important; 
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 !important;
+    position: relative;
+    z-index: 2;
+}
+
+/* ЛЕВАЯ СТРЕЛКА */
+#guess-word-1 {
+    background: url('data:image/svg+xml;utf8,<svg preserveAspectRatio="none" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg"><path d="M 185,15 Q 195,15 195,25 L 195,75 Q 195,85 185,85 L 50,85 L 50,92 Q 50,97 44,92 L 6,55 Q 2,50 6,45 L 44,8 Q 50,3 50,8 L 50,15 Z" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.4)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>') no-repeat center center !important;
+    background-size: 100% 100% !important;
+    /* PADDING отодвигает слова от острия: сверху, справа, снизу, СЛЕВА */
+    padding: 14px 16px 14px 50px !important; 
+    left: 0 !important; /* Убрали сдвиг */
+}
+
+/* ПРАВАЯ СТРЕЛКА */
+#guess-word-2 {
+    background: url('data:image/svg+xml;utf8,<svg preserveAspectRatio="none" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg"><path d="M 15,15 Q 5,15 5,25 L 5,75 Q 5,85 15,85 L 150,85 L 150,92 Q 150,97 156,92 L 194,55 Q 198,50 194,45 L 156,8 Q 150,3 150,8 L 150,15 Z" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.4)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>') no-repeat center center !important;
+    background-size: 100% 100% !important;
+    /* PADDING отодвигает слова от острия: сверху, СПРАВА, снизу, слева */
+    padding: 14px 50px 14px 16px !important; 
+    left: 0 !important; /* Убрали сдвиг */
+}
+
+/* Запрет вывода старых текстовых стрелок (← и →) */
+#guess-word-1::before, #guess-word-2::after,
+#guess-word-1::after, #guess-word-2::before {
+    display: none !important;
+}
+
+#guess-word-1::before, #guess-word-2::after,
+#guess-word-1::after, #guess-word-2::before {
+    display: none !important;
 }
 
 .swipe-hint-text {
@@ -2878,10 +2073,10 @@ h2 {
     opacity: 0.7;
 }
 
-/* Секция способностей и анимаций */
 .reveals-section {
     width: 100%;
-    margin-top: 10px;
+    max-width: 400px;
+    margin: 10px auto 0;
     border-top: 1px dashed rgba(255, 255, 255, 0.1);
     padding-top: 20px;
 }
@@ -2906,353 +2101,102 @@ h2 {
     position: relative;
     flex: 1;
     display: flex;
+    flex-direction: column !important;
+    gap: 6px !important;
 }
 
 .ability-inline-btn {
     width: 100% !important;
 }
 
-/* Кнопка вопроса (демо) */
-.demo-toggle-btn {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background: linear-gradient(135deg, #4d5dff, #7f65ff);
-    border: 2px solid rgba(20, 19, 29, 0.95);
-    color: white;
-    border-radius: 50%;
-    width: 26px;
-    height: 26px;
-    font-size: 13px;
-    font-weight: 900;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-    transition: transform 0.2s ease, filter 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.demo-toggle-btn:active {
-    transform: scale(0.9);
-    filter: brightness(1.2);
-}
-
-/* Контейнер анимации */
-.demo-box {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px dashed rgba(140, 108, 255, 0.3);
-    border-radius: 20px;
-    padding: 18px;
-    margin-bottom: 16px;
-    text-align: center;
-    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.demo-label {
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 16px;
-    letter-spacing: 0.05em;
-}
-
-.demo-label strong {
-    color: #fff;
-}
-
-.demo-anim-container {
-    position: relative;
-    height: 44px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.demo-step {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-}
-
-/* Логика анимации (смена каждые 2 секунды) */
-.step-1 { animation: showFirst 4s infinite; }
-.step-2 { animation: showSecond 4s infinite; }
-
-@keyframes showFirst {
-    0%, 45% { opacity: 1; transform: scale(1); }
-    50%, 100% { opacity: 0; transform: scale(0.96); }
-}
-
-@keyframes showSecond {
-    0%, 45% { opacity: 0; transform: scale(0.96); }
-    50%, 95% { opacity: 1; transform: scale(1); }
-    100% { opacity: 0; transform: scale(0.96); }
-}
-
-/* --- ИСПРАВЛЕНИЕ КНОПОК ВОПРОСИКОВ (ДЕМО) --- */
-
-/* Делаем обертку вертикальной, чтобы кнопки выстроились друг под другом */
-.ability-wrapper {
-    flex-direction: column !important;
-    gap: 6px !important;
-}
-
-/* Превращаем маленькую круглую кнопку в удобную широкую плашку под основной кнопкой */
-.demo-toggle-btn {
-    position: relative !important;
-    top: auto !important;
-    right: auto !important;
-    width: 100% !important;
-    height: 30px !important;
-    border-radius: 10px !important;
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px dashed rgba(140, 108, 255, 0.3) !important;
-    color: var(--muted) !important;
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    box-shadow: none !important;
-    letter-spacing: 0.05em !important;
-}
-
-/* Добавляем текст "How it works" прямо через CSS */
-.demo-toggle-btn::after {
-    content: ' HOW IT WORKS';
-    color: rgba(255, 255, 255, 0.6);
-    margin-left: 4px;
-}
-
-.demo-toggle-btn:hover {
-    background: rgba(255, 255, 255, 0.06) !important;
-}
-
-.demo-toggle-btn:active {
-    transform: scale(0.96) !important;
-    background: rgba(140, 108, 255, 0.15) !important;
-}
-
-/* --- ОРГАНИЧНЫЕ КНОПКИ ОТВЕТОВ В ТЕКСТЕ --- */
-.integrated-question-flow {
-    gap: 12px !important;
-}
-
-.guess-answer-block {
-    background: rgba(255, 255, 255, 0.03) !important; /* Почти невидимый фон */
-    border: 1px dashed rgba(255, 255, 255, 0.2) !important; /* Легкий пунктир как намек на кликабельность */
-    box-shadow: none !important;
-    padding: 8px 16px !important;
-    min-height: auto !important;
-    width: auto !important; /* Кнопка облегает контент, а не тянется на весь экран */
-    border-radius: 12px !important;
-    justify-content: center !important;
-    gap: 8px !important;
-}
-
-.guess-answer-block:active {
-    background: rgba(140, 108, 255, 0.15) !important;
-    border-color: rgba(140, 108, 255, 0.5) !important;
-    transform: scale(0.97) !important;
-}
-
-/* Скрываем старые кружочки, если они где-то остались */
-.answer-num-indicator {
-    display: none !important;
-}
-
-/* Стиль для органичных цифр "1:" и "2:" */
-.organic-num {
-    font-weight: 800;
-    color: #ffd56b;
-    font-size: 1.1rem;
-    opacity: 0.9;
-}
-
-/* --- УБИРАЕМ "МАТРЁШКИ" ВОКРУГ СЛОВ И КНОПОК --- */
-
-/* 1. Убираем пунктирную рамку вокруг самих слов, чтобы они сливались с фоном */
-.word-group {
-    border: none !important;
-    background: transparent !important;
-    padding: 0 !important;
-    margin: 0 4px !important;
-}
-
-/* 2. Делаем кнопки ответов абсолютно плоскими и органичными (как часть текста) */
-.guess-answer-block {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    min-height: auto !important;
-    padding: 6px 12px !important;
-    margin: 0 !important;
-}
-
-/* Легкий эффект при нажатии, чтобы было понятно, что элемент кликабельный */
-.guess-answer-block:active {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border-radius: 12px !important;
-    transform: scale(0.97) !important;
-}
-
-/* 3. Опускаем прочерки длины вниз (на базовую линию текста) */
 .letter-dash {
     vertical-align: bottom !important;
-    transform: translateY(-4px) !important; /* Прижимаем к низу строки */
+    transform: translateY(-4px) !important;
     height: 3px !important;
     border-radius: 1px !important;
 }
 
-/* На всякий случай скрываем старые фоны у индикаторов цифр, делая их текстом */
-.answer-num-indicator {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    color: #ffd56b !important;
-    font-size: 1.15rem !important;
-    width: auto !important;
-    height: auto !important;
-}
-.answer-num-indicator::after {
-    content: ":";
-}
-
-.word-group .letter-gap,
-.word-group .letter-dash {
-    align-self: flex-end !important;
-    transform: none !important; /* Отключаем старые сдвиги по оси Y */
-    margin-bottom: 6px !important; /* Настраиваем высоту отступа под базовую линию текста */
-}
-
-/* Обводка для слов, если их больше одного */
 .word-group:not(:only-child) {
     border: 1px dashed rgba(255, 255, 255, 0.25) !important;
     padding: 4px 8px !important;
     border-radius: 8px !important;
 }
 
-/* Запрет переноса букв на новую строку внутри одного слова */
-.word-group {
-    flex-wrap: nowrap !important;
-    white-space: nowrap !important;
-}
-
-/* Опускаем чёрточки ровно на уровень базовой линии букв */
 .word-group .letter-gap,
 .word-group .letter-dash {
     align-self: flex-end !important;
-    margin-bottom: 2px !important; /* Расстояние от нижнего края контейнера */
+    margin-bottom: 2px !important;
     transform: none !important;
 }
 
-/* Разрешаем иконкам выходить за границы кнопок */
-#guess-word-1, #guess-word-2 {
-    position: relative !important;
-    overflow: visible !important; 
-}
-
-/* Иконка справа от ПЕРВОЙ кнопки (свайп влево) */
-/* Кнопка адаптируется под размер слова (shrink-wrap) */
-.guess-answer-block {
-    width: fit-content !important; 
-    max-width: 100% !important;
-    margin: 0 auto !important; /* Держим по центру */
-    min-width: 140px; /* Чтобы одиночные буквы не смотрелись слишком куцо */
-    position: relative !important;
-    overflow: visible !important; /* Разрешаем PNG выходить за края самой кнопки */
-}
-
-/* Отключаем старые иконки, чтобы они не дублировались с новыми */
-#guess-word-1::after { content: none !important; }
-#guess-word-2::before { content: none !important; }
-
-/* НОВОЕ ПОЛОЖЕНИЕ: Иконка СЛЕВА от ПЕРВОЙ кнопки (свайп влево) */
-#guess-word-1::before {
-    content: "";
-    position: absolute;
-    left: -45px; /* Сдвиг влево от кнопки (настрой отступ, если нужно ближе/дальше) */
-    top: 50%;
-    transform: translateY(-50%);
-    width: 45px;
-    height: 45px;
-    background-image: url('src/ui/swipeLeft.png'); /* Укажи свой файл */
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    pointer-events: none;
-    filter: invert(1) opacity(0.35);
-    z-index: 5;
-}
-
-/* НОВОЕ ПОЛОЖЕНИЕ: Иконка СПРАВА от ВТОРОЙ кнопки (свайп вправо) */
-#guess-word-2::after {
-    content: "";
-    position: absolute;
-    right: -45px; /* Сдвиг вправо от кнопки */
-    top: 50%;
-    transform: translateY(-50%);
-    width: 45px;
-    height: 45px;
-    background-image: url('src/ui/swipeRight.png'); /* Укажи свой файл */
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    pointer-events: none;
-    filter: invert(1) opacity(0.35);
-    z-index: 5;
-}
-
-/* Жестко ограничиваем ширину кнопок и их внутреннего контейнера */
-.guess-answer-block {
-    width: fit-content !important;
-    align-self: center !important; /* Не дает кнопке растягиваться во flex-колонке */
-    max-width: 90% !important;
-}
-
-.guess-answer-block .masked-wrapper {
-    width: fit-content !important;
-    margin: 0 auto !important;
-    justify-content: center !important;
-}
-
-/* Убираем черную тень у слов при свайпе, чтобы неоновое свечение лучше читалось */
-.guess-answer-block * {
-    transition: text-shadow 0.1s ease-out;
-}
-
-/* --- ВОССТАНАВЛИВАЕМ ВИДИМОСТЬ ИСТОРИИ НА ФИНАЛЬНОМ ЭКРАНЕ --- */
-
-/* Контейнер окна истории */
 #final-screen #final-history-window {
     display: block !important;
-    background: rgba(25, 23, 35, 0.95) !important;
-    border: 1px solid rgba(140, 108, 255, 0.3) !important;
-    border-radius: 20px !important;
-    padding: 18px !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
     margin-top: 16px !important;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+    box-shadow: none !important;
 }
 
-/* Карточки самих ответов внутри истории */
-.game-container .history-card {
-    display: block !important;
-    background: rgba(255, 255, 255, 0.05) !important; 
-    border: 1px solid rgba(255, 255, 255, 0.1) !important; 
-    border-radius: 14px !important;
-    padding: 16px !important; 
-    margin: 0 0 12px 0 !important;
-}
-
-/* Убираем линию-разделитель у последней карточки (которую мы добавляли ранее) */
-.game-container .history-card {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-}
-
-/* Делаем список кнопок игроков видимым */
 #final-screen #history-player-list {
     display: flex !important;
     padding: 10px 0 !important;
+}
+
+.sr-access-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.option-label span {
+    font-size: 0.85rem;
+    font-weight: 400;
+    opacity: 0.7;
+    margin-top: 2px;
+}
+
+.card-question {
+    margin: 12px 0;
+    font-size: 0.95rem;
+}
+
+.rules-dropdown-box {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--muted);
+}
+
+.inputs-combined-wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.history-window {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.guesser-info-block {
+    text-align: center;
+    padding: 4px 10px 20px !important;
+    margin: 4px 0 16px !important;
+    border-top: none !important;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.15) !important;
+}
+
+.history-card {
+    display: block;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 16px 16px 26px 16px !important;
+    margin: 0 0 12px 0;
+}
+
+/* Возвращаем отступ между кнопкой Add Player и списком игроков */
+#setup-screen #players-boxes-container {
+    margin-top: 20px !important;
 }

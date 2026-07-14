@@ -82,16 +82,18 @@ showPassScreen(player, onConfirm, note = "Only this player should look at the ph
     let cleanNote = note;
     if (window.game) {
       const responder = window.game.players[window.game.getResponderIndex()];
-      const responderName = responder.name.toUpperCase();
-      if (cleanNote.includes(responderName)) {
-        cleanNote = cleanNote.replace(responderName, `<span class="player-name-pass-fade">${responder.emoji} ${responderName}</span>`);
+      // Делаем поиск имени нечувствительным к регистру, чтобы точно подсветить его
+      const regex = new RegExp(responder.name, 'i');
+      if (regex.test(cleanNote)) {
+        cleanNote = cleanNote.replace(regex, `<span class="player-name-pass-fade">${responder.emoji} ${responder.name.toUpperCase()}</span>`);
       }
     }
 
-    message.innerHTML = `PASS THE PHONE TO:<br>${highlightedTargetName}<br><br><span style="font-size: 1.2rem; font-weight: 400; color: var(--muted);">${cleanNote}</span>`;
+    // Добавили вывод cleanNote с аккуратными стилями под именем
+    message.innerHTML = `PASS THE PHONE TO:<br>${highlightedTargetName}<br><span style="display: block; font-size: 1.05rem; color: var(--muted); margin-top: 24px; font-weight: 600; text-transform: none; line-height: 1.45; letter-spacing: normal;">${cleanNote}</span>`;
+    
     window.scrollTo({ top: 0, behavior: 'instant' });
 
-    // Вешаем клик на весь экран передачи телефона
     this.screens.pass.onclick = null;
     this.screens.pass.onclick = () => {
       this.screens.pass.style.display = 'none';
