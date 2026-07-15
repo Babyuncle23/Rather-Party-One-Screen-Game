@@ -241,23 +241,15 @@ const rallyToggle = document.getElementById('rally-english-toggle');
     if (rallyToggle) {
       rallyToggle.checked = false;
       
-      rallyToggle.onchange = async (e) => {
-        if (e.target.checked) {
-          screens.showLoading(); // Включаем экран загрузки
-          const hasFinnish = await audioManager.checkFinnishVoiceExistsAsync();
-          screens.hideLoading(); // Выключаем загрузку
-          
-          if (!hasFinnish) {
-            screens.showAlert(
-              "Missing Voice 🇫🇮", 
-              "Rally English mode requires a Finnish text-to-speech voice, which is not installed or hasn't loaded yet on your device. The game will proceed with a standard voice. Please try checking the box again in a few seconds!"
-            );
-            e.target.checked = false;
-            audioManager.setRallyEnglishMode(false);
-            return;
-          }
-        }
+      rallyToggle.onchange = (e) => {
+        // Просто включаем режим мгновенно, без алертов и экранов загрузки.
         audioManager.setRallyEnglishMode(e.target.checked);
+        
+        // Тихо "пинаем" синтезатор в фоне, чтобы он начал подтягивать 
+        // финский голос к тому моменту, как мы нажмем Start Game.
+        if (e.target.checked && window.speechSynthesis) {
+          window.speechSynthesis.getVoices();
+        }
       };
     }
 

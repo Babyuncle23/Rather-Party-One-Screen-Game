@@ -580,8 +580,27 @@ p {
 
 
 .creator-subtitle {
-  font-size: 15px;
-  font-weight: 500;
+  /* Используем шрифты для кода */
+  font-family: 'Consolas', 'Courier New', 'Fira Code', monospace;
+  font-size: 14px;
+  color: #a5a1c8; /* Цвет текста, похожий на комментарии в коде */
+  letter-spacing: 0.5px;
+  margin-top: 5px;
+  display: inline-block;
+}
+
+/* Добавляем мигающий курсор после текста */
+.creator-subtitle::after {
+  content: '_';
+  color: #37ffe2; /* Неоновый бирюзовый акцент из твоей палитры */
+  margin-left: 4px;
+  animation: blinkCursor 1s step-end infinite;
+}
+
+/* Анимация мигания */
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 .safety-info-heading {
@@ -1651,38 +1670,56 @@ p {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 10px 22px;
+  gap: 8px;
+  padding: 8px 20px;
   
-  font-family: "Comic Sans MS", "Comic Sans", cursive, sans-serif !important;
-  font-style: italic; /* <--- КУРСИВ */
-  font-size: 15px;
+  font-family: system-ui, -apple-system, sans-serif !important;
+  font-style: italic;
+  font-size: 14px;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #fff;
+  letter-spacing: 1.5px;
+  color: #ffffff;
   
-  /* Смягченная переливающаяся радуга (пастельно-неоновая) */
-  background: linear-gradient(124deg, #d9534f, #d98cb3, #d9a84f, #a2d94f, #4fd98c, #4fb3d9, #6a4fd9, #b34fd9);
-  background-size: 400% 400%;
-  animation: rainbowBadge 4s ease infinite; /* Чуть замедлили */
+  /* Более чистые и сочные цвета для радуги */
+  background: linear-gradient(124deg, #ff6b6b, #feca57, #1dd1a1, #5f27cd, #ff9ff3);
+  background-size: 300% 300%;
+  animation: rainbowBadge 5s ease infinite;
   
-  border: 3px solid #ffffff;
+  /* Чуть утончили рамку, чтобы не спорила с фоном */
+  border: 2px solid rgba(255, 255, 255, 0.9);
   border-radius: 50px;
+  
+  /* Собрали 3D-тень в единый гармоничный блок (темно-фиолетовый низ) */
   box-shadow: 
-    0 6px 0px rgba(140, 108, 255, 0.7), /* Смягчили жесткий низ */
-    0 12px 15px rgba(0,0,0,0.5), 
-    inset 0 4px 10px rgba(255,255,255,0.5); 
+    0 5px 0px #341f97, 
+    0 10px 15px rgba(0,0,0,0.3), 
+    inset 0 2px 5px rgba(255,255,255,0.4); 
     
-  text-shadow: 
-    2px 2px 0 #000, -2px -2px 0 #000, 
-    2px -2px 0 #000, -2px 2px 0 #000,
-    0 4px 0 #000;
-    
+  /* Аккуратная тень текста для читаемости */
+  text-shadow: 0px 2px 4px rgba(0,0,0,0.4);
+
   transform: rotate(-3deg);
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   margin: 10px 0 20px 0;
   cursor: pointer;
+}
+
+/* Оживляем кнопку при наведении! */
+.creator-badge:hover {
+  transform: rotate(0deg) translateY(2px);
+  box-shadow: 
+    0 3px 0px #341f97, 
+    0 5px 10px rgba(0,0,0,0.3), 
+    inset 0 2px 5px rgba(255,255,255,0.4); 
+}
+
+.creator-badge:active {
+  transform: rotate(0deg) translateY(5px);
+  box-shadow: 
+    0 0px 0px #341f97, 
+    0 2px 5px rgba(0,0,0,0.3), 
+    inset 0 2px 5px rgba(255,255,255,0.4); 
 }
 
 @keyframes rainbowBadge {
