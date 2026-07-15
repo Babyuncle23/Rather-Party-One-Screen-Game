@@ -569,7 +569,7 @@ checkFinnishVoiceExistsAsync() {
       // Если за это время событие не нашло финский голос, значит его точно нет на устройстве.
       setTimeout(() => {
         resolve(checkForFi());
-      }, 2500);
+      }, 5000);
     });
   }
 
