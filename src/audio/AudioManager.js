@@ -625,9 +625,9 @@ toFinglish(text) {
     const finalVoiceText = this.isRallyEnglish ? this.toFinglish(text).toLowerCase() : text;
     const utterance = new SpeechSynthesisUtterance(finalVoiceText);
     if (this.isRallyEnglish) {
-      utterance.volume = Math.min(this.volume * 1.25, 1.0); // Изменено с 2 на 1.25
+      utterance.volume = Math.min(this.volume * 1.0, 1.0); // Изменено с 2 на 1.25
       utterance.lang = 'fi-FI';
-      utterance.rate = 0.75; // На 25% медленнее
+      utterance.rate = 0.8; // На 25% медленнее
     } else {
       utterance.volume = this.volume;
       utterance.lang = 'en-US';
