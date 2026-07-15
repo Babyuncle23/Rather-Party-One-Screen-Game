@@ -357,7 +357,7 @@ toFinglish(text) {
       "receive": "resiv",
       " any ": " eni ",
       "harry potter": "harri potteri",
-      "both": "boos",
+      "both": "bos",
       " guilty ": " gilti ",
       "should": "suud",
       "breathe": "briis",
