@@ -112,24 +112,42 @@ toFinglish(text) {
     // 1. Словарь частых исключений, системных фраз и всех эмодзи
     const dict = {
       // Фразы
+      "1000-page": "tausand-peidz",
+      " 1000 ": " tausand ",
+      " 100 ": " handred ",
+      " 60 ": " siksti ",
+      " 10 ": " ten ",
+      " 9 ": " nain ",
+      " 8 ": " eit ",
+      " 7 ": " seven ",
+      " 6 ": " siks ",
+      " 5 ": " faiv ",
+      " 4 ": " foor ",
+      " 3 ": " trii ",
+      " 2 ": " tuu ",
+      " 1 ": " van ",
+      " 0 ": " siirou ",
       "would you rather": "vud ju raater",
       "pass the phone to": "paas tö foun tuu,",
-      "choose an emoji": "tšuus en emoji",
+      "choose an emoji": "tsuus en emoji",
       "only this player": "onli tis pleijer",
       "should look at the phone": "šuud luuk ät tö foun",
       "keep it hidden from others": "kiip it hidden from aatörs",
       "time to play": "taim tu plei",
       "next up is": "nekst ap is",
       "hand the device over to": "händ tö divais över tu",
+      "vinnie": "vinni",
+      "gummy": "gammi",
       "it is": "it is",
       "world": "vorld",
       "pizza": "pizza",
       "sauce": "soos",
-      "be": "bii",
+      " be ": " bii ",
       "able": "ebl",
       "anywhere": "eniver",
       "k-pop":"kei-pop",
-      "the":"te",
+      " the ":" tee ",
+      " about ": " ebaut ",
       "question":"kvesson",
       "mandatory ":"mandatori ",
       "history":"histori",
@@ -143,7 +161,8 @@ toFinglish(text) {
       "copy": "kopi",
       "frends": "frendit",
       "have": "hev",
-      "dirt": "dört",
+      "dirt": "djört",
+      "right": "rait",
       "watch": "vots",
       "chocolate": "tsokolat",
       "doritos": "dorios",
@@ -159,11 +178,12 @@ toFinglish(text) {
       "instantly": "instantli", 
       " all ": " ool ", 
       "small": "smol",
-      "fortnit": "fortnait",
+      "fortnite ": "fortnait ",
       "you": "juu", 
       "switch": "svits",
       "bodies": "boodis",
       "down": "daun",
+      "own": "oun",
       "appear": "apiar",
       "body": "boodi",
       " no " : " nou ",
@@ -192,7 +212,8 @@ toFinglish(text) {
       "climb": "klaimb", 
       "during": "djuring",
       "toilet": "toilet", 
-      "forced": "forsd", 
+      "forced": "forst", 
+      "howard": "hovard",
       "curry": "karri",
       " sacrifice ": "sakrifais",
       "synthesizer": "syntikka",
@@ -210,7 +231,7 @@ toFinglish(text) {
       "like": "laik",
       "pirate": "pairat", 
       "teemu": "teemu",
-      "larry": "larry",
+      "larry": "larri",
       "desert": "desört",
       "island": "ailand",
       "lighter": "laiter",
@@ -279,7 +300,7 @@ toFinglish(text) {
       "stick": "stik",
       "genghis khan": "gengis kan",
       "million": "million", 
-      " it ": " , iit ",
+      " it ": " iit ",
       "stares": "steires",
       "swedish": "swidish", 
       "astronaut": "astranaut",
@@ -289,13 +310,13 @@ toFinglish(text) {
       " beyoncé ": " biijonse ", 
       "gang": "geng",
       "conversation": "konversation",
-      "vely ": "vli",
+      "vely ": "vli ",
       "nervous": "nervös",
       "terrible": "terribl",
       "magically": "magikali", 
       "supply": "saplai", 
       "analyzing": "analaising",
-      "become ": "biikam ",
+      "become": "biikam",
       "low-budget": "lou-budget",
       "diver": "daiver",
       "biden": "baiden",
@@ -327,9 +348,8 @@ toFinglish(text) {
       " page ": ",page", 
       "physically": "fisikali",
       " monkey " : " monki ",
-      " breath " : " briit ",
       "gum": "gam",
-      " cloud ": "klaud",
+      " cloud ": " klaud ",
       " invited ": "invaited",
       " jump " : " ,jump ",
       "first": "fjörst",
@@ -337,6 +357,20 @@ toFinglish(text) {
       "receive": "resiv",
       " any ": " eni ",
       "harry potter": "harri potteri",
+      "both": "boos",
+      " guilty ": " gilti ",
+      "should": "suud",
+      "breathe": "briis",
+      "sneeze": "sniis",
+      "school": "skuul",
+      "pewdiepie" : "pju-di-pai",
+      "jimmy": "jimmi",
+      "sci-Fi": "ski-fi",
+      "future": "future",
+      "portuguese": "portugis",
+      "acoustic": "akustik", 
+      "tourists": "tursits",
+
       
       /*"":"",
       "":"",
@@ -344,17 +378,17 @@ toFinglish(text) {
 
       "turn now": "törn nau",
       "this is your call only": "tis is joor kool ounli",
-      "read the question and choose a prompt": "riid tö kvestion änd tšuus a prompt",
+      "read the question and choose a prompt": "riid tö kvestion änd tsuus a prompt",
       "can watch the guessing process": "kän vats tö gessing prosess",
       "it's a draw": "its a droo",
       "finished with": "finist vit",
       "points": "points",
       "unbelievable": "anbiliivöböl",
-      "first place is shared by": "föörst pleis is šääred bai",
+      "first place is shared by": "föörst pleis is sääred bai",
       "the winner is": "tö vinner is",
       "other scores": "aatör skoors",
       "followed by": "folloud bai",
-      "here is the history of all choices": "hiir is tö histori of ool tšoises",
+      "here is the history of all choices": "hiir is tö histori of ool tsoises",
       "creation": "kreation", 
       "rally english": "rälli englanti",
       " to ": " tuu ",
@@ -367,12 +401,12 @@ toFinglish(text) {
       "otter": "oottör", "sloth": "sloot", "chipmunk": "tsipmank", 
       "bat": "bät", "raccoon": "rakkuun", "penguin": "pengvin", 
       "owl": "aul", "bird": "böörd", "eagle": "iigöl", "duck": "dak", 
-      "rooster": "ruustör", "baby chick": "beibi tšik", "peacock": "piikok", 
+      "rooster": "ruustör", "baby chick": "beibi tsik", "peacock": "piikok", 
       "dove": "dove", "parrot": "parrot", "flamingo": "flamingo",
       "frog": "frog", "octopus": "oktopus", "turtle": "törtöl", 
       "lizard": "lisaard", "shrimp": "srimp", "crab": "krab", 
       "squid": "skvid", "shark": "saark", "lobster": "lobster", 
-      "whale": "veil", "dolphin": "dolfin", "blowfish": "bloufiš",
+      "whale": "veil", "dolphin": "dolfin", "blowfish": "bloufis",
       "bee": "bii", "spider": "spaider",
       "dino": "dino", "t-rex": "tii-reks", "dragon": "dragon", "unicorn": "unikorn",
       // Эмодзи (Люди и роли)
@@ -399,10 +433,11 @@ toFinglish(text) {
     let processedText = text.toLowerCase();
     const maskedPhrases = [];
 
-    // Маскируем фразы из словаря
+// Маскируем фразы из словаря
     for (const [eng, fin] of Object.entries(dict)) {
       if (processedText.includes(eng)) {
-        const mask = `__MASK${maskedPhrases.length}__`;
+        // Добавляем пробелы до и после маски:
+        const mask = ` __MASK${maskedPhrases.length}__ `; 
         maskedPhrases.push({ mask, fin });
         processedText = processedText.split(eng).join(mask);
       }
@@ -429,8 +464,12 @@ toFinglish(text) {
     processedText = processedText.replace(/sh/g, 's');
     processedText = processedText.replace(/ph/g, 'f');
     processedText = processedText.replace(/ch/g, 'ts');
-    processedText = processedText.replace(/z/g, 'ts');
     processedText = processedText.replace(/th/g, 't'); 
+    processedText = processedText.replace(/wh/g, 'v'); // НОВОЕ: what/when -> vat/ven
+    
+    // Добавь эту строку для удаления "h" на конце слов:
+    processedText = processedText.replace(/h\b/g, '');
+    
     processedText = processedText.replace(/w/g, 'v');
     
     // Твои специфические правила суффиксов
@@ -443,23 +482,25 @@ toFinglish(text) {
     processedText = processedText.replace(/ate\b/g, 'eit');
     processedText = processedText.replace(/ew\b/g, 'ju');
     processedText = processedText.replace(/ime\b/g, 'aim');
+    processedText = processedText.replace(/ture\b/g, 'tsur'); // НОВОЕ: future -> fjutsur
     
-    // Правила ing/ly и ck
-    processedText = processedText.replace(/ly\b/g, 'li ');
+    processedText = processedText.replace(/ck/g, 'k');
     
-    processedText = processedText.replace(/ck\b/g, 'k');
+    // ИЗМЕНЕНО: Универсальное правило для "y" на конце слов (заменяет старые ly и dy)
+    // Убирает баг с пробелом и чинит слова вроде party, funny, hobby
+    processedText = processedText.replace(/y\b/g, 'i'); 
     
     // Обработка c и x
     processedText = processedText.replace(/c(?=[eiy])/g, 's');
     processedText = processedText.replace(/c/g, 'k');
     processedText = processedText.replace(/x/g, 'ks');
-    processedText = processedText.replace(/ct\b/g, 'kt');
+    // Правило ct -> kt удалено за ненадобностью
     
     // Остальные
-    processedText = processedText.replace(/tion/g, 'šon');
-    processedText = processedText.replace(/tial/g, 'šial');
+    processedText = processedText.replace(/tion/g, 'sson');
+    processedText = processedText.replace(/sion/g, 'sson'); // НОВОЕ: version -> versson
+    processedText = processedText.replace(/tial/g, 'sial');
     processedText = processedText.replace(/q/g, 'kv');
-    processedText = processedText.replace(/dy\b/g, 'di');
 
 
     // Размаскировываем сохраненные словарные фразы
@@ -580,11 +621,11 @@ toFinglish(text) {
     window.speechSynthesis.cancel();
     this.cancelQueue = false;
     
-// Принудительно опускаем в нижний регистр для финского, чтобы избежать чтения по буквам
+    // Принудительно опускаем в нижний регистр для финского, чтобы избежать чтения по буквам
     const finalVoiceText = this.isRallyEnglish ? this.toFinglish(text).toLowerCase() : text;
     const utterance = new SpeechSynthesisUtterance(finalVoiceText);
     if (this.isRallyEnglish) {
-      utterance.volume = Math.min(this.volume * 2, 1.0); // Громче в 2 раза, но не больше максимума (1.0)
+      utterance.volume = Math.min(this.volume * 1.25, 1.0); // Изменено с 2 на 1.25
       utterance.lang = 'fi-FI';
       utterance.rate = 0.75; // На 25% медленнее
     } else {
@@ -630,11 +671,11 @@ toFinglish(text) {
         return;
       }
       
-// Принудительно опускаем в нижний регистр для финского
+      // Принудительно опускаем в нижний регистр для финского
       const finalVoiceText = this.isRallyEnglish ? this.toFinglish(text).toLowerCase() : text;
       const utterance = new SpeechSynthesisUtterance(finalVoiceText);
       if (this.isRallyEnglish) {
-        utterance.volume = Math.min(this.volume * 2, 1.0);
+        utterance.volume = Math.min(this.volume * 1.25, 1.0); // Изменено с 2 на 1.25
         utterance.lang = 'fi-FI';
         utterance.rate = 0.75;
       } else {

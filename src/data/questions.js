@@ -303,7 +303,6 @@ politician: {
       "Merkel", 
       "Stalin", 
       "Lenin", 
-      "Hitler", 
       "Nixon",
       "Donald Trump", 
       "Joe Biden", 
@@ -316,7 +315,8 @@ politician: {
       "Abraham Lincoln", 
       "Benjamin Franklin", 
       "Queen Elizabeth",
-      "Margaret Thatcher"
+      "Margaret Thatcher",
+      "Kamala Harris"
     ] 
   },  historical: { 
     text: "Historical figure", 
@@ -337,7 +337,8 @@ politician: {
       "Martin Luther King", 
       "Marco Polo", 
       "Alexander the Great", 
-      "Genghis Khan"
+      "Genghis Khan",
+      "Marie Curie"
     ] 
   },
   singer: { 

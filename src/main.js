@@ -238,7 +238,7 @@ const rallyToggle = document.getElementById('rally-english-toggle');
           if (!hasFinnish) {
             screens.showAlert(
               "Missing Voice 🇫🇮", 
-              "Rally English mode requires a Finnish text-to-speech voice, which is not installed on your device or browser. The game will proceed with a standard voice."
+              "Rally English mode requires a Finnish text-to-speech voice, which is not installed or hasn't loaded yet on your device. The game will proceed with a standard voice. Please try checking the box again in a few seconds!"
             );
             e.target.checked = false;
             audioManager.setRallyEnglishMode(false);
