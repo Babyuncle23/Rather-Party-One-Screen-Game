@@ -1671,6 +1671,18 @@ company: {
       "Techno"
     ] 
   },
+  famousCity: { 
+    text: "Famous city", 
+    brainstorm: ["Tokyo", "New York", "Paris", "London", "Dubai"] 
+  },
+  specificLocation: { 
+    text: "Specific location", 
+    brainstorm: ["A nightclub", "A maternity ward", "A public toilet", "A bank vault", "A police station"] 
+  },
+  publicPlace: { 
+    text: "Random public place", 
+    brainstorm: ["A shopping mall", "A crowded elevator", "A busy intersection"] 
+  },
 };
 
 export const questionsDatabase = [
@@ -2296,5 +2308,85 @@ export const questionsDatabase = [
     }
   ],
   "hints": []
-}
+},
+{
+    id: 18,
+    category: "adventure",
+    text: "Would you rather",
+    fragments: [
+      {
+        options: [
+          { text: "be randomly teleported to", type: "location", hints: [PROMPTS.country, PROMPTS.famousCity] },
+          { text: "instantly teleport inside the private home of", type: "person", hints: [PROMPTS.actor, PROMPTS.singer, PROMPTS.politician, PROMPTS.historical, PROMPTS.youtuber] },
+          { text: "be permanently transported into the fictional universe of", type: "universe", hints: [PROMPTS.movie, PROMPTS.videoGame, PROMPTS.tvShow, PROMPTS.cartoonChar] },
+          { text: "be magically teleported into", type: "place", hints: [PROMPTS.specificLocation, PROMPTS.publicPlace] }
+        ]
+      },
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]" }
+        ]
+      },
+      {
+        options: [
+          // Логичные временные рамки и объяснение механики возврата
+          { text: "and stay there for exactly 24 hours before teleporting right back", type: "time_24h", requires: ["location", "person", "place"] },
+          { text: "and stay there for the rest of your life", type: "time_life", requires: ["location", "person", "place"] },
+          { text: "for the rest of your life", type: "time_universe", requires: ["universe"] }
+        ]
+      },
+      {
+        options: [
+          // Модульные награды для коротких путешествий
+          { text: ", and getting a million dollars right after?", requires: ["time_24h"] },
+          { text: ", and getting ten thousand dollars right after?", requires: ["time_24h"] },
+          { text: ", and getting thousand dollars right after?", requires: ["time_24h"] },
+          
+          // Награды для сценариев "до конца жизни"
+          { text: ", but in return gain the ability to fly?", requires: ["time_life", "time_universe"] },
+          { text: ", but in return gain the ability to read minds?", requires: ["time_life", "time_universe"] },
+          
+          { text: "?" }
+        ]
+      }
+    ],
+    hints: []
+  },
+  {
+    id: 19,
+    category: "identity",
+    text: "Would you rather",
+    fragments: [
+      {
+        options: [
+          { text: "have everyone genuinely believe you are the exact same age as", type: "age", hints: [PROMPTS.actor, PROMPTS.historical, PROMPTS.politician, PROMPTS.singer] },
+          { text: "have everyone constantly insist that you look exactly like", type: "look", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.animalFunny, PROMPTS.cartoonChar] },
+          { text: "have society treat you strictly like", type: "status", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.profession, PROMPTS.fictionalChar] },
+          { text: "have your physical appearance randomly morph into", type: "morph", hints: [PROMPTS.fictionalChar, PROMPTS.chubbyAnimal, PROMPTS.historical] }
+        ]
+      },
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]" }
+        ]
+      },
+      {
+        options: [
+          { text: "even though your actual body hasn't changed at all", requires: ["age", "status"], type: "no_change" },
+          { text: "every time you are trying to be serious", requires: ["look", "morph", "status"], type: "serious" },
+          { text: "for the next 10 years", type: "duration" },
+          { text: "", type: "none" }
+        ]
+      },
+      {
+        options: [
+          { text: ", but you receive a million dollars in compensation?" },
+          { text: ", and you can never convince anyone otherwise?", requires: ["no_change", "serious", "duration"] },
+          { text: "?" }
+        ]
+      }
+    ],
+    hints: []
+  }
+
 ];
