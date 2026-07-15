@@ -1824,7 +1824,7 @@ export const questionsDatabase = [
           { text: "the hiring manager during a job interview?", requires: ["context"] },
           { text: "your parents at dinner?", requires: ["context"] },
           { text: "your parents?", requires: ["context"] },
-          { text: "completely hungover?", requires: ["condition"] },
+          { text: "have a headache?", requires: ["condition"] },
           { text: "in sauna?", requires: ["condition"] },
           { text: "having a bad hair day?", requires: ["condition"] },
           { text: "on a first date?", requires: ["condition"] }
@@ -2329,22 +2329,18 @@ export const questionsDatabase = [
       },
       {
         options: [
-          // Логичные временные рамки и объяснение механики возврата
           { text: "and stay there for exactly 24 hours before teleporting right back", type: "time_24h", requires: ["location", "person", "place"] },
-          { text: "and stay there for the rest of your life", type: "time_life", requires: ["location", "person", "place"] },
+          { text: "and stay there for the rest of your life", type: "time_life", requires: ["location", "place"] },
+          { text: "and stay there for the rest of your life", type: "time_life_person", requires: ["person"] },
           { text: "for the rest of your life", type: "time_universe", requires: ["universe"] }
         ]
       },
       {
         options: [
-          // Модульные награды для коротких путешествий
-          { text: ", and getting a million dollars right after?", requires: ["time_24h"] },
-          { text: ", and getting ten thousand dollars right after?", requires: ["time_24h"] },
-          { text: ", and getting thousand dollars right after?", requires: ["time_24h"] },
-          
-          // Награды для сценариев "до конца жизни"
           { text: ", but in return gain the ability to fly?", requires: ["time_life", "time_universe"] },
           { text: ", but in return gain the ability to read minds?", requires: ["time_life", "time_universe"] },
+          { text: ", but in return, you'll gain knowledge and techniques of every martial art that has ever existed?", requires: ["time_life", "time_universe"] },
+          { text: ", but in return, you'll gain the ability to see through walls?", requires: ["time_life", "time_universe"] },
           
           { text: "?" }
         ]
@@ -2372,7 +2368,7 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "even though your actual body hasn't changed at all", requires: ["age", "status"], type: "no_change" },
+          { text: "even though your actual appearance hasn't changed at all", requires: ["age", "status"], type: "no_change" },
           { text: "every time you are trying to be serious", requires: ["look", "morph", "status"], type: "serious" },
           { text: "for the next 10 years", type: "duration" },
           { text: "", type: "none" }
@@ -2380,13 +2376,43 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: ", but you receive a million dollars in compensation?" },
-          { text: ", and you can never convince anyone otherwise?", requires: ["no_change", "serious", "duration"] },
+          { text: ", and you can never convince anyone otherwise?", requires: ["age", "look", "status"] },
           { text: "?" }
         ]
       }
     ],
     hints: []
+  },
+{
+    id: 20,
+    category: "social",
+    text: "Would you rather have",
+    fragments: [
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]" }
+        ]
+      },
+      {
+        options: [
+          { text: "as your ruthless boss?", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.youtuber, PROMPTS.actor] },
+          { text: "as your loyal best friend?", hints: [PROMPTS.cartoonChar, PROMPTS.chubbyAnimal, PROMPTS.dogBreed, PROMPTS.fictionalChar] },
+          { text: "as your sworn enemy?", hints: [PROMPTS.villain, PROMPTS.historical, PROMPTS.youtuber, PROMPTS.mediaPersonality] },
+          { text: "as your personal therapist?", hints: [PROMPTS.historical, PROMPTS.actor, PROMPTS.singer, PROMPTS.mediaPersonality] },
+          { text: "as your martial art sparring partner?", hints: [PROMPTS.actor, PROMPTS.heavyAnimal, PROMPTS.dangerousAnimal, PROMPTS.villain] },
+          { text: "as your cleaner?", hints: [PROMPTS.politician, PROMPTS.historical, PROMPTS.villain, PROMPTS.youtuber] },
+          { text: "as your personal fitness trainer?", hints: [PROMPTS.actor, PROMPTS.fastAnimal, PROMPTS.villain, PROMPTS.singer] },
+          { text: "as your obedient subordinate?", hints: [PROMPTS.politician, PROMPTS.villain, PROMPTS.historical, PROMPTS.actor] },
+          { text: "as your butler?", hints: [PROMPTS.actor, PROMPTS.historical, PROMPTS.villain, PROMPTS.fictionalChar] },
+          { text: "as your nanny?", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.actor, PROMPTS.cartoonChar] },
+          { text: "as your math teacher?", hints: [PROMPTS.youtuber, PROMPTS.historical, PROMPTS.villain, PROMPTS.singer] },
+          { text: "as your art teacher?", hints: [PROMPTS.actor, PROMPTS.historical, PROMPTS.villain, PROMPTS.heavyAnimal] },
+          { text: "as your dance teacher?", hints: [PROMPTS.politician, PROMPTS.heavyAnimal, PROMPTS.villain, PROMPTS.cartoonChar] },
+          { text: "as your yoga teacher?", hints: [PROMPTS.villain, PROMPTS.dangerousAnimal, PROMPTS.politician, PROMPTS.actor] },
+          { text: "as your uber driver?", hints: [PROMPTS.historical, PROMPTS.villain, PROMPTS.chubbyAnimal, PROMPTS.singer] }
+        ]
+      }
+    ],
+    hints: []
   }
-
 ];

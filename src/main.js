@@ -39,31 +39,37 @@ function getDefaultEmojiForNewPlayer() {
   return PLAYER_EMOJIS[Math.floor(Math.random() * PLAYER_EMOJIS.length)];
 }
 
-function passPhoneWithSpeech(player, onConfirm, note, speakNote = false) {
+function passPhoneWithSpeech(player, onConfirm, note, speakNote = false, exactSpeech = null) {
   const emojiName = EMOJI_NAMES[player.emoji] || "";
-let randomPhrase = "";
+  let spokenText = "";
   
-  if (audioManager && audioManager.isRallyEnglish) {
-    // В режиме Finglish используем только одну каноничную фразу
-    randomPhrase = `Pass the phone to ${emojiName} ${player.name}.`;
+  // Если передана конкретная короткая фраза - используем её
+  if (exactSpeech) {
+    spokenText = exactSpeech;
   } else {
-    // В английском оставляем разнообразие
-    const handoverPhrases = [
-      `Pass the phone to ${emojiName} ${player.name}.`,
-      `Hand the device over to ${emojiName} ${player.name}.`,
-      `It is ${emojiName} ${player.name}'s turn now.`,
-      `Give the phone to ${emojiName} ${player.name}.`,
-      `Time for ${emojiName} ${player.name} to play.`,
-      `Next up is ${emojiName} ${player.name}.`
-    ];
-    randomPhrase = handoverPhrases[Math.floor(Math.random() * handoverPhrases.length)];
-  }
-  
-  let spokenText = randomPhrase;
-  
-  if (note && speakNote) {
-    const cleanNote = note.replace(/<\/?[^>]+(>|$)/g, "");
-    spokenText += " " + cleanNote;
+    let randomPhrase = "";
+    if (audioManager && audioManager.isRallyEnglish) {
+      // В режиме Finglish используем только одну каноничную фразу
+      randomPhrase = `Pass the phone to ${emojiName} ${player.name}.`;
+    } else {
+      // В английском оставляем разнообразие
+      const handoverPhrases = [
+        `Pass the phone to ${emojiName} ${player.name}.`,
+        `Hand the device over to ${emojiName} ${player.name}.`,
+        `It is ${emojiName} ${player.name}'s turn now.`,
+        `Give the phone to ${emojiName} ${player.name}.`,
+        `Time for ${emojiName} ${player.name} to play.`,
+        `Next up is ${emojiName} ${player.name}.`
+      ];
+      randomPhrase = handoverPhrases[Math.floor(Math.random() * handoverPhrases.length)];
+    }
+    
+    spokenText = randomPhrase;
+    
+    if (note && speakNote) {
+      const cleanNote = note.replace(/<\/?[^>]+(>|$)/g, "");
+      spokenText += " " + cleanNote;
+    }
   }
 
   if (audioManager && !audioManager.isScreenReaderMode) {
@@ -80,7 +86,13 @@ let randomPhrase = "";
     audioManager.stopSpeech(); 
   }
   
-  screens.showPassScreen(player, onConfirm, note);
+  // Обертка: при тапе по экрану прерываем голос и идём дальше
+  const wrappedConfirm = () => {
+    if (audioManager) audioManager.stopSpeech();
+    onConfirm();
+  };
+  
+  screens.showPassScreen(player, wrappedConfirm, note);
 }
 
 let game = null;
@@ -1248,18 +1260,25 @@ function setupNextGuesser() {
    
     window.scrollTo({ top: 0, behavior: 'instant' });
     const responderName = game.players[game.getResponderIndex()].name;
+    
+    // Получаем данные текущего угадывающего
+    const guesser = game.players[currentGuesserIndex];
+    const emojiName = EMOJI_NAMES[guesser.emoji] || "";
+
+    // Формируем строгую короткую фразу для озвучки
+    const shortSpeech = `Pass the phone to ${emojiName} ${guesser.name}, and ${responderName} can watch.`;
 
     passPhoneWithSpeech(
-      game.players[currentGuesserIndex],
+      guesser,
       startGuesserPhase,
-      `Only this player should hold the phone, but ${responderName} can watch the guessing process!`,
-      true
+      `Only this player should hold the phone, but ${responderName} can watch!`,
+      false,       // Отключаем чтение визуальной заметки
+      shortSpeech  // Передаём нашу короткую фразу
     );
   } catch (err) {
     screens.showAlert("Error", "Error inside setupNextGuesser: " + err.message);
   }
 }
-
 function startGuesserPhase() {
   try {
     const guesser = game.players[currentGuesserIndex];

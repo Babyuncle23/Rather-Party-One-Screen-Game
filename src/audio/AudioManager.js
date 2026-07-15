@@ -370,6 +370,7 @@ toFinglish(text) {
       "portuguese": "portugis",
       "acoustic": "akustik", 
       "tourists": "tursits",
+      "can watch": "kän vats",
 
       
       /*"":"",
@@ -425,7 +426,8 @@ toFinglish(text) {
       "moonface": "muunfeis",
       "alone": "eloun", "strawberry" : "strouberri",
       "great": "greit",
-      "to?": "tuu?"
+      "to?": "tuu?",
+      "thought": "sout"
       
     
     };
@@ -436,8 +438,12 @@ toFinglish(text) {
 // Маскируем фразы из словаря
     for (const [eng, fin] of Object.entries(dict)) {
       if (processedText.includes(eng)) {
-        // Добавляем пробелы до и после маски:
-        const mask = ` __MASK${maskedPhrases.length}__ `; 
+        // Динамически переносим пробелы из оригинального слова в маску, 
+        // чтобы не создавать ложных границ для других слов
+        const prefix = eng.startsWith(' ') ? ' ' : '';
+        const suffix = eng.endsWith(' ') ? ' ' : '';
+        const mask = `${prefix}__MASK${maskedPhrases.length}__${suffix}`;
+        
         maskedPhrases.push({ mask, fin });
         processedText = processedText.split(eng).join(mask);
       }
@@ -527,34 +533,43 @@ toFinglish(text) {
     return voices.some(v => v.lang === 'fi-FI' || v.lang === 'fi_FI');
   }
 
-  checkFinnishVoiceExistsAsync() {
+checkFinnishVoiceExistsAsync() {
     return new Promise((resolve) => {
       if (!window.speechSynthesis) {
         resolve(false);
         return;
       }
-      
-      let voices = window.speechSynthesis.getVoices();
-      // Если голоса уже загружены
-      if (voices.length > 0) {
-        const hasFi = voices.some(v => v.lang === 'fi-FI' || v.lang === 'fi_FI');
-        resolve(hasFi);
+
+      // Функция для проверки наличия финского голоса
+      const checkForFi = () => {
+        const voices = window.speechSynthesis.getVoices();
+        return voices.some(v => v.lang === 'fi-FI' || v.lang === 'fi_FI');
+      };
+
+      // 1. Быстрая проверка: если нужный голос уже в списке
+      if (checkForFi()) {
+        resolve(true);
         return;
       }
 
-      // Если массив пуст (браузер еще их подтягивает), ждем события
+      // 2. Если финского пока нет (список пуст ИЛИ загружены только базовые голоса), 
+      // подписываемся на событие обновления списка голосов
       window.speechSynthesis.onvoiceschanged = () => {
-        voices = window.speechSynthesis.getVoices();
-        const hasFi = voices.some(v => v.lang === 'fi-FI' || v.lang === 'fi_FI');
-        resolve(hasFi);
+        if (checkForFi()) {
+          resolve(true);
+          // Очищаем обработчик, чтобы не висел в памяти
+          window.speechSynthesis.onvoiceschanged = null; 
+        }
       };
 
-      // Страховочный таймаут (3 секунды) на случай, если событие не сработает
+      // 3. Принудительно вызываем getVoices(), чтобы "пнуть" движок в iOS/Chrome
+      window.speechSynthesis.getVoices();
+
+      // 4. Страховочный таймаут (2.5 секунды). 
+      // Если за это время событие не нашло финский голос, значит его точно нет на устройстве.
       setTimeout(() => {
-        voices = window.speechSynthesis.getVoices();
-        const hasFi = voices.some(v => v.lang === 'fi-FI' || v.lang === 'fi_FI');
-        resolve(hasFi);
-      }, 3000);
+        resolve(checkForFi());
+      }, 2500);
     });
   }
 
