@@ -55,6 +55,22 @@ actionEmbarrassing: {
       "forget your own password"
     ] 
   },
+  nickname: { 
+    text: "Nickname", 
+    brainstorm: ["Stinky", "Crybaby", "Pookie", "Snookums", "Goofball", "Peanut"] 
+  },
+  fantasyKingdom: { 
+    text: "Fantasy kingdom", 
+    brainstorm: ["Mordor", "Narnia", "Westeros", "Hogwarts", "Wakanda", "Asgard"] 
+  },
+  terriblePlace: { 
+    text: "Terrible place to be", 
+    brainstorm: ["Dentist office", "Traffic jam", "Public toilet", "Prison", "Tax office"] 
+  },
+  title: { 
+    text: "Title", 
+    brainstorm: ["Supreme Overlord", "Grand Poobah", "Chief Executive", "His Majesty", "The Great"] 
+  },
   actionParty: { 
     text: "Weird party trick", 
     brainstorm: [
@@ -2410,6 +2426,34 @@ export const questionsDatabase = [
           { text: "as your dance teacher?", hints: [PROMPTS.politician, PROMPTS.heavyAnimal, PROMPTS.villain, PROMPTS.cartoonChar] },
           { text: "as your yoga teacher?", hints: [PROMPTS.villain, PROMPTS.dangerousAnimal, PROMPTS.politician, PROMPTS.actor] },
           { text: "as your uber driver?", hints: [PROMPTS.historical, PROMPTS.villain, PROMPTS.chubbyAnimal, PROMPTS.singer] }
+        ]
+      }
+    ],
+    hints: []
+  },
+{
+    id: 21,
+    category: "naming",
+    text: "Would you rather",
+    fragments: [
+      {
+        options: [
+          { text: "have every second newborn baby legally named", type: "newborn", hints: [PROMPTS.nickname, PROMPTS.title, PROMPTS.villain, PROMPTS.snack, PROMPTS.animalFunny] },
+          { text: "have the country you live in renamed to", type: "country", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.company, PROMPTS.chubbyAnimal, PROMPTS.everyday] },
+          { text: "have the city you live in renamed to", type: "city", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.snack, PROMPTS.everyday, PROMPTS.company] },
+          { text: "have your own legal name permanently changed to", type: "own_name", hints: [PROMPTS.nickname, PROMPTS.title, PROMPTS.app, PROMPTS.animalFunny, PROMPTS.everyday] },
+          { text: "have everyone with the most common name in your country change it to", type: "common_name", hints: [PROMPTS.nickname, PROMPTS.animalFunny, PROMPTS.techOld, PROMPTS.snack, PROMPTS.everyday] },
+          { text: "have a national public holiday created in your honor called The Day of", type: "holiday", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday] },
+          { text: "have to adopt a dog and legally name it", type: "dog", hints: [PROMPTS.title, PROMPTS.politician, PROMPTS.company, PROMPTS.app, PROMPTS.techOld] },
+          { text: "have to adopt a cat and legally name it", type: "cat", hints: [PROMPTS.terriblePlace, PROMPTS.villain, PROMPTS.company, PROMPTS.app, PROMPTS.techOld] }
+        ]
+      },
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]?" },
+          { text: "[ ... ]land or [ ... ]land?", requires: ["country", "city"] },
+          { text: "The Republic of [ ... ] or The Republic of [ ... ]?", requires: ["country"] },
+          { text: "New [ ... ] or New [ ... ]?", requires: ["country", "city"] }
         ]
       }
     ],
