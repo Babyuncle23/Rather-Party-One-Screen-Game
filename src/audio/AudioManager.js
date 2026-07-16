@@ -494,11 +494,16 @@ toFinglish(text) {
     processedText = processedText.replace(/igh/g, 'ai');
     
 
-    // 3. Гласные (Дифтонги)
+// 3. Гласные (Дифтонги)
     processedText = processedText.replace(/ay|ey|ai/g, 'ei');
     processedText = processedText.replace(/ee|ea/g, 'ii');
-    processedText = processedText.replace(/oo/g, 'uu');
-    processedText = processedText.replace(/ou|ow/g, 'au');
+    
+    // Удаляем жесткие правила для 'oo' и 'ou'. Теперь door и four 
+    // будут читаться синтезатором буквально (через звук "о").
+    // Оставляем только мягкий фикс для 'ow' (превращаем в 'ou'), 
+    // чтобы слова вроде show и know не читались как shov и knov.
+    processedText = processedText.replace(/ow/g, 'ou');
+    
     processedText = processedText.replace(/aw|au/g, 'oo');
 
 // 4. Согласные и суффиксы
