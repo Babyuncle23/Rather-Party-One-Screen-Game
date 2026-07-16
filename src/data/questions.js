@@ -50,10 +50,10 @@ actionEmbarrassing: {
       "forget to zip pants",
       "call teacher mom",
       "accidentally like an old post",
-      "have spinach in teeth during date",
+      "have spinach in teeth",
       "walk into a glass door",
       "forget your own password"
-    ] 
+    ]
   },
   nickname: { 
     text: "Nickname", 
@@ -1840,10 +1840,9 @@ export const questionsDatabase = [
           { text: "the hiring manager during a job interview?", requires: ["context"] },
           { text: "your parents at dinner?", requires: ["context"] },
           { text: "your parents?", requires: ["context"] },
-          { text: "have a headache?", requires: ["condition"] },
+          { text: "completely hungover?", requires: ["condition"] },
           { text: "in sauna?", requires: ["condition"] },
-          { text: "having a bad hair day?", requires: ["condition"] },
-          { text: "on a first date?", requires: ["condition"] }
+          { text: "having a bad hair day?", requires: ["condition"] }
         ]
       }
     ],
@@ -2127,7 +2126,7 @@ export const questionsDatabase = [
     ],
     hints: []
   },
-  {
+{
     id: 13,
     category: "lifestyle",
     text: "Would you rather",
@@ -2148,18 +2147,15 @@ export const questionsDatabase = [
       {
         options: [
           { text: "to every job interview you ever go to?", requires: ["costume_full", "dress_like"] },
-          { text: "on wedding days you are invited to?", requires: ["costume_full", "dress_like"] },
           { text: "every time you fly on an airplane?", requires: ["costume_full", "carry_statue"] },
           { text: "every time you use public transport?", requires: ["costume_full", "carry_statue"] },
           { text: "every time you use public toilet?", requires: ["costume_full", "carry_statue"] },
           { text: "in all your official ID and passport photos?", requires: ["costume_mask"] },
-          { text: "during every serious conversation with your partner?", requires: ["costume_mask"] },
           { text: "every time you talk to a police officer?", requires: ["costume_mask", "dress_like"] },
           { text: "every time you talk to a government official?", requires: ["costume_mask", "dress_like"] },
           { text: "every time you go grocery shopping?", requires: ["carry_statue"] },
           { text: "through airport security every single time?", requires: ["carry_statue"] },
           { text: "to every family gathering?", requires: ["costume_full", "dress_like", "carry_statue", "costume_mask"] },
-          { text: "on every single first date?", requires: ["costume_full", "costume_mask", "dress_like"] },
           { text: "and pretend you don't understand why people are staring?", requires: ["costume_full", "carry_statue", "dress_like"] }
         ]
       }
