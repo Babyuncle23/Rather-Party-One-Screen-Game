@@ -211,6 +211,7 @@ let currentHintObject = null;
 let isCustomHintActive = false; 
 let shifter = null;
 let responderChoice = "";
+let isIsmQuestion = false;
 
 let remainingGuessers = [];
 let totalGuessersThisRound = 0; 
@@ -892,11 +893,12 @@ function initRound() {
       roundScoresSnapshot = game.players.map(p => ({ id: p.id, gold: p.gold }));
     }
 
-    currentQuestion = game.getRandomQuestion();
+currentQuestion = game.getRandomQuestion();
     currentQuestion.customCompiledText = null;
     fragmentsHistory = [];
     questionHistory = [];
     currentFragmentsState = []; 
+    isIsmQuestion = false; // <-- ДОБАВИТЬ ЭТУ СТРОКУ
 const undoBtn = document.getElementById('undo-options-btn');
     if (undoBtn) {
       undoBtn.disabled = true;
@@ -1159,6 +1161,7 @@ submitWordsBtn.onclick = () => {
 
       // Если это вопрос про -ism, меняем сами слова навсегда
       if (rawQuestionStr.includes("[ ... ]ism")) {
+        isIsmQuestion = true; // <-- ДОБАВИТЬ ЭТУ СТРОКУ
           const processIsmStem = (word) => {
              let hyphenated = word.split(/\s+/).filter(Boolean).join('-');
              if (hyphenated.endsWith('Y')) return hyphenated.slice(0, -1);
@@ -1288,9 +1291,24 @@ function setupNextGuesser() {
       return;
     }
    
-    currentGuesserIndex = remainingGuessers.shift();
+currentGuesserIndex = remainingGuessers.shift();
     oralHintUsedThisTurn = false;
     shifter = new WordShifter(shifter.orig1, shifter.orig2, shifter.isNerfed, shifter.isMultiWord);
+    
+    // --- АВТО-ОТКРЫТИЕ ISM ПРИ СМЕНЕ ИГРОКА ---
+    if (isIsmQuestion) {
+        const revealIsm = (word, openedSet) => {
+            if (word.endsWith("ISM")) {
+                openedSet.add(word.length - 1); // буква M
+                openedSet.add(word.length - 2); // буква S
+                openedSet.add(word.length - 3); // буква I
+            }
+        };
+        revealIsm(shifter.orig1, shifter.openedIndices1);
+        revealIsm(shifter.orig2, shifter.openedIndices2);
+    }
+    // ------------------------------------------
+
     revealCount = 0;
    
     window.scrollTo({ top: 0, behavior: 'instant' });
