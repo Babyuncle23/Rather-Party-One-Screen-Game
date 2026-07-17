@@ -1972,10 +1972,11 @@ export const questionsDatabase = [
           { text: "for one week" }
         ]
       },
-      {
+{
         options: [
-          { text: "having only [ ... ] or having only [ ... ]?" },
-          { text: "being allowed to bring only [ ... ] or only [ ... ]?" }
+          { text: ", arriving there with absolutely nothing but [ ... ] or [ ... ]?" },
+          { text: ", with your only starting item being [ ... ] or [ ... ]?" },
+          { text: ", starting off with nothing but [ ... ] or [ ... ] in your pockets?" }
         ]
       }
     ],

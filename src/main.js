@@ -877,42 +877,13 @@ function getCompiledQuestionString(w1 = "[ ... ]", w2 = "[ ... ]", useHtml = fal
       });
   }
  
-  str = str.trim();
-
-  // Умный алгоритм для создания идеологий (правила орфографии и дефисы)
-  const processIsmStem = (word) => {
-     if (word === "[ ... ]" || word === "___") return word;
-     // Убираем лишние пробелы и ставим дефисы между всеми словами
-     let hyphenated = word.split(/\s+/).filter(Boolean).join('-');
-     
-     // Правила орфографии (все слова уже в UPPERCASE)
-     if (hyphenated.endsWith('Y')) return hyphenated.slice(0, -1); // Заменяем 'Y'
-     if (hyphenated.endsWith('IST')) return hyphenated.slice(0, -3); // Обрезаем 'IST'
-     // Буква 'E' остается по умолчанию (Apple -> APPLEISM)
-     
-     return hyphenated; 
-  };
-
   if (useHtml) {
-    // Если вопрос требует суффикса -ism, применяем умный алгоритм
-    if (str.includes("[ ... ]ism")) {
-        str = str.replace("[ ... ]ism", `<span style="color: #00ffb3; font-weight: bold;">${processIsmStem(w1)}ISM</span>`);
-        str = str.replace("[ ... ]ism", `<span style="color: #ff4a4a; font-weight: bold;">${processIsmStem(w2)}ISM</span>`);
-    } else {
-        str = str.replace("[ ... ]", `<span style="color: #00ffb3; font-weight: bold;">${w1}</span>`);
-        str = str.replace("[ ... ]", `<span style="color: #ff4a4a; font-weight: bold;">${w2}</span>`);
-    }
+    str = str.replace("[ ... ]", `<span style="color: #00ffb3; font-weight: bold;">${w1}</span>`);
+    str = str.replace("[ ... ]", `<span style="color: #ff4a4a; font-weight: bold;">${w2}</span>`);
   } else {
-    // Обычный текст (для истории и логов)
-    if (str.includes("[ ... ]ism")) {
-        str = str.replace("[ ... ]ism", processIsmStem(w1) + "ISM");
-        str = str.replace("[ ... ]ism", processIsmStem(w2) + "ISM");
-    } else {
-        str = str.replace("[ ... ]", w1).replace("[ ... ]", w2);
-    }
+    str = str.replace("[ ... ]", w1).replace("[ ... ]", w2);
   }
-  
-  return str;
+  return str.trim();
 }
 
 function initRound() {
@@ -1173,8 +1144,38 @@ submitWordsBtn.onclick = () => {
         return;
       }
 
-      const tokens1 = w1.split(/\s+/).filter(Boolean);
-      const tokens2 = w2.split(/\s+/).filter(Boolean);
+      // --- ЛОГИКА ТРАНСФОРМАЦИИ IDEOLOGY (-ISM) ---
+      let finalW1 = w1;
+      let finalW2 = w2;
+
+      // Получаем сырой текст текущего вопроса
+      let rawQuestionStr = currentQuestion.customCompiledText || "";
+      if (!rawQuestionStr) {
+          rawQuestionStr = currentQuestion.text + " ";
+          currentQuestion.fragments.forEach((frag, i) => {
+            rawQuestionStr += frag.options[currentFragmentsState[i]].text + " ";
+          });
+      }
+
+      // Если это вопрос про -ism, меняем сами слова навсегда
+      if (rawQuestionStr.includes("[ ... ]ism")) {
+          const processIsmStem = (word) => {
+             let hyphenated = word.split(/\s+/).filter(Boolean).join('-');
+             if (hyphenated.endsWith('Y')) return hyphenated.slice(0, -1);
+             if (hyphenated.endsWith('IST')) return hyphenated.slice(0, -3);
+             if (hyphenated.endsWith('E')) return hyphenated.slice(0, -1);
+             return hyphenated; 
+          };
+          finalW1 = processIsmStem(w1) + "ISM";
+          finalW2 = processIsmStem(w2) + "ISM";
+          
+          // Убираем 'ism' из самого шаблона вопроса, чтобы не было дублирования (APPLEISMism)
+          currentQuestion.customCompiledText = rawQuestionStr.replace(/\[ \.\.\. \]ism/g, "[ ... ]");
+      }
+      // ---------------------------------------------
+
+      const tokens1 = finalW1.split(/\s+/).filter(Boolean);
+      const tokens2 = finalW2.split(/\s+/).filter(Boolean);
       const isMultiWord = tokens1.length > 1 || tokens2.length > 1;
 
 const hasSimpleColor = tokens1.some(t => SIMPLE_COLORS.includes(t)) || tokens2.some(t => SIMPLE_COLORS.includes(t));
@@ -1199,35 +1200,48 @@ const hasSimpleColor = tokens1.some(t => SIMPLE_COLORS.includes(t)) || tokens2.s
         shouldNerf = false;
       }
 
-      shifter = new WordShifter(w1, w2, shouldNerf, isMultiWord);
+shifter = new WordShifter(finalW1, finalW2, shouldNerf, isMultiWord);
      
-// БЛОКИРОВКА ПОЛЕЙ И ОБНОВЛЕНИЕ СЧЕТЧИКОВ
+      // --- АВТО-ОТКРЫТИЕ ISM ---
+      if (rawQuestionStr.includes("[ ... ]ism")) {
+          const revealIsm = (word, openedSet) => {
+              if (word.endsWith("ISM")) {
+                  openedSet.add(word.length - 1); // буква M
+                  openedSet.add(word.length - 2); // буква S
+                  openedSet.add(word.length - 3); // буква I
+              }
+          };
+          revealIsm(finalW1, shifter.openedIndices1);
+          revealIsm(finalW2, shifter.openedIndices2);
+      }
+      // -------------------------
+
+      // БЛОКИРОВКА ПОЛЕЙ И ОБНОВЛЕНИЕ СЧЕТЧИКОВ
       in1.disabled = true;
       in2.disabled = true;
 
-      // Находим элементы счетчиков для каждого поля
       const updateCounterToLocked = (counterEl) => {
         const txt = counterEl.querySelector('.counter-text');
         const lock = counterEl.querySelector('.lock-icon');
         if (txt && lock) {
-          txt.style.display = "none";  // Скрываем цифры (например, "5/25")
-          lock.style.display = "inline"; // Показываем иконку замка
+          txt.style.display = "none";
+          lock.style.display = "inline";
         }
       };
-updateCounterToLocked(counter1);
+      updateCounterToLocked(counter1);
       updateCounterToLocked(counter2);
 
       choiceBlock.style.display = 'block';
 
-      const finalQ = getCompiledQuestionString(w1, w2, false);
+      const finalQ = getCompiledQuestionString(finalW1, finalW2, false);
       document.getElementById('responder-final-question').innerText = finalQ;
      
       const opt1 = document.getElementById('opt-btn-1');
       const opt2 = document.getElementById('opt-btn-2');
-      opt1.innerText = w1; opt2.innerText = w2;
+      opt1.innerText = finalW1; opt2.innerText = finalW2;
      
-      opt1.onclick = () => confirmResponderChoice(w1, w2, w1);
-      opt2.onclick = () => confirmResponderChoice(w1, w2, w2);
+      opt1.onclick = () => confirmResponderChoice(finalW1, finalW2, finalW1);
+      opt2.onclick = () => confirmResponderChoice(finalW1, finalW2, finalW2);
 
       setTimeout(() => {
         choiceBlock.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
