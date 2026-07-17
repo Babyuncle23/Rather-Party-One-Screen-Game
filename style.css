@@ -2269,18 +2269,10 @@ p {
   width: 100%;
   
   /* Возвращаем все цвета из бейджа: #ff6b6b, #feca57, #1dd1a1, #5f27cd, #ff9ff3 */
-background: linear-gradient(
-  124deg,
-  #ff6b6b 0%,
-  #feca57 5%,
-  #1dd1a1 10%,
-  #5f27cd 25%,
-  #5f27cd 75%,
-  #ff9ff3 90%,
-  #ff9ff3 100%
-);
-  background-size: 300% 300%;
-  animation: rainbowBadge 5s ease infinite;
+background: #5F27CD;
+background: linear-gradient(90deg, rgba(95, 39, 205, 1) 64%, rgba(255, 159, 243, 1) 75%, rgba(255, 107, 107, 1) 85%, rgba(254, 202, 87, 1) 93%, rgba(29, 209, 161, 1) 100%);
+  background-size: 250% 300%;
+  animation: rainbowBadge 15s ease infinite;
   
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
