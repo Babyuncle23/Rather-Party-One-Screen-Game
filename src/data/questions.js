@@ -282,7 +282,6 @@ fictionalChar: {
   villain: { 
     text: "Horror movie villain", 
     brainstorm: [
-      "Joker", 
       "Dracula", 
       "Pennywise", 
       "Chucky", 
@@ -306,7 +305,7 @@ youtuber: {
       "Logan Paul", 
       "KSI", 
       "Ninja",
-      "Hassan Piker",
+      "Hasan Piker",
       "Johnny Harris"
     ] 
   },
@@ -484,22 +483,16 @@ band: {
   mediaPersonality: { 
     text: "Famous media personality", 
     brainstorm: [
-      // Короткие
-      "Oprah", 
-      "Ellen", 
-      "Conan", 
-      "Fallon", 
-      "Kimmel",
-      
-      // Длинные и фразовые
-      "Howard Stern", 
+      "Oprah Winfrey", 
+      "Ellen DeGeneres", 
+      "Conan O'Brien", 
+      "Jimmy Fallon", 
+      "Jimmy Kimmel",
       "Joe Rogan", 
-      "Ryan Seacrest", 
       "Larry King", 
       "David Letterman", 
       "Gordon Ramsay", 
       "Tucker Carlson", 
-      "Jimmy Fallon", 
       "Trevor Noah"
     ] 
   },
@@ -1001,7 +994,6 @@ company: {
       "Penguin", 
       "Bear",
       "Red panda", 
-      "Chubby rabbit", 
       "Guinea pig", 
       "Hippopotamus", 
       "Groundhog", 
@@ -1699,6 +1691,30 @@ company: {
     text: "Random public place", 
     brainstorm: ["A shopping mall", "A crowded elevator", "A busy intersection"] 
   },
+  funnyShape: {
+    text: "Funny shape",
+    brainstorm: ["Cube", "Triangle", "Peanut", "Balloon", "Lightbulb", "Pear", "Egg", "Football", "Brick"]
+  },
+  abstractMood: {
+    text: "Abstract feeling or concept",
+    brainstorm: ["Joy", "Despair", "Confusion", "Apathy", "Panic", "Melancholy", "Euphoria", "Boredom", "Nostalgia"]
+  },
+  fantasyWorld: {
+    text: "Fantasy world",
+    brainstorm: ["Middle-earth", "Westeros", "Narnia", "Hogwarts", "Hyrule", "The Witcher universe", "Azeroth"]
+  },
+  sciFiWorld: {
+    text: "Sci-Fi universe",
+    brainstorm: ["Star Wars galaxy", "Cyberpunk Night City", "The Matrix", "Dune universe", "Star Trek universe", "Fallout wasteland"]
+  },
+  madeUpCompound: {
+    text: "Made-up compound word",
+    brainstorm: ["Thunderfluff", "Doomwaffle", "Slimebucket", "Laserpants", "Gigachad"]
+  },
+  madeUpHyphenated: {
+    text: "Made-up hyphenated word",
+    brainstorm: ["Bongo-bongo", "Wibbly-wobbly", "Dilly-dally", "Mumbo-jumbo", "Flim-flam"]
+  },
 };
 
 export const questionsDatabase = [
@@ -1834,13 +1850,13 @@ export const questionsDatabase = [
           { text: "but only when you are trying to impress", type: "context" }
         ]
       },
-      {
+{
         options: [
           { text: "the first person you meet on the street?", requires: ["context"] },
-          { text: "the hiring manager during a job interview?", requires: ["context"] },
+          { text: "the hiring manager?", requires: ["context"] }, // Изменено
           { text: "your parents at dinner?", requires: ["context"] },
           { text: "your parents?", requires: ["context"] },
-          { text: "completely hungover?", requires: ["condition"] },
+          { text: "half asleep?", requires: ["condition"] },
           { text: "in sauna?", requires: ["condition"] },
           { text: "having a bad hair day?", requires: ["condition"] }
         ]
@@ -1883,20 +1899,21 @@ export const questionsDatabase = [
     category: "body",
     text: "Would you rather",
     fragments: [
-      {
+{
         options: [
           { text: "instantly sweat a puddle that", type: "sweat" },
           { text: "breathe out a cloud that", type: "breath" },
           { text: "produce saliva that", type: "saliva" },
           { text: "have a face that", type: "face" },
-          { text: "have a head that", type: "head" }
+          { text: "have a head shape that", type: "head" } // Изменено
         ]
       },
       {
         options: [
           { text: "smells exactly like", requires: ["sweat", "breath"], hints: [PROMPTS.strongFood, PROMPTS.fastFood, PROMPTS.sweetLiquid, PROMPTS.candyType, PROMPTS.fruit, { text: "Thing that smells bad", brainstorm: ["Garbage", "Skunk", "Rotten egg", "Mud"] }] },
           { text: "tastes exactly like", requires: ["sweat", "saliva"], hints: [PROMPTS.strongFood, PROMPTS.fastFood, PROMPTS.sweetLiquid, PROMPTS.candyType, PROMPTS.fruit, PROMPTS.snack] },
-          { text: "looks exactly like a", requires: ["face", "head"], hints: [PROMPTS.animalFunny, PROMPTS.chubbyAnimal] }
+          { text: "strongly reminds people of the face of a", requires: ["face"], hints: [PROMPTS.animalFunny, PROMPTS.chubbyAnimal] }, // Изменено
+          { text: "closely resembles a", requires: ["head"], hints: [PROMPTS.funnyShape, PROMPTS.everyday, PROMPTS.smallObj] } // Добавлено
         ]
       },
       {
@@ -1957,7 +1974,8 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "without [ ... ] or without [ ... ]?" }
+          { text: "having only [ ... ] or having only [ ... ]?" },
+          { text: "being allowed to bring only [ ... ] or only [ ... ]?" }
         ]
       }
     ],
@@ -2118,7 +2136,7 @@ export const questionsDatabase = [
           { text: "but suddenly everyone you know knows it?", requires: ["teleport", "shapeshift"] },
           { text: "but you can't control exactly when it happens?", requires: ["mind", "shapeshift"] },
           { text: "but the effect only lasts for 60 seconds a day?", requires: ["transform", "invisible", "strength"] }, 
-          { text: "and you have to loudly annouce that you are doing it before use?" },
+          { text: ", but you have to yell out what you're doing first?" },
           { text: "?" },
           { text: "?" } 
         ]
@@ -2175,7 +2193,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: "without anyone ever knowing?" },
-          { text: ", but you have to loudly announce that you're using it?" },
+          { text: ", but you have to yell out what you're doing first?" },
           { text: ", but it only works when no one is looking at you?" },
           { text: ", but doing it makes you incredibly tired?" },
           { text: ", but you instantly forget everything that happened while you were using it?" },
@@ -2234,12 +2252,12 @@ export const questionsDatabase = [
           { text: "[ ... ] or [ ... ]" }
         ]
       },
-      {
+{
         options: [
           { text: "for the rest of your lives?" },
           { text: "every single Monday for the rest of your lives?" },
           { text: "every weekend for the next 10 years?" },
-          { text: "for one random day every month, without warning?" },
+          { text: "for one random day every month?" }, // Изменено
           { text: "for exactly one year, and then return to normal?" }
         ]
       }
@@ -2326,11 +2344,11 @@ export const questionsDatabase = [
     category: "adventure",
     text: "Would you rather",
     fragments: [
-      {
+{
         options: [
           { text: "be randomly teleported to", type: "location", hints: [PROMPTS.country, PROMPTS.famousCity] },
           { text: "instantly teleport inside the private home of", type: "person", hints: [PROMPTS.actor, PROMPTS.singer, PROMPTS.politician, PROMPTS.historical, PROMPTS.youtuber] },
-          { text: "be permanently transported into the fictional universe of", type: "universe", hints: [PROMPTS.movie, PROMPTS.videoGame, PROMPTS.tvShow, PROMPTS.cartoonChar] },
+          { text: "be permanently transported into the fictional universe of", type: "universe", hints: [PROMPTS.fantasyWorld, PROMPTS.sciFiWorld, PROMPTS.videoGame, PROMPTS.cartoonChar] }, // Изменено
           { text: "be magically teleported into", type: "place", hints: [PROMPTS.specificLocation, PROMPTS.publicPlace] }
         ]
       },
@@ -2367,7 +2385,7 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "have everyone genuinely believe you are the exact same age as", type: "age", hints: [PROMPTS.actor, PROMPTS.historical, PROMPTS.politician, PROMPTS.singer] },
+          { text: "have everyone genuinely believe you are the exact same age as", type: "age", hints: [PROMPTS.politician, PROMPTS.youtuber] },
           { text: "have everyone constantly insist that you look exactly like", type: "look", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.animalFunny, PROMPTS.cartoonChar] },
           { text: "have society treat you strictly like", type: "status", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.profession, PROMPTS.fictionalChar] },
           { text: "have your physical appearance randomly morph into", type: "morph", hints: [PROMPTS.fictionalChar, PROMPTS.chubbyAnimal, PROMPTS.historical] }
@@ -2411,7 +2429,7 @@ export const questionsDatabase = [
           { text: "as your loyal best friend?", hints: [PROMPTS.cartoonChar, PROMPTS.chubbyAnimal, PROMPTS.dogBreed, PROMPTS.fictionalChar] },
           { text: "as your sworn enemy?", hints: [PROMPTS.villain, PROMPTS.historical, PROMPTS.youtuber, PROMPTS.mediaPersonality] },
           { text: "as your personal therapist?", hints: [PROMPTS.historical, PROMPTS.actor, PROMPTS.singer, PROMPTS.mediaPersonality] },
-          { text: "as your martial art sparring partner?", hints: [PROMPTS.actor, PROMPTS.heavyAnimal, PROMPTS.dangerousAnimal, PROMPTS.villain] },
+          { text: "as your martial art sparring partner?", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.youtuber, PROMPTS.historical] },
           { text: "as your cleaner?", hints: [PROMPTS.politician, PROMPTS.historical, PROMPTS.villain, PROMPTS.youtuber] },
           { text: "as your personal fitness trainer?", hints: [PROMPTS.actor, PROMPTS.fastAnimal, PROMPTS.villain, PROMPTS.singer] },
           { text: "as your obedient subordinate?", hints: [PROMPTS.politician, PROMPTS.villain, PROMPTS.historical, PROMPTS.actor] },
@@ -2432,11 +2450,11 @@ export const questionsDatabase = [
     category: "naming",
     text: "Would you rather",
     fragments: [
-      {
+{
         options: [
           { text: "have every second newborn baby legally named", type: "newborn", hints: [PROMPTS.nickname, PROMPTS.title, PROMPTS.villain, PROMPTS.snack, PROMPTS.animalFunny] },
-          { text: "have the country you live in renamed to", type: "country", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.company, PROMPTS.chubbyAnimal, PROMPTS.everyday] },
-          { text: "have the city you live in renamed to", type: "city", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.snack, PROMPTS.everyday, PROMPTS.company] },
+          { text: "have the country you live in renamed to", type: "country", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.company, PROMPTS.chubbyAnimal, PROMPTS.everyday, PROMPTS.abstractMood] }, // Изменено
+          { text: "have the city you live in renamed to", type: "city", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.snack, PROMPTS.everyday, PROMPTS.company, PROMPTS.abstractMood] }, // Изменено
           { text: "have your own legal name permanently changed to", type: "own_name", hints: [PROMPTS.nickname, PROMPTS.title, PROMPTS.app, PROMPTS.animalFunny, PROMPTS.everyday] },
           { text: "have everyone with the most common name in your country change it to", type: "common_name", hints: [PROMPTS.nickname, PROMPTS.animalFunny, PROMPTS.techOld, PROMPTS.snack, PROMPTS.everyday] },
           { text: "have a national public holiday created in your honor called The Day of", type: "holiday", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday] },
@@ -2454,5 +2472,81 @@ export const questionsDatabase = [
       }
     ],
     hints: []
+  },
+{
+    id: 22,
+    category: "social",
+    text: "Would you rather",
+    fragments: [
+      {
+        options: [
+          { text: "have your catchphrase be", type: "catchphrase" },
+          { text: "have to loudly yell", type: "yell" }
+        ]
+      },
+      {
+        options: [
+          { text: "\"Sweet mother of [ ... ]!\" or \"Sweet mother of [ ... ]!\"" },
+          { text: "\"Holy [ ... ]!\" or \"Holy [ ... ]!\"" },
+          { text: "\"By the power of [ ... ]!\" or \"By the power of [ ... ]!\"" },
+          { text: "\"What in the [ ... ]?\" or \"What in the [ ... ]?\"" }
+        ]
+      },
+      {
+        options: [
+          { text: "every time you enter a room?" },
+          { text: "every time you sit down?" },
+          { text: "every time you answer the phone?" },
+          { text: "whenever you get surprised?" },
+          { text: "whenever you sneeze?" },
+          { text: "whenever you find yourself in an awkward situation?" },
+          { text: "?" }
+        ]
+      }
+    ],
+    hints: [
+      PROMPTS.madeUpCompound, 
+      PROMPTS.madeUpHyphenated, 
+      PROMPTS.animalFunny, 
+      PROMPTS.everyday, 
+      PROMPTS.kitchenItem, 
+      PROMPTS.snack
+    ]
+  },
+  {
+    id: 23,
+    category: "naming",
+    text: "Would you rather",
+    fragments: [
+      {
+        options: [
+          { text: "become the supreme leader of a new global ideology called" },
+          { text: "write a 1000-page manifesto explaining the core principles of" },
+          { text: "from now on, live exclusively by the principles of" },
+          { text: "have your country's government officially adopt the ideology of" },
+          { text: "have your parents strictly adopt the ideology of" },
+          { text: "have your entire friend group adopt the ideology of" },
+          { text: "permanently ban the dangerous ideology of" },
+          { text: "build the bright future of the world strictly on the ideology of" },
+          { text: "be forced to study the complex history of" }
+        ]
+      },
+      {
+        options: [
+          { text: "[ ... ]ism or [ ... ]ism?" }
+        ]
+      }
+    ],
+    hints: [
+      PROMPTS.fastFood,
+      PROMPTS.animalFunny,
+      PROMPTS.everyday,
+      PROMPTS.techOld,
+      PROMPTS.actor,
+      PROMPTS.chore,
+      PROMPTS.annoyingHabit,
+      PROMPTS.company,
+      PROMPTS.abstractMood
+    ]
   }
 ];

@@ -877,13 +877,42 @@ function getCompiledQuestionString(w1 = "[ ... ]", w2 = "[ ... ]", useHtml = fal
       });
   }
  
+  str = str.trim();
+
+  // Умный алгоритм для создания идеологий (правила орфографии и дефисы)
+  const processIsmStem = (word) => {
+     if (word === "[ ... ]" || word === "___") return word;
+     // Убираем лишние пробелы и ставим дефисы между всеми словами
+     let hyphenated = word.split(/\s+/).filter(Boolean).join('-');
+     
+     // Правила орфографии (все слова уже в UPPERCASE)
+     if (hyphenated.endsWith('Y')) return hyphenated.slice(0, -1); // Заменяем 'Y'
+     if (hyphenated.endsWith('IST')) return hyphenated.slice(0, -3); // Обрезаем 'IST'
+     // Буква 'E' остается по умолчанию (Apple -> APPLEISM)
+     
+     return hyphenated; 
+  };
+
   if (useHtml) {
-    str = str.replace("[ ... ]", `<span style="color: #00ffb3; font-weight: bold;">${w1}</span>`);
-    str = str.replace("[ ... ]", `<span style="color: #ff4a4a; font-weight: bold;">${w2}</span>`);
+    // Если вопрос требует суффикса -ism, применяем умный алгоритм
+    if (str.includes("[ ... ]ism")) {
+        str = str.replace("[ ... ]ism", `<span style="color: #00ffb3; font-weight: bold;">${processIsmStem(w1)}ISM</span>`);
+        str = str.replace("[ ... ]ism", `<span style="color: #ff4a4a; font-weight: bold;">${processIsmStem(w2)}ISM</span>`);
+    } else {
+        str = str.replace("[ ... ]", `<span style="color: #00ffb3; font-weight: bold;">${w1}</span>`);
+        str = str.replace("[ ... ]", `<span style="color: #ff4a4a; font-weight: bold;">${w2}</span>`);
+    }
   } else {
-    str = str.replace("[ ... ]", w1).replace("[ ... ]", w2);
+    // Обычный текст (для истории и логов)
+    if (str.includes("[ ... ]ism")) {
+        str = str.replace("[ ... ]ism", processIsmStem(w1) + "ISM");
+        str = str.replace("[ ... ]ism", processIsmStem(w2) + "ISM");
+    } else {
+        str = str.replace("[ ... ]", w1).replace("[ ... ]", w2);
+    }
   }
-  return str.trim();
+  
+  return str;
 }
 
 function initRound() {

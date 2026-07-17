@@ -462,8 +462,37 @@ toFinglish(text) {
       "alone": "eloun", "strawberry" : "strouberri",
       "great": "greit",
       "to?": "tuu?",
-      "thought": "sout"
+      "thought": "sout",
       
+      // Новые фразы и шаблоны (catchphrases)
+      "sweet mother of": "sviit madör of",
+      "holy": "houli",
+      "by the power of": "bai tö pauör of",
+      "what in the": "vot in tö",
+
+      // Выдуманные составные слова (Made-up words)
+      "thunderfluff": "tanderflaf",
+      "doomwaffle": "duumvoföl",
+      "slimebucket": "slaimbaket",
+      "laserpants": "leiserpänts",
+      "gigachad": "gigatsäd",
+      "wibbly-wobbly": "vibli-vobli",
+      "dilly-dally": "dilli-dälli",
+      "mumbo-jumbo": "mambo-jambo",
+      "flim-flam": "flim-fläm",
+      "ideology": "aidiologi",
+      "leader": "liidör",
+      "global": "glouböl",
+      "called": "koold",
+      "manifesto": "mänifesto",
+      "explaining": "ekspleining",
+      "core": "koor",
+      "principles": "prinsipöls",
+      "exclusively": "eksklusiivli",
+      "officially": "offisiali",
+      "bright": "brait",
+      "strictly": "striktli",
+      "complex": "kompleks",
     
     };
 
