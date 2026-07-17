@@ -2237,3 +2237,53 @@ p {
 #setup-screen #players-boxes-container {
     margin-top: 20px !important;
 }
+
+/* =========================================
+   ЗАГОЛОВОК С ПОЛНЫМ ГРАДИЕНТОМ
+   ========================================= */
+
+.header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.animated-text-outline {
+  font-style: italic;
+  position: relative;
+  display: inline-block;
+  margin: 0 auto 16px;
+  text-align: center;
+  color: #ffffff;
+  z-index: 1;
+}
+
+.animated-text-outline::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  width: 100%;
+  
+  /* Возвращаем все цвета из бейджа: #ff6b6b, #feca57, #1dd1a1, #5f27cd, #ff9ff3 */
+background: linear-gradient(
+  124deg,
+  #ff6b6b 0%,
+  #feca57 5%,
+  #1dd1a1 10%,
+  #5f27cd 25%,
+  #5f27cd 75%,
+  #ff9ff3 90%,
+  #ff9ff3 100%
+);
+  background-size: 300% 300%;
+  animation: rainbowBadge 5s ease infinite;
+  
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 4px transparent;
+}
+
