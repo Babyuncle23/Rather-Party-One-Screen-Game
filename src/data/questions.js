@@ -1691,9 +1691,9 @@ company: {
     text: "Random public place", 
     brainstorm: ["A shopping mall", "A crowded elevator", "A busy intersection"] 
   },
-  funnyShape: {
-    text: "Funny shape",
-    brainstorm: ["Cube", "Triangle", "Peanut", "Balloon", "Lightbulb", "Pear", "Egg", "Football", "Brick"]
+  shape: {
+    text: "shape / an object with a recognizable shape",
+    brainstorm: ["Cube", "Triangle", "Peanut", "Balloon", "Lightbulb", "Pear", "Egg", "Brick", "Heart", "Diamond", "Cylinder", "Cone", "Donut", "Banana", "Pyramid", "Star", "Arrow", "Pill"]
   },
   abstractMood: {
     text: "Abstract feeling or concept",
@@ -1913,7 +1913,7 @@ export const questionsDatabase = [
           { text: "smells exactly like", requires: ["sweat", "breath"], hints: [PROMPTS.strongFood, PROMPTS.fastFood, PROMPTS.sweetLiquid, PROMPTS.candyType, PROMPTS.fruit, { text: "Thing that smells bad", brainstorm: ["Garbage", "Skunk", "Rotten egg", "Mud"] }] },
           { text: "tastes exactly like", requires: ["sweat", "saliva"], hints: [PROMPTS.strongFood, PROMPTS.fastFood, PROMPTS.sweetLiquid, PROMPTS.candyType, PROMPTS.fruit, PROMPTS.snack] },
           { text: "strongly reminds people of the face of a", requires: ["face"], hints: [PROMPTS.animalFunny, PROMPTS.chubbyAnimal] }, // Изменено
-          { text: "closely resembles a", requires: ["head"], hints: [PROMPTS.funnyShape, PROMPTS.everyday, PROMPTS.smallObj] } // Добавлено
+          { text: "closely resembles a", requires: ["head"], hints: [PROMPTS.shape, PROMPTS.everyday, PROMPTS.smallObj] } // Добавлено
         ]
       },
       {
