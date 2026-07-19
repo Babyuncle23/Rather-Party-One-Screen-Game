@@ -261,6 +261,8 @@ const rallyToggle = document.getElementById('rally-english-toggle');
     
     updateStatsBarVisibility(); 
 
+    setupVideoTutorial();
+
     const initAudioPreload = () => {
       audioManager.preloadRevealSounds();
       document.removeEventListener('click', initAudioPreload);
@@ -430,13 +432,17 @@ function renderEmojiPickerGrid(selectedEmoji) {
     tile.innerText = emoji;
     tile.title = EMOJI_NAMES[emoji] ? `${EMOJI_NAMES[emoji]} (${emoji})` : emoji;
     if (emoji === selectedEmoji) tile.classList.add('selected');
-    tile.onclick = (e) => {
+tile.onclick = (e) => {
       e.stopPropagation();
       if (activeEmojiPickerIndex === null) return;
       temporaryPlayersList[activeEmojiPickerIndex].emoji = emoji;
       renderPlayerBoxes();
-      renderEmojiPickerGrid(emoji);
+      
+      // ДОБАВЬ ЭТИ ДВЕ СТРОЧКИ:
+      if (audioManager) audioManager.play('click'); // Воспроизводим звук клика
+      closeEmojiPicker(); // Сразу закрываем окно!
     };
+    
     grid.appendChild(tile);
   });
 }
@@ -1751,4 +1757,49 @@ function animateGoldChange(amount, positive = false) {
     el.classList.add(cls);
     setTimeout(() => el.classList.remove(cls), 900);
   } catch (e) {}
+}
+
+function setupVideoTutorial() {
+  const tutorialBtn = document.getElementById('tutorial-btn');
+  const videoModal = document.getElementById('video-modal');
+  const closeVideoBtn = document.getElementById('close-video-btn');
+  const tutorialVideo = document.getElementById('tutorial-video');
+
+  if (!tutorialBtn || !videoModal || !tutorialVideo) return;
+
+  // Открыть окно и запустить видео
+  tutorialBtn.onclick = (e) => {
+    e.preventDefault();
+    if (audioManager) audioManager.play('click');
+    
+    videoModal.classList.remove('hidden');
+    videoModal.style.display = 'flex';
+    
+    // Пытаемся запустить автоматически (браузеры иногда блокируют звук, поэтому ловим ошибку)
+    tutorialVideo.play().catch(() => {
+      console.log("Autoplay requires manual interaction");
+    });
+  };
+
+  // Функция закрытия окна
+  const closeVideo = () => {
+    videoModal.style.display = 'none';
+    videoModal.classList.add('hidden');
+    
+    // Ставим видео на паузу и перематываем в начало
+    tutorialVideo.pause();
+    tutorialVideo.currentTime = 0; 
+  };
+
+  // Закрытие по крестику
+  if (closeVideoBtn) {
+    closeVideoBtn.onclick = closeVideo;
+  }
+
+  // Закрытие по клику на темный фон вокруг видео (улучшает UX!)
+  videoModal.onclick = (e) => {
+    if (e.target === videoModal) {
+      closeVideo();
+    }
+  };
 }

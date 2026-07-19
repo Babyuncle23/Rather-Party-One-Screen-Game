@@ -39,9 +39,6 @@
       <h2>Choose an emoji</h2>
       <p class="emoji-picker-subtitle">Pick an icon that fits your style.</p>
       <div id="emoji-picker-grid" class="emoji-picker-grid"></div>
-      <div class="emoji-picker-actions">
-        <button id="emoji-picker-close-btn" class="btn btn-secondary">Done</button>
-      </div>
     </div>
   </div>
 
@@ -132,6 +129,25 @@
     </div> 
   </div>
 
+  <!-- ОКНО ТУТОРИАЛА С ВИДЕО -->
+  <div id="video-modal" class="modal-overlay hidden" style="z-index: 2000;">
+    <div class="modal-content" style="padding: 14px; background: #08080d; width: min(400px, 95%); border: 1px solid rgba(255,255,255,0.08);">
+      
+      <!-- Шапка окна с крестиком -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
+        <h3 style="margin: 0; color: var(--text); font-size: 1.15rem;">How to play</h3>
+        <button id="close-video-btn" style="background: none; border: none; color: var(--muted); font-size: 28px; cursor: pointer; padding: 0; line-height: 1; transition: color 0.2s;">&times;</button>
+      </div>
+      
+      <!-- Само видео -->
+      <video id="tutorial-video" controls playsinline preload="auto" style="width: 100%; height: auto; max-height: 80vh; border-radius: 12px; background: transparent; object-fit: contain;">
+        <source src="./src/video/tutorial.mp4" type="video/mp4"> <!-- Поменяй src на твой рабочий вариант -->
+        Your browser does not support the video tag.
+      </video>
+      
+    </div>
+  </div>
+
   <!-- ГЛАВНЫЙ КОНТЕЙНЕР ИГРЫ -->
   <div class="game-container">
     
@@ -189,6 +205,13 @@
     ✨
   </p>
 </div>
+
+<div style="text-align: center; margin-bottom: 24px;">
+  <button id="tutorial-btn" class="btn btn-secondary" style="width: auto; padding: 10px 24px; border-radius: 20px; display: inline-flex; align-items: center; gap: 8px;">
+    <span>🎥</span> How to play (23s)
+  </button>
+</div>
+
       <div class="add-player-block">
         <input id="single-player-input" type="text" placeholder="Enter player name" class="input-field">
         <button id="add-player-btn" class="btn btn-accent spaced-button">+ Add Player</button>
