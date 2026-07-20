@@ -1759,6 +1759,40 @@ function animateGoldChange(amount, positive = false) {
   } catch (e) {}
 }
 
+// --- ЛОГИКА УСТАНОВКИ ПРИЛОЖЕНИЯ (PWA) ---
+let deferredPrompt;
+const installBtn = document.getElementById('install-app-btn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Отменяем стандартное мини-уведомление Chrome
+  e.preventDefault();
+  // Сохраняем событие, чтобы вызвать его по клику на нашу кнопку
+  deferredPrompt = e;
+  
+  // Показываем нашу кнопку установки
+  if (installBtn) {
+    installBtn.classList.remove('hidden');
+    installBtn.style.display = 'block';
+  }
+});
+
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      // Показываем системное окно установки
+      deferredPrompt.prompt();
+      
+      // Ждем ответа пользователя
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('Пользователь установил игру');
+        installBtn.style.display = 'none'; // Прячем кнопку после установки
+      }
+      deferredPrompt = null;
+    }
+  });
+}
+
 // --- ЛОГИКА ОКНА ТУТОРИАЛА ---
 function setupVideoTutorial() {
   const tutorialBtn = document.getElementById('tutorial-btn');
