@@ -1810,45 +1810,51 @@ function setupVideoTutorial() {
 
   if (!tutorialBtn || !videoModal) return;
 
-  // Абсолютно надежная функция закрытия
   const closeVideo = () => {
     videoModal.style.display = 'none';
     videoModal.classList.add('hidden');
     
-    // Безопасно глушим видео, чтобы не было ошибок в консоли
+    // Выходим из полноэкранного режима при закрытии
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) { /* Safari */
+        document.webkitExitFullscreen();
+      }
+    }
+    
     if (tutorialVideo) {
       if (tutorialVideo.tagName === 'IFRAME') {
         const currentSrc = tutorialVideo.src;
-        tutorialVideo.src = currentSrc; // Обнуляет YouTube
+        tutorialVideo.src = currentSrc; 
       } else if (typeof tutorialVideo.pause === 'function') {
-        tutorialVideo.pause(); // Ставит на паузу локальное видео
+        tutorialVideo.pause(); 
         tutorialVideo.currentTime = 0; 
       }
     }
   };
 
-// Открытие окна
   tutorialBtn.onclick = (e) => {
     e.preventDefault();
     if (window.audioManager) window.audioManager.play('click');
     
-    // 1. Принудительно прокручиваем страницу немного вниз, 
-    // чтобы мобильный браузер автоматически спрятал адресную строку
-    window.scrollBy({ top: 120, behavior: 'smooth' });
+    // Включаем НАСТОЯЩИЙ полноэкранный режим для всего документа
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen().catch(() => {});
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+      elem.webkitRequestFullscreen();
+    }
 
-    // 2. Даем браузеру четверть секунды на анимацию скролла, 
-    // а затем плавно показываем модальное окно поверх полноэкранного вида
-    setTimeout(() => {
-      videoModal.classList.remove('hidden');
-      videoModal.style.display = 'flex';
-    }, 250);
+    // Показываем модалку
+    videoModal.classList.remove('hidden');
+    videoModal.style.display = 'flex';
   };
 
-  // Закрытие по крестику (с защитой от перехвата кликов)
   if (closeVideoBtn) {
     const handleClose = (e) => {
       e.preventDefault();
-      e.stopPropagation(); // Блокируем любые конфликты на странице
+      e.stopPropagation(); 
       if (window.audioManager) window.audioManager.play('click');
       closeVideo();
     };
@@ -1857,7 +1863,6 @@ function setupVideoTutorial() {
     closeVideoBtn.addEventListener('touchstart', handleClose, { passive: false });
   }
 
-  // Закрытие по клику на темный фон вокруг видео
   videoModal.addEventListener('click', (e) => {
     if (e.target === videoModal) closeVideo();
   });
