@@ -1763,30 +1763,44 @@ function animateGoldChange(amount, positive = false) {
 let deferredPrompt;
 const installBtn = document.getElementById('install-app-btn');
 
+// Простая и надежная проверка на устройства Apple (iPhone / iPad)
+// Вторая часть проверки нужна для новых iPad, которые маскируются под Mac
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+// Если это iPhone/iPad, сразу принудительно показываем кнопку
+if (isIOS && installBtn) {
+  installBtn.classList.remove('hidden');
+  installBtn.style.display = 'block';
+}
+
+// Для Android перехватываем системное событие "готов к установке"
 window.addEventListener('beforeinstallprompt', (e) => {
-  // Отменяем стандартное мини-уведомление Chrome
   e.preventDefault();
-  // Сохраняем событие, чтобы вызвать его по клику на нашу кнопку
   deferredPrompt = e;
-  
-  // Показываем нашу кнопку установки
-  if (installBtn) {
+  // Показываем кнопку для Android, только когда браузер дал добро
+  if (installBtn && !isIOS) { 
     installBtn.classList.remove('hidden');
     installBtn.style.display = 'block';
   }
 });
 
 if (installBtn) {
-  installBtn.addEventListener('click', async () => {
-    if (deferredPrompt) {
-      // Показываем системное окно установки
+  installBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    if (window.audioManager) window.audioManager.play('click');
+    
+    if (isIOS) {
+      // Показываем твое кастомное окно с инструкцией для Apple
+      screens.showAlert(
+        "🍏 Install on iPhone", 
+        "To play in full-screen mode like a real app:\n\n1. Tap the Share button (square with an arrow pointing up) at the bottom of the screen.\n2. Scroll down and tap 'Add to Home Screen' ➕."
+      );
+    } else if (deferredPrompt) {
+      // Стандартная автоматическая установка для Android
       deferredPrompt.prompt();
-      
-      // Ждем ответа пользователя
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
-        console.log('Пользователь установил игру');
-        installBtn.style.display = 'none'; // Прячем кнопку после установки
+        installBtn.style.display = 'none'; // Прячем кнопку после успешной установки
       }
       deferredPrompt = null;
     }
