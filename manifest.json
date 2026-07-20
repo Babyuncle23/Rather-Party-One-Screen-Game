@@ -1,0 +1,16 @@
+{
+  "name": "Rather Party",
+  "short_name": "Rather Party",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#08080d",
+  "theme_color": "#08080d",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

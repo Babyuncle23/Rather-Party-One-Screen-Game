@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Rather Party — One Screen Game</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -270,6 +271,10 @@
       
       <button id="start-game-btn" class="btn btn-primary spaced-button">Start Game</button>
       
+      <button id="install-app-btn" class="btn btn-secondary spaced-button hidden" style="margin-bottom: 24px; border-color: var(--accent); color: var(--accent); display: none;">
+        📱 Install App to Home Screen
+      </button>
+
       <div class="share-qr-block">
         <p>Liked this one-screen game? Share the link with others via QR 😊</p>
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://babyuncle23.github.io/Rather-Party-One-Screen-Game/" alt="Share Game QR" class="qr-code-image">
@@ -448,5 +453,10 @@
   <audio id="sound-fanfare" src="./src/audio/fanfare.mp3" preload="auto"></audio>
 
   <script type="module" src="./src/main.js"></script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+</script>
 </body>
 </html>
