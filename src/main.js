@@ -1759,47 +1759,56 @@ function animateGoldChange(amount, positive = false) {
   } catch (e) {}
 }
 
+// --- ЛОГИКА ОКНА ТУТОРИАЛА ---
 function setupVideoTutorial() {
   const tutorialBtn = document.getElementById('tutorial-btn');
   const videoModal = document.getElementById('video-modal');
   const closeVideoBtn = document.getElementById('close-video-btn');
   const tutorialVideo = document.getElementById('tutorial-video');
 
-  if (!tutorialBtn || !videoModal || !tutorialVideo) return;
+  if (!tutorialBtn || !videoModal) return;
 
-  // Открыть окно и запустить видео
-  tutorialBtn.onclick = (e) => {
-    e.preventDefault();
-    if (audioManager) audioManager.play('click');
-    
-    videoModal.classList.remove('hidden');
-    videoModal.style.display = 'flex';
-    
-    // Пытаемся запустить автоматически (браузеры иногда блокируют звук, поэтому ловим ошибку)
-    tutorialVideo.play().catch(() => {
-      console.log("Autoplay requires manual interaction");
-    });
-  };
-
-  // Функция закрытия окна
+  // Абсолютно надежная функция закрытия
   const closeVideo = () => {
     videoModal.style.display = 'none';
     videoModal.classList.add('hidden');
     
-    // Ставим видео на паузу и перематываем в начало
-    tutorialVideo.pause();
-    tutorialVideo.currentTime = 0; 
-  };
-
-  // Закрытие по крестику
-  if (closeVideoBtn) {
-    closeVideoBtn.onclick = closeVideo;
-  }
-
-  // Закрытие по клику на темный фон вокруг видео (улучшает UX!)
-  videoModal.onclick = (e) => {
-    if (e.target === videoModal) {
-      closeVideo();
+    // Безопасно глушим видео, чтобы не было ошибок в консоли
+    if (tutorialVideo) {
+      if (tutorialVideo.tagName === 'IFRAME') {
+        const currentSrc = tutorialVideo.src;
+        tutorialVideo.src = currentSrc; // Обнуляет YouTube
+      } else if (typeof tutorialVideo.pause === 'function') {
+        tutorialVideo.pause(); // Ставит на паузу локальное видео
+        tutorialVideo.currentTime = 0; 
+      }
     }
   };
+
+  // Открытие окна
+  tutorialBtn.onclick = (e) => {
+    e.preventDefault();
+    if (window.audioManager) window.audioManager.play('click');
+    
+    videoModal.classList.remove('hidden');
+    videoModal.style.display = 'flex';
+  };
+
+  // Закрытие по крестику (с защитой от перехвата кликов)
+  if (closeVideoBtn) {
+    const handleClose = (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // Блокируем любые конфликты на странице
+      if (window.audioManager) window.audioManager.play('click');
+      closeVideo();
+    };
+    
+    closeVideoBtn.addEventListener('click', handleClose);
+    closeVideoBtn.addEventListener('touchstart', handleClose, { passive: false });
+  }
+
+  // Закрытие по клику на темный фон вокруг видео
+  videoModal.addEventListener('click', (e) => {
+    if (e.target === videoModal) closeVideo();
+  });
 }

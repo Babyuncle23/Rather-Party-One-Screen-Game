@@ -65,13 +65,21 @@
         </div>
       </div>
 
-      <div id="safety-screen-options" class="hidden">
+<div id="safety-screen-options" class="hidden">
         <h2 class="safety-title">Safety Options</h2>
+        
+        <!-- ДОБАВЛЕНА ПОДСКАЗКА -->
+        <p style="text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: -4px; margin-bottom: 16px; line-height: 1.4;">
+          Tap an option to expand details.<br>Actions require a 2-second hold.
+        </p>
+
         <div class="safety-options-column">
           <!-- ОПЦИЯ 1 -->
           <div class="safety-option-card">
-            <div class="safety-option-header highlight-gold">
+            <!-- Убрали highlight-gold и добавили стрелочку ▼ -->
+            <div class="safety-option-header">
               <span>🔄 Skip This Round</span>
+              <span style="color: rgba(255,255,255,0.3); font-size: 12px;">▼</span>
             </div>
             <div class="safety-desc-text">Round is canceled. Game draws a new question.</div>
             <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="skip">Hold 2s to Confirm</button>
@@ -81,6 +89,7 @@
           <div class="safety-option-card">
             <div class="safety-option-header">
               <span>💬 Open Circle (Let's Talk)</span>
+              <span style="color: rgba(255,255,255,0.3); font-size: 12px;">▼</span>
             </div>
             <div class="safety-desc-text">Pauses the game and opens a friendly text screen for the whole company.</div>
             <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="talk">Hold 2s to Confirm</button>
@@ -90,6 +99,7 @@
           <div class="safety-option-card safety-option-card--danger">
             <div class="safety-option-header">
               <span>🛑 Stop Match & Talk Openly</span>
+              <span style="color: rgba(255,255,255,0.3); font-size: 12px;">▼</span>
             </div>
             <div class="safety-desc-text">Stops match instantly and saves points.</div>
             <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="stop-direct">Hold 2s to Confirm</button>
@@ -99,6 +109,7 @@
           <div class="safety-option-card safety-option-card--muted">
             <div class="safety-option-header">
               <span>⏳ Set Anonymous Exit Timer</span>
+              <span style="color: rgba(255,255,255,0.3); font-size: 12px;">▼</span>
             </div>
             <div class="safety-desc-text">
               Choose a delay below, and the match will end automatically later.
@@ -114,6 +125,7 @@
             <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="stop-delayed">Hold 2s to Confirm</button>
           </div>
         </div>
+        
         <div class="safety-close-row">
           <button id="safety-close-btn-2" class="btn btn-small">← Return to Game</button>
         </div>
@@ -129,21 +141,31 @@
     </div> 
   </div>
 
-  <!-- ОКНО ТУТОРИАЛА С ВИДЕО -->
-  <div id="video-modal" class="modal-overlay hidden" style="z-index: 2000;">
-    <div class="modal-content" style="padding: 14px; background: #08080d; width: min(400px, 95%); border: 1px solid rgba(255,255,255,0.08);">
+<!-- ОКНО ТУТОРИАЛА С ВИДЕО -->
+  <!-- padding: 0 убирает рамки вокруг окна -->
+  <div id="video-modal" class="modal-overlay hidden" style="z-index: 2000; padding: 0;">
+    
+    <!-- Сбрасываем ограничения ширины, делаем окно 100% на 100% и убираем скругления -->
+    <div class="modal-content" style="padding: 0; width: 100%; height: 100%; max-width: 100%; max-height: 100%; border-radius: 0; border: none; background: #08080d; display: flex; flex-direction: column; overflow: hidden;">
       
       <!-- Шапка окна с крестиком -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: #08080d; position: relative; z-index: 9999; flex-shrink: 0;">
         <h3 style="margin: 0; color: var(--text); font-size: 1.15rem;">How to play</h3>
-        <button id="close-video-btn" style="background: none; border: none; color: var(--muted); font-size: 28px; cursor: pointer; padding: 0; line-height: 1; transition: color 0.2s;">&times;</button>
+        
+        <!-- Секретный UX-трюк: padding: 15px и margin: -15px делают зону для тапа огромной, не ломая верстку. Плюс максимальный z-index -->
+        <button id="close-video-btn" style="background: none; border: none; color: var(--text); font-size: 36px; cursor: pointer; padding: 15px; margin: -15px; line-height: 1; position: relative; z-index: 9999; pointer-events: auto;">&times;</button>
       </div>
       
-      <!-- Само видео -->
-      <video id="tutorial-video" controls playsinline preload="auto" style="width: 100%; height: auto; max-height: 80vh; border-radius: 12px; background: transparent; object-fit: contain;">
-        <source src="./src/video/tutorial.mp4" type="video/mp4"> <!-- Поменяй src на твой рабочий вариант -->
-        Your browser does not support the video tag.
-      </video>
+      <!-- Контейнер для видео -->
+      <div style="flex-grow: 1; width: 100%; display: flex; justify-content: center; align-items: center; background: #000;">
+        <iframe id="tutorial-video" 
+          style="width: 100%; height: 100%; max-width: 65vh; border: none;"
+          src="https://www.youtube.com/embed/TU6HCiXeL0A?rel=0&playsinline=1" 
+          title="Rather Party Tutorial"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+      </div>
       
     </div>
   </div>
@@ -159,20 +181,38 @@
       </div>
       <div id="safety-tip-text" class="safety-tip-text">Recommended to read before starting.</div>
       
-      <div id="help-panel" class="rules-dropdown-box hidden">
+<div id="help-panel" class="rules-dropdown-box hidden">
         <p class="help-panel-title"><strong>How to play</strong></p>
+        
         <div class="help-step" data-step="1">
-          <p><strong>Step 1: Picker</strong></p>
-          <p>Choose a prompt for the next player.</p>
+          <p><strong>Step 1: The Picker</strong></p>
+          <ul style="padding-left: 20px; margin-top: 8px; color: var(--text);">
+            <li style="margin-bottom: 6px;"><strong>Action:</strong> Choose a prompt for the next player.</li>
+            <li style="color: var(--muted);"><strong>💡 Tip:</strong> The prompt is not a secret! You can discuss it or clarify what you meant.</li>
+          </ul>
         </div>
+        
         <div class="help-step" data-step="2" style="display:none;">
-          <p><strong>Step 2: Responder</strong></p>
-          <p>Type 2 answers and secretly select one.</p>
+          <p><strong>Step 2: The Responder</strong></p>
+          <ul style="padding-left: 20px; margin-top: 8px; color: var(--text);">
+            <li style="margin-bottom: 6px;"><strong>Action:</strong> Type 2 answers that fit the prompt. Only <em>after</em> that, you will see the secret question.</li>
+            <li style="color: var(--danger);"><strong>🤫 Rule:</strong> Keep absolute silence! Do not say your words out loud and keep your final choice a strict secret.</li>
+          </ul>
         </div>
+        
         <div class="help-step" data-step="3" style="display:none;">
-          <p><strong>Step 3: Guessers</strong></p>
-          <p>Guess the choice! <em>Tip: Tap 👁️ to peek at the secret question!</em></p>
+          <p><strong>Step 3: The Guessers</strong></p>
+          <ul style="padding-left: 20px; margin-top: 8px; color: var(--text);">
+            <li style="margin-bottom: 6px;"><strong>Action:</strong> Guess which option the Responder chose!</li>
+            <li style="color: var(--muted);"><strong>Need a hint?</strong> Spend points to use abilities:
+              <ul style="list-style: none; padding-left: 0; margin-top: 8px; color: var(--text);">
+                <li style="margin-bottom: 4px;">🎲 <strong>Random:</strong> Opens random letters.</li>
+                <li>📏 <strong>Length:</strong> Shows word length & first letters.</li>
+              </ul>
+            </li>
+          </ul>
         </div>
+        
         <div class="carousel-controls">
           <button id="help-prev-btn" class="carousel-btn">←</button>
           <span id="carousel-index">Step 1 / 3</span>
@@ -200,15 +240,18 @@
     </div>
 <div class="header-container">
   <h2 class="animated-text-outline" data-text="Rather Party">Rather Party</h2>
-  <p class="setup-lead-text">
-    Choose questions and find out how others have answered them 
-    ✨
-  </p>
-</div>
+  
+  <!-- Новая строка для ясности формата -->
+  <div style="color: var(--accent); font-weight: 800; font-size: 0.9rem; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px;">
+    📱 1 Device &bull; 2-4 Players
+  </div>
 
-<div style="text-align: center; margin-bottom: 24px;">
+  <p class="setup-lead-text" style="margin-bottom: 16px;">
+    Choose questions and find out how others have answered them ✨
+  </p>
+  
   <button id="tutorial-btn" class="btn btn-secondary" style="width: auto; padding: 10px 24px; border-radius: 20px; display: inline-flex; align-items: center; gap: 8px;">
-    <span>🎥</span> How to play (23s)
+    <span>🎥</span> How to play (22s)
   </button>
 </div>
 
