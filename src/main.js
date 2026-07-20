@@ -1763,24 +1763,18 @@ function animateGoldChange(amount, positive = false) {
 let deferredPrompt;
 const installBtn = document.getElementById('install-app-btn');
 
-// Простая и надежная проверка на устройства Apple (iPhone / iPad)
-// Вторая часть проверки нужна для новых iPad, которые маскируются под Mac
+// Глобальная проверка: открыта ли игра уже как установленное приложение?
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-// Если это iPhone/iPad, сразу принудительно показываем кнопку
-if (isIOS && installBtn) {
-  installBtn.classList.remove('hidden');
-  installBtn.style.display = 'block';
-}
-
-// Для Android перехватываем системное событие "готов к установке"
+// Для Android перехватываем системное событие
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  // Показываем кнопку для Android, только когда браузер дал добро
-  if (installBtn && !isIOS) { 
-    installBtn.classList.remove('hidden');
+  // Показываем кнопку, только если мы в браузере (не standalone)
+  if (installBtn && !isIOS && !isStandalone) { 
     installBtn.style.display = 'block';
+    setTimeout(() => installBtn.style.opacity = '1', 50); // Плавное появление
   }
 });
 
@@ -1790,17 +1784,17 @@ if (installBtn) {
     if (window.audioManager) window.audioManager.play('click');
     
     if (isIOS) {
-      // Показываем твое кастомное окно с инструкцией для Apple
       screens.showAlert(
         "🍏 Install on iPhone", 
         "To play in full-screen mode like a real app:\n\n1. Tap the Share button (square with an arrow pointing up) at the bottom of the screen.\n2. Scroll down and tap 'Add to Home Screen' ➕."
       );
     } else if (deferredPrompt) {
-      // Стандартная автоматическая установка для Android
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
-        installBtn.style.display = 'none'; // Прячем кнопку после успешной установки
+        // Если юзер установил приложение, плавно прячем кнопку навсегда
+        installBtn.style.opacity = '0';
+        setTimeout(() => installBtn.style.display = 'none', 400);
       }
       deferredPrompt = null;
     }
