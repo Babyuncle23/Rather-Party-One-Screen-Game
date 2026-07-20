@@ -1785,13 +1785,21 @@ function setupVideoTutorial() {
     }
   };
 
-  // Открытие окна
+// Открытие окна
   tutorialBtn.onclick = (e) => {
     e.preventDefault();
     if (window.audioManager) window.audioManager.play('click');
     
-    videoModal.classList.remove('hidden');
-    videoModal.style.display = 'flex';
+    // 1. Принудительно прокручиваем страницу немного вниз, 
+    // чтобы мобильный браузер автоматически спрятал адресную строку
+    window.scrollBy({ top: 120, behavior: 'smooth' });
+
+    // 2. Даем браузеру четверть секунды на анимацию скролла, 
+    // а затем плавно показываем модальное окно поверх полноэкранного вида
+    setTimeout(() => {
+      videoModal.classList.remove('hidden');
+      videoModal.style.display = 'flex';
+    }, 250);
   };
 
   // Закрытие по крестику (с защитой от перехвата кликов)
