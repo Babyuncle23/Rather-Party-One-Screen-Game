@@ -211,7 +211,7 @@ let currentHintObject = null;
 let isCustomHintActive = false; 
 let shifter = null;
 let responderChoice = "";
-let isIsmQuestion = false;
+let activeSuffix = "";
 
 let remainingGuessers = [];
 let totalGuessersThisRound = 0; 
@@ -498,10 +498,10 @@ helpToggle.onclick = () => {
       currentHelpStep = determineCurrentStep();
       renderHelpCarousel();
       helpPanel.style.display = 'block';
-      helpToggle.innerText = 'Hide tips'; // Обновленный текст
+      helpToggle.innerText = '🔼 Hide'; // Изменили тут
     } else {
       helpPanel.style.display = 'none';
-      helpToggle.innerText = 'Tips'; // Обновленный текст
+      helpToggle.innerText = 'How to play?'; // Изменили тут
     }
     audioManager.play('click');
   };
@@ -519,8 +519,8 @@ helpToggle.onclick = () => {
     };
   }
 
-  helpPanel.style.display = 'none';
-  helpToggle.innerText = 'Tips'; // Обновленный текст
+helpPanel.style.display = 'none';
+  helpToggle.innerText = 'How to play?'; // Изменили тут
   updateHelpTargetText();
 }
 
@@ -904,7 +904,7 @@ currentQuestion = game.getRandomQuestion();
     fragmentsHistory = [];
     questionHistory = [];
     currentFragmentsState = []; 
-    isIsmQuestion = false; // <-- ДОБАВИТЬ ЭТУ СТРОКУ
+    activeSuffix = "";
 const undoBtn = document.getElementById('undo-options-btn');
     if (undoBtn) {
       undoBtn.disabled = true;
@@ -1152,7 +1152,7 @@ submitWordsBtn.onclick = () => {
         return;
       }
 
-      // --- ЛОГИКА ТРАНСФОРМАЦИИ IDEOLOGY (-ISM) ---
+// --- ЛОГИКА ТРАНСФОРМАЦИИ СУФФИКСОВ (-ISM, -LAND, -VILLE, -FIELD) ---
       let finalW1 = w1;
       let finalW2 = w2;
 
@@ -1165,21 +1165,41 @@ submitWordsBtn.onclick = () => {
           });
       }
 
-      // Если это вопрос про -ism, меняем сами слова навсегда
-      if (rawQuestionStr.includes("[ ... ]ism")) {
-        isIsmQuestion = true; // <-- ДОБАВИТЬ ЭТУ СТРОКУ
-          const processIsmStem = (word) => {
-             let hyphenated = word.split(/\s+/).filter(Boolean).join('-');
-             if (hyphenated.endsWith('Y')) return hyphenated.slice(0, -1);
-             if (hyphenated.endsWith('IST')) return hyphenated.slice(0, -3);
-             if (hyphenated.endsWith('E')) return hyphenated.slice(0, -1);
-             return hyphenated; 
-          };
-          finalW1 = processIsmStem(w1) + "ISM";
-          finalW2 = processIsmStem(w2) + "ISM";
+      // Проверяем наличие любого из суффиксов
+      const suffixes = ["ism", "land", "ville", "field"];
+      let detectedSuffix = "";
+      
+      for (const suf of suffixes) {
+        if (rawQuestionStr.includes(`[ ... ]${suf}`)) {
+          detectedSuffix = suf;
+          break;
+        }
+      }
+
+      if (detectedSuffix) {
+          activeSuffix = detectedSuffix.toUpperCase(); // Сохраняем, чтобы знать, сколько букв открыть
           
-          // Убираем 'ism' из самого шаблона вопроса, чтобы не было дублирования (APPLEISMism)
-          currentQuestion.customCompiledText = rawQuestionStr.replace(/\[ \.\.\. \]ism/g, "[ ... ]");
+          const processStem = (word, suf) => {
+             // Склеиваем слова через дефис
+             let hyphenated = word.split(/\s+/).filter(Boolean).join('-');
+             
+             // Специфичные правила отсечения окончаний ТОЛЬКО для ISM
+             if (suf === "ism") {
+                 if (hyphenated.endsWith('Y')) hyphenated = hyphenated.slice(0, -1);
+                 if (hyphenated.endsWith('IST')) hyphenated = hyphenated.slice(0, -3);
+                 if (hyphenated.endsWith('E')) hyphenated = hyphenated.slice(0, -1);
+             }
+             
+             // Для land, ville, field просто приклеиваем напрямую к результату (VIDEO-GAMESLAND)
+             return hyphenated + suf.toUpperCase(); 
+          };
+          
+          finalW1 = processStem(w1, detectedSuffix);
+          finalW2 = processStem(w2, detectedSuffix);
+          
+          // Вырезаем именно этот суффикс из самого шаблона вопроса
+          const regex = new RegExp(`\\[ \\.\\.\\. \\]${detectedSuffix}`, 'g');
+          currentQuestion.customCompiledText = rawQuestionStr.replace(regex, "[ ... ]");
       }
       // ---------------------------------------------
 
@@ -1211,17 +1231,18 @@ const hasSimpleColor = tokens1.some(t => SIMPLE_COLORS.includes(t)) || tokens2.s
 
 shifter = new WordShifter(finalW1, finalW2, shouldNerf, isMultiWord);
      
-      // --- АВТО-ОТКРЫТИЕ ISM ---
-      if (rawQuestionStr.includes("[ ... ]ism")) {
-          const revealIsm = (word, openedSet) => {
-              if (word.endsWith("ISM")) {
-                  openedSet.add(word.length - 1); // буква M
-                  openedSet.add(word.length - 2); // буква S
-                  openedSet.add(word.length - 3); // буква I
+// --- АВТО-ОТКРЫТИЕ СУФФИКСА ---
+      if (activeSuffix) {
+          const revealSuffix = (word, openedSet, suf) => {
+              if (word.endsWith(suf)) {
+                  // Динамически открываем нужное количество букв с конца
+                  for (let i = 1; i <= suf.length; i++) {
+                      openedSet.add(word.length - i);
+                  }
               }
           };
-          revealIsm(finalW1, shifter.openedIndices1);
-          revealIsm(finalW2, shifter.openedIndices2);
+          revealSuffix(finalW1, shifter.openedIndices1, activeSuffix);
+          revealSuffix(finalW2, shifter.openedIndices2, activeSuffix);
       }
       // -------------------------
 
@@ -1301,17 +1322,17 @@ currentGuesserIndex = remainingGuessers.shift();
     oralHintUsedThisTurn = false;
     shifter = new WordShifter(shifter.orig1, shifter.orig2, shifter.isNerfed, shifter.isMultiWord);
     
-    // --- АВТО-ОТКРЫТИЕ ISM ПРИ СМЕНЕ ИГРОКА ---
-    if (isIsmQuestion) {
-        const revealIsm = (word, openedSet) => {
-            if (word.endsWith("ISM")) {
-                openedSet.add(word.length - 1); // буква M
-                openedSet.add(word.length - 2); // буква S
-                openedSet.add(word.length - 3); // буква I
+// --- АВТО-ОТКРЫТИЕ СУФФИКСА ПРИ СМЕНЕ ИГРОКА ---
+    if (activeSuffix) {
+        const revealSuffix = (word, openedSet, suf) => {
+            if (word.endsWith(suf)) {
+                for (let i = 1; i <= suf.length; i++) {
+                    openedSet.add(word.length - i);
+                }
             }
         };
-        revealIsm(shifter.orig1, shifter.openedIndices1);
-        revealIsm(shifter.orig2, shifter.openedIndices2);
+        revealSuffix(shifter.orig1, shifter.openedIndices1, activeSuffix);
+        revealSuffix(shifter.orig2, shifter.openedIndices2, activeSuffix);
     }
     // ------------------------------------------
 
