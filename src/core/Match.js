@@ -35,12 +35,18 @@ export class Match {
     this.queuedComboCategory = category; // Запоминаем категорию прошлого вопроса
   }
 
-  getRandomQuestion() {
+getRandomQuestion() {
     // Если комбо заряжено и в этом раунде еще не использовалось
     if (this.queuedComboWord && !this.comboUsedThisRound) {
       
-      // Ищем комбо-вопросы, которые идеально подходят под категорию предыдущего
-      const matchingCombos = this.comboDatabase.filter(q => q.triggerCategory === this.queuedComboCategory);
+      // Ищем комбо-вопросы, поддерживающие как строку, так и массив категорий
+      const matchingCombos = this.comboDatabase.filter(q => {
+        if (!q.triggerCategory) return false;
+        if (Array.isArray(q.triggerCategory)) {
+          return q.triggerCategory.includes(this.queuedComboCategory);
+        }
+        return q.triggerCategory === this.queuedComboCategory;
+      });
       
       let comboQ;
       if (matchingCombos.length > 0) {
@@ -70,7 +76,7 @@ export class Match {
     return this.shuffledQuestions.pop();
   }
 
-  // --- ЭТИ ДВЕ ФУНКЦИИ БЫЛИ УТЕРЯНЫ ---
+  // --- ЭТИ ДВЕ ФУНКЦИИ СОХРАНЯЕМ ---
   getResponderIndex() {
     return (this.pickerIndex + 1) % this.players.length;
   }

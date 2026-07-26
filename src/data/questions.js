@@ -1715,6 +1715,7 @@ export const questionsDatabase = [
   {
     id: 1,
     category: "survival",
+    canTriggerCombo: true,
     text: "Would you rather",
     fragments: [
       {
@@ -2009,6 +2010,7 @@ export const questionsDatabase = [
 {
     id: 9,
     category: "social",
+    canTriggerCombo: true,
     text: "Would you rather",
     fragments: [
       {
@@ -2190,6 +2192,7 @@ export const questionsDatabase = [
 {
     id: 15,
     category: "mind",
+    canTriggerCombo: true,
     text: "Would you rather",
     fragments: [
       {
@@ -2220,6 +2223,7 @@ hints: [
 {
     id: 16,
     category: "identity",
+    canTriggerCombo: true,
     text: "Would you rather",
     fragments: [
       {
@@ -2304,6 +2308,7 @@ hints: [
 {
     id: 19,
     category: "identity",
+    canTriggerCombo: true,
     text: "Would you rather",
     fragments: [
       {
@@ -2330,6 +2335,7 @@ hints: [
 {
     id: 20,
     category: "social",
+    canTriggerCombo: true,
     text: "Would you rather have",
     fragments: [
       {
@@ -2389,6 +2395,7 @@ hints: [
 {
     id: 22,
     category: "social",
+    canTriggerCombo: true,
     text: "Would you rather",
     fragments: [
       {
@@ -2467,9 +2474,9 @@ hints: [
 {
     id: 101,
     isCombo: true,
-    triggerCategory: "animals",
+    triggerCategory: ["animals", "survival", "social", "mind", "identity"],
     category: "combo",
-    text: "Being relentlessly chased by [PREV_CHOICE], would you rather have",
+    text: "Being chased by angry [PREV_CHOICE], would you rather have",
     fragments: [
       {
         options: [
@@ -2483,7 +2490,7 @@ hints: [
 {
     id: 102,
     isCombo: true,
-    triggerCategory: "lifestyle",
+    triggerCategory: ["animals", "survival", "lifestyle", "social", "mind", "identity"],
     category: "combo",
     text: "If you were trapped in a room with mutated angry [PREV_CHOICE], would you rather have",
     fragments: [
@@ -2493,12 +2500,13 @@ hints: [
         ]
       }
     ],
-    hints: [PROMPTS.kitchenItem, PROMPTS.everyday, PROMPTS.smallObj]
+    hints: [PROMPTS.kitchenItem, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.actor, PROMPTS.profession
+    ]
   },
   {
     id: 103,
     isCombo: true,
-    triggerCategory: "career",
+    triggerCategory: ["career", "superpowers"],
     category: "combo",
     text: "To convince the boss that [PREV_CHOICE] is crucial for the company, would you rather present",
     fragments: [
@@ -2509,6 +2517,6 @@ hints: [
         ]
       }
     ],
-    hints: [PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.annoyingHabit]
+    hints: [PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.annoyingHabit, PROMPTS.humanActivity]
   }
 ];
