@@ -1789,6 +1789,7 @@ export const questionsDatabase = [
 {
     id: 3,
     category: "animals",
+    canTriggerCombo: true,
     text: "Would you rather",
     fragments: [
       {
@@ -1846,7 +1847,6 @@ export const questionsDatabase = [
         options: [
           { text: "the first person you meet on the street?", requires: ["context"] },
           { text: "the hiring manager?", requires: ["context"] }, // Изменено
-          { text: "your parents at dinner?", requires: ["context"] },
           { text: "your parents?", requires: ["context"] },
           { text: "half asleep?", requires: ["condition"] },
           { text: "in sauna?", requires: ["condition"] },
@@ -1865,8 +1865,7 @@ export const questionsDatabase = [
         options: [
           { text: "have to brush your teeth with", type: "hygiene", hints: [PROMPTS.sauce, PROMPTS.stickyThing, PROMPTS.sweetLiquid, { text: "Strong-smelling food", brainstorm: ["onion", "garlic", "blue cheese", "rotten eggs"] }] },
           { text: "have to wash your clothes in", type: "hygiene", hints: [PROMPTS.sauce, PROMPTS.sweetLiquid, PROMPTS.hotDrink, PROMPTS.popularDrink] },
-          { text: "have to drink a full glass of", type: "utility", hints: [PROMPTS.sauce, PROMPTS.sweetLiquid, PROMPTS.hotDrink] },
-          { text: "fill your bed pillows with", type: "storage", hints: [PROMPTS.snack, PROMPTS.kitchenItem, PROMPTS.smallObj, PROMPTS.everyday, PROMPTS.candyType] }
+          { text: "have to drink a full glass of", type: "utility", hints: [PROMPTS.sauce, PROMPTS.sweetLiquid, PROMPTS.hotDrink] }
         ]
       },
       {
@@ -1877,9 +1876,8 @@ export const questionsDatabase = [
       {
         options: [
           { text: "every morning for the rest of your life?" },
-          { text: "every day for a year for a million dollars?" },
+          { text: "every day for a year?" },
           { text: "right before sleep?" },
-          { text: "while a stranger intensely stares at you?" },
           { text: "?" }
         ]
       }
@@ -1891,21 +1889,21 @@ export const questionsDatabase = [
     category: "body",
     text: "Would you rather",
     fragments: [
-{
+      {
         options: [
           { text: "instantly sweat a puddle that", type: "sweat" },
           { text: "breathe out a cloud that", type: "breath" },
           { text: "produce saliva that", type: "saliva" },
           { text: "have a face that", type: "face" },
-          { text: "have a head shape that", type: "head" } // Изменено
+          { text: "have a head shape that", type: "head" } 
         ]
       },
       {
         options: [
-          { text: "smells exactly like", requires: ["sweat", "breath"], hints: [PROMPTS.strongFood, PROMPTS.fastFood, PROMPTS.sweetLiquid, PROMPTS.candyType, PROMPTS.fruit, { text: "Thing that smells bad", brainstorm: ["Garbage", "Skunk", "Rotten egg", "Mud"] }] },
-          { text: "tastes exactly like", requires: ["sweat", "saliva"], hints: [PROMPTS.strongFood, PROMPTS.fastFood, PROMPTS.sweetLiquid, PROMPTS.candyType, PROMPTS.fruit, PROMPTS.snack] },
-          { text: "strongly reminds people of the face of a", requires: ["face"], hints: [PROMPTS.animalFunny, PROMPTS.chubbyAnimal] }, // Изменено
-          { text: "closely resembles a", requires: ["head"], hints: [PROMPTS.shape, PROMPTS.everyday, PROMPTS.smallObj] } // Добавлено
+          { text: "smells like", requires: ["sweat", "breath"], hints: [PROMPTS.strongFood, PROMPTS.fastFood, PROMPTS.sweetLiquid, PROMPTS.candyType, PROMPTS.fruit, { text: "Thing that smells bad", brainstorm: ["Garbage", "Skunk", "Rotten egg", "Mud"] }] },
+          { text: "tastes like", requires: ["sweat", "saliva"], hints: [PROMPTS.strongFood, PROMPTS.fastFood, PROMPTS.sweetLiquid, PROMPTS.candyType, PROMPTS.fruit, PROMPTS.snack] },
+          { text: "looks exactly like a", requires: ["face"], hints: [PROMPTS.animalFunny, PROMPTS.chubbyAnimal] },
+          { text: "closely resembles a", requires: ["head"], hints: [PROMPTS.shape, PROMPTS.everyday, PROMPTS.smallObj] }
         ]
       },
       {
@@ -1982,13 +1980,14 @@ export const questionsDatabase = [
 {
     id: 8,
     category: "lifestyle",
+    canTriggerCombo: true,
     text: "Would you rather",
     fragments: [
       {
         options: [
           { text: "receive an endless supply of", type: "recurring", hints: [{ text: "Large item in a house", isPlural: true, brainstorm: ["Sofas", "Beds", "Fridges", "Tables"] }, { text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive, { text: "Thing you wear on your head", isPlural: true, brainstorm: ["Hats", "Helmets", "Caps", "Headbands"] }, PROMPTS.candyType] },
           { text: "receive a daily package containing", type: "recurring", hints: [{ text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive, PROMPTS.candyType, PROMPTS.personalLike, PROMPTS.letterM] },
-          { text: "wake up every morning next to a pile of", type: "recurring", hints: [{ text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }, PROMPTS.everyday, PROMPTS.smallObj, { text: "Thing that smells bad", brainstorm: ["Garbage", "Skunk", "Rotten egg", "Mud"] }, PROMPTS.strongFood] }
+          { text: "wake up every morning next to a pile of", type: "recurring", hints: [{ text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.strongFood] }
         ]
       },
       {
@@ -2034,19 +2033,20 @@ export const questionsDatabase = [
 {
     id: 10,
     category: "career",
+    canTriggerCombo: true,
     text: "Would you rather",
     fragments: [
       {
         options: [
           { text: "start a business that only sells", type: "business", hints: [{ text: "Cheap item", isPlural: true, brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] }, PROMPTS.expensive, PROMPTS.techOld, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
-          { text: "start a cult based on", type: "cult", hints: [PROMPTS.everyday, PROMPTS.techOld, { text: "Thing you find in a bathroom", brainstorm: ["Soap", "Shampoo", "Toothpaste", "Toilet paper"] }, { text: "Random thing in your room", isPlural: true, brainstorm: ["Books", "Cables", "Pillows", "Cups"] }] },
-          { text: "start a social movement about", type: "movement", hints: [PROMPTS.conspiracyTheory, { text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }, PROMPTS.annoyingHabit] },
+          { text: "start a cult based around", type: "cult", hints: [PROMPTS.everyday, PROMPTS.techOld, { text: "Thing you find in a bathroom", brainstorm: ["Soap", "Shampoo", "Toothpaste", "Toilet paper"] }, { text: "Random thing in your room", isPlural: true, brainstorm: ["Books", "Cables", "Pillows", "Cups"] }] },
+          { text: "start a protest movement against", type: "movement", hints: [{ text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }, PROMPTS.annoyingHabit] },
           { text: "open a restaurant where everything tastes like", type: "restaurant", hints: [PROMPTS.strongFood, { text: "Disease", isPlural: true, brainstorm: ["Flus", "Colds", "Headaches", "Allergies"] }] },
           { text: "host a podcast about", type: "podcast", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, { text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }, PROMPTS.personalInterest] },
           { text: "run a YouTube channel about", type: "podcast", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, PROMPTS.annoyingHabit] },
           { text: "become CEO of a company making", type: "business", hints: [{ text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }, { text: "Office supply", isPlural: true, brainstorm: ["Staplers", "Pens", "Sticky notes", "Folders"] }, PROMPTS.techOld] },
           { text: "start a band where instruments are replaced by", type: "band", hints: [{ text: "Tool", isPlural: true, brainstorm: ["Hammers", "Saws", "Drills", "Wrenches"] }, { text: "Office supply", isPlural: true, brainstorm: ["Staplers", "Pens", "Sticky notes", "Folders"] }, { text: "Cheap item", isPlural: true, brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] }] },
-          { text: "start a gang that only steals", type: "gang", hints: [PROMPTS.everyday, PROMPTS.smallObj, { text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }] }
+          { text: "start a street gang that only steals", type: "gang", hints: [PROMPTS.everyday, PROMPTS.smallObj, { text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }] }
         ]
       },
       {
@@ -2057,7 +2057,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: "and become famous, but everyone mocks you?" },
-          { text: "and force your entire family to join?" }, 
+          { text: "and try to convince your friends to join?" }, 
           { text: "and bring it up in every conversation?" },
           { text: "?" }
         ]
@@ -2132,6 +2132,7 @@ export const questionsDatabase = [
 {
     id: 13,
     category: "lifestyle",
+    canTriggerCombo: true,
     text: "Would you rather",
     fragments: [
       {
@@ -2157,11 +2158,18 @@ export const questionsDatabase = [
     ],
     hints: []
   },
-  {
+{
     id: 14,
     category: "superpowers",
-    text: "Would you rather have the magical ability to instantly",
+    text: "Would you rather have the magical ability to",
     fragments: [
+      {
+        options: [
+          { text: "make everyone in the room suddenly start", type: "start", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.humanActivity, PROMPTS.creativeHobby] },
+          { text: "instantly stop anyone from", type: "stop", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.humanActivity] },
+          { text: "earn $10 every time you finish", type: "earn", hints: [PROMPTS.chore, PROMPTS.humanActivity] }
+        ]
+      },
       {
         options: [
           { text: "[ ... ] or [ ... ]" }
@@ -2169,18 +2177,15 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "without anyone ever knowing?" },
-          { text: ", but you have to yell out what you're doing first?" },
-          { text: ", but it only works when no one is looking at you?" },
-          { text: ", but doing it makes you incredibly tired?" },
-          { text: ", but you instantly forget everything that happened while you were using it?" },
-          { text: ", but it only works for a year?" }
+          { text: "?" },
+          { text: ", but you can only use it once a day?" },
+          { text: ", but it only works on your friends?", requires: ["start", "stop"] },
+          { text: ", but it only works on people you annoy?", requires: ["start", "stop"] },
+          { text: ", but it only works on people older than 30?", requires: ["start", "stop"] }
         ]
       }
     ],
-    hints: [
-      PROMPTS.actionParty, PROMPTS.actionExtreme
-    ]
+    hints: []
   },
 {
     id: 15,
@@ -2201,8 +2206,6 @@ export const questionsDatabase = [
       {
         options: [
           { text: ", but you permanently speak with their exact voice?" },
-          { text: ", but you also inherit all of their deepest fears?" },
-          { text: ", but you completely forget your own childhood?" },
           { text: ", but you start looking exactly like them when you get angry?" },
           { text: "?" }
         ]
@@ -2248,10 +2251,10 @@ hints: [
     fragments: [
       {
         options: [
-          { text: "force your entire family to watch", type: "watch", hints: [PROMPTS.movie, PROMPTS.tvShow] },
-          { text: "get a huge tattoo of", type: "tattoo", hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame] },
+          { text: "host a 12-hour watch party of", type: "watch", hints: [PROMPTS.movie, PROMPTS.tvShow] },
+          { text: "star in a low-budget musical about", type: "musical", hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame] },
           { text: "write a 100-page fanfiction about", type: "fanfic", hints: [PROMPTS.movie, PROMPTS.tvShow, PROMPTS.videoGame] },
-          { text: "record a 3-hour video aggressively criticizing", type: "rant", hints: [PROMPTS.movie, PROMPTS.videoGame, PROMPTS.tvShow] }
+          { text: "record a 3-hour rant about", type: "rant", hints: [PROMPTS.movie, PROMPTS.videoGame, PROMPTS.tvShow] }
         ]
       },
       {
@@ -2262,8 +2265,8 @@ hints: [
       {
         options: [
           { text: "and pause every 5 minutes to explain the plot?", requires: ["watch"] },
-          { text: "and post it on your social media?", requires: ["tattoo", "fanfic", "rant"] },
-          { text: "and send it to every person you know?", requires: ["tattoo", "fanfic", "rant"] },
+          { text: "and post it online?", requires: ["musical", "fanfic", "rant"] },
+          { text: "and send it to all your phone contacts?", requires: ["musical", "fanfic", "rant"] },
           { text: "?" }
         ]
       }
@@ -2275,11 +2278,10 @@ hints: [
     category: "adventure",
     text: "Would you rather",
     fragments: [
-{
+      {
         options: [
           { text: "be randomly teleported to", type: "location", hints: [PROMPTS.country, PROMPTS.famousCity] },
-          { text: "instantly teleport inside the private home of", type: "person", hints: [PROMPTS.actor, PROMPTS.singer, PROMPTS.politician, PROMPTS.historical, PROMPTS.youtuber] },
-          { text: "be permanently transported into the fictional universe of", type: "universe", hints: [PROMPTS.fantasyWorld, PROMPTS.sciFiWorld, PROMPTS.videoGame, PROMPTS.cartoonChar] }, // Изменено
+          { text: "instantly teleport into the home of", type: "person", hints: [PROMPTS.actor, PROMPTS.singer, PROMPTS.politician, PROMPTS.historical, PROMPTS.youtuber] },
           { text: "be magically teleported into", type: "place", hints: [PROMPTS.specificLocation, PROMPTS.publicPlace] }
         ]
       },
@@ -2290,20 +2292,10 @@ hints: [
       },
       {
         options: [
-          { text: "and stay there for exactly 24 hours before teleporting right back", type: "time_24h", requires: ["location", "person", "place"] },
-          { text: "and stay there for the rest of your life", type: "time_life", requires: ["location", "place"] },
-          { text: "and stay there for the rest of your life", type: "time_life_person", requires: ["person"] },
-          { text: "for the rest of your life", type: "time_universe", requires: ["universe"] }
-        ]
-      },
-      {
-        options: [
-          { text: ", but in return gain the ability to fly?", requires: ["time_life", "time_universe"] },
-          { text: ", but in return gain the ability to read minds?", requires: ["time_life", "time_universe"] },
-          { text: ", but in return, you'll gain knowledge and techniques of every martial art that has ever existed?", requires: ["time_life", "time_universe"] },
-          { text: ", but in return, you'll gain the ability to see through walls?", requires: ["time_life", "time_universe"] },
-          
-          { text: "?" }
+          { text: "for exactly 24 hours?" },
+          { text: "for the rest of your life?", requires: ["location", "place"] },
+          { text: "with no way back?" },
+          { text: "but you arrive dressed as a clown?" }
         ]
       }
     ],
@@ -2318,7 +2310,7 @@ hints: [
         options: [
           { text: "have everyone insist you look exactly like", type: "look", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.animalFunny, PROMPTS.cartoonChar] },
           { text: "be treated by society exactly like", type: "status", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.profession, PROMPTS.fictionalChar] },
-          { text: "morph into", type: "morph", hints: [PROMPTS.fictionalChar, PROMPTS.chubbyAnimal, PROMPTS.historical] }
+          { text: "turn into", type: "morph", hints: [PROMPTS.fictionalChar, PROMPTS.chubbyAnimal, PROMPTS.historical] }
         ]
       },
       {
@@ -2328,7 +2320,6 @@ hints: [
       },
       {
         options: [
-          { text: "even though you haven't changed at all?", requires: ["status"] },
           { text: "whenever you try to be serious?", requires: ["look", "morph", "status"] },
           { text: "?" }
         ]
@@ -2421,8 +2412,7 @@ hints: [
           { text: "every time you answer the phone?" },
           { text: "whenever you get surprised?" },
           { text: "whenever you sneeze?" },
-          { text: "whenever you find yourself in an awkward situation?" },
-          { text: "?" }
+          { text: "whenever you find yourself in an awkward situation?" }
         ]
       }
     ],
@@ -2442,7 +2432,7 @@ hints: [
     fragments: [
       {
         options: [
-          { text: "become the supreme leader of" },
+          { text: "become the spiritual leader of" },
           { text: "write a 1000-page manifesto about" },
           { text: "strictly live by" },
           { text: "have your government adopt" },
@@ -2473,5 +2463,52 @@ hints: [
       PROMPTS.letterM,
       PROMPTS.personalLike
     ]
+  },
+{
+    id: 101,
+    isCombo: true,
+    triggerCategory: "animals",
+    category: "combo",
+    text: "Being relentlessly chased by [PREV_CHOICE], would you rather have",
+    fragments: [
+      {
+        options: [
+          // Вернули твою идею! Идеально подходит для спасения от животных.
+          { text: "[ ... ] or [ ... ] as your protector?" }
+        ]
+      }
+    ],
+    hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.historical, PROMPTS.cartoonChar]
+  },
+{
+    id: 102,
+    isCombo: true,
+    triggerCategory: "lifestyle",
+    category: "combo",
+    text: "If you were trapped in a room with mutated angry [PREV_CHOICE], would you rather have",
+    fragments: [
+      {
+        options: [
+          { text: "[ ... ] or [ ... ] by your side?" }
+        ]
+      }
+    ],
+    hints: [PROMPTS.kitchenItem, PROMPTS.everyday, PROMPTS.smallObj]
+  },
+  {
+    id: 103,
+    isCombo: true,
+    triggerCategory: "career",
+    category: "combo",
+    text: "To convince the boss that [PREV_CHOICE] is crucial for the company, would you rather present",
+    fragments: [
+      {
+        options: [
+          // Убрали дублирование "100-page report"
+          { text: "a 100-page report about [ ... ] or about [ ... ]?" }
+        ]
+      }
+    ],
+    hints: [PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.annoyingHabit]
   }
 ];

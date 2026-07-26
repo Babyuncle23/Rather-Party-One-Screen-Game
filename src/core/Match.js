@@ -1,11 +1,10 @@
 import { questionsDatabase } from '../data/questions.js';
 
 export class Match {
-constructor(playerNames, totalRounds) {
+  constructor(playerNames, totalRounds) {
     this.players = playerNames.map((data, index) => {
       const playerName = typeof data === 'string' ? data : data.name;
       const playerEmoji = typeof data === 'string' ? '' : data.emoji;
-      // ДОБАВЛЕНО: lastGuessCorrect: true (чтобы в 1-м раунде не было бонусов за проигрыш)
       return { id: index + 1, name: playerName.toUpperCase(), emoji: playerEmoji, gold: 50, lastGuessCorrect: true };
     });
     this.totalRounds = totalRounds;
@@ -13,25 +12,65 @@ constructor(playerNames, totalRounds) {
     this.pickerIndex = 0; 
     this.history = [];
     
+    // --- ЛОГИКА КОМБО ---
+    this.comboUsedThisRound = false;
+    this.queuedComboWords = null;
+    this.comboDatabase = questionsDatabase.filter(q => q.isCombo);
+    
     this.shuffledQuestions = [];
     this.resetAndShuffleQuestions();
   }
 
   resetAndShuffleQuestions() {
-    this.shuffledQuestions = [...questionsDatabase];
+    // Исключаем комбо-вопросы из обычной случайной ротации
+    this.shuffledQuestions = questionsDatabase.filter(q => !q.isCombo);
     for (let i = this.shuffledQuestions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [this.shuffledQuestions[i], this.shuffledQuestions[j]] = [this.shuffledQuestions[j], this.shuffledQuestions[i]];
     }
   }
 
+  setQueuedCombo(chosenWord, category) {
+    this.queuedComboWord = chosenWord.toUpperCase();
+    this.queuedComboCategory = category; // Запоминаем категорию прошлого вопроса
+  }
+
   getRandomQuestion() {
+    // Если комбо заряжено и в этом раунде еще не использовалось
+    if (this.queuedComboWord && !this.comboUsedThisRound) {
+      
+      // Ищем комбо-вопросы, которые идеально подходят под категорию предыдущего
+      const matchingCombos = this.comboDatabase.filter(q => q.triggerCategory === this.queuedComboCategory);
+      
+      let comboQ;
+      if (matchingCombos.length > 0) {
+        // Берем случайный из подходящих
+        comboQ = JSON.parse(JSON.stringify(matchingCombos[Math.floor(Math.random() * matchingCombos.length)]));
+      } else {
+        // Фолбэк: если специфичного нет, берем любой комбо-вопрос
+        comboQ = JSON.parse(JSON.stringify(this.comboDatabase[Math.floor(Math.random() * this.comboDatabase.length)]));
+      }
+      
+      // Вшиваем слово
+      comboQ.text = comboQ.text.replace("[PREV_CHOICE]", this.queuedComboWord);
+      
+      this.comboUsedThisRound = true;
+      this.queuedComboWord = null;
+      this.queuedComboCategory = null; // Очищаем
+      return comboQ;
+    }
+    
+    // Очищаем очередь, если комбо не сработало (сброс в начале раунда)
+    this.queuedComboWord = null; 
+    this.queuedComboCategory = null;
+
     if (this.shuffledQuestions.length === 0) {
       this.resetAndShuffleQuestions();
     }
     return this.shuffledQuestions.pop();
   }
 
+  // --- ЭТИ ДВЕ ФУНКЦИИ БЫЛИ УТЕРЯНЫ ---
   getResponderIndex() {
     return (this.pickerIndex + 1) % this.players.length;
   }
@@ -45,6 +84,7 @@ constructor(playerNames, totalRounds) {
     }
     return indices;
   }
+  // -------------------------------------
 
   saveRoundToHistory(questionText, hintText, input1, input2, finalChoice) {
     this.history.push({
@@ -63,6 +103,7 @@ constructor(playerNames, totalRounds) {
     this.pickerIndex = (this.pickerIndex + 1) % this.players.length;
     if (this.pickerIndex === 0) {
       this.currentRound++;
+      this.comboUsedThisRound = false; // Сбрасываем лимит комбо на новый раунд
     }
   }
 

@@ -1066,14 +1066,7 @@ function startResponderPhase() {
 const in1 = document.getElementById('word-input-1');
     const in2 = document.getElementById('word-input-2');
 
-    if (currentQuestion && currentQuestion.id === 14) {
-      document.getElementById('displayed-hint').innerHTML = currentHint.toUpperCase() + 
-        `<br><span class="pulse-warning-text">
-          ⚠️ Use the base form of the verb: "eat pizza" (NOT "to eat" or "eating")
-        </span>`;
-    } else {
-      document.getElementById('displayed-hint').innerText = currentHint.toUpperCase();
-    }
+document.getElementById('displayed-hint').innerText = currentHint.toUpperCase();
     
     in1.placeholder = "First answer";
     in2.placeholder = "Second answer";
@@ -1298,6 +1291,12 @@ function confirmResponderChoice(w1, w2, choice) {
     const plainQuestionText = getCompiledQuestionString("___", "___", false);
     game.saveRoundToHistory(plainQuestionText, currentHint, w1, w2, choice);
    
+// --- НОВАЯ ЛОГИКА ТРИГГЕРА КОМБО ---
+    if (currentQuestion.canTriggerCombo && typeof game.setQueuedCombo === 'function') {
+      game.setQueuedCombo(choice, currentQuestion.category); // Передаем выбор И категорию
+    }
+    // -----------------------------------
+
     const fullQuestionText = getCompiledQuestionString(w1, w2, true);
     const formattedResultString = `<strong>${responder.name}</strong> chose ` +
       `<span style="color: #00ffb3; font-weight: bold;">${choice}</span> in the question:<br>` +

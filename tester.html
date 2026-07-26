@@ -295,10 +295,38 @@ function buildRandomQuestion() {
         currentState.push(q.fragments[i].options.indexOf(validOptions[randIdx]));
       });
 
+      // --- ДОБАВЛЕНА ПОДДЕРЖКА КОМБО ДЛЯ ТЕСТЕРА ---
       let str = q.text + " ";
+      if (q.isCombo) {
+         let randomPrevWord = "ПРОШЛЫЙ ВЫБОР";
+         
+         // Ищем вопросы из категории, которая триггерит это комбо
+         const triggerQs = questionsDatabase.filter(x => x.category === q.triggerCategory && !x.isCombo);
+         if (triggerQs.length > 0) {
+             const tq = triggerQs[Math.floor(Math.random() * triggerQs.length)];
+             let allHints = tq.hints ? [...tq.hints] : [];
+             tq.fragments.forEach(frag => {
+                 frag.options.forEach(opt => {
+                     if (opt.hints) allHints.push(...opt.hints);
+                 });
+             });
+             
+             // Ищем подсказки, в которых есть brainstorm
+             const brainstormHints = allHints.filter(h => typeof h === 'object' && h.brainstorm && h.brainstorm.length > 0);
+             if (brainstormHints.length > 0) {
+                 const chosenHint = brainstormHints[Math.floor(Math.random() * brainstormHints.length)];
+                 randomPrevWord = chosenHint.brainstorm[Math.floor(Math.random() * chosenHint.brainstorm.length)].toUpperCase();
+             }
+         }
+
+         // Подменяем тег на визуальную заглушку со случайным словом из brainstorm
+         str = str.replace("[PREV_CHOICE]", `<span style='color: #ffd56b;'>[${randomPrevWord}]</span>`);
+      }
+
       q.fragments.forEach((frag, i) => {
         str += frag.options[currentState[i]].text + " ";
       });
+      // ---------------------------------------------
       
       let availableHints = q.hints ? [...q.hints] : [];
       q.fragments.forEach((frag, i) => {
@@ -320,10 +348,13 @@ function buildRandomQuestion() {
         finalHints.push(availableHints[idx2]);
       }
 
+      // Выводим бейджик, если это комбо-вопрос, чтобы его было видно в тестере
+      const categoryLabel = q.isCombo ? `COMBO (${q.triggerCategory})` : q.category;
+
       return {
-        category: q.category,
+        category: categoryLabel,
         text: str.trim(),
-        hintsRaw: finalHints // Сохраняем исходные объекты подсказок для рендеринга brainstorm
+        hintsRaw: finalHints
       };
     }
 
