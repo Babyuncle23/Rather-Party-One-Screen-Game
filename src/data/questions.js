@@ -725,27 +725,16 @@ company: {
       "League of Legends"
     ] 
   },
-  boardGame: { 
+boardGame: { 
     text: "Popular board game", 
     brainstorm: [
-      // Короткие
-      "Chess", 
-      "Clue", 
-      "Risk", 
-      "Go", 
-      "Checkers",
-      
-      // Длинные и фразовые
       "Monopoly", 
-      "Catan", 
-      "Scrabble", 
-      "Ticket to Ride", 
-      "Pandemic", 
-      "Carcassonne", 
-      "Dungeons and Dragons", 
-      "Cards Against Humanity", 
-      "Betrayal at House on the Hill", 
-      "Twilight Imperium"
+      "Uno", 
+      "Chess", 
+      "Twister", 
+      "Jenga", 
+      "Scrabble",
+      "Catan"
     ] 
   },
   sport: { 
@@ -978,27 +967,16 @@ company: {
       "Sri Lanka"
     ] 
   },
-  complicatedTopic: { 
+complicatedTopic: { 
     text: "Complicated topic", 
     brainstorm: [
-      // Короткие
-      "Entropy", 
-      "Inflation", 
-      "Relativity", 
-      "Philosophy", 
-      "Genetics",
-      
-      // Длинные и фразовые
-      "Quantum mechanics", 
+      "Cryptocurrency", 
+      "Taxes", 
       "Artificial intelligence", 
-      "String theory", 
-      "Macro economics", 
-      "Climate change", 
-      "Human consciousness", 
-      "Global geopolitics", 
-      "Organic chemistry", 
-      "Nuclear fusion", 
-      "Game theory"
+      "Astrology", 
+      "Quantum physics", 
+      "The Matrix",
+      "NFTs"
     ] 
   },
   chubbyAnimal: { 
@@ -1791,7 +1769,6 @@ export const questionsDatabase = [
       },
       {
         options: [
-          // Фикс QA 22-24, 27-28: Привязываем подсказки строго к подходящим глаголам
           { text: "playing", requires: ["time", "compete", "sacrifice", "weekends", "curse"], hints: [PROMPTS.videoGame, PROMPTS.boardGame, PROMPTS.sport, PROMPTS.mobileGame, PROMPTS.instrument] },
           { text: "doing", requires: ["sacrifice", "weekends", "curse"], hints: [PROMPTS.annoyingHabit, PROMPTS.chore, PROMPTS.humanActivity, PROMPTS.creativeHobby] },
           { text: "mastering", requires: ["future", "sacrifice", "time", "weekends"], hints: [PROMPTS.professionalSkill, PROMPTS.creativeHobby, PROMPTS.instrument, PROMPTS.foreignLanguage] },
@@ -1803,12 +1780,11 @@ export const questionsDatabase = [
       {
         options: [
           { text: "[ ... ] or [ ... ]?" },
-          { text: "[ ... ] or [ ... ], and if you win you get a million dollars, but if you lose, you pay a fine equal to half of your annual income?", requires: ["compete"] },
-          { text: "[ ... ] or [ ... ], and if you win you get a million dollars, but if you lose, you pay a fine equal to a quarter of your annual income?", requires: ["compete"] }
+          { text: "[ ... ] or [ ... ] for a million dollars?", requires: ["compete"] }
         ]
       }
     ],
-    hints: [] // Очищено, подсказки теперь выдаются на основе глагола
+    hints: []
   },
 {
     id: 3,
@@ -1900,10 +1876,10 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "every single morning for the rest of your life?" },
-          { text: "every single day for an entire year, receiving the million dollars only at the very end?" },
+          { text: "every morning for the rest of your life?" },
+          { text: "every day for a year for a million dollars?" },
           { text: "right before sleep?" },
-          { text: "while a random stranger awkwardly stares at you?" },
+          { text: "while a stranger intensely stares at you?" },
           { text: "?" }
         ]
       }
@@ -2066,16 +2042,15 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          // Фикс QA 19-21: Движения не могут основываться на канцелярских скрепках, а бизнес на теориях заговора
-          { text: "start a successful business that only sells", type: "business", hints: [{ text: "Cheap item", isPlural: true, brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] }, PROMPTS.expensive, PROMPTS.techOld, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
-          { text: "found a popular new cult based entirely on the use of", type: "cult", hints: [PROMPTS.everyday, PROMPTS.techOld, { text: "Thing you find in a bathroom", brainstorm: ["Soap", "Shampoo", "Toothpaste", "Toilet paper"] }, { text: "Random thing in your room", isPlural: true, brainstorm: ["Books", "Cables", "Pillows", "Cups"] }] },
-          { text: "start a massive social movement focused on", type: "movement", hints: [PROMPTS.conspiracyTheory, { text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }, PROMPTS.annoyingHabit] },
-          { text: "open a fancy restaurant where everything tastes like", type: "restaurant", hints: [PROMPTS.strongFood, { text: "Disease", isPlural: true, brainstorm: ["Flus", "Colds", "Headaches", "Allergies"] }] },
-          { text: "host a daily podcast that obsessively discusses", type: "podcast", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, { text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }, PROMPTS.personalInterest] },
-          { text: "run a massive YouTube channel dedicated to", type: "podcast", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, PROMPTS.annoyingHabit] },
-          { text: "become the CEO of a company that produces", type: "business", hints: [{ text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }, { text: "Office supply", isPlural: true, brainstorm: ["Staplers", "Pens", "Sticky notes", "Folders"] }, PROMPTS.techOld] },
-          { text: "form a popular musical band where all instruments are replaced by", type: "band", hints: [{ text: "Tool", isPlural: true, brainstorm: ["Hammers", "Saws", "Drills", "Wrenches"] }, { text: "Office supply", isPlural: true, brainstorm: ["Staplers", "Pens", "Sticky notes", "Folders"] }, { text: "Cheap item", isPlural: true, brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] }] },
-          { text: "start a feared criminal gang that exclusively steals", type: "gang", hints: [PROMPTS.everyday, PROMPTS.smallObj, { text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }] }
+          { text: "start a business that only sells", type: "business", hints: [{ text: "Cheap item", isPlural: true, brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] }, PROMPTS.expensive, PROMPTS.techOld, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
+          { text: "start a cult based on", type: "cult", hints: [PROMPTS.everyday, PROMPTS.techOld, { text: "Thing you find in a bathroom", brainstorm: ["Soap", "Shampoo", "Toothpaste", "Toilet paper"] }, { text: "Random thing in your room", isPlural: true, brainstorm: ["Books", "Cables", "Pillows", "Cups"] }] },
+          { text: "start a social movement about", type: "movement", hints: [PROMPTS.conspiracyTheory, { text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }, PROMPTS.annoyingHabit] },
+          { text: "open a restaurant where everything tastes like", type: "restaurant", hints: [PROMPTS.strongFood, { text: "Disease", isPlural: true, brainstorm: ["Flus", "Colds", "Headaches", "Allergies"] }] },
+          { text: "host a podcast about", type: "podcast", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, { text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }, PROMPTS.personalInterest] },
+          { text: "run a YouTube channel about", type: "podcast", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, PROMPTS.annoyingHabit] },
+          { text: "become CEO of a company making", type: "business", hints: [{ text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }, { text: "Office supply", isPlural: true, brainstorm: ["Staplers", "Pens", "Sticky notes", "Folders"] }, PROMPTS.techOld] },
+          { text: "start a band where instruments are replaced by", type: "band", hints: [{ text: "Tool", isPlural: true, brainstorm: ["Hammers", "Saws", "Drills", "Wrenches"] }, { text: "Office supply", isPlural: true, brainstorm: ["Staplers", "Pens", "Sticky notes", "Folders"] }, { text: "Cheap item", isPlural: true, brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] }] },
+          { text: "start a gang that only steals", type: "gang", hints: [PROMPTS.everyday, PROMPTS.smallObj, { text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }] }
         ]
       },
       {
@@ -2085,9 +2060,9 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: ", and become incredibly famous, but everyone makes fun of you?" },
-          { text: ", but your entire family is forced to participate?" }, 
-          { text: ", and you have to bring it up in every single conversation?" },
+          { text: "and become famous, but everyone mocks you?" },
+          { text: "and force your entire family to join?" }, 
+          { text: "and bring it up in every conversation?" },
           { text: "?" }
         ]
       }
@@ -2125,21 +2100,24 @@ export const questionsDatabase = [
     ],
     hints: [] 
   },
-  {
+{
     id: 12,
     category: "superpowers",
     text: "Would you rather",
     fragments: [
       {
         options: [
-          { text: "have the superpower to turn any object into", type: "transform", hints: [{ text: "Food item", brainstorm: ["Pizza", "Cheese", "Cake", "Chocolate"] }, { text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] }, PROMPTS.animalFunny, { text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] }] },
-          { text: "have the superpower to instantly turn yourself into", type: "shapeshift", hints: [PROMPTS.animalFunny, { text: "Exotic animal", brainstorm: ["Panda", "Koala", "Iguana", "Toucan"] }, { text: "Inanimate object", brainstorm: ["Chair", "Lamp", "Car", "Tree"] }] },
-          { text: "be able to teleport anywhere, but you always arrive covered in", type: "teleport", hints: [{ text: "Sticky substance", brainstorm: ["Honey", "Mud", "Slime", "Glue"] }, { text: "Sauce", brainstorm: ["Ketchup", "Mayonnaise", "Mustard", "Soy sauce"] }, { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] }, PROMPTS.strongFood] },
-          { text: "become completely invisible while holding", type: "invisible", hints: [{ text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] }, { text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] }, { text: "Food item", brainstorm: ["Pizza", "Cheese", "Cake", "Chocolate"] }] },
-          { text: "have super strength, but only while singing songs about", type: "strength", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, PROMPTS.schoolSubject, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
-          { text: "have super strength, but only while singing songs by", type: "strength", hints: [PROMPTS.singer, PROMPTS.band] },
-          { text: "be able to fly, but you constantly emit the smell of", type: "fly", hints: [{ text: "Sauce", brainstorm: ["Ketchup", "Mayonnaise", "Mustard", "Soy sauce"] }, PROMPTS.strongFood, { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] }, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
-          { text: "gain the ability to read minds, but you can only hear people's thoughts about", type: "mind", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, PROMPTS.fastFood, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] }
+          // Без встроенного условия (к ним можно добавить крутые концовки)
+          { text: "be able to turn any object into", type: "clean_power", hints: [{ text: "Food item", brainstorm: ["Pizza", "Cheese", "Cake", "Chocolate"] }, { text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] }, PROMPTS.animalFunny, { text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] }] },
+          { text: "be able to turn yourself into", type: "clean_power_self", hints: [PROMPTS.animalFunny, { text: "Exotic animal", brainstorm: ["Panda", "Koala", "Iguana", "Toucan"] }, { text: "Inanimate object", brainstorm: ["Chair", "Lamp", "Car", "Tree"] }] },
+          
+          // Уже со встроенным условием (к ним пойдет просто знак вопроса в конце)
+          { text: "be able to teleport, but always arrive covered in", type: "has_condition", hints: [{ text: "Sticky substance", brainstorm: ["Honey", "Mud", "Slime", "Glue"] }, { text: "Sauce", brainstorm: ["Ketchup", "Mayonnaise", "Mustard", "Soy sauce"] }, { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] }, PROMPTS.strongFood] },
+          { text: "become invisible, but only while holding", type: "has_condition", hints: [{ text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] }, { text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] }, { text: "Food item", brainstorm: ["Pizza", "Cheese", "Cake", "Chocolate"] }] },
+          { text: "have super strength, but only while singing about", type: "has_condition", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, PROMPTS.schoolSubject, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
+          { text: "have super strength, but only while singing songs by", type: "has_condition", hints: [PROMPTS.singer, PROMPTS.band] },
+          { text: "be able to fly, but constantly smell like", type: "has_condition", hints: [{ text: "Sauce", brainstorm: ["Ketchup", "Mayonnaise", "Mustard", "Soy sauce"] }, PROMPTS.strongFood, { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] }, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
+          { text: "be able to read minds, but only hear thoughts about", type: "has_condition", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, PROMPTS.fastFood, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] }
         ]
       },
       {
@@ -2149,13 +2127,11 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "whenever you sneeze?", requires: ["shapeshift"] },
-          { text: "but suddenly everyone you know knows it?", requires: ["teleport", "shapeshift"] },
-          { text: "but you can't control exactly when it happens?", requires: ["mind", "shapeshift"] },
-          { text: "but the effect only lasts for 60 seconds a day?", requires: ["transform", "invisible", "strength"] }, 
-          { text: ", but you have to yell out what you're doing first?" },
-          { text: "?" },
-          { text: "?" } 
+          { text: "whenever you sneeze?", requires: ["clean_power_self"] },
+          { text: "and everyone always knows when you do it?", requires: ["clean_power", "clean_power_self"] },
+          { text: "for only 60 seconds a day?", requires: ["clean_power", "clean_power_self"] },
+          { text: "and you must yell what you're doing first?", requires: ["clean_power", "clean_power_self"] },
+          { text: "?", requires: ["has_condition", "clean_power", "clean_power_self"] }
         ]
       }
     ],
@@ -2282,80 +2258,34 @@ hints: [
     hints: []
   },
 {
-  "id": 17,
-  "category": "entertainment",
-  "text": "Would you rather",
-  "fragments": [
-    {
-      "options": [
-        // Активные действия
-        { "text": "watch a terrible, low-budget 4-hour remake of", "type": "watch", "hints": [PROMPTS.movie, PROMPTS.tvShow] },
-        { "text": "spend an entire weekend deeply analyzing", "type": "analyze", "hints": [PROMPTS.movie, PROMPTS.tvShow] },
-        { "text": "destroy every existing copy of", "type": "destroy", "hints": [PROMPTS.movie, PROMPTS.tvShow] },
-        { "text": "create an extremely awkward fan-film based on", "type": "create", "hints": [PROMPTS.movie, PROMPTS.videoGame] },
-       
-        // Потребление контента
-        { "text": "binge-watch every single episode of", "type": "watch", "hints": [PROMPTS.tvShow, PROMPTS.movie] },
-        { "text": "consume media exclusively from the genre of", "type": "consume_genre", "hints": [PROMPTS.artGenre, PROMPTS.movieGenre] },
-       
-        // Образование и манифесты
-        { "text": "teach a mandatory 4-hour college course on the history of", "type": "teach", "hints": [PROMPTS.musicGenre, PROMPTS.artGenre] },
-        { "text": "pass a global law permanently banning", "type": "ban", "hints": [PROMPTS.musicGenre, PROMPTS.movieGenre] },
-        { "text": "create a 1000-page manifesto aggressively defending", "type": "defend", "hints": [PROMPTS.movieGenre, PROMPTS.conspiracyTheory] }
-      ]
-    },
-    {
-      "options": [
-        { "text": "[ ... ] or [ ... ]" }
-      ]
-    },
-    {
-      "options": [
-        // Контекст для "создания" (create)
-        { "text": "and show it to your family", "requires": ["create"], "type": "create_family" },
-        { "text": "and show it to your colleagues", "requires": ["create"], "type": "create_colleagues" },
-        { "text": "and show it to your friends", "requires": ["create"], "type": "create_friends" },
-        { "text": "and show it to your boss", "requires": ["create"], "type": "create_boss" },
-
-        // Контекст для "смотра/анализа" (watch/analyze)
-        { "text": "with your family", "requires": ["watch"], "type": "watch_family" },
-        { "text": "surrounded by colleagues", "requires": ["watch"], "type": "watch_colleagues" },
-        { "text": "alongside your friends", "requires": ["watch"], "type": "watch_friends" },
-        { "text": "alongside your boss", "requires": ["watch", "teach"], "type": "watch_boss" },
-        { "text": "alongside your mom", "requires": ["watch", "teach"], "type": "watch_mom" },
-        { "text": "", "requires": ["watch", "teach"], "type": "watch_none" },
-       
-        // Контекст для "уничтожения/манифестов" (destroy/ban/defend)
-        { "text": "and no one will ever know about your role in this", "requires": ["destroy", "ban"], "type": "secret_action" },
-        { "text": "and everyone will find out about it right away", "requires": ["destroy", "ban", "defend"], "type": "public_action" },
-        { "text": "alone in your room", "requires": ["analyze", "defend"], "type": "alone_action" },
-        { "text": "on a live television broadcast", "requires": ["teach"], "type": "live_broadcast" },
-        
-        // Разделенные пустые строки для точечной логики концовок
-        { "text": "", "requires": ["consume_genre"], "type": "consume_none" },
-        { "text": "", "requires": ["destroy", "ban", "defend", "analyze"], "type": "silent_none" }
-      ]
-    },
-    {
-      "options": [
-        // Длинные концовки
-        { "text": ", and pause every few minutes to explain the deep meaning?", "requires": ["watch_family", "watch_friends"] },
-        { "text": ", and nervously wait for honest critique when you finish?", "requires": ["create_family", "create_colleagues", "create_friends", "create_boss", "watch_boss", "watch_mom"] },
-        
-        // Убрали "live_broadcast" из условий. Теперь стримить в интернет можно только то, что создано, или домашний просмотр
-        { "text": ", livestreaming it to thousands?", "requires": ["create_boss", "watch_none"] },
-        { "text": ", and cry afterwards?", "requires": ["watch_family", "watch_friends", "watch_mom", "watch_none"] },
-        { "text": ", and cry everytime you are done?", "requires": ["consume_none"] },
-       
-        // КОРОТКИЕ концовки (Знак вопроса)
-        { "text": "?", "requires": ["create_family", "create_colleagues", "create_friends", "create_boss", "watch_family", "watch_colleagues", "watch_friends", "watch_boss", "watch_mom", "watch_none", "secret_action", "public_action", "alone_action", "live_broadcast", "consume_none", "silent_none"] },
-        { "text": "?", "requires": ["create_family", "create_colleagues", "create_friends", "create_boss", "watch_family", "watch_colleagues", "watch_friends", "watch_boss", "watch_mom", "watch_none", "secret_action", "public_action", "alone_action", "live_broadcast", "consume_none", "silent_none"] },
-        { "text": "?", "requires": ["create_family", "create_colleagues", "create_friends", "create_boss", "watch_family", "watch_colleagues", "watch_friends", "watch_boss", "watch_mom", "watch_none", "secret_action", "public_action", "alone_action", "live_broadcast", "consume_none", "silent_none"] }
-      ]
-    }
-  ],
-  "hints": []
-},
+    id: 17,
+    category: "entertainment",
+    text: "Would you rather",
+    fragments: [
+      {
+        options: [
+          { text: "force your entire family to watch", type: "watch", hints: [PROMPTS.movie, PROMPTS.tvShow] },
+          { text: "get a huge tattoo of", type: "tattoo", hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame] },
+          { text: "write a 100-page fanfiction about", type: "fanfic", hints: [PROMPTS.movie, PROMPTS.tvShow, PROMPTS.videoGame] },
+          { text: "record a 3-hour video aggressively criticizing", type: "rant", hints: [PROMPTS.movie, PROMPTS.videoGame, PROMPTS.tvShow] }
+        ]
+      },
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]" }
+        ]
+      },
+      {
+        options: [
+          { text: "and pause every 5 minutes to explain the plot?", requires: ["watch"] },
+          { text: "and post it on your social media?", requires: ["tattoo", "fanfic", "rant"] },
+          { text: "and send it to every person you know?", requires: ["tattoo", "fanfic", "rant"] },
+          { text: "?" }
+        ]
+      }
+    ],
+    hints: []
+  },
 {
     id: 18,
     category: "adventure",

@@ -1822,36 +1822,111 @@ if (installBtn) {
   });
 }
 
-// --- ЛОГИКА ОКНА ТУТОРИАЛА ---
+// --- ЛОГИКА ОКНА ТУТОРИАЛА И СКОРОСТИ ВИДЕО ---
+
+// 1. Асинхронно загружаем YouTube IFrame API
+let ytPlayer = null;
+let isYtApiReady = false;
+
+const ytScriptTag = document.createElement('script');
+ytScriptTag.src = "https://www.youtube.com/iframe_api";
+const firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(ytScriptTag, firstScriptTag);
+
+// Глобальная функция, которую вызывает сам YouTube после загрузки своего скрипта
+window.onYouTubeIframeAPIReady = function() {
+  isYtApiReady = true;
+};
+
 function setupVideoTutorial() {
   const tutorialBtn = document.getElementById('tutorial-btn');
   const videoModal = document.getElementById('video-modal');
   const closeVideoBtn = document.getElementById('close-video-btn');
   const tutorialVideo = document.getElementById('tutorial-video');
+  const speedBtns = document.querySelectorAll('.speed-btn');
 
   if (!tutorialBtn || !videoModal) return;
+
+  // Инициализация или сброс плеера
+  const initOrResetPlayer = () => {
+    if (isYtApiReady && !ytPlayer && typeof YT !== 'undefined') {
+      ytPlayer = new YT.Player('tutorial-video', {
+        events: {
+          'onReady': (event) => {
+             // Как только плеер готов — ставим 0.75 по умолчанию
+             event.target.setPlaybackRate(0.75);
+          },
+          'onStateChange': (event) => {
+             // YouTube иногда сбрасывает скорость при запуске видео, подстраховываемся
+             if (event.data === YT.PlayerState.PLAYING) {
+                const currentActive = document.querySelector('.speed-btn[style*="var(--accent)"]');
+                if (currentActive) {
+                  event.target.setPlaybackRate(parseFloat(currentActive.dataset.speed));
+                }
+             }
+          }
+        }
+      });
+    } else if (ytPlayer && typeof ytPlayer.setPlaybackRate === 'function') {
+      ytPlayer.setPlaybackRate(0.75);
+    }
+  };
+
+  // Логика переключения кнопок скорости
+  speedBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (window.audioManager) window.audioManager.play('click');
+      
+      const speed = parseFloat(btn.dataset.speed);
+      
+      // Передаем команду в YouTube
+      if (ytPlayer && typeof ytPlayer.setPlaybackRate === 'function') {
+        ytPlayer.setPlaybackRate(speed);
+      }
+      
+      // Визуально переключаем активную кнопку
+      speedBtns.forEach(b => {
+        b.style.background = 'rgba(255,255,255,0.05)';
+        b.style.borderColor = 'rgba(255,255,255,0.1)';
+        b.style.color = 'var(--text)';
+      });
+      btn.style.background = 'var(--accent)';
+      btn.style.borderColor = 'var(--accent)';
+      btn.style.color = '#fff';
+    });
+  });
 
   const closeVideo = () => {
     videoModal.style.display = 'none';
     videoModal.classList.add('hidden');
     
-    // Выходим из полноэкранного режима при закрытии
     if (document.fullscreenElement || document.webkitFullscreenElement) {
-      if (document.exitFullscreen) {
-        document.exitFullscreen().catch(() => {});
-      } else if (document.webkitExitFullscreen) { /* Safari */
-        document.webkitExitFullscreen();
-      }
+      if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
     }
     
-    if (tutorialVideo) {
-      if (tutorialVideo.tagName === 'IFRAME') {
-        const currentSrc = tutorialVideo.src;
-        tutorialVideo.src = currentSrc; 
-      } else if (typeof tutorialVideo.pause === 'function') {
-        tutorialVideo.pause(); 
-        tutorialVideo.currentTime = 0; 
-      }
+    // Ставим видео на паузу через API
+    if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+      ytPlayer.pauseVideo();
+    } else if (tutorialVideo) {
+      // Фолбэк, если API вдруг заблокировался адблоком
+      const currentSrc = tutorialVideo.src;
+      tutorialVideo.src = currentSrc; 
+    }
+    
+    // Возвращаем UI кнопок в состояние 0.75x для следующего раза
+    speedBtns.forEach(b => {
+        b.style.background = 'rgba(255,255,255,0.05)';
+        b.style.borderColor = 'rgba(255,255,255,0.1)';
+        b.style.color = 'var(--text)';
+    });
+    const defaultBtn = document.querySelector('.speed-btn[data-speed="0.75"]');
+    if (defaultBtn) {
+       defaultBtn.style.background = 'var(--accent)';
+       defaultBtn.style.borderColor = 'var(--accent)';
+       defaultBtn.style.color = '#fff';
     }
   };
 
@@ -1859,17 +1934,18 @@ function setupVideoTutorial() {
     e.preventDefault();
     if (window.audioManager) window.audioManager.play('click');
     
-    // Включаем НАСТОЯЩИЙ полноэкранный режим для всего документа
     const elem = document.documentElement;
     if (elem.requestFullscreen) {
       elem.requestFullscreen().catch(() => {});
-    } else if (elem.webkitRequestFullscreen) { /* Safari */
+    } else if (elem.webkitRequestFullscreen) { 
       elem.webkitRequestFullscreen();
     }
 
-    // Показываем модалку
     videoModal.classList.remove('hidden');
     videoModal.style.display = 'flex';
+    
+    // Запускаем настройку скорости
+    initOrResetPlayer(); 
   };
 
   if (closeVideoBtn) {
