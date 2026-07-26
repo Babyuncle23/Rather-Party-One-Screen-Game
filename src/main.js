@@ -856,14 +856,12 @@ function updatePickerHints() {
 function renderInteractiveQuestion() {
   const container = document.getElementById('secret-question-text');
   
-  // Если вопрос был отредактирован вручную
   if (currentQuestion.customCompiledText) {
-      container.innerHTML = currentQuestion.customCompiledText;
+      container.innerHTML = injectPlayerNames(currentQuestion.customCompiledText);
   } else {
-      // Иначе собираем из модульных фрагментов
-      container.innerHTML = currentQuestion.text + " ";
+      container.innerHTML = injectPlayerNames(currentQuestion.text) + " ";
       currentQuestion.fragments.forEach((frag, i) => {
-        const optText = frag.options[currentFragmentsState[i]].text;
+        const optText = injectPlayerNames(frag.options[currentFragmentsState[i]].text);
         const span = document.createElement('span');
         span.innerText = optText + " ";
         container.appendChild(span);
@@ -890,7 +888,16 @@ function getCompiledQuestionString(w1 = "[ ... ]", w2 = "[ ... ]", useHtml = fal
   } else {
     str = str.replace("[ ... ]", w1).replace("[ ... ]", w2);
   }
+  
+  str = injectPlayerNames(str);
   return str.trim();
+}
+
+function injectPlayerNames(text) {
+  if (!window.game || !window.game.players || !text) return text;
+  const pickerName = window.game.players[window.game.pickerIndex].name;
+  const responderName = window.game.players[window.game.getResponderIndex()].name;
+  return text.replace(/\[PICKER\]/g, pickerName).replace(/\[RESPONDER\]/g, responderName);
 }
 
 function initRound() {

@@ -1986,24 +1986,21 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "magically receive an endless supply of", type: "recurring", hints: [{ text: "Large item in a house", isPlural: true, brainstorm: ["Sofas", "Beds", "Fridges", "Tables"] }, { text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive, { text: "Thing you wear on your head", isPlural: true, brainstorm: ["Hats", "Helmets", "Caps", "Headbands"] }, PROMPTS.candyType] },
-          { text: "receive a random package every day containing", type: "recurring", hints: [{ text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive, PROMPTS.candyType, PROMPTS.personalLike, PROMPTS.letterM] },
-          { text: "wake up every morning next to a new pile of", type: "recurring", hints: [{ text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }, PROMPTS.everyday, PROMPTS.smallObj, { text: "Thing that smells bad", brainstorm: ["Garbage", "Skunk", "Rotten egg", "Mud"] }, PROMPTS.strongFood] },
-          { text: "get to use only", type: "one-time", hints: [PROMPTS.gadget, PROMPTS.app] }
+          { text: "receive an endless supply of", type: "recurring", hints: [{ text: "Large item in a house", isPlural: true, brainstorm: ["Sofas", "Beds", "Fridges", "Tables"] }, { text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive, { text: "Thing you wear on your head", isPlural: true, brainstorm: ["Hats", "Helmets", "Caps", "Headbands"] }, PROMPTS.candyType] },
+          { text: "receive a daily package containing", type: "recurring", hints: [{ text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive, PROMPTS.candyType, PROMPTS.personalLike, PROMPTS.letterM] },
+          { text: "wake up every morning next to a pile of", type: "recurring", hints: [{ text: "Thing you find in a refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] }, PROMPTS.everyday, PROMPTS.smallObj, { text: "Thing that smells bad", brainstorm: ["Garbage", "Skunk", "Rotten egg", "Mud"] }, PROMPTS.strongFood] }
         ]
       },
       {
         options: [
-          { text: "[ ... ] or [ ... ]", type: "middle" }
+          { text: "[ ... ] or [ ... ]" }
         ]
       },
       {
         options: [
-          { text: "appear out of thin air, but you have no control over when it happens?", requires: ["recurring"] }, 
-          { text: "except it completely disappears on weekends?", requires: ["recurring"] }, 
-          { text: "but it always emits a terrible, rotten smell?", requires: ["recurring"] },
-          { text: "for the rest of your life?", requires: ["one-time"] },
-          { text: "but you are forced to share it with a total stranger?" }, 
+          { text: "but it disappears on weekends?", requires: ["recurring"] }, 
+          { text: "but it always smells terrible?", requires: ["recurring"] },
+          { text: "but you have to share it with a stranger?" }, 
           { text: "?" }
         ]
       }
@@ -2017,14 +2014,13 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          // Фикс QA 25-26: Разделяем подсказки по логике действия (Adopted by oil / Sauce — невозможно)
           { text: "be adopted by a family of", type: "adopted", hints: [{ text: "Animal", isPlural: true, brainstorm: ["Wolves", "Monkeys", "Penguins", "Bears"] }, { text: "Type of rich person", isPlural: true, brainstorm: ["Billionaires", "Aristocrats", "Celebrities", "Royals"] }, { text: "Group of people", isPlural: true, brainstorm: ["Tourists", "Teenagers", "Politicians", "Clowns"] }] },
-          { text: "be fully accepted into a secret society of", type: "society", hints: [{ text: "Type of rich person", isPlural: true, brainstorm: ["Billionaires", "Aristocrats", "Celebrities", "Royals"] }, { text: "Group of people", isPlural: true, brainstorm: ["Tourists", "Teenagers", "Politicians", "Clowns"] }] }, 
-          { text: "be raised from birth by a pack of", type: "raised", hints: [{ text: "Animal", isPlural: true, brainstorm: ["Wolves", "Monkeys", "Penguins", "Bears"] }, { text: "Angry-looking animal", isPlural: true, brainstorm: ["Rhinos", "Bulls", "Eagles", "Hippos"] }, { text: "Pet", isPlural: true, brainstorm: ["Dogs", "Cats", "Parrots", "Hamsters"] }] },
-          { text: "be fully accepted into a magic school where the only spell you learn is how to summon", type: "society", hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
-          { text: "have the magic power to turn gold into", type: "society", hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.snack, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
-          { text: "have the magic power to turn water into", type: "society", hints: [PROMPTS.sweetLiquid, PROMPTS.sauce, PROMPTS.hotDrink] },
-          { text: "have the magic power to turn dirt into", type: "society", hints: [PROMPTS.expensive, { text: "Valuable resource", brainstorm: ["Gold", "Silver", "Diamonds", "Oil"] }, PROMPTS.fastFood, PROMPTS.candyType] }
+          { text: "join a secret society of", type: "society", hints: [{ text: "Type of rich person", isPlural: true, brainstorm: ["Billionaires", "Aristocrats", "Celebrities", "Royals"] }, { text: "Group of people", isPlural: true, brainstorm: ["Tourists", "Teenagers", "Politicians", "Clowns"] }] }, 
+          { text: "be raised by a pack of", type: "raised", hints: [{ text: "Animal", isPlural: true, brainstorm: ["Wolves", "Monkeys", "Penguins", "Bears"] }, { text: "Angry-looking animal", isPlural: true, brainstorm: ["Rhinos", "Bulls", "Eagles", "Hippos"] }, { text: "Pet", isPlural: true, brainstorm: ["Dogs", "Cats", "Parrots", "Hamsters"] }] },
+          { text: "go to a magic school where you can only summon", type: "society", hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
+          { text: "have the power to turn gold into", type: "society", hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.snack, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
+          { text: "have the power to turn water into", type: "society", hints: [PROMPTS.sweetLiquid, PROMPTS.sauce, PROMPTS.hotDrink] },
+          { text: "have the power to turn dirt into", type: "society", hints: [PROMPTS.expensive, { text: "Valuable resource", brainstorm: ["Gold", "Silver", "Diamonds", "Oil"] }, PROMPTS.fastFood, PROMPTS.candyType] }
         ]
       },
       {
@@ -2071,34 +2067,31 @@ export const questionsDatabase = [
   },
 {
     id: 11,
-    category: "time_travel",
-    text: "Would you rather",
+    category: "social",
+    text: "Would you rather have [PICKER]",
     fragments: [
       {
         options: [
-          { text: "travel into the past", type: "past" },
-          { text: "travel about 100 years into the future", type: "future" }
+          { text: "get a small tattoo of", type: "tattoo", hints: [PROMPTS.fastFood, PROMPTS.animalFunny, PROMPTS.politician, PROMPTS.actor] },
+          { text: "give a 1-hour presentation on their relationship with", type: "presentation", hints: [PROMPTS.chore, PROMPTS.everyday, PROMPTS.animalFunny, PROMPTS.snack] },
+          { text: "make you a world-class expert in", type: "expert", hints: [PROMPTS.chore, { text: "Obscure hobby", brainstorm: ["Juggling", "Yodeling", "Beatboxing", "Origami"] }, PROMPTS.animalFunny, PROMPTS.techOld] },
+          { text: "write a heartfelt song about", type: "song", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.everyday, PROMPTS.candyType] }
         ]
       },
       {
         options: [
-          { text: "and warn people about the terrible future of", requires: ["past"], type: "change", hints: [PROMPTS.company, { text: "Modern technology", brainstorm: ["Social media", "Smartphones", "Artificial Intelligence"] }, PROMPTS.app, PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic] },
-          { text: "and destroy the original prototype of", requires: ["past"], type: "change_done", hints: [PROMPTS.gadget, { text: "Modern technology", brainstorm: ["Social media", "Smartphones", "Artificial Intelligence"] }, PROMPTS.videoGame, PROMPTS.app] },
-          { text: "and invest all your savings into", requires: ["past"], type: "change_done", hints: [PROMPTS.company, PROMPTS.app] },
-          { text: "and secretly invent and take credit for", requires: ["past"], type: "change", hints: [PROMPTS.gadget, PROMPTS.app, PROMPTS.videoGame, { text: "Popular toy or game", brainstorm: ["Tamagotchi", "Rubik's Cube", "Furby", "Tetris"] }] },
-          
-          { text: "and discover that future humans worship", requires: ["future"], type: "worship", hints: [PROMPTS.youtuber, PROMPTS.mediaPersonality, PROMPTS.cartoonChar, PROMPTS.fictionalChar, PROMPTS.company] },
-          { text: "and discover that future humans completely stopped using", requires: ["future"], type: "future_stop", hints: [PROMPTS.everyday, { text: "Household item", brainstorm: ["Toaster", "Toilet", "Sofa", "Refrigerator"] }, PROMPTS.gadget, { text: "Modern convenience", brainstorm: ["Smartphones", "Wi-Fi", "Toilets", "Beds"] }] },
-          { text: "and discover that future humans still unironically use", requires: ["future"], type: "future_still", hints: [PROMPTS.techOld, { text: "Old school trend", brainstorm: ["Fidget spinners", "Tamagotchis", "Yo-yos", "Pogs"] }, PROMPTS.conspiracyTheory] }
+          { text: "[ ... ] or [ ... ]" }
         ]
       },
       {
         options: [
-          { text: "[ ... ] or [ ... ]?" }
+          { text: "on their back?", requires: ["tattoo"] },
+          { text: "?", requires: ["presentation", "expert"] },
+          { text: "and perform it at your birthday?", requires: ["song"] }
         ]
       }
     ],
-    hints: [] 
+    hints: []
   },
 {
     id: 12,
@@ -2107,11 +2100,11 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          // Без встроенного условия (к ним можно добавить крутые концовки)
+          // Без встроенного условия
           { text: "be able to turn any object into", type: "clean_power", hints: [{ text: "Food item", brainstorm: ["Pizza", "Cheese", "Cake", "Chocolate"] }, { text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] }, PROMPTS.animalFunny, { text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] }] },
           { text: "be able to turn yourself into", type: "clean_power_self", hints: [PROMPTS.animalFunny, { text: "Exotic animal", brainstorm: ["Panda", "Koala", "Iguana", "Toucan"] }, { text: "Inanimate object", brainstorm: ["Chair", "Lamp", "Car", "Tree"] }] },
           
-          // Уже со встроенным условием (к ним пойдет просто знак вопроса в конце)
+          // Уже со встроенным условием
           { text: "be able to teleport, but always arrive covered in", type: "has_condition", hints: [{ text: "Sticky substance", brainstorm: ["Honey", "Mud", "Slime", "Glue"] }, { text: "Sauce", brainstorm: ["Ketchup", "Mayonnaise", "Mustard", "Soy sauce"] }, { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] }, PROMPTS.strongFood] },
           { text: "become invisible, but only while holding", type: "has_condition", hints: [{ text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] }, { text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] }, { text: "Food item", brainstorm: ["Pizza", "Cheese", "Cake", "Chocolate"] }] },
           { text: "have super strength, but only while singing about", type: "has_condition", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, PROMPTS.schoolSubject, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
@@ -2130,7 +2123,6 @@ export const questionsDatabase = [
           { text: "whenever you sneeze?", requires: ["clean_power_self"] },
           { text: "and everyone always knows when you do it?", requires: ["clean_power", "clean_power_self"] },
           { text: "for only 60 seconds a day?", requires: ["clean_power", "clean_power_self"] },
-          { text: "and you must yell what you're doing first?", requires: ["clean_power", "clean_power_self"] },
           { text: "?", requires: ["has_condition", "clean_power", "clean_power_self"] }
         ]
       }
@@ -2144,10 +2136,9 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "be forced to wear a costume of", type: "costume_full", hints: [PROMPTS.animalFunny, { text: "Food item", brainstorm: ["Hot dog", "Banana", "Taco", "Pizza"] }, { text: "Weird profession", brainstorm: ["Clown", "Mime", "Pirate", "Astronaut"] }, PROMPTS.fictionalChar, PROMPTS.cartoonChar] },
-          { text: "have to wear a mask of", type: "costume_mask", hints: [PROMPTS.politician, PROMPTS.villain, PROMPTS.actor, PROMPTS.mediaPersonality] },
-          { text: "have to physically carry a life-sized statue of", type: "carry_statue", hints: [PROMPTS.politician, PROMPTS.historical, PROMPTS.actor, PROMPTS.mediaPersonality] },
-          { text: "be forced to dress exactly like", type: "dress_like", hints: [PROMPTS.villain, { text: "Weird profession", brainstorm: ["Clown", "Mime", "Pirate", "Astronaut"] }, PROMPTS.cartoonChar] }
+          { text: "wear a full costume of", type: "costume_full", hints: [PROMPTS.animalFunny, { text: "Food item", brainstorm: ["Hot dog", "Banana", "Taco", "Pizza"] }, { text: "Weird profession", brainstorm: ["Clown", "Mime", "Pirate", "Astronaut"] }, PROMPTS.fictionalChar, PROMPTS.cartoonChar] },
+          { text: "carry a life-sized statue of", type: "carry_statue", hints: [PROMPTS.politician, PROMPTS.historical, PROMPTS.actor, PROMPTS.mediaPersonality] },
+          { text: "dress exactly like", type: "dress_like", hints: [PROMPTS.villain, { text: "Weird profession", brainstorm: ["Clown", "Mime", "Pirate", "Astronaut"] }, PROMPTS.cartoonChar] }
         ]
       },
       {
@@ -2157,17 +2148,10 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "to every job interview you ever go to?", requires: ["costume_full", "dress_like"] },
-          { text: "every time you fly on an airplane?", requires: ["costume_full", "carry_statue"] },
-          { text: "every time you use public transport?", requires: ["costume_full", "carry_statue"] },
-          { text: "every time you use public toilet?", requires: ["costume_full", "carry_statue"] },
-          { text: "in all your official ID and passport photos?", requires: ["costume_mask"] },
-          { text: "every time you talk to a police officer?", requires: ["costume_mask", "dress_like"] },
-          { text: "every time you talk to a government official?", requires: ["costume_mask", "dress_like"] },
-          { text: "every time you go grocery shopping?", requires: ["carry_statue"] },
-          { text: "through airport security every single time?", requires: ["carry_statue"] },
-          { text: "to every family gathering?", requires: ["costume_full", "dress_like", "carry_statue", "costume_mask"] },
-          { text: "and pretend you don't understand why people are staring?", requires: ["costume_full", "carry_statue", "dress_like"] }
+          { text: "to every job interview?", requires: ["costume_full", "dress_like"] },
+          { text: "on public transport?", requires: ["costume_full", "carry_statue"] },
+          { text: "when grocery shopping?", requires: ["carry_statue"] },
+          { text: "to every family gathering?", requires: ["costume_full", "dress_like", "carry_statue"] }
         ]
       }
     ],
@@ -2325,17 +2309,16 @@ hints: [
     ],
     hints: []
   },
-  {
+{
     id: 19,
     category: "identity",
     text: "Would you rather",
     fragments: [
       {
         options: [
-          { text: "have everyone genuinely believe you are the exact same age as", type: "age", hints: [PROMPTS.politician, PROMPTS.youtuber] },
-          { text: "have everyone constantly insist that you look exactly like", type: "look", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.animalFunny, PROMPTS.cartoonChar] },
-          { text: "have society treat you strictly like", type: "status", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.profession, PROMPTS.fictionalChar] },
-          { text: "have your physical appearance randomly morph into", type: "morph", hints: [PROMPTS.fictionalChar, PROMPTS.chubbyAnimal, PROMPTS.historical] }
+          { text: "have everyone insist you look exactly like", type: "look", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.animalFunny, PROMPTS.cartoonChar] },
+          { text: "be treated by society exactly like", type: "status", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.profession, PROMPTS.fictionalChar] },
+          { text: "morph into", type: "morph", hints: [PROMPTS.fictionalChar, PROMPTS.chubbyAnimal, PROMPTS.historical] }
         ]
       },
       {
@@ -2345,15 +2328,8 @@ hints: [
       },
       {
         options: [
-          { text: "even though your actual appearance hasn't changed at all", requires: ["age", "status"], type: "no_change" },
-          { text: "every time you are trying to be serious", requires: ["look", "morph", "status"], type: "serious" },
-          { text: "for the next 10 years", type: "duration" },
-          { text: "", type: "none" }
-        ]
-      },
-      {
-        options: [
-          { text: ", and you can never convince anyone otherwise?", requires: ["age", "look", "status"] },
+          { text: "even though you haven't changed at all?", requires: ["status"] },
+          { text: "whenever you try to be serious?", requires: ["look", "morph", "status"] },
           { text: "?" }
         ]
       }
@@ -2399,24 +2375,21 @@ hints: [
     fragments: [
       {
         options: [
-          { text: "have every second newborn baby in the world legally named", type: "newborn", hints: [PROMPTS.nickname, PROMPTS.title, PROMPTS.villain, PROMPTS.snack, PROMPTS.animalFunny, PROMPTS.personRespect, PROMPTS.letterM] },
-          { text: "have the country you live in renamed to", type: "country", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.company, PROMPTS.chubbyAnimal, PROMPTS.everyday, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.letterM] },
-          { text: "have the city you live in renamed to", type: "city", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.snack, PROMPTS.everyday, PROMPTS.company, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.letterM] },
-          { text: "have your own legal name permanently changed to", type: "own_name", hints: [PROMPTS.nickname, PROMPTS.title, PROMPTS.app, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.personRespect, PROMPTS.letterM] },
-          { text: "have everyone with the most common name in your country change it to", type: "common_name", hints: [PROMPTS.nickname, PROMPTS.animalFunny, PROMPTS.techOld, PROMPTS.snack, PROMPTS.everyday, PROMPTS.personalLike, PROMPTS.letterM] },
-          { text: "have a national public holiday created in your honor called The Day of", type: "holiday", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday, PROMPTS.personalInterest, PROMPTS.personRespect, PROMPTS.personalLike] },
-          { text: "have to adopt a dog and legally name it", type: "dog", hints: [PROMPTS.title, PROMPTS.politician, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personRespect, PROMPTS.personalLike, PROMPTS.letterM] },
-          { text: "have to adopt a cat and legally name it", type: "cat", hints: [PROMPTS.terriblePlace, PROMPTS.villain, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personRespect, PROMPTS.personalLike, PROMPTS.letterM] }
+          { text: "rename your country to", type: "country", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.company, PROMPTS.chubbyAnimal, PROMPTS.everyday, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.letterM] },
+          { text: "rename your city to", type: "city", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.snack, PROMPTS.everyday, PROMPTS.company, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.letterM] },
+          { text: "change your surname to", type: "own_name", hints: [PROMPTS.nickname, PROMPTS.title, PROMPTS.app, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.personRespect, PROMPTS.letterM] },
+          { text: "have a national holiday called The Day of", type: "holiday", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday, PROMPTS.personalInterest, PROMPTS.personRespect, PROMPTS.personalLike] },
+          { text: "adopt a dog and name it", type: "dog", hints: [PROMPTS.title, PROMPTS.politician, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personRespect, PROMPTS.personalLike, PROMPTS.letterM] },
+          { text: "adopt a cat and name it", type: "cat", hints: [PROMPTS.terriblePlace, PROMPTS.villain, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personRespect, PROMPTS.personalLike, PROMPTS.letterM] }
         ]
       },
-{
+      {
         options: [
-          { text: "[ ... ] or [ ... ]?" },
+          { text: "[ ... ] or [ ... ]?", requires: ["own_name", "holiday", "dog", "cat"] },
           { text: "[ ... ]land or [ ... ]land?", requires: ["country", "city"] },
           { text: "[ ... ]ville or [ ... ]ville?", requires: ["city"] },
           { text: "[ ... ]field or [ ... ]field?", requires: ["city"] },
-          { text: "The Republic of [ ... ] or The Republic of [ ... ]?", requires: ["country"] },
-          { text: "New [ ... ] or New [ ... ]?", requires: ["country", "city"] }
+          { text: "The Republic of [ ... ] or The Republic of [ ... ]?", requires: ["country"] }
         ]
       }
     ],
@@ -2469,15 +2442,14 @@ hints: [
     fragments: [
       {
         options: [
-          { text: "become the supreme leader of a new global ideology called" },
-          { text: "write a 1000-page manifesto explaining the core principles of" },
-          { text: "from now on, live exclusively by the principles of" },
-          { text: "have your country's government officially adopt the ideology of" },
-          { text: "have your parents strictly adopt the ideology of" },
-          { text: "have your entire friend group adopt the ideology of" },
-          { text: "permanently ban the dangerous ideology of" },
-          { text: "build the bright future of the world strictly on the ideology of" },
-          { text: "be forced to study the complex history of" }
+          { text: "become the supreme leader of" },
+          { text: "write a 1000-page manifesto about" },
+          { text: "strictly live by" },
+          { text: "have your government adopt" },
+          { text: "try to convince your parents to follow" },
+          { text: "try to convince your friends to follow" },
+          { text: "permanently ban" },
+          { text: "study the history of" }
         ]
       },
       {
