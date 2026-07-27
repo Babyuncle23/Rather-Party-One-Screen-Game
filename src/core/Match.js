@@ -34,11 +34,11 @@ export class Match {
 setQueuedCombo(chosenWord, category) {
     // 1. Проверка: если комбо уже было в этой ИГРЕ — отменяем
     // ЗАКОММЕНТИРУЙ ДЛЯ ТЕСТОВ, чтобы комбо могли выпадать несколько раз за игру
-    // if (this.comboUsedThisGame) return;
+    if (this.comboUsedThisGame) return;
     
     // 2. Бросаем кубик: 60% шанс, что комбо зарядится
     // ЗАКОММЕНТИРУЙ ДЛЯ ТЕСТОВ, чтобы шанс был 100%
-    // if (Math.random() > 0.6) return; 
+    if (Math.random() > 0.6) return; 
 
     this.queuedComboWord = chosenWord.toUpperCase();
     this.queuedComboCategory = category;
@@ -67,7 +67,7 @@ setQueuedCombo(chosenWord, category) {
       comboQ.text = comboQ.text.replace("[PREV_CHOICE]", this.queuedComboWord);
       
       // ЗАКОММЕНТИРУЙ ДЛЯ ТЕСТОВ, чтобы игра не блокировала следующие комбо
-      // this.comboUsedThisGame = true; 
+      this.comboUsedThisGame = true; 
       this.queuedComboWord = null;
       this.queuedComboCategory = null; 
       return comboQ;
