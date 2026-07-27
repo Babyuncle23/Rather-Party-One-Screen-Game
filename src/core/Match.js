@@ -13,8 +13,9 @@ export class Match {
     this.history = [];
     
     // --- ЛОГИКА КОМБО ---
-    this.comboUsedThisRound = false;
-    this.queuedComboWords = null;
+    this.comboUsedThisGame = false; // Теперь лимит действует на всю игру
+    this.queuedComboWord = null;
+    this.queuedComboCategory = null;
     this.comboDatabase = questionsDatabase.filter(q => q.isCombo);
     
     this.shuffledQuestions = [];
@@ -31,13 +32,19 @@ export class Match {
   }
 
   setQueuedCombo(chosenWord, category) {
+    // 1. Проверка: если комбо уже было в этой ИГРЕ — отменяем
+    if (this.comboUsedThisGame) return;
+    
+    // 2. Бросаем кубик: 50% шанс, что комбо зарядится
+    if (Math.random() > 0.5) return; 
+
     this.queuedComboWord = chosenWord.toUpperCase();
-    this.queuedComboCategory = category; // Запоминаем категорию прошлого вопроса
+    this.queuedComboCategory = category;
   }
 
-getRandomQuestion() {
-    // Если комбо заряжено и в этом раунде еще не использовалось
-    if (this.queuedComboWord && !this.comboUsedThisRound) {
+  getRandomQuestion() {
+    // Если комбо заряжено и в этой игре еще не использовалось
+    if (this.queuedComboWord && !this.comboUsedThisGame) {
       
       // Ищем комбо-вопросы, поддерживающие как строку, так и массив категорий
       const matchingCombos = this.comboDatabase.filter(q => {
@@ -60,13 +67,13 @@ getRandomQuestion() {
       // Вшиваем слово
       comboQ.text = comboQ.text.replace("[PREV_CHOICE]", this.queuedComboWord);
       
-      this.comboUsedThisRound = true;
+      this.comboUsedThisGame = true; // Блокируем комбо до конца игры
       this.queuedComboWord = null;
-      this.queuedComboCategory = null; // Очищаем
+      this.queuedComboCategory = null; 
       return comboQ;
     }
     
-    // Очищаем очередь, если комбо не сработало (сброс в начале раунда)
+    // Очищаем очередь, если комбо не сработало
     this.queuedComboWord = null; 
     this.queuedComboCategory = null;
 
@@ -76,7 +83,6 @@ getRandomQuestion() {
     return this.shuffledQuestions.pop();
   }
 
-  // --- ЭТИ ДВЕ ФУНКЦИИ СОХРАНЯЕМ ---
   getResponderIndex() {
     return (this.pickerIndex + 1) % this.players.length;
   }
@@ -90,7 +96,6 @@ getRandomQuestion() {
     }
     return indices;
   }
-  // -------------------------------------
 
   saveRoundToHistory(questionText, hintText, input1, input2, finalChoice) {
     this.history.push({
@@ -109,7 +114,7 @@ getRandomQuestion() {
     this.pickerIndex = (this.pickerIndex + 1) % this.players.length;
     if (this.pickerIndex === 0) {
       this.currentRound++;
-      this.comboUsedThisRound = false; // Сбрасываем лимит комбо на новый раунд
+      // Удален сброс комбо, чтобы лимит держался до конца матча
     }
   }
 
