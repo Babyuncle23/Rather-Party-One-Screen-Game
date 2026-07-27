@@ -1,42 +1,43 @@
 export const PROMPTS = {
   // Действия (для вопроса 14)
+// Действия
   actionWork: { 
     text: "Inappropriate action at work", 
     brainstorm: [
-      "take a nap", 
-      "leave early", 
-      "ignore the boss", 
-      "play games",
-      "watch netflix",
-      "sing in the breakroom",
-      "steal coffee",
-      "start a fight",
-      "show up drunk",
-      "scroll tiktok on phone",
-      "cry in the toilet",
-      "delete important database",
-      "insult the main client",
-      "wear pajamas to meeting",
-      "fall asleep during presentation",
-      "liquidate company assets"
+      "taking a nap", 
+      "leaving early", 
+      "ignoring the boss", 
+      "playing games",
+      "watching netflix",
+      "singing in the breakroom",
+      "stealing coffee",
+      "starting a fight",
+      "showing up drunk",
+      "scrolling tiktok on phone",
+      "crying in the toilet",
+      "deleting important database",
+      "insulting the main client",
+      "wearing pajamas to meeting",
+      "falling asleep during presentation",
+      "liquidating company assets"
     ] 
   },
   actionIllegal: { 
     text: "Minor illegal act", 
     brainstorm: [
-      "pirate a movie", 
-      "jaywalk", 
-      "steal a pen", 
-      "sneak into a concert",
-      "shoplift a candy",
-      "vandalize a wall",
-      "speed in a school zone",
-      "ride the train without a ticket",
-      "use a fake name",
-      "jerk the emergency brake",
-      "bribe a parking guard",
-      "steal wifi from neighbors",
-      "forge a doctor note"
+      "pirating a movie", 
+      "jaywalking", 
+      "stealing a pen", 
+      "sneaking into a concert",
+      "shoplifting a candy",
+      "vandalizing a wall",
+      "speeding in a school zone",
+      "riding the train without a ticket",
+      "using a fake name",
+      "jerking the emergency brake",
+      "bribing a parking guard",
+      "stealing wifi from neighbors",
+      "forging a doctor note"
     ] 
   },
   personalLike: { 
@@ -58,17 +59,17 @@ export const PROMPTS = {
 actionEmbarrassing: { 
     text: "Embarrassing action", 
     brainstorm: [
-      "forget a name", 
-      "snort while laughing", 
-      "wave at a stranger",
-      "reply wrong to a text",
-      "have toilet paper on shoe",
-      "forget to zip pants",
-      "call teacher mom",
-      "accidentally like an old post",
-      "have spinach in teeth",
-      "walk into a glass door",
-      "forget your own password"
+      "forgetting a name", 
+      "snorting while laughing", 
+      "waving at a stranger",
+      "replying wrong to a text",
+      "having toilet paper on shoe",
+      "forgetting to zip pants",
+      "calling teacher mom",
+      "accidentally liking an old post",
+      "having spinach in teeth",
+      "walking into a glass door",
+      "forgetting your own password"
     ]
   },
   nickname: { 
@@ -87,90 +88,88 @@ actionEmbarrassing: {
     text: "Title", 
     brainstorm: ["Supreme Overlord", "Grand Poobah", "Chief Executive", "His Majesty", "The Great"] 
   },
-  actionParty: { 
+actionParty: { 
     text: "Weird party trick", 
     brainstorm: [
-      // Стандартные/классические
-      "swallow a sword", 
-      "juggle apples", 
-      "do a backflip", 
-      "eat a glass",
-      "hold breath for two minutes",
-      "solve a rubiks cube blindfolded",
-      "peel a banana with feet",
-      "guess the secret ingredient in drink",
-      "sing song backwards",
-      "break a wooden board with head",
-      "speak with two voices at once",
-      "wobble eyeballs in different directions",
-      "tie a cherry stem with tongue",
-      "find a needle in a haystack"
+      "swallowing a sword", 
+      "juggling apples", 
+      "doing a backflip", 
+      "eating a glass",
+      "holding breath for two minutes",
+      "solving a rubiks cube blindfolded",
+      "peeling a banana with feet",
+      "guessing the secret ingredient in drink",
+      "singing a song backwards",
+      "breaking a wooden board with head",
+      "speaking with two voices at once",
+      "wobbling eyeballs in different directions",
+      "tying a cherry stem with tongue",
+      "finding a needle in a haystack"
     ] 
   },
 actionChore: { 
     text: "Annoying daily chore", 
     brainstorm: [
-      "wash the dishes", 
-      "iron clothes", 
-      "vacuum", 
-      "take out the trash",
-      "fold the laundry",
-      "make the bed",
-      "dust the shelves",
-      "clean the toilet",
-      "sort out the recycling bin",
-      "change bed sheets",
-      "unload the dishwasher",
-      "wipe all the windows"
+      "washing the dishes", 
+      "ironing clothes", 
+      "vacuuming", 
+      "taking out the trash",
+      "folding the laundry",
+      "making the bed",
+      "dusting the shelves",
+      "cleaning the toilet",
+      "sorting out the recycling bin",
+      "changing bed sheets",
+      "unloading the dishwasher",
+      "wiping all the windows"
     ] 
   },
-  actionRelax: { 
+actionRelax: { 
     text: "Relaxing activity", 
     brainstorm: [
-      "sleep for 10 hours", 
-      "take a hot bath", 
-      "read a book", 
-      "stare at the wall",
-      "watch the sunset",
-      "go for a walk",
-      "meditate",
-      "drink herbal tea",
-      "do absolutely nothing",
-      "lie on the beach",
-      "watch clouds floating by",
-      "take a bubble bath",
-      "listen to ocean",
-      "get a  massage",
-      "breathe deeply",
-      "watch rain hit the window",
-      "paint a canvas"
+      "sleeping for 10 hours", 
+      "taking a hot bath", 
+      "reading a book", 
+      "staring at the wall",
+      "watching the sunset",
+      "going for a walk",
+      "meditating",
+      "drinking herbal tea",
+      "doing absolutely nothing",
+      "lying on the beach",
+      "watching clouds floating by",
+      "taking a bubble bath",
+      "listening to ocean",
+      "getting a massage",
+      "breathing deeply",
+      "watching rain hit the window",
+      "painting a canvas"
     ] 
   },
 actionExtreme: { 
     text: "Extreme sport action", 
     brainstorm: [
-      "surf a huge wave", 
-      "go skydiving",
-      "ride a dirt bike",
-      "climb a rock",
-      "fly in a wingsuit",
-      "do a backflip",
-      "run an ultra marathon",
-      "jump across two buildings",
-      "skate down a massive hill"
+      "surfing a huge wave", 
+      "going skydiving",
+      "riding a dirt bike",
+      "climbing a rock",
+      "flying in a wingsuit",
+      "doing a backflip",
+      "running an ultra marathon",
+      "jumping across two buildings",
+      "skating down a massive hill"
     ] 
-  },  actionAlone: { 
+  }, actionAlone: { 
     text: "Something you do when alone", 
     brainstorm: [
-      // Стандартные и короткие
-      "sing loudly", 
-      "talk to yourself", 
-      "eat from the fridge",
-      "binge watch cartoons",
-      "search your own name online",
-      "rehearse a fake argument",
-      "dance in front of the mirror",
-      "stare into the fridge for no reason"
+      "singing loudly", 
+      "talking to yourself", 
+      "eating from the fridge",
+      "binge watching cartoons",
+      "searching your own name online",
+      "rehearsing a fake argument",
+      "dancing in front of the mirror",
+      "staring into the fridge for no reason"
     ] 
   },
 
@@ -2556,5 +2555,36 @@ hints: [
       }
     ],
     hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday, PROMPTS.personalInterest, PROMPTS.app]
+  },
+  {
+    id: 106,
+    isCombo: true,
+    triggerCategory: ["naming_realm"],
+    category: "combo",
+    text: "As the leader of [PREV_CHOICE], would you rather put",
+    fragments: [
+      {
+        options: [
+          { text: "a giant [ ... ] or a giant [ ... ] on your state flag?" },
+          { text: "a picture of [ ... ] or [ ... ] on your national currency?" }
+        ]
+      }
+    ],
+    hints: [PROMPTS.animalFunny, PROMPTS.angryAnimal, PROMPTS.fastFood, PROMPTS.everyday, PROMPTS.survivalTool, PROMPTS.kitchenItem]
+  },
+  {
+    id: 107,
+    isCombo: true,
+    triggerCategory: ["social", "identity", "animals"],
+    category: "combo",
+    text: "What is the most likely interaction between [PICKER] and [PREV_CHOICE]:",
+    fragments: [
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]?" }
+        ]
+      }
+    ],
+    hints: [PROMPTS.actionParty, PROMPTS.actionExtreme, PROMPTS.actionChore, PROMPTS.actionEmbarrassing, PROMPTS.actionWork]
   }
 ];

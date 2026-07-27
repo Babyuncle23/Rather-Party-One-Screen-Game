@@ -31,12 +31,14 @@ export class Match {
     }
   }
 
-  setQueuedCombo(chosenWord, category) {
+setQueuedCombo(chosenWord, category) {
     // 1. Проверка: если комбо уже было в этой ИГРЕ — отменяем
-    if (this.comboUsedThisGame) return;
+    // ЗАКОММЕНТИРУЙ ДЛЯ ТЕСТОВ, чтобы комбо могли выпадать несколько раз за игру
+    // if (this.comboUsedThisGame) return;
     
     // 2. Бросаем кубик: 60% шанс, что комбо зарядится
-    if (Math.random() > 0.6) return; 
+    // ЗАКОММЕНТИРУЙ ДЛЯ ТЕСТОВ, чтобы шанс был 100%
+    // if (Math.random() > 0.6) return; 
 
     this.queuedComboWord = chosenWord.toUpperCase();
     this.queuedComboCategory = category;
@@ -44,9 +46,9 @@ export class Match {
 
   getRandomQuestion() {
     // Если комбо заряжено и в этой игре еще не использовалось
-    if (this.queuedComboWord && !this.comboUsedThisGame) {
+    // ДЛЯ ТЕСТОВ можешь убрать проверку !this.comboUsedThisGame
+    if (this.queuedComboWord /* && !this.comboUsedThisGame */) { 
       
-      // Ищем комбо-вопросы, поддерживающие как строку, так и массив категорий
       const matchingCombos = this.comboDatabase.filter(q => {
         if (!q.triggerCategory) return false;
         if (Array.isArray(q.triggerCategory)) {
@@ -57,17 +59,15 @@ export class Match {
       
       let comboQ;
       if (matchingCombos.length > 0) {
-        // Берем случайный из подходящих
         comboQ = JSON.parse(JSON.stringify(matchingCombos[Math.floor(Math.random() * matchingCombos.length)]));
       } else {
-        // Фолбэк: если специфичного нет, берем любой комбо-вопрос
         comboQ = JSON.parse(JSON.stringify(this.comboDatabase[Math.floor(Math.random() * this.comboDatabase.length)]));
       }
       
-      // Вшиваем слово
       comboQ.text = comboQ.text.replace("[PREV_CHOICE]", this.queuedComboWord);
       
-      this.comboUsedThisGame = true; // Блокируем комбо до конца игры
+      // ЗАКОММЕНТИРУЙ ДЛЯ ТЕСТОВ, чтобы игра не блокировала следующие комбо
+      // this.comboUsedThisGame = true; 
       this.queuedComboWord = null;
       this.queuedComboCategory = null; 
       return comboQ;
