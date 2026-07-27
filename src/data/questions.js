@@ -1892,7 +1892,7 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "instantly sweat a puddle that", type: "sweat" },
+          { text: "sweat a puddle that", type: "sweat" },
           { text: "breathe out a cloud that", type: "breath" },
           { text: "produce saliva that", type: "saliva" },
           { text: "have a face that", type: "face" },
@@ -1914,9 +1914,9 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: ", but only when you are", type: "condition" },
-          { text: ", and it triggers every time you", type: "action" },
-          { text: "", type: "none" }
+          { text: "but only when you are", type: "condition" },
+          { text: "every time you", type: "action" },
+          { text: "", type: "none", requires: ["face", "head"] } // Фикс: пустая концовка только для лица и головы
         ]
       },
       {
