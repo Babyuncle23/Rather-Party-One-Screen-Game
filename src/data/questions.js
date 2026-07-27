@@ -899,7 +899,7 @@ boardGame: {
     ] 
   },
   conspiracyTheory: { 
-    text: "Weird conspiracy theory", 
+    text: "Conspiracy theory", 
     brainstorm: [
       // Короткие
       "Flat Earth", 
@@ -2138,9 +2138,9 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "wear a full costume of", type: "costume_full", hints: [PROMPTS.animalFunny, { text: "Food item", brainstorm: ["Hot dog", "Banana", "Taco", "Pizza"] }, { text: "Weird profession", brainstorm: ["Clown", "Mime", "Pirate", "Astronaut"] }, PROMPTS.fictionalChar, PROMPTS.cartoonChar] },
+          { text: "wear a full costume of", type: "costume_full", hints: [PROMPTS.animalFunny, { text: "Food item", brainstorm: ["Hot dog", "Banana", "Taco", "Pizza"] }, { text: "Unusual profession", brainstorm: ["Clown", "Mime", "Pirate", "Astronaut"] }, PROMPTS.fictionalChar, PROMPTS.cartoonChar] },
           { text: "carry a life-sized statue of", type: "carry_statue", hints: [PROMPTS.politician, PROMPTS.historical, PROMPTS.actor, PROMPTS.mediaPersonality] },
-          { text: "dress exactly like", type: "dress_like", hints: [PROMPTS.villain, { text: "Weird profession", brainstorm: ["Clown", "Mime", "Pirate", "Astronaut"] }, PROMPTS.cartoonChar] }
+          { text: "dress exactly like", type: "dress_like", hints: [PROMPTS.villain, { text: "Unusual profession", brainstorm: ["Clown", "Mime", "Pirate", "Astronaut"] }, PROMPTS.cartoonChar] }
         ]
       },
       {
