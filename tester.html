@@ -122,6 +122,18 @@
       font-weight: bold; font-size: 14px; background: rgba(0,0,0,0.2); transition: background 0.2s;
     }
     .filter-header:hover { background: rgba(0,0,0,0.4); }
+    
+    .filter-actions {
+      display: flex; gap: 10px; padding: 10px 16px;
+      background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .filter-actions button {
+      flex: 1; padding: 8px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; transition: filter 0.2s;
+    }
+    .filter-actions button:hover { filter: brightness(1.2); }
+    #btn-select-all { background: rgba(80, 250, 123, 0.2); color: #50fa7b; }
+    #btn-deselect-all { background: rgba(255, 85, 85, 0.2); color: #ff5555; }
+
     .filter-list {
       padding: 10px; max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
     }
@@ -157,14 +169,20 @@
     <button class="btn-main btn-report" id="report-btn">📋 Show Report (0)</button>
   </div>
 
-  <!-- НОВАЯ ПАНЕЛЬ ФИЛЬТРОВ -->
+  <!-- ОБНОВЛЕННАЯ ПАНЕЛЬ ФИЛЬТРОВ С КНОПКАМИ -->
   <div class="filter-section">
     <div class="filter-header" id="filter-toggle">
       <span>⚙️ Выбор вопросов для теста (Активно: <span id="active-q-count">0</span>/<span id="total-q-count">0</span>)</span>
       <span id="filter-arrow">▼</span>
     </div>
-    <div class="filter-list" id="filter-list" style="display: none;">
-      <!-- Галочки будут сгенерированы скриптом здесь -->
+    <div id="filter-content" style="display: none;">
+      <div class="filter-actions">
+        <button id="btn-select-all">✅ Выбрать все</button>
+        <button id="btn-deselect-all">❌ Убрать все</button>
+      </div>
+      <div class="filter-list" id="filter-list">
+        <!-- Галочки будут сгенерированы скриптом здесь -->
+      </div>
     </div>
   </div>
   
@@ -182,7 +200,7 @@
   </div>
 
   <script type="module">
-    import { questionsDatabase } from './src/data/questions.js';
+    import { questionsDatabase } from './src/data/questions.js'; // Убедись, что путь к базе верный
 
     window.qaReportLog = JSON.parse(localStorage.getItem('qaReportLog')) || [];
 
@@ -205,7 +223,6 @@
 
       list.innerHTML = '';
       questionsDatabase.forEach(q => {
-        // Формируем предпросмотр (Текст вопроса + первая опция из первого фрагмента)
         let preview = q.text + " ";
         if (q.fragments && q.fragments.length > 0) {
            preview += q.fragments[0].options[0].text + " ...";
@@ -217,14 +234,13 @@
         item.innerHTML = `
           <input type="checkbox" id="chk-${q.id}" ${isChecked ? 'checked' : ''}>
           <div class="filter-info">
-            <div class="filter-theme">ID: ${q.id} | ТЕМА: ${q.category}</div>
+            <div class="filter-theme">ID: ${q.id} | ТЕМА: ${q.category} ${q.isCombo ? '🔗 COMBO' : ''}</div>
             <div class="filter-text">"${preview}"</div>
           </div>
         `;
 
         const chk = item.querySelector('input');
         
-        // Клик по тексту тоже переключает галочку
         item.querySelector('.filter-info').onclick = () => { chk.click(); };
 
         chk.onchange = (e) => {
@@ -239,18 +255,32 @@
       });
     }
 
-    // Раскрытие/закрытие панели
+    // Раскрытие/закрытие панели (теперь переключает весь контейнер с кнопками)
     document.getElementById('filter-toggle').onclick = () => {
-      const list = document.getElementById('filter-list');
+      const content = document.getElementById('filter-content');
       const arrow = document.getElementById('filter-arrow');
-      if (list.style.display === 'none') {
-        list.style.display = 'flex';
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
         arrow.innerText = '▲';
       } else {
-        list.style.display = 'none';
+        content.style.display = 'none';
         arrow.innerText = '▼';
       }
     };
+
+    // --- НОВЫЕ КНОПКИ ДЛЯ МАССОВОГО ВЫДЕЛЕНИЯ ---
+    document.getElementById('btn-select-all').onclick = () => {
+      excludedIds.clear();
+      localStorage.setItem('qaExcludedIdsArr', JSON.stringify([...excludedIds]));
+      renderFilterList();
+    };
+
+    document.getElementById('btn-deselect-all').onclick = () => {
+      questionsDatabase.forEach(q => excludedIds.add(q.id));
+      localStorage.setItem('qaExcludedIdsArr', JSON.stringify([...excludedIds]));
+      renderFilterList();
+    };
+    // ---------------------------------------------
 
     renderFilterList(); // Отрисовываем список при загрузке
     // ===================================
@@ -295,13 +325,18 @@ function buildRandomQuestion() {
         currentState.push(q.fragments[i].options.indexOf(validOptions[randIdx]));
       });
 
-      // --- ДОБАВЛЕНА ПОДДЕРЖКА КОМБО ДЛЯ ТЕСТЕРА ---
+// Поддержка комбо
       let str = q.text + " ";
       if (q.isCombo) {
          let randomPrevWord = "ПРОШЛЫЙ ВЫБОР";
          
-         // Ищем вопросы из категории, которая триггерит это комбо
-         const triggerQs = questionsDatabase.filter(x => x.category === q.triggerCategory && !x.isCombo);
+         const triggerQs = questionsDatabase.filter(x => {
+             if (Array.isArray(q.triggerCategory)) {
+                 return q.triggerCategory.includes(x.category) && !x.isCombo;
+             }
+             return x.category === q.triggerCategory && !x.isCombo;
+         });
+
          if (triggerQs.length > 0) {
              const tq = triggerQs[Math.floor(Math.random() * triggerQs.length)];
              let allHints = tq.hints ? [...tq.hints] : [];
@@ -311,22 +346,34 @@ function buildRandomQuestion() {
                  });
              });
              
-             // Ищем подсказки, в которых есть brainstorm
              const brainstormHints = allHints.filter(h => typeof h === 'object' && h.brainstorm && h.brainstorm.length > 0);
              if (brainstormHints.length > 0) {
                  const chosenHint = brainstormHints[Math.floor(Math.random() * brainstormHints.length)];
                  randomPrevWord = chosenHint.brainstorm[Math.floor(Math.random() * chosenHint.brainstorm.length)].toUpperCase();
+                 
+                 // === ФИКС ДЛЯ КОМБО СТРАН В ТЕСТЕРЕ ===
+                 // Если комбо триггерится от создания страны/города, симулируем суффиксы
+                 const categories = Array.isArray(q.triggerCategory) ? q.triggerCategory : [q.triggerCategory];
+                 if (categories.includes("naming_realm")) {
+                     const formats = [
+                         w => w + "LAND",
+                         w => w + "VILLE",
+                         w => w + "FIELD",
+                         w => "THE REPUBLIC OF " + w
+                     ];
+                     // Выбираем случайный формат для предпросмотра
+                     randomPrevWord = formats[Math.floor(Math.random() * formats.length)](randomPrevWord);
+                 }
+                 // ======================================
              }
          }
 
-         // Подменяем тег на визуальную заглушку со случайным словом из brainstorm
          str = str.replace("[PREV_CHOICE]", `<span style='color: #ffd56b;'>[${randomPrevWord}]</span>`);
       }
 
       q.fragments.forEach((frag, i) => {
         str += frag.options[currentState[i]].text + " ";
       });
-      // ---------------------------------------------
       
       let availableHints = q.hints ? [...q.hints] : [];
       q.fragments.forEach((frag, i) => {
@@ -348,7 +395,6 @@ function buildRandomQuestion() {
         finalHints.push(availableHints[idx2]);
       }
 
-      // Выводим бейджик, если это комбо-вопрос, чтобы его было видно в тестере
       const categoryLabel = q.isCombo ? `COMBO (${q.triggerCategory})` : q.category;
 
       return {
@@ -364,14 +410,12 @@ function buildRandomQuestion() {
       const fullQ = card.dataset.q;
       const hints = card.dataset.hints;
       
-      // Читаем кастомный комментарий из поля
       const commentInput = card.querySelector('.comment-input');
       const customComment = commentInput.value.trim();
       
       const selection = window.getSelection().toString().trim();
       const target = selection ? selection : "ВЕСЬ ВОПРОС ЦЕЛИКОМ";
       
-      // Генерируем уникальный ID для возможности удаления
       const logId = Date.now().toString(36) + Math.random().toString(36).substr(2);
       
       window.qaReportLog.push({
@@ -386,7 +430,6 @@ function buildRandomQuestion() {
       localStorage.setItem('qaReportLog', JSON.stringify(window.qaReportLog));
       updateReportCounter();
 
-      // Рендерим бейджик с крестиком удаления
       const tagsContainer = card.querySelector('.tags-container');
       const badge = document.createElement('div');
       badge.className = `tag-badge tag-${issueType}`;
@@ -403,12 +446,10 @@ function buildRandomQuestion() {
       
       card.style.borderColor = "rgba(140, 108, 255, 0.5)";
       
-      // Сбрасываем поле ввода и выделение текста
       commentInput.value = "";
       window.getSelection().removeAllRanges();
     };
 
-    // Глобальная функция удаления тега
     window.removeTag = function(logId) {
       window.qaReportLog = window.qaReportLog.filter(log => log.id !== logId);
       localStorage.setItem('qaReportLog', JSON.stringify(window.qaReportLog));
@@ -424,7 +465,6 @@ function buildRandomQuestion() {
       }
     };
 
-    // Отрисовка новых вопросов
     document.getElementById('generate-btn').onclick = () => {
       const out = document.getElementById('output');
       out.innerHTML = '';
@@ -476,7 +516,6 @@ function buildRandomQuestion() {
       }
     };
 
-    // Генерация отчета
     document.getElementById('report-btn').onclick = () => {
       const modal = document.getElementById('report-modal');
       const textarea = document.getElementById('report-text');
@@ -499,7 +538,6 @@ function buildRandomQuestion() {
       modal.style.display = 'block';
     };
 
-    // Кнопка полной очистки памяти
     document.getElementById('clear-report-btn').onclick = () => {
       if(confirm("Вы уверены, что хотите удалить весь сохраненный отчет?")) {
         window.qaReportLog = [];

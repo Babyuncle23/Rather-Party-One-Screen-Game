@@ -1028,14 +1028,13 @@ complicatedTopic: {
       "Snake",
       
       // Длинные и фразовые
-      "Grizzly bear", 
+      "Grizzly", 
       "Silverback gorilla", 
       "Cape buffalo", 
       "Honey badger", 
       "Hippopotamus", 
       "Wolverine", 
       "Rhinoceros", 
-      "Angry goose", 
       "Chihuahua", 
       "Wild boar"
     ] 
@@ -1761,21 +1760,20 @@ export const questionsDatabase = [
       {
         options: [
           { text: "spend 1000 hours", type: "time" },
-          { text: "enter a world championship for", type: "compete" },
+          { text: "enter a championship for", type: "compete" },
           { text: "dedicate your entire future to", type: "future" },
           { text: "sacrifice all your free time to", type: "sacrifice" },
           { text: "spend all your weekends", type: "weekends" },
-          { text: "be cursed to spend the rest of your life", type: "curse" }
         ]
       },
       {
         options: [
-          { text: "playing", requires: ["time", "compete", "sacrifice", "weekends", "curse"], hints: [PROMPTS.videoGame, PROMPTS.boardGame, PROMPTS.sport, PROMPTS.mobileGame, PROMPTS.instrument] },
-          { text: "doing", requires: ["sacrifice", "weekends", "curse"], hints: [PROMPTS.annoyingHabit, PROMPTS.chore, PROMPTS.humanActivity, PROMPTS.creativeHobby] },
+          { text: "playing", requires: ["time", "compete", "sacrifice", "weekends"], hints: [PROMPTS.videoGame, PROMPTS.boardGame, PROMPTS.sport, PROMPTS.mobileGame, PROMPTS.instrument] },
+          { text: "doing", requires: ["sacrifice", "weekends"], hints: [PROMPTS.annoyingHabit, PROMPTS.chore, PROMPTS.humanActivity, PROMPTS.creativeHobby] },
           { text: "mastering", requires: ["future", "sacrifice", "time", "weekends"], hints: [PROMPTS.professionalSkill, PROMPTS.creativeHobby, PROMPTS.instrument, PROMPTS.foreignLanguage] },
-          { text: "watching", requires: ["time", "weekends", "curse"], hints: [PROMPTS.tvShow, PROMPTS.youtuber, PROMPTS.sport] },
-          { text: "obsessively analyzing", requires: ["future", "curse", "time"], hints: [PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical, PROMPTS.country, PROMPTS.mediaPersonality, PROMPTS.personalInterest] },
-          { text: "aggressively teaching people about", requires: ["curse", "future", "weekends"], hints: [PROMPTS.schoolSubject, PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical] }
+          { text: "watching", requires: ["time", "weekends"], hints: [PROMPTS.tvShow, PROMPTS.youtuber, PROMPTS.sport] },
+          { text: "obsessively analyzing", requires: ["future", "time"], hints: [PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical, PROMPTS.country, PROMPTS.mediaPersonality, PROMPTS.personalInterest] },
+          { text: "aggressively teaching people about", requires: ["future", "weekends"], hints: [PROMPTS.schoolSubject, PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical] }
         ]
       },
       {
@@ -1894,17 +1892,13 @@ export const questionsDatabase = [
         options: [
           { text: "sweat a puddle that", type: "sweat" },
           { text: "breathe out a cloud that", type: "breath" },
-          { text: "produce saliva that", type: "saliva" },
-          { text: "have a face that", type: "face" },
-          { text: "have a head shape that", type: "head" } 
+          { text: "produce saliva that", type: "saliva" }
         ]
       },
       {
         options: [
           { text: "smells like", requires: ["sweat", "breath"], hints: [PROMPTS.strongFood, PROMPTS.fastFood, PROMPTS.sweetLiquid, PROMPTS.candyType, PROMPTS.fruit, { text: "Thing that smells bad", brainstorm: ["Garbage", "Skunk", "Rotten egg", "Mud"] }] },
-          { text: "tastes like", requires: ["sweat", "saliva"], hints: [PROMPTS.strongFood, PROMPTS.fastFood, PROMPTS.sweetLiquid, PROMPTS.candyType, PROMPTS.fruit, PROMPTS.snack] },
-          { text: "looks exactly like a", requires: ["face"], hints: [PROMPTS.animalFunny, PROMPTS.chubbyAnimal] },
-          { text: "closely resembles a", requires: ["head"], hints: [PROMPTS.shape, PROMPTS.everyday, PROMPTS.smallObj] }
+          { text: "tastes like", requires: ["sweat", "saliva"], hints: [PROMPTS.strongFood, PROMPTS.fastFood, PROMPTS.sweetLiquid, PROMPTS.candyType, PROMPTS.fruit, PROMPTS.snack] }
         ]
       },
       {
@@ -1916,7 +1910,6 @@ export const questionsDatabase = [
         options: [
           { text: "but only when you are", type: "condition" },
           { text: "every time you", type: "action" },
-          { text: "", type: "none", requires: ["face", "head"] } // Фикс: пустая концовка только для лица и головы
         ]
       },
       {
@@ -2047,7 +2040,6 @@ export const questionsDatabase = [
           { text: "host a podcast about", type: "podcast", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, { text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }, PROMPTS.personalInterest] },
           { text: "run a YouTube channel about", type: "podcast", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, PROMPTS.annoyingHabit] },
           { text: "become CEO of a company making", type: "business", hints: [{ text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }, { text: "Office supply", isPlural: true, brainstorm: ["Staplers", "Pens", "Sticky notes", "Folders"] }, PROMPTS.techOld] },
-          { text: "start a band where instruments are replaced by", type: "band", hints: [{ text: "Tool", isPlural: true, brainstorm: ["Hammers", "Saws", "Drills", "Wrenches"] }, { text: "Office supply", isPlural: true, brainstorm: ["Staplers", "Pens", "Sticky notes", "Folders"] }, { text: "Cheap item", isPlural: true, brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] }] },
           { text: "start a street gang that only steals", type: "gang", hints: [PROMPTS.everyday, PROMPTS.smallObj, { text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }] }
         ]
       },
@@ -2075,8 +2067,9 @@ export const questionsDatabase = [
         options: [
           { text: "get a small tattoo of", type: "tattoo", hints: [PROMPTS.fastFood, PROMPTS.animalFunny, PROMPTS.politician, PROMPTS.actor] },
           { text: "give a 1-hour presentation on their relationship with", type: "presentation", hints: [PROMPTS.chore, PROMPTS.everyday, PROMPTS.animalFunny, PROMPTS.snack] },
-          { text: "make you a world-class expert in", type: "expert", hints: [PROMPTS.chore, { text: "Obscure hobby", brainstorm: ["Juggling", "Yodeling", "Beatboxing", "Origami"] }, PROMPTS.animalFunny, PROMPTS.techOld] },
-          { text: "write a heartfelt song about", type: "song", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.everyday, PROMPTS.candyType] }
+          { text: "write a heartfelt song about", type: "song", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.everyday, PROMPTS.candyType] },
+          { text: "star in a low-budget musical about", type: "musical", hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame] }
+
         ]
       },
       {
@@ -2110,7 +2103,6 @@ export const questionsDatabase = [
           { text: "become invisible, but only while holding", type: "has_condition", hints: [{ text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] }, { text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] }, { text: "Food item", brainstorm: ["Pizza", "Cheese", "Cake", "Chocolate"] }] },
           { text: "have super strength, but only while singing about", type: "has_condition", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, PROMPTS.schoolSubject, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
           { text: "have super strength, but only while singing songs by", type: "has_condition", hints: [PROMPTS.singer, PROMPTS.band] },
-          { text: "be able to fly, but constantly smell like", type: "has_condition", hints: [{ text: "Sauce", brainstorm: ["Ketchup", "Mayonnaise", "Mustard", "Soy sauce"] }, PROMPTS.strongFood, { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] }, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
           { text: "be able to read minds, but only hear thoughts about", type: "has_condition", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, PROMPTS.fastFood, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] }
         ]
       },
@@ -2122,7 +2114,6 @@ export const questionsDatabase = [
       {
         options: [
           { text: "whenever you sneeze?", requires: ["clean_power_self"] },
-          { text: "and everyone always knows when you do it?", requires: ["clean_power", "clean_power_self"] },
           { text: "for only 60 seconds a day?", requires: ["clean_power", "clean_power_self"] },
           { text: "?", requires: ["has_condition", "clean_power", "clean_power_self"] }
         ]
@@ -2153,7 +2144,7 @@ export const questionsDatabase = [
           { text: "to every job interview?", requires: ["costume_full", "dress_like"] },
           { text: "on public transport?", requires: ["costume_full", "carry_statue"] },
           { text: "when grocery shopping?", requires: ["carry_statue"] },
-          { text: "to every family gathering?", requires: ["costume_full", "dress_like", "carry_statue"] }
+          { text: "whenver you meet your family members?", requires: ["costume_full", "dress_like", "carry_statue"] }
         ]
       }
     ],
@@ -2181,7 +2172,6 @@ export const questionsDatabase = [
           { text: "?" },
           { text: ", but you can only use it once a day?" },
           { text: ", but it only works on your friends?", requires: ["start", "stop"] },
-          { text: ", but it only works on people you annoy?", requires: ["start", "stop"] },
           { text: ", but it only works on people older than 30?", requires: ["start", "stop"] }
         ]
       }
@@ -2255,7 +2245,7 @@ hints: [
       {
         options: [
           { text: "host a 12-hour watch party of", type: "watch", hints: [PROMPTS.movie, PROMPTS.tvShow] },
-          { text: "star in a low-budget musical about", type: "musical", hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame] },
+          { text: "star in a low-budget musical about/based on", type: "musical", hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame] },
           { text: "write a 100-page fanfiction about", type: "fanfic", hints: [PROMPTS.movie, PROMPTS.tvShow, PROMPTS.videoGame] },
           { text: "record a 3-hour rant about", type: "rant", hints: [PROMPTS.movie, PROMPTS.videoGame, PROMPTS.tvShow] }
         ]
@@ -2314,7 +2304,7 @@ hints: [
         options: [
           { text: "have everyone insist you look exactly like", type: "look", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.animalFunny, PROMPTS.cartoonChar] },
           { text: "be treated by society exactly like", type: "status", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.profession, PROMPTS.fictionalChar] },
-          { text: "turn into", type: "morph", hints: [PROMPTS.fictionalChar, PROMPTS.chubbyAnimal, PROMPTS.historical] }
+          { text: "permamently turn into", type: "morph", hints: [PROMPTS.fictionalChar, PROMPTS.chubbyAnimal, PROMPTS.historical] }
         ]
       },
       {
@@ -2324,7 +2314,7 @@ hints: [
       },
       {
         options: [
-          { text: "whenever you try to be serious?", requires: ["look", "morph", "status"] },
+          { text: "whenever you try to be serious?", requires: ["look", "status"] },
           { text: "?" }
         ]
       }
@@ -2344,13 +2334,13 @@ hints: [
       },
       {
         options: [
-          { text: "as your ruthless boss?", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.youtuber, PROMPTS.actor, PROMPTS.personRespect] },
-          { text: "as your loyal best friend?", hints: [PROMPTS.cartoonChar, PROMPTS.chubbyAnimal, PROMPTS.dogBreed, PROMPTS.fictionalChar] },
+          { text: "as your boss?", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.youtuber, PROMPTS.actor, PROMPTS.personRespect] },
+          { text: "as your best friend?", hints: [PROMPTS.cartoonChar, PROMPTS.chubbyAnimal, PROMPTS.dogBreed, PROMPTS.fictionalChar] },
           { text: "as your sworn enemy?", hints: [PROMPTS.villain, PROMPTS.historical, PROMPTS.youtuber, PROMPTS.mediaPersonality] },
-          { text: "as your personal therapist?", hints: [PROMPTS.historical, PROMPTS.actor, PROMPTS.singer, PROMPTS.mediaPersonality, PROMPTS.personRespect] },
+          { text: "as your psychotherapist?", hints: [PROMPTS.historical, PROMPTS.actor, PROMPTS.singer, PROMPTS.mediaPersonality, PROMPTS.personRespect] },
           { text: "as your martial art sparring partner?", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.youtuber, PROMPTS.historical] },
           { text: "as your cleaner?", hints: [PROMPTS.politician, PROMPTS.historical, PROMPTS.villain, PROMPTS.youtuber] },
-          { text: "as your personal fitness trainer?", hints: [PROMPTS.actor, PROMPTS.fastAnimal, PROMPTS.villain, PROMPTS.singer] },
+          { text: "as your fitness trainer?", hints: [PROMPTS.actor, PROMPTS.fastAnimal, PROMPTS.villain, PROMPTS.singer] },
           { text: "as your obedient subordinate?", hints: [PROMPTS.politician, PROMPTS.villain, PROMPTS.historical, PROMPTS.actor] },
           { text: "as your butler?", hints: [PROMPTS.actor, PROMPTS.historical, PROMPTS.villain, PROMPTS.fictionalChar] },
           { text: "as your nanny?", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.actor, PROMPTS.cartoonChar] },
@@ -2366,22 +2356,18 @@ hints: [
   },
 {
     id: 21,
-    category: "naming",
+    category: "naming_realm", // Уникальная категория-триггер для комбо
+    canTriggerCombo: true,
     text: "Would you rather",
     fragments: [
       {
         options: [
           { text: "rename your country to", type: "country", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.company, PROMPTS.chubbyAnimal, PROMPTS.everyday, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.letterM] },
-          { text: "rename your city to", type: "city", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.snack, PROMPTS.everyday, PROMPTS.company, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.letterM] },
-          { text: "change your surname to", type: "own_name", hints: [PROMPTS.nickname, PROMPTS.title, PROMPTS.app, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.personRespect, PROMPTS.letterM] },
-          { text: "have a national holiday called The Day of", type: "holiday", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday, PROMPTS.personalInterest, PROMPTS.personRespect, PROMPTS.personalLike] },
-          { text: "adopt a dog and name it", type: "dog", hints: [PROMPTS.title, PROMPTS.politician, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personRespect, PROMPTS.personalLike, PROMPTS.letterM] },
-          { text: "adopt a cat and name it", type: "cat", hints: [PROMPTS.terriblePlace, PROMPTS.villain, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personRespect, PROMPTS.personalLike, PROMPTS.letterM] }
+          { text: "rename your city to", type: "city", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.snack, PROMPTS.everyday, PROMPTS.company, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.letterM] }
         ]
       },
       {
         options: [
-          { text: "[ ... ] or [ ... ]?", requires: ["own_name", "holiday", "dog", "cat"] },
           { text: "[ ... ]land or [ ... ]land?", requires: ["country", "city"] },
           { text: "[ ... ]ville or [ ... ]ville?", requires: ["city"] },
           { text: "[ ... ]field or [ ... ]field?", requires: ["city"] },
@@ -2470,6 +2456,28 @@ hints: [
       PROMPTS.personalLike
     ]
   },
+  {
+    id: 24, // Вынесли питомцев и личные имена сюда, чтобы они не триггерили комбо
+    category: "naming",
+    canTriggerCombo: false,
+    text: "Would you rather",
+    fragments: [
+      {
+        options: [
+          { text: "change your surname to", type: "own_name", hints: [PROMPTS.nickname, PROMPTS.title, PROMPTS.app, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.personRespect, PROMPTS.letterM] },
+          { text: "have a national holiday called The Day of", type: "holiday", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday, PROMPTS.personalInterest, PROMPTS.personRespect, PROMPTS.personalLike] },
+          { text: "adopt a dog and name it", type: "dog", hints: [PROMPTS.title, PROMPTS.politician, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personRespect, PROMPTS.personalLike, PROMPTS.letterM] },
+          { text: "adopt a cat and name it", type: "cat", hints: [PROMPTS.terriblePlace, PROMPTS.villain, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personRespect, PROMPTS.personalLike, PROMPTS.letterM] }
+        ]
+      },
+      {
+        options: [
+          { text: "[ ... ] or [ ... ]?" }
+        ]
+      }
+    ],
+    hints: []
+  },
 {
     id: 101,
     isCombo: true,
@@ -2517,5 +2525,36 @@ hints: [
       }
     ],
     hints: [PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.annoyingHabit, PROMPTS.humanActivity]
+  },
+  {
+    id: 104,
+    isCombo: true,
+    triggerCategory: ["naming_realm"], // Срабатывает только после создания страны/города
+    category: "combo",
+    text: "As the supreme leader of [PREV_CHOICE], would you rather adopt",
+    fragments: [
+      {
+        options: [
+          // Движок корректно заменит скобки, и суффикс "ism" приклеится к слову игрока
+          { text: "[ ... ]ism or [ ... ]ism as your state ideology?" }
+        ]
+      }
+    ],
+    hints: [PROMPTS.fastFood, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.techOld, PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.company, PROMPTS.abstractMood]
+  },
+  {
+    id: 105,
+    isCombo: true,
+    triggerCategory: ["naming_realm"], // Срабатывает только после создания страны/города
+    category: "combo",
+    text: "As the supreme leader of [PREV_CHOICE], would you rather establish a national holiday called",
+    fragments: [
+      {
+        options: [
+          { text: "The Day of [ ... ] or The Day of [ ... ]?" }
+        ]
+      }
+    ],
+    hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday, PROMPTS.personalInterest, PROMPTS.app]
   }
 ];

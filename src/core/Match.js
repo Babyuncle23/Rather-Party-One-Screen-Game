@@ -35,8 +35,8 @@ export class Match {
     // 1. Проверка: если комбо уже было в этой ИГРЕ — отменяем
     if (this.comboUsedThisGame) return;
     
-    // 2. Бросаем кубик: 50% шанс, что комбо зарядится
-    if (Math.random() > 0.5) return; 
+    // 2. Бросаем кубик: 60% шанс, что комбо зарядится
+    if (Math.random() > 0.6) return; 
 
     this.queuedComboWord = chosenWord.toUpperCase();
     this.queuedComboCategory = category;
