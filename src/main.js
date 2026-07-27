@@ -212,6 +212,7 @@ let isCustomHintActive = false;
 let shifter = null;
 let responderChoice = "";
 let activeSuffix = "";
+let activePrefix = "";
 
 let remainingGuessers = [];
 let totalGuessersThisRound = 0; 
@@ -912,6 +913,7 @@ currentQuestion = game.getRandomQuestion();
     questionHistory = [];
     currentFragmentsState = []; 
     activeSuffix = "";
+    activePrefix = "";
 const undoBtn = document.getElementById('undo-options-btn');
     if (undoBtn) {
       undoBtn.disabled = true;
@@ -1152,7 +1154,7 @@ submitWordsBtn.onclick = () => {
         return;
       }
 
-// --- ЛОГИКА ТРАНСФОРМАЦИИ СУФФИКСОВ (-ISM, -LAND, -VILLE, -FIELD) ---
+// --- ЛОГИКА ТРАНСФОРМАЦИИ ПРЕФИКСОВ И СУФФИКСОВ ---
       let finalW1 = w1;
       let finalW2 = w2;
 
@@ -1165,9 +1167,12 @@ submitWordsBtn.onclick = () => {
           });
       }
 
-      // Проверяем наличие любого из суффиксов
+      // Ищем префиксы и суффиксы
       const suffixes = ["ism", "land", "ville", "field"];
+      const prefixes = ["The Republic of "]; // С пробелом на конце
+      
       let detectedSuffix = "";
+      let detectedPrefix = "";
       
       for (const suf of suffixes) {
         if (rawQuestionStr.includes(`[ ... ]${suf}`)) {
@@ -1175,33 +1180,39 @@ submitWordsBtn.onclick = () => {
           break;
         }
       }
+      for (const pref of prefixes) {
+        if (rawQuestionStr.includes(`${pref}[ ... ]`)) {
+          detectedPrefix = pref;
+          break;
+        }
+      }
 
       if (detectedSuffix) {
-          activeSuffix = detectedSuffix.toUpperCase(); // Сохраняем, чтобы знать, сколько букв открыть
+          activeSuffix = detectedSuffix.toUpperCase();
           
           const processStem = (word, suf) => {
-             // Склеиваем слова через дефис
              let hyphenated = word.split(/\s+/).filter(Boolean).join('-');
-             
-             // Специфичные правила отсечения окончаний ТОЛЬКО для ISM
              if (suf === "ism") {
                  if (hyphenated.endsWith('Y')) hyphenated = hyphenated.slice(0, -1);
                  if (hyphenated.endsWith('IST')) hyphenated = hyphenated.slice(0, -3);
                  if (hyphenated.endsWith('E')) hyphenated = hyphenated.slice(0, -1);
              }
-             
-             // Для land, ville, field просто приклеиваем напрямую к результату (VIDEO-GAMESLAND)
              return hyphenated + suf.toUpperCase(); 
           };
           
           finalW1 = processStem(w1, detectedSuffix);
           finalW2 = processStem(w2, detectedSuffix);
           
-          // Вырезаем именно этот суффикс из самого шаблона вопроса
           const regex = new RegExp(`\\[ \\.\\.\\. \\]${detectedSuffix}`, 'g');
           currentQuestion.customCompiledText = rawQuestionStr.replace(regex, "[ ... ]");
+          
+      } else if (detectedPrefix) {
+          // Для префиксов мы просто запоминаем их для комбо
+          activePrefix = detectedPrefix.toUpperCase();
+          // ВАЖНО: Мы НЕ клеим префикс к finalW1/finalW2 (на кнопке будет просто SONY)
+          // И НЕ удаляем префикс из вопроса (в тексте останется The Republic of SONY)
       }
-      // ---------------------------------------------
+// ---------------------------------------------
 
       const tokens1 = finalW1.split(/\s+/).filter(Boolean);
       const tokens2 = finalW2.split(/\s+/).filter(Boolean);
@@ -1291,11 +1302,15 @@ function confirmResponderChoice(w1, w2, choice) {
     const plainQuestionText = getCompiledQuestionString("___", "___", false);
     game.saveRoundToHistory(plainQuestionText, currentHint, w1, w2, choice);
    
-// --- НОВАЯ ЛОГИКА ТРИГГЕРА КОМБО ---
+// --- НОВАЯ ЛОГИКА ТРИГГЕРА КОМБО С УЧЕТОМ ПРЕФИКСОВ ---
     if (currentQuestion.canTriggerCombo && typeof game.setQueuedCombo === 'function') {
-      game.setQueuedCombo(choice, currentQuestion.category); // Передаем выбор И категорию
+      let comboWord = choice;
+      if (activePrefix) {
+         comboWord = activePrefix + choice; // Склеиваем The Republic of + SONY только для памяти игры
+      }
+      game.setQueuedCombo(comboWord, currentQuestion.category);
     }
-    // -----------------------------------
+// -----------------------------------
 
     const fullQuestionText = getCompiledQuestionString(w1, w2, true);
     const formattedResultString = `<strong>${responder.name}</strong> chose ` +
