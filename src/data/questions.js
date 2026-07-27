@@ -2038,7 +2038,7 @@ export const questionsDatabase = [
     canTriggerCombo: true,
     text: "Would you rather",
     fragments: [
-      {
+{
         options: [
           { text: "start a business that only sells", type: "business", hints: [{ text: "Cheap item", isPlural: true, brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] }, PROMPTS.expensive, PROMPTS.techOld, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
           { text: "start a cult based around", type: "cult", hints: [PROMPTS.everyday, PROMPTS.techOld, { text: "Thing you find in a bathroom", brainstorm: ["Soap", "Shampoo", "Toothpaste", "Toilet paper"] }, { text: "Random thing in your room", isPlural: true, brainstorm: ["Books", "Cables", "Pillows", "Cups"] }] },
@@ -2058,7 +2058,6 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "and become famous, but everyone mocks you?" },
           { text: "and try to convince your friends to join?" }, 
           { text: "and bring it up in every conversation?" },
           { text: "?" }
