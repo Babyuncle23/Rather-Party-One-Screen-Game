@@ -3,81 +3,33 @@ import { WordShifter } from './core/WordShifter.js';
 import { ScreenController } from './ui/ScreenController.js';
 import { AudioManager } from './audio/AudioManager.js';
 import { SIMPLE_COLORS, SIMPLE_MATERIALS, SIMPLE_MOODS, SIMPLE_ERAS, SIMPLE_COUNTRIES, SIMPLE_CITIES, SIMPLE_FOODS, SIMPLE_SPORTS, SIMPLE_PROFESSIONS, SIMPLE_VEGETABLES, SIMPLE_FRUITS, SIMPLE_CLOTHES } from './data/nerfWords.js';
-import { SCENE_REGISTRY } from './data/scenes.js';
 
-
-export const PLAYER_EMOJIS = [
-  "🔥", "⚠️", "🦊", "🐼", "🐱", "🐶", "🐰", "🐯", "🐨", "🐷", "🐮", "🐵", "🐺", "🦁", "🐸", 
-  "👽", "🤖", "👶", "👴", "🥷", "🦸‍♂️", "🦹", "🧝‍♂️", "🧙‍♂️", "🤠", "😎", "🤓", "🥳", "🤡", 
-  "😡", "👺", "👹", "💀", "👻", "🍉", "🍓", "🥑", "🍍", "🥝", "🍊", "🍒", "🍋", "🍎", "🥭", 
-  "🥥", "🌸", "🌻", "🍄", "🌹", "🌝"
+const PLAYER_EMOJIS = [
+  "🔥", "⚠️",
+  "🦊", "🐼", "🐱", "🐶", "🐰", "🐯", "🐨", "🐷", "🐮", "🐵", "🐺", "🦁", "🦦", "🦥", "🐿️", "🦇", "🦝",
+  "🐧", "🦉", "🐦", "🦅", "🦆", "🐓", "🐤", "🦚", "🕊️", "🦜", "🦩",
+  "🐸", "🐙", "🐢", "🦎", "🦐", "🦀", "🦑", "🦈", "🦞", "🐳", "🐬", "🐡",
+  "🐝", "🕷️",
+  "🦕", "🦖", "🐉", "🦄",
+  "👶", "👴", "🥋", "🥷", "🦸‍♂️", "🦹", "🧝‍♂️", "🧙‍♂️",
+  "🤠", "😎", "🤓", "🥳", "🤡", "😡", "👺", "👹", "💀", "👻",
+  "👽", "🤖",
+  "🍉", "🍓", "🥑", "🍍", "🥝", "🍊", "🍒", "🍋", "🍎", "🥭", "🥥",
+  "🌸", "🌻", "🍄", "🌹", "🌝"
 ];
 
 const EMOJI_NAMES = {
   "🔥": "Fiery", "⚠️": "Dangerous",
-  "🦊": "Fox", "🐼": "Panda", "🐱": "Cat", "🐶": "Dog", "🐰": "Bunny", "🐯": "Tiger", "🐨": "Koala", "🐷": "Pig", "🐮": "Cow", "🐵": "Monkey", "🐺": "Wolf", "🦁": "Lion",
-  "🐸": "Frog",
-  "👶": "Baby", "👴": "Old Man", "🥷": "Ninja", "🦸‍♂️": "Super", "🦹": "Supervillain", "🧝‍♂️": "Elf", "🧙‍♂️": "Wizard",
+  "🦊": "Fox", "🐼": "Panda", "🐱": "Cat", "🐶": "Dog", "🐰": "Bunny", "🐯": "Tiger", "🐨": "Koala", "🐷": "Pig", "🐮": "Cow", "🐵": "Monkey", "🐺": "Wolf", "🦁": "Lion", "🦦": "Otter", "🦥": "Sloth", "🐿️": "Chipmunk", "🦇": "Bat", "🦝": "Raccoon",
+  "🐧": "Penguin", "🦉": "Owl", "🐦": "Bird", "🦅": "Eagle", "🦆": "Duck", "🐓": "Rooster", "🐤": "Baby Chick", "🦚": "Peacock", "🕊️": "Dove", "🦜": "Parrot", "🦩": "Flamingo",
+  "🐸": "Frog", "🐙": "Octopus", "🐢": "Turtle", "🦎": "Lizard", "🦐": "Shrimp", "🦀": "Crab", "🦑": "Squid", "🦈": "Shark", "🦞": "Lobster", "🐳": "Whale", "🐬": "Dolphin", "🐡": "Blowfish",
+  "🐝": "Bee", "🕷️": "Spider",
+  "🦕": "Dino", "🦖": "T-Rex", "🐉": "Dragon", "🦄": "Unicorn",
+  "👶": "Baby", "👴": "Old Man", "🥋": "Sensei", "🥷": "Ninja", "🦸‍♂️": "Super", "🦹": "Supervillain", "🧝‍♂️": "Elf", "🧙‍♂️": "Wizard",
   "🤠": "Cowboy", "😎": "Cool", "🤓": "Nerd", "🥳": "Party", "🤡": "Clown", "😡": "Angry", "👺": "Goblin", "👹": "Ogre", "💀": "Skeleton", "👻": "Ghost",
   "👽": "Alien", "🤖": "Robo",
   "🍉": "Watermelon", "🍓": "Strawberry", "🥑": "Avocado", "🍍": "Pineapple", "🥝": "Kiwi", "🍊": "Tangerine", "🍒": "Cherries", "🍋": "Lemon", "🍎": "Apple", "🥭": "Mango", "🥥": "Coconut",
   "🌸": "Flower", "🌻": "Sunflower", "🍄": "Mushroom", "🌹": "Rose", "🌝": "Moonface"
-};
-
-// Словарь координат глаз для эмодзи (x, y - сдвиг, s - масштаб)
-export const EYE_ANCHORS = {
-  "🐼": { x: -7, y: 8, s: 1.05 },
-  "👽": { x: 0, y: -10, s: 1.3 },
-  "🔥": { x: -2, y: 16, s: 0.65 },
-  "⚠️": { x: -1, y: 16, s: 0.5 },
-  "🦊": { x: -3, y: 22, s: 0.7 },
-  "🐱": { x: -4, y: 22, s: 0.75 },
-  "🐶": { x: -5, y: -5, s: 0.75 },
-  "🐰": { x: -4, y: 23, s: 0.65 },
-  "🐯": { x: -4, y: 2, s: 0.65 },
-  "🐨": { x: -4, y: 12, s: 0.75 },
-  "🐷": { x: -1, y: 16, s: 0.5 },
-  "🐮": { x: -1, y: 2, s: 0.5 },
-  "🐵": { x: -1, y: 2, s: 0.5 },
-"🐺": { x: -5, y: 14, s: 0.9 },
-"🦁": { x: -5, y: -1, s: 0.8 },
-"🐸": { x: -5, y: -31, s: 1.05 },
-"👽": { x: -5, y: 13, s: 1.05 },
-"🤖": { x: -4, y: 1, s: 1.05 },
-"👶": { x: -5, y: 24, s: 0.85 },
-"👴": { x: -5, y: 24, s: 0.85 },
-"👻": { x: -5, y: -31, s: 0.75 },
-"🥷": { x: 3, y: -29, s: 0.45 },
-"🦸‍♂️": { x: -2, y: -25, s: 0.5 },
-"🦹": { x: -2, y: -25, s: 0.5 },
-"🧝‍♂️": { x: -2, y: -25, s: 0.5 },
-"🧙‍♂️": { x: -6, y: 2, s: 0.6 },
-"🤠": { x: -4, y: -3, s: 0.75 },
-"😎": { x: -9, y: -24, s: 1.25 },
-"🤓": { x: -8, y: -7, s: 1.1 },
-"🥳": { x: -3, y: -7, s: 0.85 },
-"🤡": { x: -7, y: -7, s: 0.95 },
-"😡": { x: -6, y: 13, s: 0.95 },
-"👺": { x: -5, y: -15, s: 0.95 },
-"👹": { x: -5, y: 7, s: 0.85 },
-"💀": { x: -5, y: 13, s: 1 },
-"🍉": { x: 1, y: 23, s: 0.75 },
-"🍓": { x: 1, y: 23, s: 0.75 },
-"🥑": { x: 1, y: 23, s: 0.75 },
-"🍍": { x: 1, y: 23, s: 0.5 },
-"🥝": { x: -2, y: 1, s: 0.9 },
-"🍊": { x: 1, y: 11, s: 0.65 },
-"🍒": { x: -5, y: 44, s: 0.85 },
-"🍋": { x: 7, y: -1, s: 0.65 },
-"🍎": { x: -5, y: 14, s: 0.9 },
-"🥭": { x: 4, y: 4, s: 0.6 },
-"🥥": { x: 4, y: 4, s: 0.6 },
-"🌸": { x: 4, y: 4, s: 0.6 },
-"🌻": { x: 4, y: -17, s: 0.45 },
-"🍄": { x: 4, y: -17, s: 0.6 },
-"🌹": { x: 4, y: -21, s: 0.35 },
-"🌝": { x: -4, y: -14, s: 0.8 },
-  "default": { x: 0, y: 0, s: 1.0 } // Если эмодзи нет в словаре
 };
 
 function getDefaultEmojiForNewPlayer() {
@@ -91,13 +43,16 @@ function passPhoneWithSpeech(player, onConfirm, note, speakNote = false, exactSp
   const emojiName = EMOJI_NAMES[player.emoji] || "";
   let spokenText = "";
   
+  // Если передана конкретная короткая фраза - используем её
   if (exactSpeech) {
     spokenText = exactSpeech;
   } else {
     let randomPhrase = "";
     if (audioManager && audioManager.isRallyEnglish) {
+      // В режиме Finglish используем только одну каноничную фразу
       randomPhrase = `Pass the phone to ${emojiName} ${player.name}.`;
     } else {
+      // В английском оставляем разнообразие
       const handoverPhrases = [
         `Pass the phone to ${emojiName} ${player.name}.`,
         `Hand the device over to ${emojiName} ${player.name}.`,
@@ -131,6 +86,7 @@ function passPhoneWithSpeech(player, onConfirm, note, speakNote = false, exactSp
     audioManager.stopSpeech(); 
   }
   
+  // Обертка: при тапе по экрану прерываем голос и идём дальше
   const wrappedConfirm = () => {
     if (audioManager) audioManager.stopSpeech();
     onConfirm();
@@ -143,6 +99,7 @@ let game = null;
 let screens = null;
 let audioManager = null;
 
+// --- ЛОГИКА РАСПОЗНАВАНИЯ СВАЙПОВ И АНИМАЦИИ ---
 let touchStartX = 0;
 let touchStartY = 0;
 let currentSwipeDeltaX = 0;
@@ -157,6 +114,7 @@ document.addEventListener('touchstart', (e) => {
     isSwiping = true;
     currentSwipeDeltaX = 0;
     
+    // Отключаем CSS-анимации возврата, чтобы кнопка четко следовала за пальцем
     const btn1 = document.getElementById('guess-word-1');
     const btn2 = document.getElementById('guess-word-2');
     if(btn1) btn1.style.transition = 'none';
@@ -171,6 +129,7 @@ document.addEventListener('touchmove', (e) => {
     const deltaX = touchCurrentX - touchStartX;
     const deltaY = touchCurrentY - touchStartY;
 
+    // Если движение больше похоже на вертикальный скролл, отменяем свайп
     if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 20) {
         resetSwipeVisuals();
         isSwiping = false;
@@ -181,22 +140,29 @@ document.addEventListener('touchmove', (e) => {
     const btn1 = document.getElementById('guess-word-1');
     const btn2 = document.getElementById('guess-word-2');
     
-    const maxDrag = 35; 
+    // Настройки физики свайпа
+    const maxDrag = 35; // Максимальное смещение кнопки
     const pullDistance = Math.abs(deltaX);
-    const glowIntensity = Math.min(0.9, 0.2 + (pullDistance / 100)); 
-    const glowRadius = pullDistance * 0.4; 
+    
+    // Прогрессивное свечение: растет по мере оттягивания свайпа
+    const glowIntensity = Math.min(0.9, 0.2 + (pullDistance / 100)); // Прозрачность от 0.2 до 0.9
+    const glowRadius = pullDistance * 0.4; // Радиус размытия плавно увеличивается
 
     if (deltaX < -15 && btn1) { 
+        // Тянем ВЛЕВО (выбираем первую кнопку)
         const pull = Math.max(-maxDrag, deltaX * 0.4);
         btn1.style.transform = `translateX(${pull}px) scale(0.98)`;
         btn1.style.boxShadow = `0 0 ${10 + glowRadius}px rgba(55, 255, 226, ${glowIntensity})`;
         btn1.style.borderColor = `rgba(55, 255, 226, ${glowIntensity})`;
+        // Подсвечиваем сами буквы и прочерки
         btn1.style.textShadow = `0 0 ${5 + glowRadius * 0.5}px rgba(55, 255, 226, ${glowIntensity + 0.1})`;
     } else if (deltaX > 15 && btn2) { 
+        // Тянем ВПРАВО (выбираем вторую кнопку)
         const pull = Math.min(maxDrag, deltaX * 0.4);
         btn2.style.transform = `translateX(${pull}px) scale(0.98)`;
         btn2.style.boxShadow = `0 0 ${10 + glowRadius}px rgba(55, 255, 226, ${glowIntensity})`;
         btn2.style.borderColor = `rgba(55, 255, 226, ${glowIntensity})`;
+        // Подсвечиваем сами буквы и прочерки
         btn2.style.textShadow = `0 0 ${5 + glowRadius * 0.5}px rgba(55, 255, 226, ${glowIntensity + 0.1})`;
     }
 }, { passive: true });
@@ -205,7 +171,7 @@ document.addEventListener('touchend', (e) => {
     if (!isSwiping) return;
     isSwiping = false;
     
-    const threshold = 75; 
+    const threshold = 75; // Комфортный порог: сколько пикселей нужно протянуть для выбора
     
     if (currentSwipeDeltaX < -threshold) {
         makeGuess(shifter.orig1);
@@ -213,6 +179,7 @@ document.addEventListener('touchend', (e) => {
         makeGuess(shifter.orig2);
     }
     
+    // Плавно возвращаем кнопки на место
     resetSwipeVisuals();
 }, { passive: true });
 
@@ -263,8 +230,6 @@ let oralHintUsedThisTurn = false;
 
 document.addEventListener("DOMContentLoaded", () => {
   try {
-    if (!document.getElementById('setup-screen')) return;
-
     audioManager = new AudioManager();
     screens = new ScreenController();
     screens.setupAudioControl(audioManager);
@@ -274,11 +239,16 @@ document.addEventListener("DOMContentLoaded", () => {
       srToggle.onchange = (e) => audioManager.setScreenReaderMode(e.target.checked);
     }
 
-    const rallyToggle = document.getElementById('rally-english-toggle');
+const rallyToggle = document.getElementById('rally-english-toggle');
     if (rallyToggle) {
       rallyToggle.checked = false;
+      
       rallyToggle.onchange = (e) => {
+        // Просто включаем режим мгновенно, без алертов и экранов загрузки.
         audioManager.setRallyEnglishMode(e.target.checked);
+        
+        // Тихо "пинаем" синтезатор в фоне, чтобы он начал подтягивать 
+        // финский голос к тому моменту, как мы нажмем Start Game.
         if (e.target.checked && window.speechSynthesis) {
           window.speechSynthesis.getVoices();
         }
@@ -291,6 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupPsychologicalSafetySystem(); 
     
     updateStatsBarVisibility(); 
+
     setupVideoTutorial();
 
     const initAudioPreload = () => {
@@ -303,7 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   } catch (error) {
     console.error("Initialization error:", error);
-    if (screens) screens.showAlert("Error", "UI Style Injection failed: " + error.message);
+    screens.showAlert("Error", "UI Style Injection failed: " + error.message);
   }
 });
 
@@ -380,11 +351,11 @@ function setupInitialEventListeners() {
     game = new Match(temporaryPlayersList, roundsInput);
     window.game = game; 
    
-    const safetyBtn = document.getElementById('safety-global-btn');
+const safetyBtn = document.getElementById('safety-global-btn');
     if (safetyBtn) safetyBtn.style.display = 'block';
    
     const safetyTip = document.getElementById('safety-tip-text');
-    if (safetyTip) safetyTip.style.display = 'none'; 
+    if (safetyTip) safetyTip.style.display = 'none'; // Прячем курсив во время игры
 
     passPhoneWithSpeech(
       game.players[game.pickerIndex],
@@ -462,14 +433,17 @@ function renderEmojiPickerGrid(selectedEmoji) {
     tile.innerText = emoji;
     tile.title = EMOJI_NAMES[emoji] ? `${EMOJI_NAMES[emoji]} (${emoji})` : emoji;
     if (emoji === selectedEmoji) tile.classList.add('selected');
-    tile.onclick = (e) => {
+tile.onclick = (e) => {
       e.stopPropagation();
       if (activeEmojiPickerIndex === null) return;
       temporaryPlayersList[activeEmojiPickerIndex].emoji = emoji;
       renderPlayerBoxes();
-      if (audioManager) audioManager.play('click'); 
-      closeEmojiPicker(); 
+      
+      // ДОБАВЬ ЭТИ ДВЕ СТРОЧКИ:
+      if (audioManager) audioManager.play('click'); // Воспроизводим звук клика
+      closeEmojiPicker(); // Сразу закрываем окно!
     };
+    
     grid.appendChild(tile);
   });
 }
@@ -519,16 +493,16 @@ function setupHelpPanel() {
     if (indexDisplay) indexDisplay.innerText = `Step ${currentHelpStep} / 3`;
   }
 
-  helpToggle.onclick = () => {
+helpToggle.onclick = () => {
     const isOpen = helpPanel.style.display === 'block';
     if (!isOpen) {
       currentHelpStep = determineCurrentStep();
       renderHelpCarousel();
       helpPanel.style.display = 'block';
-      helpToggle.innerText = '🔼 Hide'; 
+      helpToggle.innerText = '🔼 Hide'; // Изменили тут
     } else {
       helpPanel.style.display = 'none';
-      helpToggle.innerText = 'How to play?'; 
+      helpToggle.innerText = 'How to play?'; // Изменили тут
     }
     audioManager.play('click');
   };
@@ -546,14 +520,15 @@ function setupHelpPanel() {
     };
   }
 
-  helpPanel.style.display = 'none';
-  helpToggle.innerText = 'How to play?'; 
+helpPanel.style.display = 'none';
+  helpToggle.innerText = 'How to play?'; // Изменили тут
   updateHelpTargetText();
 }
 
 function setupGlobalButtonSounds() {
   document.addEventListener('click', (e) => {
     const button = e.target.closest('button');
+    // Добавляем проверку, чтобы звук работал и при тапе по экранам передачи/алертов:
     const isTapScreen = e.target.closest('#pass-screen') || e.target.closest('#custom-alert-modal');
     
     if (button || isTapScreen) {
@@ -594,6 +569,7 @@ function setupPsychologicalSafetySystem() {
 
   const closeSafety = () => { modal.style.display = 'none'; };
   
+  // Безопасная привязка кликов: вешаем событие, только если кнопка есть в HTML
   if (closeBtn1) closeBtn1.onclick = () => { closeSafety(); resetSafetyButtonsState(scrOptions); };
   if (closeBtn2) closeBtn2.onclick = () => { closeSafety(); resetSafetyButtonsState(scrOptions); };
   if (resumeMatchBtn) resumeMatchBtn.onclick = () => { closeSafety(); resetSafetyButtonsState(scrOptions); };
@@ -753,9 +729,9 @@ function executeSafetyAction(action, scrOptions, scrTalk, modal, minutes) {
       "🛑 Match Stopped", 
       `The session has been explicitly halted. Current player scores have been preserved successfully:\n\n${progressReport}\n\nReturning to the main lobby.`,
       () => {
-        const safetyTip = document.getElementById('safety-tip-text');
+const safetyTip = document.getElementById('safety-tip-text');
         if (safetyTip) {
-            safetyTip.style.display = 'block'; 
+            safetyTip.style.display = 'block'; // Возвращаем видимость на главном экране
             safetyTip.innerText = "Recommended to read before starting.";
         }
         game = null;
@@ -764,7 +740,7 @@ function executeSafetyAction(action, scrOptions, scrTalk, modal, minutes) {
       }
     );
 
-  } else if (action === 'stop-delayed') {
+} else if (action === 'stop-delayed') {
     modal.style.display = 'none';
     const delayMs = minutes * 60 * 1000;
    
@@ -931,14 +907,14 @@ function initRound() {
       roundScoresSnapshot = game.players.map(p => ({ id: p.id, gold: p.gold }));
     }
 
-    currentQuestion = game.getRandomQuestion();
+currentQuestion = game.getRandomQuestion();
     currentQuestion.customCompiledText = null;
     fragmentsHistory = [];
     questionHistory = [];
     currentFragmentsState = []; 
     activeSuffix = "";
     activePrefix = "";
-    const undoBtn = document.getElementById('undo-options-btn');
+const undoBtn = document.getElementById('undo-options-btn');
     if (undoBtn) {
       undoBtn.disabled = true;
       undoBtn.onclick = () => {
@@ -946,7 +922,7 @@ function initRound() {
           const previousState = questionHistory.pop();
           currentQuestion = previousState.question;
           currentFragmentsState = previousState.fragments;
-          currentQuestion.customCompiledText = previousState.customText; 
+          currentQuestion.customCompiledText = previousState.customText; // <-- ДОБАВИТЬ ЭТУ СТРОКУ
           renderInteractiveQuestion();
           updatePickerHints();
           audioManager.play('click');
@@ -973,6 +949,8 @@ function initRound() {
    
     updateHelpTargetText();
 
+    // --- ЛОГИКА ТРЕХЗОННОГО РЕДАКТИРОВАНИЯ ---
+// --- ОБНОВЛЕННАЯ ЛОГИКА РЕДАКТИРОВАНИЯ ---
     const editToggleBtn = document.getElementById('edit-question-toggle-btn');
     const editBlock = document.getElementById('edit-question-block');
     const editPart1 = document.getElementById('edit-q-part1');
@@ -991,6 +969,7 @@ function initRound() {
       const toggleEdit = () => {
         const isEditing = editBlock.style.display === 'block';
         if (!isEditing) {
+          // Открываем режим редактирования
           const rawQuestion = getCompiledQuestionString("[ ... ]", "[ ... ]", false);
           const parts = rawQuestion.split("[ ... ]");
           editPart1.value = (parts[0] || "").trim();
@@ -1000,8 +979,9 @@ function initRound() {
           editBlock.style.display = 'block';
           secretTextDisplay.style.display = 'none';
           if (btnGroup) btnGroup.style.display = 'none';
-          editToggleBtn.innerHTML = "✖"; 
+          editToggleBtn.innerHTML = "✖"; // Можно заменить иконку на крестик при открытии
         } else {
+          // Закрываем режим редактирования
           editBlock.style.display = 'none';
           secretTextDisplay.style.display = 'block';
           if (btnGroup) btnGroup.style.display = 'flex';
@@ -1010,7 +990,7 @@ function initRound() {
       };
 
       editToggleBtn.onclick = toggleEdit;
-      editCancelBtn.onclick = toggleEdit; 
+      editCancelBtn.onclick = toggleEdit; // Кнопка Cancel теперь просто вызывает ту же функцию закрытия
 
       editSaveBtn.onclick = () => {
         const p1 = editPart1.value.trim();
@@ -1020,18 +1000,18 @@ function initRound() {
         currentQuestion.customCompiledText = `${p1} [ ... ] ${p2} [ ... ] ${p3}`;
         renderInteractiveQuestion();
         
-        toggleEdit(); 
+        toggleEdit(); // Автоматически закрываем после сохранения
       };
     }
 
-    const rerollOptionsBtn = document.getElementById('reroll-options-btn');
+const rerollOptionsBtn = document.getElementById('reroll-options-btn');
     if (rerollOptionsBtn) {
       rerollOptionsBtn.onclick = () => {
         if (currentQuestion && currentFragmentsState.length > 0) {
           questionHistory.push({
             question: currentQuestion,
             fragments: [...currentFragmentsState],
-            customText: currentQuestion.customCompiledText
+            customText: currentQuestion.customCompiledText // <-- ДОБАВИТЬ ЭТУ СТРОКУ
           });
           const undoBtn = document.getElementById('undo-options-btn');
           if (undoBtn) undoBtn.disabled = false;
@@ -1039,7 +1019,7 @@ function initRound() {
         
         game.shuffledQuestions.unshift(currentQuestion);
         currentQuestion = game.getRandomQuestion();
-        currentQuestion.customCompiledText = null; 
+        currentQuestion.customCompiledText = null; // <-- ДОБАВИТЬ ЭТУ СТРОКУ
         currentFragmentsState = [];
         randomizeCurrentFragments();
         updatePickerHints();
@@ -1085,15 +1065,16 @@ function startResponderPhase() {
    
     document.getElementById('responder-name').innerText = `${responder.emoji} ${responder.name}`;
     
-    const in1 = document.getElementById('word-input-1');
+const in1 = document.getElementById('word-input-1');
     const in2 = document.getElementById('word-input-2');
 
-    document.getElementById('displayed-hint').innerText = currentHint.toUpperCase();
+document.getElementById('displayed-hint').innerText = currentHint.toUpperCase();
     
     in1.placeholder = "First answer";
     in2.placeholder = "Second answer";
 
-    const helperToggle = document.getElementById('responder-helper-toggle');
+const helperToggle = document.getElementById('responder-helper-toggle');
+    // Ищем коробку по ID, а если её нет — берем родителя кнопки
     const helperBox = document.getElementById('responder-helper-box') || (helperToggle ? helperToggle.parentElement : null);
     const helperContent = document.getElementById('responder-helper-content');
     const helperText = document.getElementById('responder-helper-text');
@@ -1101,7 +1082,7 @@ function startResponderPhase() {
     if (helperToggle && helperContent && helperText) {
       if (helperBox) helperBox.style.display = 'none';
       helperContent.style.display = 'none';
-      helperToggle.innerText = '💡 Ideas'; 
+      helperToggle.innerText = '💡 Ideas'; // Короткий текст по умолчанию
      
       let ideas = [];
       if (!isCustomHintActive && currentHintObject && typeof currentHintObject === 'object' && Array.isArray(currentHintObject.brainstorm)) {
@@ -1109,11 +1090,13 @@ function startResponderPhase() {
       }
 
       if (ideas.length > 0) {
+        // Берем 4 случайные идеи из базы
         const randomIdeas = [...ideas].sort(() => Math.random() - 0.5).slice(0, 4);
         helperText.innerText = randomIdeas.join(', ');
         
         if (helperBox) helperBox.style.display = 'block';
        
+        // Вешаем логику сворачивания/разворачивания
         helperToggle.onclick = (e) => {
           e.stopPropagation();
           const isCollapsed = helperContent.style.display === 'none';
@@ -1129,7 +1112,7 @@ function startResponderPhase() {
       }
     }
    
-    const counter1 = document.getElementById('word-counter-1');
+const counter1 = document.getElementById('word-counter-1');
     const counter2 = document.getElementById('word-counter-2');
    
     in1.value = ""; in2.value = "";
@@ -1162,7 +1145,7 @@ function startResponderPhase() {
     const choiceBlock = document.getElementById('responder-choice-block');
     choiceBlock.style.display = 'none';
    
-    submitWordsBtn.onclick = () => {
+submitWordsBtn.onclick = () => {
       const w1 = in1.value.trim().toUpperCase();
       const w2 = in2.value.trim().toUpperCase();
      
@@ -1171,9 +1154,11 @@ function startResponderPhase() {
         return;
       }
 
+// --- ЛОГИКА ТРАНСФОРМАЦИИ ПРЕФИКСОВ И СУФФИКСОВ ---
       let finalW1 = w1;
       let finalW2 = w2;
 
+      // Получаем сырой текст текущего вопроса
       let rawQuestionStr = currentQuestion.customCompiledText || "";
       if (!rawQuestionStr) {
           rawQuestionStr = currentQuestion.text + " ";
@@ -1182,8 +1167,9 @@ function startResponderPhase() {
           });
       }
 
+      // Ищем префиксы и суффиксы
       const suffixes = ["ism", "land", "ville", "field"];
-      const prefixes = ["The Republic of "]; 
+      const prefixes = ["The Republic of "]; // С пробелом на конце
       
       let detectedSuffix = "";
       let detectedPrefix = "";
@@ -1221,14 +1207,18 @@ function startResponderPhase() {
           currentQuestion.customCompiledText = rawQuestionStr.replace(regex, "[ ... ]");
           
       } else if (detectedPrefix) {
+          // Для префиксов мы просто запоминаем их для комбо
           activePrefix = detectedPrefix.toUpperCase();
+          // ВАЖНО: Мы НЕ клеим префикс к finalW1/finalW2 (на кнопке будет просто SONY)
+          // И НЕ удаляем префикс из вопроса (в тексте останется The Republic of SONY)
       }
+// ---------------------------------------------
 
       const tokens1 = finalW1.split(/\s+/).filter(Boolean);
       const tokens2 = finalW2.split(/\s+/).filter(Boolean);
       const isMultiWord = tokens1.length > 1 || tokens2.length > 1;
 
-      const hasSimpleColor = tokens1.some(t => SIMPLE_COLORS.includes(t)) || tokens2.some(t => SIMPLE_COLORS.includes(t));
+const hasSimpleColor = tokens1.some(t => SIMPLE_COLORS.includes(t)) || tokens2.some(t => SIMPLE_COLORS.includes(t));
       const hasSimpleMaterialBoth = tokens1.some(t => SIMPLE_MATERIALS.includes(t)) && tokens2.some(t => SIMPLE_MATERIALS.includes(t));
       const hasSimpleMoodBoth = tokens1.some(t => SIMPLE_MOODS.includes(t)) && tokens2.some(t => SIMPLE_MOODS.includes(t));
       const hasSimpleEra = tokens1.some(t => SIMPLE_ERAS.includes(t)) || tokens2.some(t => SIMPLE_ERAS.includes(t));
@@ -1250,11 +1240,13 @@ function startResponderPhase() {
         shouldNerf = false;
       }
 
-      shifter = new WordShifter(finalW1, finalW2, shouldNerf, isMultiWord);
+shifter = new WordShifter(finalW1, finalW2, shouldNerf, isMultiWord);
      
+// --- АВТО-ОТКРЫТИЕ СУФФИКСА ---
       if (activeSuffix) {
           const revealSuffix = (word, openedSet, suf) => {
               if (word.endsWith(suf)) {
+                  // Динамически открываем нужное количество букв с конца
                   for (let i = 1; i <= suf.length; i++) {
                       openedSet.add(word.length - i);
                   }
@@ -1263,7 +1255,9 @@ function startResponderPhase() {
           revealSuffix(finalW1, shifter.openedIndices1, activeSuffix);
           revealSuffix(finalW2, shifter.openedIndices2, activeSuffix);
       }
+      // -------------------------
 
+      // БЛОКИРОВКА ПОЛЕЙ И ОБНОВЛЕНИЕ СЧЕТЧИКОВ
       in1.disabled = true;
       in2.disabled = true;
 
@@ -1303,17 +1297,20 @@ function confirmResponderChoice(w1, w2, choice) {
   try {
     responderChoice = choice;
     const responder = game.players[game.getResponderIndex()];
+    const loserWord = (choice === w1) ? w2 : w1;
    
     const plainQuestionText = getCompiledQuestionString("___", "___", false);
     game.saveRoundToHistory(plainQuestionText, currentHint, w1, w2, choice);
    
+// --- НОВАЯ ЛОГИКА ТРИГГЕРА КОМБО С УЧЕТОМ ПРЕФИКСОВ ---
     if (currentQuestion.canTriggerCombo && typeof game.setQueuedCombo === 'function') {
       let comboWord = choice;
       if (activePrefix) {
-         comboWord = activePrefix + choice; 
+         comboWord = activePrefix + choice; // Склеиваем The Republic of + SONY только для памяти игры
       }
       game.setQueuedCombo(comboWord, currentQuestion.category);
     }
+// -----------------------------------
 
     const fullQuestionText = getCompiledQuestionString(w1, w2, true);
     const formattedResultString = `<strong>${responder.name}</strong> chose ` +
@@ -1342,10 +1339,11 @@ function setupNextGuesser() {
       return;
     }
    
-    currentGuesserIndex = remainingGuessers.shift();
+currentGuesserIndex = remainingGuessers.shift();
     oralHintUsedThisTurn = false;
     shifter = new WordShifter(shifter.orig1, shifter.orig2, shifter.isNerfed, shifter.isMultiWord);
     
+// --- АВТО-ОТКРЫТИЕ СУФФИКСА ПРИ СМЕНЕ ИГРОКА ---
     if (activeSuffix) {
         const revealSuffix = (word, openedSet, suf) => {
             if (word.endsWith(suf)) {
@@ -1357,23 +1355,26 @@ function setupNextGuesser() {
         revealSuffix(shifter.orig1, shifter.openedIndices1, activeSuffix);
         revealSuffix(shifter.orig2, shifter.openedIndices2, activeSuffix);
     }
+    // ------------------------------------------
 
     revealCount = 0;
    
     window.scrollTo({ top: 0, behavior: 'instant' });
     const responderName = game.players[game.getResponderIndex()].name;
     
+    // Получаем данные текущего угадывающего
     const guesser = game.players[currentGuesserIndex];
     const emojiName = EMOJI_NAMES[guesser.emoji] || "";
 
+    // Формируем строгую короткую фразу для озвучки
     const shortSpeech = `Pass the phone to ${emojiName} ${guesser.name}, and ${responderName} can watch.`;
 
     passPhoneWithSpeech(
       guesser,
       startGuesserPhase,
       `Only this player should hold the phone, but ${responderName} can watch!`,
-      false,       
-      shortSpeech  
+      false,       // Отключаем чтение визуальной заметки
+      shortSpeech  // Передаём нашу короткую фразу
     );
   } catch (err) {
     screens.showAlert("Error", "Error inside setupNextGuesser: " + err.message);
@@ -1402,14 +1403,16 @@ function startGuesserPhase() {
     const btn1 = document.getElementById('guess-word-1');
     const btn2 = document.getElementById('guess-word-2');
    
-    if (btn1 && shifter) {
-      btn1.onclick = () => {
+if (btn1 && shifter) {
+      btn1.onclick = (e) => {
+        // Если палец сдвинулся больше чем на 15 пикселей (был свайп или скролл) — блокируем обычный клик
         if (typeof currentSwipeDeltaX !== 'undefined' && Math.abs(currentSwipeDeltaX) > 15) return; 
         makeGuess(shifter.orig1);
       };
     }
     if (btn2 && shifter) {
-      btn2.onclick = () => {
+      btn2.onclick = (e) => {
+        // Аналогичная защита для второй кнопки
         if (typeof currentSwipeDeltaX !== 'undefined' && Math.abs(currentSwipeDeltaX) > 15) return; 
         makeGuess(shifter.orig2);
       };
@@ -1472,18 +1475,22 @@ function useReveal(revealType, cost) {
 
 function updateGuesserUI() {
   try {
-    const progressEl = document.getElementById('guesser-round-progress');
+const progressEl = document.getElementById('guesser-round-progress');
     if (progressEl && game) {
       const currentGuesserStep = totalGuessersThisRound - remainingGuessers.length;
       let elements = [];
       
+      // Показываем счетчик раундов только если их больше 1
       if (game.totalRounds > 1) {
         elements.push(`<span>ROUND ${game.currentRound}/${game.totalRounds}</span>`);
       }
+      
+      // Показываем счетчик угадывающих только если игроков больше 2
       if (game.players.length > 2) {
         elements.push(`<span>GUESSER ${currentGuesserStep} OF ${totalGuessersThisRound}</span>`);
       }
       
+      // Если есть что показывать — выводим на экран, если нет — скрываем контейнер
       if (elements.length > 0) {
         progressEl.innerHTML = elements.join(' <span style="color: rgba(255,255,255,0.15)">|</span> ');
         progressEl.style.display = 'flex';
@@ -1494,7 +1501,7 @@ function updateGuesserUI() {
     }
 
     const masks = shifter.getMaskedWords();
-    const hintEl = document.getElementById('guesser-displayed-hint');
+const hintEl = document.getElementById('guesser-displayed-hint');
     const scoreEl = document.getElementById('potential-score');
     const balanceEl = document.getElementById('gold-balance');
     const guess1Btn = document.getElementById('guess-word-1');
@@ -1504,6 +1511,7 @@ function updateGuesserUI() {
     if (scoreEl) scoreEl.innerText = `Win: +${FIXED_REWARD} points`;
     if (balanceEl) balanceEl.innerText = `${game.players[currentGuesserIndex].name}'s score: ${game.players[currentGuesserIndex].gold}`;
 
+    // Разбиваем вопрос на 3 части (До 1 ответа, между, и после 2 ответа)
     const rawQuestion = getCompiledQuestionString("[ ... ]", "[ ... ]", false);
     const parts = rawQuestion.split("[ ... ]");
     
@@ -1515,8 +1523,10 @@ function updateGuesserUI() {
     if (part2El) part2El.innerText = parts[1] ? parts[1].trim() : "";
     if (part3El) part3El.innerText = parts[2] ? parts[2].trim() : "";
 
-    if (guess1Btn) guess1Btn.innerHTML = `<div class="masked-wrapper" style="margin: 0; justify-content: center;">${masks.w1}</div>`;
+// Вставляем маски с кружочками-номерами
+   if (guess1Btn) guess1Btn.innerHTML = `<div class="masked-wrapper" style="margin: 0; justify-content: center;">${masks.w1}</div>`;
     if (guess2Btn) guess2Btn.innerHTML = `<div class="masked-wrapper" style="margin: 0; justify-content: center;">${masks.w2}</div>`;
+
 
     const randBtn = document.getElementById('ability-extra-rand-btn');
     const lengthBtn = document.getElementById('ability-length-btn');
@@ -1534,9 +1544,10 @@ function updateGuesserUI() {
     
     updateStatsBarVisibility();
 
-    const renderAbility = (btn, label, icon) => {
+const renderAbility = (btn, label, icon, desc) => {
       if (!btn) return;
       const row = btn.closest('.ability-row');
+      const isUsed = revealCount >= 2;
 
       btn.innerHTML = `
         <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 4px;">
@@ -1565,7 +1576,7 @@ function updateGuesserUI() {
       }
     };
 
-    renderAbility(randBtn, 'Open random letters', '🎲');
+renderAbility(randBtn, 'Open random letters', '🎲');
     renderAbility(lengthBtn, "Show words' length and first letters", '📏');
 
     const abilitiesContainer = document.querySelector('.abilities-list-vertical');
@@ -1606,87 +1617,6 @@ function updateGuesserUI() {
   }
 }
 
-export function getSmartProp(word) {
-  if (!word) return null;
-  const w = word.toUpperCase();
-  if (w.includes("DOG") || w.includes("PUPPY")) return "🐶";
-  if (w.includes("CAT") || w.includes("KITTEN")) return "🐱";
-  if (w.includes("HORSE") || w.includes("PONY")) return "🐴";
-  if (w.includes("BIRD") || w.includes("EAGLE") || w.includes("PARROT")) return "🐦";
-  if (w.includes("FISH") || w.includes("SHARK")) return "🐟";
-  if (w.includes("MONEY") || w.includes("CASH") || w.includes("DOLLAR") || w.includes("BANK")) return "💸";
-  if (w.includes("CAR") || w.includes("DRIVE")) return "🚗";
-  if (w.includes("HOUSE") || w.includes("HOME")) return "🏠";
-  if (w.includes("APPLE")) return "🍎";
-  if (w.includes("BOOK") || w.includes("READ")) return "📖";
-  if (w.includes("PHONE") || w.includes("APP")) return "📱";
-  return null;
-}
-
-export function generateVisualScene(isCorrect, activeTypes, involvesPicker, responderEmoji, pickerEmoji, guessWord) {
-  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  if (conn && (conn.saveData || conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g')) {
-    return ''; 
-  }
-
-  const smartProp = getSmartProp(guessWord);
-
-  let activeSceneKey = activeTypes.find(t => SCENE_REGISTRY[t]);
-  if (!activeSceneKey) return '';
-  const sceneData = SCENE_REGISTRY[activeSceneKey];
-
-  let bgClass = "stars-bg";
-  let bgStyle = "background-color: transparent;";
-  
-  if (sceneData.bg && (sceneData.bg.url || sceneData.bg.local)) {
-    let bgUrl = sceneData.bg.local ? `src/ui/${sceneData.bg.local}` : sceneData.bg.url;
-    let bgSize = sceneData.bg.cover ? 'cover' : `${sceneData.bg.s}%`;
-    bgStyle = `background-image: url('${bgUrl}'); background-position: ${sceneData.bg.x}% ${sceneData.bg.y}%; background-size: ${bgSize};`;
-    bgClass = ""; // Убираем звезды, если есть картинка
-  }
-
-let elementsHtml = sceneData.elements.map((el, index) => {
-    let renderContent = String(el.content);
-    renderContent = renderContent.replace(/\[RESPONDER\]/g, responderEmoji);
-    renderContent = renderContent.replace(/\[PICKER\]/g, pickerEmoji);
-    renderContent = renderContent.replace(/\[SMART_PROP\]/g, smartProp || '');
-    renderContent = renderContent.replace(/\[GUESS_WORD\]/g, guessWord || '');
-
-    let finalS = el.s;
-    let extraStyles = "";
-    
-    if (el.type === 'text') {
-      if (!el.fixedText && renderContent.length > 8) {
-        finalS = el.s * Math.max(0.25, 8 / renderContent.length);
-      }
-      if (el.fixedText) {
-        extraStyles += "white-space: nowrap; max-width: none; ";
-      }
-    }
-
-    let overlayHtml = '';
-    if (el.emo && el.emo.enabled) {
-      const anchor = EYE_ANCHORS[renderContent] || EYE_ANCHORS["default"];
-      const ovX = anchor.x;
-      const ovY = anchor.y;
-      const ovS = anchor.s; 
-
-      const winOverlay = `<img src="src/ui/acostajnalec-sunglasses-5040012_1280.png" style="width: 1.15em; height: auto; object-fit: contain;">`;
-      const loseOverlay = `<div style="transform: translate(0.45em, 0.05em);"><span style="font-size: 0.35em; text-shadow: 0 2px 4px rgba(0,0,0,0.4); display: inline-block; animation: dropTear 1.2s infinite ease-in;">💧</span></div>`;
-      const overlayEmoji = isCorrect ? winOverlay : loseOverlay;
-
-      overlayHtml = `<div style="position: absolute; left: 50%; top: 50%; display: flex; justify-content: center; align-items: center; transform: translate(calc(-50% + ${ovX}%), calc(-50% + ${ovY}%)) scale(${ovS}); z-index: 4; pointer-events: none;">${overlayEmoji}</div>`;
-    }
-
-    let textStyles = el.type === 'text' ? `color: ${el.color || '#ffffff'}; font-family: ${el.font || 'inherit'}; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;` : '';
-    
-    let filterStyle = el.glow ? 'filter: drop-shadow(0 0 15px var(--positive));' : 'filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));';
-
-    return `<div class="scene-element ${el.anim}" style="--x: ${el.x}%; --y: ${el.y}%; --s: ${finalS}; --r: ${el.r}deg; --flip: ${el.flipX ? -1 : 1}; z-index: ${index + 2}; ${textStyles} ${filterStyle} ${extraStyles}">${renderContent}${overlayHtml}</div>`;
-  }).join('');
-
-  return `<div class="alert-visual-scene ${bgClass}" style="${bgStyle} border-bottom-color: ${isCorrect ? 'var(--positive)' : 'var(--danger)'};">${elementsHtml}</div>`;
-}
 function makeGuess(word) {
   try {
     const guesser = game.players[currentGuesserIndex];
@@ -1695,24 +1625,6 @@ function makeGuess(word) {
    
     guesser.lastGuessCorrect = isCorrect;
 
-const activeTypes = [];
-    if (currentQuestion) activeTypes.push(currentQuestion.id.toString());
-if (currentQuestion && currentQuestion.fragments) {
-      currentQuestion.fragments.forEach((frag, i) => {
-        const stateIndex = currentFragmentsState[i];
-        if (stateIndex !== undefined && stateIndex !== -1) {
-          const selectedOpt = frag.options[stateIndex];
-          
-          if (selectedOpt && selectedOpt.type) {
-            activeTypes.push(selectedOpt.type);
-          }
-          // ДОБАВЛЕНО: Теперь игра подхватывает визуальные сцены
-          if (selectedOpt && selectedOpt.scene) {
-            activeTypes.push(selectedOpt.scene);
-          }
-        }
-      });
-    }
     if (isCorrect) {
       guesser.gold += FIXED_REWARD;
       animateGoldChange(FIXED_REWARD, true);
@@ -1721,22 +1633,17 @@ if (currentQuestion && currentQuestion.fragments) {
       audioManager.play('lose', audioManager.getVolume() * 0.75);
     }
 
-    const lastRoundData = game.history[game.history.length - 1];
+const lastRoundData = game.history[game.history.length - 1];
+    // Берем красивую строку с HTML (с жирным шрифтом и цветами), а не голый текст
     const formattedSentence = lastRoundData.resultSentence; 
+
     const statusIcon = isCorrect ? "🎉 CORRECT!" : "❌ WRONG!";
     const finalWallet = guesser.gold;
     const guessColor = isCorrect ? 'var(--positive)' : 'var(--danger)';
 
-    const responder = game.players[game.getResponderIndex()];
-    const picker = game.players[game.pickerIndex];
-    const rawText = currentQuestion.customCompiledText || currentQuestion.text || "";
-    const involvesPicker = rawText.includes('[PICKER]');
-    
-    const visualScene = generateVisualScene(isCorrect, activeTypes, involvesPicker, responder.emoji, picker.emoji, word);
-
-    const alertMessage = `<div style="text-align: center; margin-bottom: 10px;"><span style="font-size: 1.1rem; font-weight: 800; color: #ffd56b;">Score: ${goldBefore} ➔ ${finalWallet}</span></div>` +
-      visualScene + 
-      `<div style="background: rgba(255,255,255,0.04); padding: 14px; border-radius: 14px; border: 1px dashed rgba(255,255,255,0.15); font-size: 0.95rem; text-align: center; white-space: normal;"><div style="margin-bottom: 10px; font-weight: 700;">Your guess: <span style="color: ${guessColor}; text-transform: uppercase;">"${word}"</span></div><div style="line-height: 1.5; color: #e8e9f1;">${formattedSentence}</div></div>`;
+    // Собираем компактную карточку с результатами
+// Собираем компактную карточку с результатами (в одну строку, чтобы pre-wrap не добавлял лишние пробелы)
+    const alertMessage = `<div style="text-align: center; margin-bottom: 10px;"><span style="font-size: 1.1rem; font-weight: 800; color: #ffd56b;">Score: ${goldBefore} ➔ ${finalWallet}</span></div><div style="background: rgba(255,255,255,0.04); padding: 14px; border-radius: 14px; border: 1px dashed rgba(255,255,255,0.15); font-size: 0.95rem; text-align: center; white-space: normal;"><div style="margin-bottom: 10px; font-weight: 700;">Your guess: <span style="color: ${guessColor}; text-transform: uppercase;">"${word}"</span></div><div style="line-height: 1.5; color: #e8e9f1;">${formattedSentence}</div></div>`;
 
     screens.showAlert(statusIcon, alertMessage, () => {
       setupNextGuesser();
@@ -1894,18 +1801,22 @@ function animateGoldChange(amount, positive = false) {
   } catch (e) {}
 }
 
+// --- ЛОГИКА УСТАНОВКИ ПРИЛОЖЕНИЯ (PWA) ---
 let deferredPrompt;
 const installBtn = document.getElementById('install-app-btn');
 
+// Глобальная проверка: открыта ли игра уже как установленное приложение?
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
+// Для Android перехватываем системное событие
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
+  // Показываем кнопку, только если мы в браузере (не standalone)
   if (installBtn && !isIOS && !isStandalone) { 
     installBtn.style.display = 'block';
-    setTimeout(() => installBtn.style.opacity = '1', 50); 
+    setTimeout(() => installBtn.style.opacity = '1', 50); // Плавное появление
   }
 });
 
@@ -1923,6 +1834,7 @@ if (installBtn) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
+        // Если юзер установил приложение, плавно прячем кнопку навсегда
         installBtn.style.opacity = '0';
         setTimeout(() => installBtn.style.display = 'none', 400);
       }
@@ -1931,6 +1843,9 @@ if (installBtn) {
   });
 }
 
+// --- ЛОГИКА ОКНА ТУТОРИАЛА И СКОРОСТИ ВИДЕО ---
+
+// 1. Асинхронно загружаем YouTube IFrame API
 let ytPlayer = null;
 let isYtApiReady = false;
 
@@ -1939,6 +1854,7 @@ ytScriptTag.src = "https://www.youtube.com/iframe_api";
 const firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(ytScriptTag, firstScriptTag);
 
+// Глобальная функция, которую вызывает сам YouTube после загрузки своего скрипта
 window.onYouTubeIframeAPIReady = function() {
   isYtApiReady = true;
 };
@@ -1952,14 +1868,17 @@ function setupVideoTutorial() {
 
   if (!tutorialBtn || !videoModal) return;
 
+  // Инициализация или сброс плеера
   const initOrResetPlayer = () => {
     if (isYtApiReady && !ytPlayer && typeof YT !== 'undefined') {
       ytPlayer = new YT.Player('tutorial-video', {
         events: {
           'onReady': (event) => {
+             // Как только плеер готов — ставим 0.75 по умолчанию
              event.target.setPlaybackRate(0.75);
           },
           'onStateChange': (event) => {
+             // YouTube иногда сбрасывает скорость при запуске видео, подстраховываемся
              if (event.data === YT.PlayerState.PLAYING) {
                 const currentActive = document.querySelector('.speed-btn[style*="var(--accent)"]');
                 if (currentActive) {
@@ -1974,6 +1893,7 @@ function setupVideoTutorial() {
     }
   };
 
+  // Логика переключения кнопок скорости
   speedBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -1982,10 +1902,12 @@ function setupVideoTutorial() {
       
       const speed = parseFloat(btn.dataset.speed);
       
+      // Передаем команду в YouTube
       if (ytPlayer && typeof ytPlayer.setPlaybackRate === 'function') {
         ytPlayer.setPlaybackRate(speed);
       }
       
+      // Визуально переключаем активную кнопку
       speedBtns.forEach(b => {
         b.style.background = 'rgba(255,255,255,0.05)';
         b.style.borderColor = 'rgba(255,255,255,0.1)';
@@ -2006,13 +1928,16 @@ function setupVideoTutorial() {
       else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
     }
     
+    // Ставим видео на паузу через API
     if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
       ytPlayer.pauseVideo();
     } else if (tutorialVideo) {
+      // Фолбэк, если API вдруг заблокировался адблоком
       const currentSrc = tutorialVideo.src;
       tutorialVideo.src = currentSrc; 
     }
     
+    // Возвращаем UI кнопок в состояние 0.75x для следующего раза
     speedBtns.forEach(b => {
         b.style.background = 'rgba(255,255,255,0.05)';
         b.style.borderColor = 'rgba(255,255,255,0.1)';
@@ -2040,6 +1965,7 @@ function setupVideoTutorial() {
     videoModal.classList.remove('hidden');
     videoModal.style.display = 'flex';
     
+    // Запускаем настройку скорости
     initOrResetPlayer(); 
   };
 
