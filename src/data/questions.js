@@ -1722,11 +1722,11 @@ export const questionsDatabase = [
           { text: "be left", type: "left" }
         ]
       },
-      {
+{
         options: [
-          { text: "on a desert island", requires: ["stranded", "left"], type: "isolated" },
-          { text: "in the woods alone", requires: ["stranded", "left"], type: "isolated" },
-          { text: "in a completely unfamiliar city", requires: ["left"], type: "urban" },
+          { text: "on a desert island", requires: ["stranded", "left"], type: "isolated", scene: "island" },
+          { text: "in the woods alone", requires: ["stranded", "left"], type: "isolated", scene: "woods" },
+          { text: "in a completely unfamiliar city", requires: ["left"], type: "urban", scene: "city" }
         ]
       },
       {
@@ -1771,8 +1771,8 @@ export const questionsDatabase = [
           { text: "doing", requires: ["sacrifice", "weekends"], hints: [PROMPTS.annoyingHabit, PROMPTS.chore, PROMPTS.humanActivity, PROMPTS.creativeHobby] },
           { text: "mastering", requires: ["future", "sacrifice", "time", "weekends"], hints: [PROMPTS.professionalSkill, PROMPTS.creativeHobby, PROMPTS.instrument, PROMPTS.foreignLanguage] },
           { text: "watching", requires: ["time", "weekends"], hints: [PROMPTS.tvShow, PROMPTS.youtuber, PROMPTS.sport] },
-          { text: "obsessively analyzing", requires: ["future", "time"], hints: [PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical, PROMPTS.country, PROMPTS.mediaPersonality, PROMPTS.personalInterest] },
-          { text: "aggressively teaching people about", requires: ["future", "weekends"], hints: [PROMPTS.schoolSubject, PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical] }
+          { text: "obsessively analyzing", requires: ["future", "time"], scene: "report", hints: [PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical, PROMPTS.country, PROMPTS.mediaPersonality, PROMPTS.personalInterest] },
+          { text: "aggressively teaching people about", requires: ["future", "weekends"], scene: "report", hints: [PROMPTS.schoolSubject, PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical] }
         ]
       },
       {
@@ -1793,7 +1793,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: "have a pet", type: "possession", hints: [PROMPTS.animalFarm, PROMPTS.dogBreed, PROMPTS.chubbyAnimal, PROMPTS.animalFunny] },
-          { text: "be chased by a", type: "threat_run", hints: [PROMPTS.fastAnimal, PROMPTS.angryAnimal, PROMPTS.dangerousAnimal, PROMPTS.wildAnimal, PROMPTS.heavyAnimal] },
+          { text: "be chased by a", type: "threat_run", scene: "102", hints: [PROMPTS.fastAnimal, PROMPTS.angryAnimal, PROMPTS.dangerousAnimal, PROMPTS.wildAnimal, PROMPTS.heavyAnimal] },
           // Фикс QA 13-18: Разделяем опасных животных и безобидных для сценариев с лесом и лифтом
           { text: "be trapped alone with a", type: "threat_close", hints: [PROMPTS.dangerousAnimal, PROMPTS.angryAnimal, PROMPTS.bitingAnimal, PROMPTS.loudAnimal] },
           { text: "have to play with a", type: "threat_close", hints: [PROMPTS.insect, PROMPTS.animalFunny, PROMPTS.dogBreed, PROMPTS.nocturnalAnimal] }
@@ -1857,13 +1857,14 @@ export const questionsDatabase = [
 {
     id: 5,
     category: "lifestyle",
+    tags: ["lab_scene", "meme_charlie"],
     text: "Would you rather",
     fragments: [
       {
         options: [
           { text: "have to brush your teeth with", type: "hygiene", hints: [PROMPTS.sauce, PROMPTS.stickyThing, PROMPTS.sweetLiquid, { text: "Strong-smelling food", brainstorm: ["onion", "garlic", "blue cheese", "rotten eggs"] }] },
           { text: "have to wash your clothes in", type: "hygiene", hints: [PROMPTS.sauce, PROMPTS.sweetLiquid, PROMPTS.hotDrink, PROMPTS.popularDrink] },
-          { text: "have to drink a full glass of", type: "utility", hints: [PROMPTS.sauce, PROMPTS.sweetLiquid, PROMPTS.hotDrink] }
+          { text: "have to drink a full glass of", type: "drink", hints: [PROMPTS.sauce, PROMPTS.sweetLiquid, PROMPTS.hotDrink] } // <-- Заменили тег
         ]
       },
       {
@@ -1928,7 +1929,7 @@ export const questionsDatabase = [
     ],
     hints: [] 
   },
-  {
+{
     id: 7,
     category: "survival",
     text: "Would you rather",
@@ -1941,9 +1942,9 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "on a desert island", requires: ["stranded", "left"] },
-          { text: "in the woods alone", requires: ["stranded", "left"] },
-          { text: "in a completely unfamiliar city", requires: ["left"] }
+          { text: "on a desert island", requires: ["stranded", "left"], type: "island" }, // Добавили тег
+          { text: "in the woods alone", requires: ["stranded", "left"], type: "woods" }, // Добавили тег
+          { text: "in a completely unfamiliar city", requires: ["left"], type: "city" } // Добавили тег
         ]
       },
       {
@@ -1955,7 +1956,7 @@ export const questionsDatabase = [
           { text: "for one week" }
         ]
       },
-{
+      {
         options: [
           { text: ", arriving there with absolutely nothing but [ ... ] or [ ... ]?" },
           { text: ", with your only starting item being [ ... ] or [ ... ]?" },
@@ -2008,7 +2009,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: "be adopted by a family of", type: "adopted", hints: [{ text: "Animal", isPlural: true, brainstorm: ["Wolves", "Monkeys", "Penguins", "Bears"] }, { text: "Type of rich person", isPlural: true, brainstorm: ["Billionaires", "Aristocrats", "Celebrities", "Royals"] }, { text: "Group of people", isPlural: true, brainstorm: ["Tourists", "Teenagers", "Politicians", "Clowns"] }] },
-          { text: "join a secret society of", type: "society", hints: [{ text: "Type of rich person", isPlural: true, brainstorm: ["Billionaires", "Aristocrats", "Celebrities", "Royals"] }, { text: "Group of people", isPlural: true, brainstorm: ["Tourists", "Teenagers", "Politicians", "Clowns"] }] }, 
+          { text: "start a cult based around", type: "cult", scene: "spiritual", hints: [{ text: "Type of rich person", isPlural: true, brainstorm: ["Billionaires", "Aristocrats", "Celebrities", "Royals"] }, { text: "Group of people", isPlural: true, brainstorm: ["Tourists", "Teenagers", "Politicians", "Clowns"] }] }, 
           { text: "be raised by a pack of", type: "raised", hints: [{ text: "Animal", isPlural: true, brainstorm: ["Wolves", "Monkeys", "Penguins", "Bears"] }, { text: "Angry-looking animal", isPlural: true, brainstorm: ["Rhinos", "Bulls", "Eagles", "Hippos"] }, { text: "Pet", isPlural: true, brainstorm: ["Dogs", "Cats", "Parrots", "Hamsters"] }] },
           { text: "go to a magic school where you can only summon", type: "society", hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
           { text: "have the power to turn gold into", type: "society", hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.snack, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
@@ -2036,8 +2037,8 @@ export const questionsDatabase = [
           { text: "start a cult based around", type: "cult", hints: [PROMPTS.everyday, PROMPTS.techOld, { text: "Thing you find in a bathroom", brainstorm: ["Soap", "Shampoo", "Toothpaste", "Toilet paper"] }, { text: "Random thing in your room", isPlural: true, brainstorm: ["Books", "Cables", "Pillows", "Cups"] }] },
           { text: "start a protest movement against", type: "movement", hints: [{ text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }, PROMPTS.annoyingHabit] },
           { text: "open a restaurant where everything tastes like", type: "restaurant", hints: [PROMPTS.strongFood, { text: "Disease", isPlural: true, brainstorm: ["Flus", "Colds", "Headaches", "Allergies"] }] },
-          { text: "host a podcast about", type: "podcast", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, { text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }, PROMPTS.personalInterest] },
-          { text: "run a YouTube channel about", type: "podcast", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, PROMPTS.annoyingHabit] },
+          { text: "host a podcast about", type: "podcast", scene: "report", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, { text: "Minor inconvenience", isPlural: true, brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] }, PROMPTS.personalInterest] },
+          { text: "run a YouTube channel about", type: "podcast", scene: "report", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, PROMPTS.annoyingHabit] },
           { text: "become CEO of a company making", type: "business", hints: [{ text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }, { text: "Office supply", isPlural: true, brainstorm: ["Staplers", "Pens", "Sticky notes", "Folders"] }, PROMPTS.techOld] },
           { text: "start a street gang that only steals", type: "gang", hints: [PROMPTS.everyday, PROMPTS.smallObj, { text: "Cheap household item", isPlural: true, brainstorm: ["Sponges", "Toilet paper", "Lightbulbs", "Batteries"] }] }
         ]
@@ -2065,7 +2066,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: "get a small tattoo of", type: "tattoo", hints: [PROMPTS.fastFood, PROMPTS.animalFunny, PROMPTS.politician, PROMPTS.actor] },
-          { text: "give a 1-hour presentation on their relationship with", type: "presentation", hints: [PROMPTS.chore, PROMPTS.everyday, PROMPTS.animalFunny, PROMPTS.snack] },
+          { text: "give a 1-hour presentation on their relationship with", type: "presentation", scene: "report", hints: [PROMPTS.chore, PROMPTS.everyday, PROMPTS.animalFunny, PROMPTS.snack] },
           { text: "write a heartfelt song about", type: "song", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.everyday, PROMPTS.candyType] },
           { text: "star in a low-budget musical about", type: "musical", hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame] }
 
@@ -2158,7 +2159,7 @@ export const questionsDatabase = [
         options: [
           { text: "make everyone in the room suddenly start", type: "start", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.humanActivity, PROMPTS.creativeHobby] },
           { text: "instantly stop anyone from", type: "stop", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.humanActivity] },
-          { text: "earn $10 every time you finish", type: "earn", hints: [PROMPTS.chore, PROMPTS.humanActivity] }
+          { text: "earn $10 every time you finish", type: "earn", scene: "106", hints: [PROMPTS.chore, PROMPTS.humanActivity] }
         ]
       },
       {
@@ -2246,7 +2247,7 @@ hints: [
           { text: "host a 12-hour watch party of", type: "watch", hints: [PROMPTS.movie, PROMPTS.tvShow] },
           { text: "star in a low-budget musical about/based on", type: "musical", hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame] },
           { text: "write a 100-page fanfiction about", type: "fanfic", hints: [PROMPTS.movie, PROMPTS.tvShow, PROMPTS.videoGame] },
-          { text: "record a 3-hour rant about", type: "rant", hints: [PROMPTS.movie, PROMPTS.videoGame, PROMPTS.tvShow] }
+          { text: "record a 3-hour rant about", type: "rant", scene: "report",  hints: [PROMPTS.movie, PROMPTS.videoGame, PROMPTS.tvShow] }
         ]
       },
       {
@@ -2335,8 +2336,8 @@ hints: [
         options: [
           { text: "as your boss?", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.youtuber, PROMPTS.actor, PROMPTS.personRespect] },
           { text: "as your best friend?", hints: [PROMPTS.cartoonChar, PROMPTS.chubbyAnimal, PROMPTS.dogBreed, PROMPTS.fictionalChar] },
-          { text: "as your sworn enemy?", hints: [PROMPTS.villain, PROMPTS.historical, PROMPTS.youtuber, PROMPTS.mediaPersonality] },
-          { text: "as your psychotherapist?", hints: [PROMPTS.historical, PROMPTS.actor, PROMPTS.singer, PROMPTS.mediaPersonality, PROMPTS.personRespect] },
+{ text: "as your sworn enemy?", hints: [PROMPTS.villain, PROMPTS.historical, PROMPTS.youtuber, PROMPTS.mediaPersonality] },
+          { text: "as your psychotherapist?", type: "therapist", hints: [PROMPTS.historical, PROMPTS.actor, PROMPTS.singer, PROMPTS.mediaPersonality, PROMPTS.personRespect] },
           { text: "as your martial art sparring partner?", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.youtuber, PROMPTS.historical] },
           { text: "as your cleaner?", hints: [PROMPTS.politician, PROMPTS.historical, PROMPTS.villain, PROMPTS.youtuber] },
           { text: "as your fitness trainer?", hints: [PROMPTS.actor, PROMPTS.fastAnimal, PROMPTS.villain, PROMPTS.singer] },
@@ -2423,14 +2424,14 @@ hints: [
     fragments: [
       {
         options: [
-          { text: "become the spiritual leader of" },
-          { text: "write a 1000-page manifesto about" },
-          { text: "strictly live by" },
-          { text: "have your government adopt" },
-          { text: "try to convince your parents to follow" },
-          { text: "try to convince your friends to follow" },
-          { text: "permanently ban" },
-          { text: "study the history of" }
+          { text: "become the spiritual leader of", scene: "spiritual" },
+          { text: "write a 1000-page manifesto about", type: "manifesto", scene: "fanfic" },
+          { text: "strictly live by", scene: "report" },
+          { text: "have your government adopt", scene: "104" },
+          { text: "try to convince your parents to follow", scene: "report" },
+          { text: "try to convince your friends to follow", scene: "report" },
+          { text: "permanently ban", scene: "ban" },
+          { text: "study the history of", type: "explain", scene: "fanfic" }
         ]
       },
       {
@@ -2509,7 +2510,7 @@ hints: [
     hints: [PROMPTS.kitchenItem, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.actor, PROMPTS.profession
     ]
   },
-  {
+{
     id: 103,
     isCombo: true,
     triggerCategory: ["career", "superpowers"],
@@ -2518,8 +2519,7 @@ hints: [
     fragments: [
       {
         options: [
-          // Убрали дублирование "100-page report"
-          { text: "a 100-page report about [ ... ] or about [ ... ]?" }
+          { text: "a 100-page report about [ ... ] or about [ ... ]?", type: "report", scene: "report" }
         ]
       }
     ],
@@ -2566,7 +2566,7 @@ hints: [
       {
         options: [
           { text: "a giant [ ... ] or a giant [ ... ] on your state flag?" },
-          { text: "a picture of [ ... ] or [ ... ] on your national currency?" }
+          { text: "a picture of [ ... ] or [ ... ] on your national currency?", scene: "106" }
         ]
       }
     ],
