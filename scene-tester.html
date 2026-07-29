@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Ultimate Scene Studio (JSON & Eye Tracker)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+  <title>Ultimate Scene Studio (Native Engine)</title>
   <style>
     :root {
       --bg: #08080d; --panel: rgba(255, 255, 255, 0.04);
@@ -43,55 +44,12 @@
 
     .scene-preview-container { background: var(--panel); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; padding: 20px; flex-shrink: 0; min-height: 250px; }
     
-    .alert-visual-scene {
-      width: 100%; max-width: 320px;
-      aspect-ratio: 16 / 9;
-      background-color: transparent; background-repeat: no-repeat;
-      border-radius: 14px; position: relative; overflow: hidden;
-      border-bottom: 2px solid var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      margin: 0 auto;
-      container-type: inline-size;
-    }
-
-    .stars-bg {
-      background-color: #08080d;
-      background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 4px), radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 3px), radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 4px);
-      background-size: 550px 550px, 350px 350px, 250px 250px; background-position: 0 0, 40px 60px, 130px 270px;
-      animation: starTwinkle 4s infinite linear;
-    }
-    @keyframes starTwinkle { 0% {opacity:0.7;} 50% {opacity:1;} 100% {opacity:0.7;} }
-
-    .scene-element {
-      position: absolute;
-      left: var(--x); top: var(--y);
-      transform: translate(-50%, -50%) scale(calc(var(--s) * var(--flip)), var(--s)) rotate(var(--r));
-      font-size: 12.5cqi; 
-      display: flex; align-items: center; justify-content: center;
-      
-      white-space: nowrap; /* ВОЗВРАЩАЕМ В ОДНУ СТРОКУ */
-      line-height: 1;
-    }
-    
-    .anim-run-left { animation: runLeft 3s linear infinite; }
-    @keyframes runLeft { 0% { margin-left: 200px; } 100% { margin-left: -200px; } }
-    .anim-bounce-talk { animation: bounceTalk 1.5s ease-in-out infinite; }
-    @keyframes bounceTalk { 0%, 100% { margin-top: 0; } 50% { margin-top: -15px; } }
-    .anim-float { animation: floatProp 3s ease-in-out infinite; }
-    @keyframes floatProp { 0%, 100% { margin-top: 0; transform: translate(-50%, -50%) scale(calc(var(--s) * var(--flip)), var(--s)) rotate(var(--r)); } 50% { margin-top: -15px; transform: translate(-50%, -50%) scale(calc(var(--s) * var(--flip)), var(--s)) rotate(calc(var(--r) + 5deg)); } }
-    .anim-shake { animation: shakeScene 2s ease-in-out infinite; }
-    @keyframes shakeScene { 0%, 100% { margin-left: 0; } 25% { margin-left: -5px; } 75% { margin-left: 5px; } }
-    .anim-worship { animation: worship 1.5s ease-in-out infinite; }
-    @keyframes worship { 0%, 100% { margin-top: 15px; opacity: 0.5; } 50% { margin-top: 0; opacity: 1; } }
-
-    @keyframes dropTear { 
-      0% { transform: translateY(-0.1em); opacity: 0; } 
-      20% { transform: translateY(0); opacity: 1; } 
-      70% { transform: translateY(0.4em); opacity: 1; } 
-      100% { transform: translateY(0.6em); opacity: 0; } 
-    }
-
+    /* Стили сцен перенесены в main.js и style.css, тестеру достаточно иметь пустой контейнер */
     .export-box { background: rgba(0,0,0,0.5); padding: 16px; border-radius: 12px; border: 1px solid var(--positive); font-family: monospace; font-size: 11px; white-space: pre-wrap; color: #8be9fd; user-select: all; cursor: copy; }
   </style>
+  
+  <!-- Загружаем оригинальные стили игры, чтобы тестер выглядел ровно так же 1 в 1 -->
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
@@ -107,28 +65,46 @@
       <label style="color: #a5a1c8;">Комментарий для ИИ (Экстра)</label>
       <textarea id="scene-note" rows="2" placeholder="Например: добавь конфетти..." style="resize: vertical;"></textarea>
     </div>
+
+    <div class="control-group">
+      <label style="color: var(--warning);">SFX (Звук сцены)</label>
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="scene-sfx" placeholder="Например: dog_bark.mp3" style="border-color: var(--warning); flex: 1;">
+        <button id="test-sfx-btn" class="btn-small btn-outline" style="border-color: var(--warning); color: var(--warning);" title="Воспроизвести звук">🔊 Test Sequence</button>
+      </div>
+    </div>
     
-    <div class="control-row">
-      <label style="color: var(--warning);">Эмодзи Responder</label>
-      <input type="text" id="test-resp-emo" value="🐼" style="width: 50px; text-align: center;">
+    <div class="control-row" style="margin-top: 8px;">
+      <label style="color: var(--warning); flex:1;">Эмодзи Responder</label>
+      <input type="text" id="test-resp-emo" value="🐼" style="width: 60px; text-align: center;">
     </div>
     <div class="control-row">
-      <label style="color: var(--warning);">Эмодзи Picker</label>
-      <input type="text" id="test-pick-emo" value="👽" style="width: 50px; text-align: center;">
+      <label style="color: var(--warning); flex:1;">Эмодзи Picker</label>
+      <input type="text" id="test-pick-emo" value="👽" style="width: 60px; text-align: center;">
+    </div>
+    <div class="control-row">
+      <label style="color: #50fa7b; flex:1;">Слово [GUESS_WORD]</label>
+      <input type="text" id="test-guess-word" value="ОТВЕТ" style="width: 100px; text-align: center; border-color: #50fa7b;">
+    </div>
+
+    <div class="control-row" style="margin-top: 10px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px;">
+      <label style="color: var(--warning); width: 100%; display: flex; align-items: center;">📱 Симулятор ОС
+        <select id="os-simulator" style="width: 150px; margin-left: auto;">
+          <option value="native">Мой ПК (Native)</option>
+          <option value="'Noto Color Emoji', sans-serif">Android (Google)</option>
+          <option value="'Apple Color Emoji', sans-serif">iPhone / Mac</option>
+          <option value="'Segoe UI Emoji', sans-serif">Windows</option>
+        </select>
+      </label>
     </div>
 
     <!-- БЛОК ОВЕРЛЕЕВ -->
     <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-top: 8px;">
-      <label style="color: var(--positive); margin-bottom: 6px;">Превью эмоций (Для слоев с глазами)</label>
-      <select id="test-overlay-type" style="margin-bottom: 6px;">
-        <option value="win">😎 Победа (Оригинальный размер)</option>
-        <option value="lose">💧 Поражение (Капающая слеза)</option>
-        <option value="custom">✍️ Свой кастом...</option>
+      <label style="color: var(--positive); margin-bottom: 6px;">Сценарий превью (влияет на очки/слезы)</label>
+      <select id="test-overlay-type" style="margin-bottom: 0;">
+        <option value="win">😎 Игрок Угадал (Win)</option>
+        <option value="lose">💧 Игрок Ошибся (Lose)</option>
       </select>
-      <div id="custom-overlay-row" style="display:none; gap: 6px;">
-        <input type="text" id="test-overlay-custom" value="🔥" placeholder="Текст">
-        <input type="number" id="test-overlay-scale" value="1.0" step="0.1" style="width: 60px;" title="Множитель">
-      </div>
     </div>
 
     <h3>🖼️ Фон сцены</h3>
@@ -162,11 +138,8 @@
 
   <!-- ЦЕНТРАЛЬНАЯ ПАНЕЛЬ -->
   <div class="col-center">
-    <div class="scene-preview-container">
-      <div class="alert-visual-scene stars-bg" id="scene-box">
-        <div id="elements-container"></div>
-      </div>
-    </div>
+    <!-- Сюда будет инжектиться рендер из main.js -->
+    <div class="scene-preview-container"></div>
     
     <div id="active-layer-settings" style="background: var(--panel); border: 1px solid rgba(255,255,255,0.08); padding: 16px; border-radius: 16px; display: none;">
       <h3 style="margin-top:0;">Настройки слоя: <span id="layer-title-display"></span></h3>
@@ -250,10 +223,11 @@
     </div>
   </div>
 
+  <!-- ИМПОРТИРУЕМ ЛОГИКУ РЕНДЕРА ИЗ САМОЙ ИГРЫ -->
   <script type="module">
     import { SCENE_REGISTRY } from './src/data/scenes.js';
     import { questionsDatabase } from './src/data/questions.js';
-    import { EYE_ANCHORS } from './src/main.js';
+    import { EYE_ANCHORS, generateVisualScene } from './src/main.js';
 
     const sceneSelect = document.getElementById('load-scene-select');
     Object.keys(SCENE_REGISTRY).forEach(key => {
@@ -282,8 +256,7 @@
     let activeLayerId = null;
     let elementIdCounter = 0;
 
-    const state = { id: 'custom_scene', note: '', bg: { url: '', local: '', base64: '', x: 50, y: 50, s: 100, cover: false }, elements: [] };
-    let currentContext = { responder: '🐼', picker: '👽', smartProp: '💸', guessWord: 'ОТВЕТ' };
+    const state = { id: 'custom_scene', note: '', sfx: '', bg: { url: '', local: '', base64: '', x: 50, y: 50, s: 100, cover: false }, elements: [] };
 
     document.getElementById('load-scene-btn').onclick = () => {
        const key = sceneSelect.value;
@@ -295,6 +268,9 @@
        
        state.note = data.note || '';
        document.getElementById('scene-note').value = state.note;
+
+       state.sfx = data.sfx || '';
+       document.getElementById('scene-sfx').value = state.sfx;
        
        state.bg = JSON.parse(JSON.stringify(data.bg));
        state.bg.base64 = '';
@@ -311,6 +287,7 @@
        
        activeLayerId = state.elements.length > 0 ? state.elements[state.elements.length-1].id : null;
        renderApp();
+       if (window.playTestSequence) window.playTestSequence();
     };
 
     document.getElementById('new-from-tag-btn').onclick = () => {
@@ -319,6 +296,8 @@
        document.getElementById('scene-id').value = tag;
        state.note = '';
        document.getElementById('scene-note').value = '';
+       state.sfx = '';
+       document.getElementById('scene-sfx').value = '';
        state.bg = { url: '', local: '', base64: '', x: 50, y: 50, s: 100, cover: false };
        state.elements = [];
        elementIdCounter = 0; 
@@ -356,19 +335,16 @@
     window.selectLayer = (id) => { activeLayerId = id; renderApp(); };
 
     function renderApp() {
-      const box = document.getElementById('scene-box');
-      if (state.bg.base64) { box.style.backgroundImage = `url('${state.bg.base64}')`; box.classList.remove('stars-bg'); }
-      else if (state.bg.url) { box.style.backgroundImage = `url('${state.bg.url}')`; box.classList.remove('stars-bg'); }
-      else if (state.bg.local) { box.style.backgroundImage = `url('./src/ui/${state.bg.local}')`; box.classList.remove('stars-bg'); }
-      else { box.style.backgroundImage = 'none'; box.classList.add('stars-bg'); }
-
-      box.style.backgroundPosition = `${state.bg.x}% ${state.bg.y}%`;
-      box.style.backgroundSize = state.bg.cover ? 'cover' : `${state.bg.s}%`;
+      // 1. Считываем данные с инпутов
+      const respEmo = document.getElementById('test-resp-emo').value || '🐼';
+      const pickEmo = document.getElementById('test-pick-emo').value || '👽';
+      const guessWord = document.getElementById('test-guess-word').value || 'ОТВЕТ';
 
       document.getElementById('val-bg-x').innerText = `${state.bg.x}%`;
       document.getElementById('val-bg-y').innerText = `${state.bg.y}%`;
       document.getElementById('val-bg-s').innerText = `${state.bg.s}%`;
 
+      // 2. Обновление списка слоев (Левая колонка)
       const layersList = document.getElementById('layers-list');
       layersList.innerHTML = '';
       [...state.elements].reverse().forEach(el => {
@@ -389,88 +365,65 @@
         layersList.appendChild(item);
       });
 
-      const container = document.getElementById('elements-container');
-      container.innerHTML = '';
+      // 3. Подготовка данных для симуляции (Временный инжект в SCENE_REGISTRY)
+      const liveBg = { ...state.bg };
+      if (state.bg.base64) {
+          liveBg.url = state.bg.base64;
+          liveBg.local = '';
+      }
+      SCENE_REGISTRY['__LIVE_TEST__'] = {
+          bg: liveBg,
+          elements: state.elements
+      };
+
+      // 4. Подготовка eye-tracker экспорта и перехват словаря (для live-калибровки ползунками)
       let inlineExportText = "";
-
-      state.elements.forEach((el, index) => {
-        const div = document.createElement('div');
-        div.className = `scene-element ${el.anim}`;
-        
-let renderContent = String(el.content);
-        renderContent = renderContent.replace(/\[RESPONDER\]/g, currentContext.responder);
-        renderContent = renderContent.replace(/\[PICKER\]/g, currentContext.picker);
-        renderContent = renderContent.replace(/\[SMART_PROP\]/g, currentContext.smartProp);
-        renderContent = renderContent.replace(/\[GUESS_WORD\]/g, currentContext.guessWord);
-
-        let finalS = el.s;
-        if (el.type === 'text' && !el.fixedText && renderContent.length > 8) {
-          // Уменьшили лимит до 0.25, чтобы слова влезали в одну строчку
-          finalS = el.s * Math.max(0.25, 8 / renderContent.length);
-        }
-
-        if (el.type === 'text' && el.fixedText) {
-            div.style.whiteSpace = 'nowrap';
-            div.style.maxWidth = 'none';
-        }
-
-        div.style.setProperty('--x', `${el.x}%`); div.style.setProperty('--y', `${el.y}%`);
-        div.style.setProperty('--s', finalS); div.style.setProperty('--r', `${el.r}deg`);
-        div.style.setProperty('--flip', el.flipX ? -1 : 1); div.style.zIndex = index + 2;
-
-        if (el.type === 'text') {
-          div.innerText = renderContent; div.style.color = el.color; div.style.fontFamily = el.font;
-          div.style.fontWeight = '900'; div.style.textTransform = 'uppercase'; div.style.letterSpacing = '1px';
-        } else { div.innerText = renderContent; }
-        
-        let currentFilter = 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))';
-        if (el.glow) currentFilter = 'drop-shadow(0 0 15px var(--positive))';
-        div.style.filter = currentFilter;
-
-        if (el.emo && el.emo.enabled) {
-          if (el.emo.x === undefined) {
-             if (EYE_ANCHORS[renderContent]) {
-                 el.emo.x = EYE_ANCHORS[renderContent].x; el.emo.y = EYE_ANCHORS[renderContent].y; el.emo.s = EYE_ANCHORS[renderContent].s;
-             } else {
-                 el.emo.x = 0; el.emo.y = 0; el.emo.s = 1;
-             }
-          }
-
-          let overlayContent = '';
-          let finalOverlayScale = el.emo.s;
-          const overlayType = document.getElementById('test-overlay-type').value;
-
-          if (overlayType === 'win') {
-             overlayContent = `<img src="./src/ui/acostajnalec-sunglasses-5040012_1280.png" style="width: 1.15em; height: auto; object-fit: contain;">`;
-             finalOverlayScale = el.emo.s;
-          } else if (overlayType === 'lose') {
-             overlayContent = `<div style="transform: translate(0.45em, 0.05em);"><span style="font-size: 0.35em; text-shadow: 0 2px 4px rgba(0,0,0,0.4); display: inline-block; animation: dropTear 1.2s infinite ease-in;">💧</span></div>`;
-             finalOverlayScale = el.emo.s;
-          } else {
-             const custVal = document.getElementById('test-overlay-custom').value || '';
-             const custScale = parseFloat(document.getElementById('test-overlay-scale').value) || 1.0;
-             overlayContent = `<span>${custVal}</span>`;
-             finalOverlayScale = el.emo.s * custScale;
-          }
-
-          const emoDiv = document.createElement('div');
-          emoDiv.innerHTML = overlayContent;
-          emoDiv.style.position = 'absolute'; emoDiv.style.left = '50%'; emoDiv.style.top = '50%'; 
-          emoDiv.style.display = 'flex'; emoDiv.style.justifyContent = 'center'; emoDiv.style.alignItems = 'center';
-          emoDiv.style.transform = `translate(calc(-50% + ${el.emo.x}%), calc(-50% + ${el.emo.y}%)) scale(${finalOverlayScale})`;
-          emoDiv.style.zIndex = '4'; emoDiv.style.pointerEvents = 'none';
-          div.appendChild(emoDiv);
-          
-          if (el.id === activeLayerId) {
-             inlineExportText = `"${renderContent}": { x: ${el.emo.x}, y: ${el.emo.y}, s: ${el.emo.s} },`;
-          }
-        }
-        
-        container.appendChild(div);
-      });
-
-      const activePanel = document.getElementById('active-layer-settings');
       const activeEl = state.elements.find(e => e.id === activeLayerId);
+      if (activeEl && activeEl.emo && activeEl.emo.enabled) {
+          let renderContent = String(activeEl.content);
+          renderContent = renderContent.replace(/\[RESPONDER\]/g, respEmo);
+          renderContent = renderContent.replace(/\[PICKER\]/g, pickEmo);
+          renderContent = renderContent.replace(/\[GUESS_WORD\]/g, guessWord);
+          
+          if (activeEl.emo.x === undefined) {
+              if (EYE_ANCHORS[renderContent]) {
+                  activeEl.emo.x = EYE_ANCHORS[renderContent].x; 
+                  activeEl.emo.y = EYE_ANCHORS[renderContent].y; 
+                  activeEl.emo.s = EYE_ANCHORS[renderContent].s;
+              } else {
+                  activeEl.emo.x = 0; activeEl.emo.y = 0; activeEl.emo.s = 1;
+              }
+          }
+          // Перехватываем словарь, чтобы main.js использовал значения с ползунков тестера
+          EYE_ANCHORS[renderContent] = { 
+              x: activeEl.emo.x, 
+              y: activeEl.emo.y, 
+              s: activeEl.emo.s 
+          };
+          inlineExportText = `"${renderContent}": { x: ${activeEl.emo.x}, y: ${activeEl.emo.y}, s: ${activeEl.emo.s} },`;
+      }
+
+      // ====================================================================
+      // 5. ГЕНЕРАЦИЯ СЦЕНЫ ЧЕРЕЗ РОДНУЮ ФУНКЦИЮ ИЗ MAIN.JS
+      // ====================================================================
+      const isCorrect = document.getElementById('test-overlay-type').value === 'win';
+      const involvesPicker = state.elements.some(e => String(e.content).includes('[PICKER]'));
+      
+      const sceneHtml = generateVisualScene(
+          isCorrect, 
+          ['__LIVE_TEST__'], 
+          involvesPicker, 
+          respEmo, 
+          pickEmo, 
+          guessWord
+      );
+
+      // Вставляем результат в контейнер тестера
+      document.querySelector('.scene-preview-container').innerHTML = sceneHtml;
+
+
+      // 6. Обновление UI настроек активного слоя (Правая панель)
+      const activePanel = document.getElementById('active-layer-settings');
       const eyeBox = document.getElementById('eye-calibration-box');
       
       if (activeEl) {
@@ -513,21 +466,56 @@ let renderContent = String(el.content);
               if (eyeBox) eyeBox.style.display = 'none';
           }
         }
-      } else { activePanel.style.display = 'none'; if(eyeBox) eyeBox.style.display = 'none'; }
+      } else { 
+        activePanel.style.display = 'none'; 
+        if(eyeBox) eyeBox.style.display = 'none'; 
+      }
     }
 
-    document.getElementById('test-overlay-type').onchange = e => {
-      document.getElementById('custom-overlay-row').style.display = e.target.value === 'custom' ? 'flex' : 'none';
-      renderApp();
-    };
-    document.getElementById('test-overlay-custom').oninput = () => renderApp();
-    document.getElementById('test-overlay-scale').oninput = () => renderApp();
-
+    // Слушатели событий
+    document.getElementById('test-overlay-type').onchange = () => renderApp();
+    
     document.getElementById('scene-id').oninput = e => state.id = e.target.value;
     document.getElementById('scene-note').oninput = e => state.note = e.target.value;
-    
-document.getElementById('test-resp-emo').oninput = e => { 
-      const newEmoji = e.target.value || '🐼'; currentContext.responder = newEmoji; 
+    document.getElementById('scene-sfx').oninput = e => state.sfx = e.target.value;
+
+    let testBaseAudio = null;
+    let testSfxAudio = null;
+
+    window.playTestSequence = () => {
+      if (testBaseAudio) { testBaseAudio.pause(); testBaseAudio.currentTime = 0; }
+      if (testSfxAudio) { testSfxAudio.pause(); testSfxAudio.currentTime = 0; }
+
+      const isLose = document.getElementById('test-overlay-type').value === 'lose';
+      
+      testBaseAudio = new Audio(isLose ? './src/audio/lose.ogg' : './src/audio/win.mp3');
+      testBaseAudio.volume = isLose ? 0.75 : 0.6;
+      testBaseAudio.play().catch(() => console.log('Базовый звук не найден'));
+
+      if (state.sfx) {
+        setTimeout(() => {
+          testSfxAudio = new Audio(`./src/audio/${state.sfx}`);
+          testSfxAudio.volume = 0;
+          testSfxAudio.play().then(() => {
+            let vol = 0;
+            const fadeIn = setInterval(() => {
+              vol += 0.1;
+              if (vol >= 0.7) {
+                testSfxAudio.volume = 0.7;
+                clearInterval(fadeIn);
+              } else {
+                testSfxAudio.volume = vol;
+              }
+            }, 40);
+          }).catch(e => alert('Не удалось найти SFX файл: ' + state.sfx));
+        }, 600);
+      }
+    };
+
+    document.getElementById('test-sfx-btn').onclick = () => playTestSequence();
+
+    document.getElementById('test-resp-emo').oninput = e => { 
+      const newEmoji = e.target.value || '🐼';
       state.elements.forEach(el => {
          if (String(el.content).includes('[RESPONDER]') && el.emo && el.emo.enabled) {
              if (EYE_ANCHORS[newEmoji]) { el.emo.x = EYE_ANCHORS[newEmoji].x; el.emo.y = EYE_ANCHORS[newEmoji].y; el.emo.s = EYE_ANCHORS[newEmoji].s; } 
@@ -537,7 +525,7 @@ document.getElementById('test-resp-emo').oninput = e => {
     };
     
     document.getElementById('test-pick-emo').oninput = e => { 
-      const newEmoji = e.target.value || '👽'; currentContext.picker = newEmoji; 
+      const newEmoji = e.target.value || '👽';
       state.elements.forEach(el => {
          if (String(el.content).includes('[PICKER]') && el.emo && el.emo.enabled) {
              if (EYE_ANCHORS[newEmoji]) { el.emo.x = EYE_ANCHORS[newEmoji].x; el.emo.y = EYE_ANCHORS[newEmoji].y; el.emo.s = EYE_ANCHORS[newEmoji].s; } 
@@ -545,6 +533,8 @@ document.getElementById('test-resp-emo').oninput = e => {
          }
       }); renderApp(); 
     };
+
+    document.getElementById('test-guess-word').oninput = () => renderApp();
     
     document.getElementById('bg-url').oninput = e => { state.bg.url = e.target.value; state.bg.base64 = ''; renderApp(); };
     document.getElementById('bg-local').oninput = e => { state.bg.local = e.target.value; state.bg.base64 = ''; renderApp(); };
@@ -570,6 +560,12 @@ document.getElementById('test-resp-emo').oninput = e => {
     document.getElementById('el-color').oninput = e => updateActiveLayer('color', e.target.value);
     document.getElementById('el-font').onchange = e => updateActiveLayer('font', e.target.value);
 
+    document.getElementById('os-simulator').onchange = e => {
+      const val = e.target.value;
+      const container = document.querySelector('.scene-preview-container');
+      container.style.fontFamily = val === 'native' ? 'inherit' : val;
+    };
+
     document.getElementById('el-emo-enabled').onchange = e => { 
        const el = state.elements.find(e => e.id === activeLayerId);
        if(el) { 
@@ -586,10 +582,11 @@ document.getElementById('test-resp-emo').oninput = e => {
       const outputObj = {};
       for (let key in reportData) { 
         outputObj[key] = { 
+          ...(reportData[key].sfx ? { sfx: reportData[key].sfx } : {}),
           ...(reportData[key].note ? { note: reportData[key].note } : {}),
           bg: reportData[key].bg, 
           elements: reportData[key].elements 
-        }; 
+        };
       }
       
       const box = document.getElementById('export-box');
@@ -620,10 +617,11 @@ document.getElementById('test-resp-emo').oninput = e => {
       });
         
       reportData[state.id] = { 
+        sfx: state.sfx,
         note: state.note,
         bg: { url: state.bg.url, local: state.bg.local, cover: state.bg.cover, x: state.bg.x, y: state.bg.y, s: state.bg.s },
         elements: cleanElements 
-      }; 
+      };
       updateExportBox();
     };
 

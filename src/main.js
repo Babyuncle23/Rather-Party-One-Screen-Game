@@ -1686,9 +1686,9 @@ function makeGuess(word) {
    
     guesser.lastGuessCorrect = isCorrect;
 
-const activeTypes = [];
+    const activeTypes = [];
     if (currentQuestion) activeTypes.push(currentQuestion.id.toString());
-if (currentQuestion && currentQuestion.fragments) {
+    if (currentQuestion && currentQuestion.fragments) {
       currentQuestion.fragments.forEach((frag, i) => {
         const stateIndex = currentFragmentsState[i];
         if (stateIndex !== undefined && stateIndex !== -1) {
@@ -1697,13 +1697,13 @@ if (currentQuestion && currentQuestion.fragments) {
           if (selectedOpt && selectedOpt.type) {
             activeTypes.push(selectedOpt.type);
           }
-          // ДОБАВЛЕНО: Теперь игра подхватывает визуальные сцены
           if (selectedOpt && selectedOpt.scene) {
             activeTypes.push(selectedOpt.scene);
           }
         }
       });
     }
+
     if (isCorrect) {
       guesser.gold += FIXED_REWARD;
       animateGoldChange(FIXED_REWARD, true);
@@ -1729,8 +1729,68 @@ if (currentQuestion && currentQuestion.fragments) {
       visualScene + 
       `<div style="background: rgba(255,255,255,0.04); padding: 14px; border-radius: 14px; border: 1px dashed rgba(255,255,255,0.15); font-size: 0.95rem; text-align: center; white-space: normal;"><div style="margin-bottom: 10px; font-weight: 700;">Your guess: <span style="color: ${guessColor}; text-transform: uppercase;">"${word}"</span></div><div style="line-height: 1.5; color: #e8e9f1;">${formattedSentence}</div></div>`;
 
+    // === ИНТЕГРАЦИЯ ЗВУКА СЦЕНЫ С ФЕЙД-ИНОМ И АВТО-ОБРЫВОМ ===
+    let currentSceneAudio = null;
+    let fadeOutInterval = null; 
+    let activeSceneKey = activeTypes.find(t => SCENE_REGISTRY[t]);
+    let activeScene = activeSceneKey ? SCENE_REGISTRY[activeSceneKey] : null;
+
+    if (activeScene && activeScene.sfx) {
+      setTimeout(() => {
+        currentSceneAudio = new Audio(`./src/audio/${activeScene.sfx}`);
+        currentSceneAudio.volume = 0;
+        currentSceneAudio.play().then(() => {
+          let vol = 0;
+          const fadeIn = setInterval(() => {
+            vol += 0.1;
+            if (vol >= 0.7) {
+              currentSceneAudio.volume = 0.7;
+              clearInterval(fadeIn);
+            } else {
+              currentSceneAudio.volume = vol;
+            }
+          }, 40);
+
+          // Обрыв звука ровно через 5 секунд плавным затуханием
+          setTimeout(() => {
+            if (currentSceneAudio && !currentSceneAudio.paused && !fadeOutInterval) {
+              let outVol = currentSceneAudio.volume;
+              fadeOutInterval = setInterval(() => {
+                outVol -= 0.1;
+                if (outVol <= 0.05) {
+                  clearInterval(fadeOutInterval);
+                  currentSceneAudio.pause();
+                } else {
+                  currentSceneAudio.volume = outVol;
+                }
+              }, 50);
+            }
+          }, 5000);
+
+        }).catch(() => {});
+      }, 600); // Задержка 600мс
+    }
+
     screens.showAlert(statusIcon, alertMessage, () => {
-      setupNextGuesser();
+      // Плавный обрыв звука при клике на закрытие окна
+      if (currentSceneAudio && !currentSceneAudio.paused) {
+         if (fadeOutInterval) clearInterval(fadeOutInterval); // Останавливаем 5-секундный таймер затухания, если он уже запустился
+         
+         let vol = currentSceneAudio.volume;
+         const fastFadeOut = setInterval(() => {
+            vol -= 0.15; // Очень быстрый фейд-аут при тапе
+            if (vol <= 0.05) {
+               clearInterval(fastFadeOut);
+               currentSceneAudio.pause();
+               currentSceneAudio.currentTime = 0;
+               setupNextGuesser(); // Переходим дальше только когда звук затих (это займет миллисекунды)
+            } else {
+               currentSceneAudio.volume = vol;
+            }
+         }, 30);
+      } else {
+         setupNextGuesser();
+      }
     });
 
   } catch (err) {

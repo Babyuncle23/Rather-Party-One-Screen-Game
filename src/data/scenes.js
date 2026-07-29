@@ -1,5 +1,6 @@
 export const SCENE_REGISTRY = {
    "102": {
+    "sfx": "universfield-cartoon-running-footsteps-250962.mp3",
     "bg": {
       "url": "",
       "local": "",
@@ -98,6 +99,7 @@ export const SCENE_REGISTRY = {
   }
 ,
   "104": {
+    "sfx": "freesound_community-rally-102090.mp3",
     bg: { url: "", local: "", x: 50, y: 50, s: 100 },
     elements: [
       { id: 1, type: "emoji", content: "🏳️", x: "53", y: "53", s: "3.95", r: 0, flipX: false, anim: "none", emo: { enabled: false } },
@@ -105,7 +107,9 @@ export const SCENE_REGISTRY = {
 { id: 3, type: "text", content: "[GUESS_WORD]", x: "51", y: "85", s: 0.55, r: 0, flipX: false, anim: "none", color: "#ffffff", font: "inherit", emo: { enabled: false } }    ]
   },
   "106": {
+    "sfx": "modestas123123-cash-register-kaching-sound-effect-125042.mp3",
     "bg": {
+      
       "url": "",
       "local": "",
       "x": 50,
@@ -161,7 +165,9 @@ export const SCENE_REGISTRY = {
   }
 ,
   "fanfic": {
+    "sfx": "pwlpl-paper-page-flip-and-document-rustle-481168.mp3",
     "bg": {
+      
       "url": "",
       "local": "",
       "x": "51",
@@ -232,8 +238,93 @@ export const SCENE_REGISTRY = {
     ]
   }
 ,
-  "drink": {
+  "switch": {
+    "sfx": "benkirb-magic-descend-3-259525.mp3",
     "bg": {
+      "url": "",
+      "local": "",
+      "x": 50,
+      "y": 50,
+      "s": 100
+    },
+    "elements": [
+      {
+        "id": 5,
+        "type": "emoji",
+        "content": "🔄",
+        "x": "50",
+        "y": "72",
+        "s": "0.75",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 1,
+        "type": "emoji",
+        "content": "👨‍⚕️",
+        "x": 31,
+        "y": 65,
+        "s": 1,
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 2,
+        "type": "emoji",
+        "content": "[RESPONDER]",
+        "x": 31,
+        "y": "49",
+        "s": "2",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "emo": {
+          "enabled": true
+        }
+      },
+      {
+        "id": 3,
+        "type": "emoji",
+        "content": "👨‍🔧",
+        "x": 66,
+        "y": 64,
+        "s": 1,
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 4,
+        "type": "emoji",
+        "content": "[PICKER]",
+        "x": "64",
+        "y": "52",
+        "s": "1.7",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "emo": {
+          "enabled": true
+        }
+      }
+    ]
+  }
+,
+  "drink": {
+    "sfx": "freesound_community-gulp-103200.mp3",
+    "bg": {
+      
       "url": "",
       "local": "",
       "x": 50,
@@ -259,9 +350,9 @@ export const SCENE_REGISTRY = {
         "id": 2,
         "type": "emoji",
         "content": "🧪",
-        "x": "30",
+        "x": "22",
         "y": 41,
-        "s": 0.8,
+        "s": "1.45",
         "r": 0,
         "flipX": false,
         "anim": "none",
@@ -305,51 +396,179 @@ export const SCENE_REGISTRY = {
     ]
   }
 ,
-  "switch": {
+  "island": {
+    "sfx": "freesound_community-ukewave-74471.mp3",
     "bg": {
+      
       "url": "",
-      "local": "",
+      "local": "litemon-island-4888462.jpg",
+      "cover": true,
+      "x": "47",
+      "y": "42",
+      "s": 100
+    },
+    "elements": [
+      {
+        "id": 1,
+        "type": "emoji",
+        "content": "[RESPONDER]",
+        "x": "56",
+        "y": "41",
+        "s": 1.55,
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "emo": {
+          "enabled": true
+        }
+      },
+      {
+        "id": 2,
+        "type": "text",
+        "content": "Well, I think ",
+        "x": "27",
+        "y": "15",
+        "s": "0.95",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "Impact",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 3,
+        "type": "text",
+        "content": "[GUESS_WORD]",
+        "x": "27",
+        "y": "42",
+        "s": "0.65",
+        "r": "0",
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "Impact",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 4,
+        "type": "text",
+        "content": "is just what I need 🌚!",
+        "x": "36",
+        "y": "83",
+        "s": "1.25",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "Impact",
+        "emo": {
+          "enabled": false
+        }
+      }
+    ]
+  }
+,
+  "woods": {
+    "sfx": "dariocoiro-forest-sound-530682.mp3",
+    "bg": {
+      
+      "url": "",
+      "local": "temperatesage-forest-4395986.jpg",
+      "cover": true,
       "x": 50,
       "y": 50,
       "s": 100
     },
     "elements": [
       {
-        "id": 5,
-        "type": "emoji",
-        "content": "🔄",
-        "x": "50",
-        "y": "72",
-        "s": "0.75",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "emo": {
-          "enabled": false
-        }
-      },
-      {
         "id": 1,
         "type": "emoji",
-        "content": "👨‍⚕️",
-        "x": 31,
-        "y": 65,
-        "s": 1,
+        "content": "[RESPONDER]",
+        "x": 51,
+        "y": "47",
+        "s": 1.55,
         "r": 0,
         "flipX": false,
         "anim": "none",
         "emo": {
-          "enabled": false
+          "enabled": true
         }
       },
       {
         "id": 2,
+        "type": "text",
+        "content": "Well, I think ",
+        "x": "26",
+        "y": "22",
+        "s": "1.05",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "Impact",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 3,
+        "type": "text",
+        "content": "[GUESS_WORD]",
+        "x": 71,
+        "y": 22,
+        "s": "0.75",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "Impact",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 4,
+        "type": "text",
+        "content": "is just what I need 🌚!",
+        "x": "29",
+        "y": "81",
+        "s": "1.15",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "Impact",
+        "emo": {
+          "enabled": false
+        }
+      }
+    ]
+  }
+,
+  "report": {
+    "sfx": "shrek_30-pop-wow-323262.mp3",
+    "bg": {
+      
+      "url": "https://cdn-useast1.kapwing.com/static/templates/charlie-conspiracy-always-sunny-in-philidelphia-meme-template-full-1b6bf049.webp",
+      "local": "",
+      "x": 32,
+      "y": "7",
+      "s": 107
+    },
+    "elements": [
+      {
+        "id": 1,
         "type": "emoji",
         "content": "[RESPONDER]",
-        "x": 31,
-        "y": "43",
-        "s": "2",
-        "r": 0,
+        "x": 34,
+        "y": "28",
+        "s": 1.85,
+        "r": "5",
         "flipX": false,
         "anim": "none",
         "emo": {
@@ -358,28 +577,142 @@ export const SCENE_REGISTRY = {
       },
       {
         "id": 3,
+        "type": "text",
+        "content": "[GUESS_WORD]",
+        "x": "65",
+        "y": "16",
+        "s": "0.85",
+        "r": "7",
+        "flipX": false,
+        "anim": "none",
+        "color": "#ff0000",
+        "font": "Impact",
+        "emo": {
+          "enabled": false
+        }
+      }
+    ]
+  }
+,
+  "city": {
+    "sfx": "alex_jauk-nearby-city-street-ambience-192219.mp3",
+    "bg": {
+      
+      "url": "",
+      "local": "grzyzz-zhongjiang-bridge-991057.jpg",
+      "cover": true,
+      "x": 50,
+      "y": 50,
+      "s": 100
+    },
+    "elements": [
+      {
+        "id": 1,
         "type": "emoji",
-        "content": "👨‍🔧",
-        "x": 66,
-        "y": 64,
-        "s": 1,
+        "content": "[RESPONDER]",
+        "x": "73",
+        "y": "38",
+        "s": 1.55,
         "r": 0,
         "flipX": false,
         "anim": "none",
+        "emo": {
+          "enabled": true
+        }
+      },
+      {
+        "id": 2,
+        "type": "text",
+        "content": "Well, I think ",
+        "x": "24",
+        "y": "36",
+        "s": "0.8",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffd642",
+        "font": "Impact",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 3,
+        "type": "text",
+        "content": "[GUESS_WORD]",
+        "x": "21",
+        "y": "56",
+        "s": "0.75",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffd642",
+        "font": "Impact",
         "emo": {
           "enabled": false
         }
       },
       {
         "id": 4,
-        "type": "emoji",
-        "content": "[PICKER]",
-        "x": "66",
-        "y": "44",
-        "s": "1.95",
-        "r": 0,
+        "type": "text",
+        "content": "is just what I need 🌚!",
+        "x": "38",
+        "y": "78",
+        "s": "1.3",
+        "r": "0",
         "flipX": false,
         "anim": "none",
+        "color": "#ffd642",
+        "font": "Impact",
+        "emo": {
+          "enabled": false
+        }
+      }
+    ]
+  }
+,
+  "spiritual": {
+    "sfx": "freesound_community-spooky-singing-choir-106736.mp3",
+    "bg": {
+      
+      "url": "",
+      "local": "nikkigocom-hands-up-6321013.svg",
+      "cover": false,
+      "x": 50,
+      "y": "38",
+      "s": 100
+    },
+    "elements": [
+      {
+        "id": 3,
+        "type": "text",
+        "content": "꧁⎝ 𓆩༺✧༻𓆪 ⎠꧂",
+        "x": 50,
+        "y": "20",
+        "s": "0.9",
+        "r": "0",
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "inherit",
+        "glow": true,
+        "emo": {
+          "enabled": false
+        },
+        "fixedText": true
+      },
+      {
+        "id": 2,
+        "type": "emoji",
+        "content": "[RESPONDER]",
+        "x": 50,
+        "y": 50,
+        "s": "2.05",
+        "r": 0,
+        "flipX": false,
+        "anim": "anim-float",
+        "color": "#ffffff",
+        "font": "inherit",
         "emo": {
           "enabled": true
         }
@@ -388,6 +721,7 @@ export const SCENE_REGISTRY = {
   }
 ,
   "dog": {
+    "sfx": "fnx_sound-animated-dog-panting-287307.mp3",
     "bg": {
       "url": "",
       "local": "",
@@ -490,319 +824,4 @@ export const SCENE_REGISTRY = {
       }
     ]
   }
-,
-  "island": {
-    "bg": {
-      "url": "",
-      "local": "litemon-island-4888462.jpg",
-      "cover": true,
-      "x": "47",
-      "y": "42",
-      "s": 100
-    },
-    "elements": [
-      {
-        "id": 1,
-        "type": "emoji",
-        "content": "[RESPONDER]",
-        "x": "56",
-        "y": "41",
-        "s": 1.55,
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "emo": {
-          "enabled": true
-        }
-      },
-      {
-        "id": 2,
-        "type": "text",
-        "content": "Well, I think ",
-        "x": "27",
-        "y": "15",
-        "s": "0.95",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "Impact",
-        "emo": {
-          "enabled": false
-        }
-      },
-      {
-        "id": 3,
-        "type": "text",
-        "content": "[GUESS_WORD]",
-        "x": "27",
-        "y": "42",
-        "s": "0.65",
-        "r": "0",
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "Impact",
-        "emo": {
-          "enabled": false
-        }
-      },
-      {
-        "id": 4,
-        "type": "text",
-        "content": "is just what I need 🌚!",
-        "x": "36",
-        "y": "83",
-        "s": "1.25",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "Impact",
-        "emo": {
-          "enabled": false
-        }
-      }
-    ]
-  }
-,
-  "woods": {
-    "bg": {
-      "url": "",
-      "local": "temperatesage-forest-4395986.jpg",
-      "cover": true,
-      "x": 50,
-      "y": 50,
-      "s": 100
-    },
-    "elements": [
-      {
-        "id": 1,
-        "type": "emoji",
-        "content": "[RESPONDER]",
-        "x": 51,
-        "y": "47",
-        "s": 1.55,
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "emo": {
-          "enabled": true
-        }
-      },
-      {
-        "id": 2,
-        "type": "text",
-        "content": "Well, I think ",
-        "x": "26",
-        "y": "22",
-        "s": "1.05",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "Impact",
-        "emo": {
-          "enabled": false
-        }
-      },
-      {
-        "id": 3,
-        "type": "text",
-        "content": "[GUESS_WORD]",
-        "x": 71,
-        "y": 22,
-        "s": "0.75",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "Impact",
-        "emo": {
-          "enabled": false
-        }
-      },
-      {
-        "id": 4,
-        "type": "text",
-        "content": "is just what I need 🌚!",
-        "x": "29",
-        "y": "81",
-        "s": "1.15",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "Impact",
-        "emo": {
-          "enabled": false
-        }
-      }
-    ]
-  }
-,
-  "report": {
-    "bg": {
-      "url": "https://cdn-useast1.kapwing.com/static/templates/charlie-conspiracy-always-sunny-in-philidelphia-meme-template-full-1b6bf049.webp",
-      "local": "",
-      "x": 32,
-      "y": "7",
-      "s": 107
-    },
-    "elements": [
-      {
-        "id": 1,
-        "type": "emoji",
-        "content": "[RESPONDER]",
-        "x": 34,
-        "y": "28",
-        "s": 1.85,
-        "r": "5",
-        "flipX": false,
-        "anim": "none",
-        "emo": {
-          "enabled": true
-        }
-      },
-      {
-        "id": 3,
-        "type": "text",
-        "content": "[GUESS_WORD]",
-        "x": "65",
-        "y": "16",
-        "s": "0.85",
-        "r": "7",
-        "flipX": false,
-        "anim": "none",
-        "color": "#ff0000",
-        "font": "Impact",
-        "emo": {
-          "enabled": false
-        }
-      }
-    ]
-  }
-,
-  "city": {
-    "bg": {
-      "url": "",
-      "local": "grzyzz-zhongjiang-bridge-991057.jpg",
-      "cover": true,
-      "x": 50,
-      "y": 50,
-      "s": 100
-    },
-    "elements": [
-      {
-        "id": 1,
-        "type": "emoji",
-        "content": "[RESPONDER]",
-        "x": 51,
-        "y": "38",
-        "s": 1.55,
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "emo": {
-          "enabled": true
-        }
-      },
-      {
-        "id": 2,
-        "type": "text",
-        "content": "Well, I think ",
-        "x": "24",
-        "y": "36",
-        "s": "0.8",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "Impact",
-        "emo": {
-          "enabled": false
-        }
-      },
-      {
-        "id": 3,
-        "type": "text",
-        "content": "[GUESS_WORD]",
-        "x": "21",
-        "y": "54",
-        "s": "0.85",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "Impact",
-        "emo": {
-          "enabled": false
-        }
-      },
-      {
-        "id": 4,
-        "type": "text",
-        "content": "is just what I need 🌚!",
-        "x": "38",
-        "y": "78",
-        "s": "1.3",
-        "r": "0",
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "Impact",
-        "emo": {
-          "enabled": false
-        }
-      }
-    ]
-  }
-,
-  "spiritual": {
-    "bg": {
-      "url": "",
-      "local": "nikkigocom-hands-up-6321013.svg",
-      "cover": false,
-      "x": 50,
-      "y": "38",
-      "s": 100
-    },
-    "elements": [
-      {
-        "id": 3,
-        "type": "text",
-        "content": "꧁⎝ 𓆩༺✧༻𓆪 ⎠꧂",
-        "x": 50,
-        "y": "20",
-        "s": "0.9",
-        "r": "0",
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "inherit",
-        "glow": true,
-        "emo": {
-          "enabled": false
-        },
-        "fixedText": true
-      },
-      {
-        "id": 2,
-        "type": "emoji",
-        "content": "[RESPONDER]",
-        "x": 50,
-        "y": 50,
-        "s": "2.05",
-        "r": 0,
-        "flipX": false,
-        "anim": "anim-float",
-        "color": "#ffffff",
-        "font": "inherit",
-        "emo": {
-          "enabled": true
-        }
-      }
-    ]
-  }
-,
 };

@@ -2302,6 +2302,7 @@ p {
 
 /* ГЛАВНЫЙ КЛАСС ДЛЯ ЭЛЕМЕНТОВ СЦЕНЫ */
 .scene-element {
+  font-family: "Noto Color Emoji", "Inter", sans-serif;
   position: absolute;
   left: var(--x); top: var(--y);
   transform: translate(-50%, -50%) scale(calc(var(--s) * var(--flip)), var(--s)) rotate(var(--r));
@@ -2314,6 +2315,7 @@ p {
 
 /* Старые классы (на случай если где-то остались хвосты) */
 .scene-actor {
+  font-family: "Noto Color Emoji", "Inter", sans-serif;
   position: absolute; z-index: 2;
   transform: translate(var(--ax), var(--ay)) scale(calc(var(--as) * var(--a-flip)), var(--as));
   display: flex; align-items: center; justify-content: center;
