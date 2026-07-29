@@ -1,5 +1,5 @@
 export const SCENE_REGISTRY = {
-  "102": {
+  "chase": {
     "sfx": "universfield-cartoon-running-footsteps-250962.mp3",
     "bg": {
       "url": "",
@@ -95,6 +95,22 @@ export const SCENE_REGISTRY = {
         "emo": {
           "enabled": false
         }
+      },
+      {
+        "id": 7,
+        "type": "emoji",
+        "content": "[GUESSER]",
+        "x": "81",
+        "y": "84",
+        "s": "1.1",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "inherit",
+        "emo": {
+          "enabled": true
+        }
       }
     ]
   }
@@ -104,6 +120,7 @@ export const SCENE_REGISTRY = {
     "bg": {
       "url": "",
       "local": "nikkigocom-hands-up-6321013.svg",
+      "cover": false,
       "x": 50,
       "y": 50,
       "s": 100
@@ -127,14 +144,14 @@ export const SCENE_REGISTRY = {
         "id": 2,
         "type": "emoji",
         "content": "[RESPONDER]",
-        "x": 53,
-        "y": 40,
-        "s": 1.35,
+        "x": "53",
+        "y": "40",
+        "s": "1.4",
         "r": 0,
         "flipX": false,
         "anim": "none",
         "emo": {
-          "enabled": true
+          "enabled": false
         }
       },
       {
@@ -152,9 +169,26 @@ export const SCENE_REGISTRY = {
         "emo": {
           "enabled": false
         }
+      },
+      {
+        "id": 4,
+        "type": "emoji",
+        "content": "[GUESSER]",
+        "x": "14",
+        "y": "80",
+        "s": "1.25",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "inherit",
+        "emo": {
+          "enabled": true
+        }
       }
     ]
-  },
+  }
+,
   "fanfic": {
     "sfx": "pwlpl-paper-page-flip-and-document-rustle-481168.mp3",
     "bg": {
@@ -176,7 +210,7 @@ export const SCENE_REGISTRY = {
         "flipX": false,
         "anim": "none",
         "emo": {
-          "enabled": true
+          "enabled": false
         }
       },
       {
@@ -225,6 +259,22 @@ export const SCENE_REGISTRY = {
           "enabled": false
         },
         "glow": true
+      },
+      {
+        "id": 7,
+        "type": "emoji",
+        "content": "[GUESSER]",
+        "x": "17",
+        "y": "85",
+        "s": "1.45",
+        "r": "-21",
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "inherit",
+        "emo": {
+          "enabled": true
+        }
       }
     ]
   }
@@ -233,6 +283,7 @@ export const SCENE_REGISTRY = {
     "bg": {
       "url": "",
       "local": "",
+      "cover": false,
       "x": 50,
       "y": 50,
       "s": 100
@@ -277,7 +328,7 @@ export const SCENE_REGISTRY = {
         "flipX": false,
         "anim": "none",
         "emo": {
-          "enabled": true
+          "enabled": false
         }
       },
       {
@@ -295,22 +346,23 @@ export const SCENE_REGISTRY = {
         }
       },
       {
-        "id": 4,
+        "id": 6,
         "type": "emoji",
-        "content": "[PICKER]",
-        "x": "66",
-        "y": "52",
-        "s": "1.7",
+        "content": "[GUESSER]",
+        "x": "64",
+        "y": "51",
+        "s": "1.55",
         "r": 0,
         "flipX": false,
         "anim": "none",
+        "color": "#ffffff",
+        "font": "inherit",
         "emo": {
           "enabled": true
         }
       }
     ]
-  }
-,
+  },
   "drink": {
     "sfx": "freesound_community-gulp-103200.mp3",
     "bg": {
@@ -325,21 +377,21 @@ export const SCENE_REGISTRY = {
         "id": 1,
         "type": "emoji",
         "content": "[RESPONDER]",
-        "x": "51",
+        "x": "79",
         "y": "29",
         "s": "2.55",
         "r": 2,
         "flipX": false,
         "anim": "none",
         "emo": {
-          "enabled": true
+          "enabled": false
         }
       },
       {
         "id": 2,
         "type": "emoji",
         "content": "🧪",
-        "x": "22",
+        "x": "52",
         "y": 41,
         "s": "1.45",
         "r": 0,
@@ -353,9 +405,9 @@ export const SCENE_REGISTRY = {
       {
         "id": 5,
         "type": "text",
-        "content": "?",
-        "x": "51",
-        "y": "88",
+        "content": "[GUESS_WORD]?",
+        "x": "50",
+        "y": "76",
         "s": 1,
         "r": 0,
         "flipX": false,
@@ -367,35 +419,51 @@ export const SCENE_REGISTRY = {
         }
       },
       {
-        "id": 7,
-        "type": "text",
-        "content": "[GUESS_WORD]",
-        "x": "38",
-        "y": "70",
-        "s": "0.8",
-        "r": "0",
+        "id": 8,
+        "type": "emoji",
+        "content": "[GUESSER]",
+        "x": "20",
+        "y": 50,
+        "s": "1.75",
+        "r": "-14",
         "flipX": false,
         "anim": "none",
-        "color": "#94ff29",
+        "color": "#ffffff",
         "font": "inherit",
         "emo": {
-          "enabled": false
+          "enabled": true
         }
       }
     ]
   }
 ,
-   "island": {
+  "island": {
     "sfx": "freesound_community-ukewave-74471.mp3",
     "bg": {
       "url": "",
       "local": "litemon-island-4888462.jpg",
       "cover": true,
-      "x": "47",
+      "x": "48",
       "y": "42",
       "s": 100
     },
     "elements": [
+      {
+        "id": 4,
+        "type": "text",
+        "content": "  [GUESS_WORD] is just what I need !",
+        "x": "77",
+        "y": "44",
+        "s": "1.8",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "inherit",
+        "emo": {
+          "enabled": false
+        }
+      },
       {
         "id": 1,
         "type": "emoji",
@@ -407,52 +475,36 @@ export const SCENE_REGISTRY = {
         "flipX": false,
         "anim": "none",
         "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 7,
+        "type": "emoji",
+        "content": "[GUESSER]",
+        "x": "21",
+        "y": "30",
+        "s": "1.95",
+        "r": "12",
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "inherit",
+        "emo": {
           "enabled": true
-        }
-      },
-      {
-        "id": 3,
-        "type": "text",
-        "content": "[GUESS_WORD]",
-        "x": "20",
-        "y": "67",
-        "s": "0.65",
-        "r": "0",
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "inherit",
-        "emo": {
-          "enabled": false
-        }
-      },
-      {
-        "id": 4,
-        "type": "text",
-        "content": "is just what I need !",
-        "x": "44",
-        "y": "86",
-        "s": "1.25",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "inherit",
-        "emo": {
-          "enabled": false
         }
       }
     ]
   }
 ,
-    "woods": {
+  "woods": {
     "sfx": "dariocoiro-forest-sound-530682.mp3",
     "bg": {
       "url": "",
       "local": "temperatesage-forest-4395986.jpg",
       "cover": true,
-      "x": 50,
-      "y": 50,
+      "x": "50",
+      "y": "50",
       "s": 100
     },
     "elements": [
@@ -467,33 +519,16 @@ export const SCENE_REGISTRY = {
         "flipX": false,
         "anim": "none",
         "emo": {
-          "enabled": true
-        }
-      },
-      {
-        "id": 3,
-        "type": "text",
-        "content": "[GUESS_WORD]",
-        "x": "22",
-        "y": "66",
-        "s": "0.75",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "inherit",
-        "emo": {
           "enabled": false
-        },
-        "glow": true
+        }
       },
       {
         "id": 4,
         "type": "text",
-        "content": "survival🌚(?)",
-        "x": "74",
-        "y": "86",
-        "s": "0.7",
+        "content": "[GUESS_WORD]-survival?",
+        "x": "47",
+        "y": "75",
+        "s": "1.35",
         "r": 0,
         "flipX": false,
         "anim": "none",
@@ -503,6 +538,22 @@ export const SCENE_REGISTRY = {
           "enabled": false
         },
         "glow": true
+      },
+      {
+        "id": 5,
+        "type": "emoji",
+        "content": "[GUESSER]",
+        "x": "32",
+        "y": "42",
+        "s": "1.45",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "inherit",
+        "emo": {
+          "enabled": true
+        }
       }
     ]
   }
@@ -527,7 +578,7 @@ export const SCENE_REGISTRY = {
         "flipX": false,
         "anim": "none",
         "emo": {
-          "enabled": true
+          "enabled": false
         }
       },
       {
@@ -577,9 +628,42 @@ export const SCENE_REGISTRY = {
         "emo": {
           "enabled": false
         }
+      },
+      {
+        "id": 6,
+        "type": "text",
+        "content": "👀",
+        "x": "34",
+        "y": "26",
+        "s": "1.25",
+        "r": "2",
+        "flipX": true,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "inherit",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 7,
+        "type": "emoji",
+        "content": "[GUESSER]",
+        "x": "82",
+        "y": "80",
+        "s": "1.45",
+        "r": "-14",
+        "flipX": true,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "inherit",
+        "emo": {
+          "enabled": true
+        }
       }
     ]
-  },
+  }
+,
   "city": {
     "sfx": "alex_jauk-nearby-city-street-ambience-192219.mp3",
     "bg": {
@@ -602,48 +686,16 @@ export const SCENE_REGISTRY = {
         "flipX": false,
         "anim": "none",
         "emo": {
-          "enabled": true
-        }
-      },
-      {
-        "id": 3,
-        "type": "text",
-        "content": "[GUESS_WORD]",
-        "x": "24",
-        "y": "57",
-        "s": "0.75",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffd642",
-        "font": "inherit",
-        "emo": {
-          "enabled": false
-        }
-      },
-      {
-        "id": 4,
-        "type": "text",
-        "content": "save me?",
-        "x": "39",
-        "y": "78",
-        "s": "0.9",
-        "r": "0",
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffd642",
-        "font": "inherit",
-        "emo": {
           "enabled": false
         }
       },
       {
         "id": 5,
         "type": "text",
-        "content": "will",
-        "x": "22",
-        "y": "40",
-        "s": "0.9",
+        "content": "will [GUESS_WORD] save me?",
+        "x": "31",
+        "y": "61",
+        "s": "1.95",
         "r": "0",
         "flipX": false,
         "anim": "none",
@@ -651,6 +703,22 @@ export const SCENE_REGISTRY = {
         "font": "inherit",
         "emo": {
           "enabled": false
+        }
+      },
+      {
+        "id": 6,
+        "type": "emoji",
+        "content": "[GUESSER]",
+        "x": "90",
+        "y": "40",
+        "s": "1.35",
+        "r": 0,
+        "flipX": true,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "inherit",
+        "emo": {
+          "enabled": true
         }
       }
     ]
@@ -659,7 +727,6 @@ export const SCENE_REGISTRY = {
   "spiritual": {
     "sfx": "freesound_community-spooky-singing-choir-106736.mp3",
     "bg": {
-      
       "url": "",
       "local": "nikkigocom-hands-up-6321013.svg",
       "cover": false,
@@ -699,11 +766,28 @@ export const SCENE_REGISTRY = {
         "color": "#ffffff",
         "font": "inherit",
         "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 4,
+        "type": "emoji",
+        "content": "[GUESSER]",
+        "x": "84",
+        "y": "82",
+        "s": "1.35",
+        "r": "-9",
+        "flipX": true,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "inherit",
+        "emo": {
           "enabled": true
         }
       }
     ]
-  },
+  }
+,
   "dog": {
     "sfx": "fnx_sound-animated-dog-panting-287307.mp3",
     "bg": {
@@ -828,23 +912,39 @@ export const SCENE_REGISTRY = {
         "id": 1,
         "type": "emoji",
         "content": "🐕",
-        "x": 69,
-        "y": "72",
-        "s": "2.25",
+        "x": "55",
+        "y": "55",
+        "s": "1.7",
         "r": 0,
         "flipX": false,
         "anim": "anim-bounce-talk",
         "emo": {
           "enabled": false
         }
+      },
+      {
+        "id": 11,
+        "type": "emoji",
+        "content": "[GUESSER]",
+        "x": "79",
+        "y": "72",
+        "s": "1.7",
+        "r": "-16",
+        "flipX": true,
+        "anim": "none",
+        "color": "#ffffff",
+        "font": "inherit",
+        "emo": {
+          "enabled": true
+        }
       }
     ]
   }
 ,
-  "money": {
-    "sfx": "modestas123123-cash-register-kaching-sound-effect-125042.mp3",
+  "dog": {
+    "sfx": "fnx_sound-animated-dog-panting-287307.mp3",
     "bg": {
-      "url": "",
+      "url": "https://cdn.pixabay.com/photo/2017/04/13/23/24/grass-2228960_1280.jpg",
       "local": "",
       "x": 50,
       "y": 50,
@@ -853,14 +953,110 @@ export const SCENE_REGISTRY = {
     "elements": [
       {
         "id": 2,
-        "type": "emoji",
-        "content": "💸",
-        "x": 35,
-        "y": 50,
-        "s": 2.45,
+        "type": "text",
+        "content": "[GUESS_WORD]",
+        "x": "59",
+        "y": "16",
+        "s": "0.75",
         "r": 0,
         "flipX": false,
         "anim": "none",
+        "color": "#ffd642",
+        "font": "inherit",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 3,
+        "type": "emoji",
+        "content": "[RESPONDER]",
+        "x": "23",
+        "y": "33",
+        "s": "2",
+        "r": 16,
+        "flipX": false,
+        "anim": "none",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 4,
+        "type": "text",
+        "content": "is a",
+        "x": "85",
+        "y": "36",
+        "s": "0.6",
+        "r": "0",
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffd642",
+        "font": "inherit",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 5,
+        "type": "text",
+        "content": "good",
+        "x": "19",
+        "y": "71",
+        "s": "0.5",
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffd642",
+        "font": "inherit",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 6,
+        "type": "text",
+        "content": "boy!",
+        "x": "42",
+        "y": "84",
+        "s": "0.65",
+        "r": "-1",
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffce1f",
+        "font": "inherit",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 9,
+        "type": "text",
+        "content": "/// ",
+        "x": "14",
+        "y": "39",
+        "s": "0.55",
+        "r": "15",
+        "flipX": false,
+        "anim": "none",
+        "color": "#fe8181",
+        "font": "serif",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 10,
+        "type": "text",
+        "content": "/// ",
+        "x": "29",
+        "y": "45",
+        "s": "0.55",
+        "r": "15",
+        "flipX": false,
+        "anim": "none",
+        "color": "#fe8181",
+        "font": "serif",
         "emo": {
           "enabled": false
         }
@@ -868,31 +1064,31 @@ export const SCENE_REGISTRY = {
       {
         "id": 1,
         "type": "emoji",
-        "content": "[RESPONDER]",
-        "x": "68",
-        "y": "46",
-        "s": "2.3",
+        "content": "🐕",
+        "x": "55",
+        "y": "55",
+        "s": "1.7",
         "r": 0,
-        "flipX": true,
-        "anim": "none",
+        "flipX": false,
+        "anim": "anim-bounce-talk",
         "emo": {
-          "enabled": true
+          "enabled": false
         }
       },
       {
-        "id": 5,
-        "type": "text",
-        "content": "[GUESS_WORD]",
-        "x": "36",
-        "y": "49",
-        "s": 0.3,
-        "r": -43,
-        "flipX": false,
+        "id": 11,
+        "type": "emoji",
+        "content": "[GUESSER]",
+        "x": "79",
+        "y": "72",
+        "s": "1.7",
+        "r": "-16",
+        "flipX": true,
         "anim": "none",
-        "color": "#09090d",
-        "font": "serif",
+        "color": "#ffffff",
+        "font": "inherit",
         "emo": {
-          "enabled": false
+          "enabled": true
         }
       }
     ]

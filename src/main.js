@@ -1612,13 +1612,13 @@ export function getSmartProp(word) {
   return null;
 }
 
-export function generateVisualScene(isCorrect, activeTypes, involvesPicker, responderEmoji, pickerEmoji, guessWord) {
+export function generateVisualScene(isCorrect, activeTypes, involvesGuesser, responder, guesser, trueWord, prevChoice = "") {
   const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   if (conn && (conn.saveData || conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g')) {
     return ''; 
   }
 
-  const smartProp = getSmartProp(guessWord);
+  const smartProp = getSmartProp(trueWord);
 
   let activeSceneKey = activeTypes.find(t => SCENE_REGISTRY[t]);
   if (!activeSceneKey) return '';
@@ -1636,41 +1636,45 @@ export function generateVisualScene(isCorrect, activeTypes, involvesPicker, resp
 
   let elementsHtml = sceneData.elements.map((el, index) => {
     let renderContent = String(el.content);
-    renderContent = renderContent.replace(/\[RESPONDER\]/g, responderEmoji);
-    renderContent = renderContent.replace(/\[PICKER\]/g, pickerEmoji);
+    // ПОДСТАНОВКА ЭМОДЗИ, ИМЕН И КОМБО
+    renderContent = renderContent.replace(/\[RESPONDER\]/g, responder.emoji);
+    renderContent = renderContent.replace(/\[GUESSER\]/g, guesser.emoji);
+    renderContent = renderContent.replace(/\[RESPONDER_NAME\]/g, responder.name);
+    renderContent = renderContent.replace(/\[GUESSER_NAME\]/g, guesser.name);
     renderContent = renderContent.replace(/\[SMART_PROP\]/g, smartProp || '');
-    renderContent = renderContent.replace(/\[GUESS_WORD\]/g, guessWord || '');
+    renderContent = renderContent.replace(/\[GUESS_WORD\]/g, trueWord || ''); 
+    renderContent = renderContent.replace(/\[PREV_CHOICE\]/g, prevChoice || '');
 
     let finalS = el.s;
     let extraStyles = "";
+    let contentHtml = renderContent;
     
     if (el.type === 'text') {
+      extraStyles += "white-space: pre-wrap; text-align: center; max-width: 90vw; ";
       if (!el.fixedText && renderContent.length > 8) {
         finalS = el.s * Math.max(0.25, 8 / renderContent.length);
       }
       if (el.fixedText) {
         extraStyles += "white-space: nowrap; max-width: none; ";
       }
+    } else if (el.type === 'image') {
+      contentHtml = `<img src="${renderContent}" style="height: 1em; width: auto; object-fit: contain; display: block;">`;
     }
 
     let filterStyle = el.glow ? 'filter: drop-shadow(0 0 15px var(--positive));' : 'filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));';
 
-    // --- ИДЕАЛЬНЫЙ СИЛУЭТ ФЛАГА ---
     if (renderContent === '🏳️') {
-      // Подставляем текстовый юникод-символ флага (⚑). 
-      // Суффикс \uFE0E гарантирует, что iPhone/Android не попытаются превратить его обратно в цветной эмодзи.
       renderContent = '⚑\uFE0E'; 
-      // Отключаем эмодзи-шрифты и задаем чистый, 100% сплошной неоновый цвет
       extraStyles += `color: ${isCorrect ? 'var(--positive)' : 'var(--danger)'} !important; font-family: sans-serif !important; `;
+      contentHtml = renderContent;
     }
-    // --------------------------------------------------
 
     let overlayHtml = '';
     if (el.emo && el.emo.enabled) {
       const anchor = EYE_ANCHORS[renderContent] || EYE_ANCHORS["default"];
-      const ovX = anchor.x;
-      const ovY = anchor.y;
-      const ovS = anchor.s; 
+      const ovX = anchor.x || 0;
+      const ovY = anchor.y || 0;
+      const ovS = anchor.s || 1; 
 
       const winOverlay = `<img src="src/ui/acostajnalec-sunglasses-5040012_1280.png" style="width: 1.15em; height: auto; object-fit: contain;">`;
       const loseOverlay = `<div style="transform: translate(0.45em, 0.05em);"><span style="font-size: 0.35em; text-shadow: 0 2px 4px rgba(0,0,0,0.4); display: inline-block; animation: dropTear 1.2s infinite ease-in;">💧</span></div>`;
@@ -1681,11 +1685,12 @@ export function generateVisualScene(isCorrect, activeTypes, involvesPicker, resp
 
     let textStyles = el.type === 'text' ? `color: ${el.color || '#ffffff'}; font-family: ${el.font || 'inherit'}; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;` : '';
 
-    return `<div class="scene-element ${el.anim}" style="--x: ${el.x}%; --y: ${el.y}%; --s: ${finalS}; --r: ${el.r}deg; --flip: ${el.flipX ? -1 : 1}; z-index: ${index + 2}; ${textStyles} ${filterStyle} ${extraStyles}">${renderContent}${overlayHtml}</div>`;
+    return `<div class="scene-element ${el.anim}" style="--x: ${el.x}%; --y: ${el.y}%; --s: ${finalS}; --r: ${el.r}deg; --flip: ${el.flipX ? -1 : 1}; z-index: ${index + 2}; ${textStyles} ${filterStyle} ${extraStyles}">${contentHtml}${overlayHtml}</div>`;
   }).join('');
 
   return `<div class="alert-visual-scene ${bgClass}" style="${bgStyle} border-bottom-color: ${isCorrect ? 'var(--positive)' : 'var(--danger)'};">${elementsHtml}</div>`;
 }
+
 function makeGuess(word) {
   try {
     const guesser = game.players[currentGuesserIndex];
@@ -1701,13 +1706,8 @@ function makeGuess(word) {
         const stateIndex = currentFragmentsState[i];
         if (stateIndex !== undefined && stateIndex !== -1) {
           const selectedOpt = frag.options[stateIndex];
-          
-          if (selectedOpt && selectedOpt.type) {
-            activeTypes.push(selectedOpt.type);
-          }
-          if (selectedOpt && selectedOpt.scene) {
-            activeTypes.push(selectedOpt.scene);
-          }
+          if (selectedOpt && selectedOpt.type) activeTypes.push(selectedOpt.type);
+          if (selectedOpt && selectedOpt.scene) activeTypes.push(selectedOpt.scene);
         }
       });
     }
@@ -1727,17 +1727,18 @@ function makeGuess(word) {
     const guessColor = isCorrect ? 'var(--positive)' : 'var(--danger)';
 
     const responder = game.players[game.getResponderIndex()];
-    const picker = game.players[game.pickerIndex];
     const rawText = currentQuestion.customCompiledText || currentQuestion.text || "";
-    const involvesPicker = rawText.includes('[PICKER]');
+    const involvesGuesser = rawText.includes('[GUESSER]');
+    const prevChoiceText = currentQuestion.comboWord || "";
     
-    const visualScene = generateVisualScene(isCorrect, activeTypes, involvesPicker, responder.emoji, picker.emoji, word);
+    // ПЕРЕДАЕМ ОБЪЕКТЫ ЦЕЛИКОМ (Эмодзи + Имя) И КОМБО
+    const visualScene = generateVisualScene(isCorrect, activeTypes, involvesGuesser, responder, guesser, responderChoice, prevChoiceText);
 
     const alertMessage = `<div style="text-align: center; margin-bottom: 10px;"><span style="font-size: 1.1rem; font-weight: 800; color: #ffd56b;">Score: ${goldBefore} ➔ ${finalWallet}</span></div>` +
       visualScene + 
       `<div style="background: rgba(255,255,255,0.04); padding: 14px; border-radius: 14px; border: 1px dashed rgba(255,255,255,0.15); font-size: 0.95rem; text-align: center; white-space: normal;"><div style="margin-bottom: 10px; font-weight: 700;">Your guess: <span style="color: ${guessColor}; text-transform: uppercase;">"${word}"</span></div><div style="line-height: 1.5; color: #e8e9f1;">${formattedSentence}</div></div>`;
 
-    // === ИНТЕГРАЦИЯ ЗВУКА СЦЕНЫ С ФЕЙД-ИНОМ И АВТО-ОБРЫВОМ ===
+    // === ИНТЕГРАЦИЯ ЗВУКА СЦЕНЫ ===
     let currentSceneAudio = null;
     let fadeOutInterval = null; 
     let activeSceneKey = activeTypes.find(t => SCENE_REGISTRY[t]);
@@ -1759,7 +1760,6 @@ function makeGuess(word) {
             }
           }, 40);
 
-          // Обрыв звука ровно через 5 секунд плавным затуханием
           setTimeout(() => {
             if (currentSceneAudio && !currentSceneAudio.paused && !fadeOutInterval) {
               let outVol = currentSceneAudio.volume;
@@ -1774,24 +1774,21 @@ function makeGuess(word) {
               }, 50);
             }
           }, 5000);
-
         }).catch(() => {});
-      }, 600); // Задержка 600мс
+      }, 600);
     }
 
     screens.showAlert(statusIcon, alertMessage, () => {
-      // Плавный обрыв звука при клике на закрытие окна
       if (currentSceneAudio && !currentSceneAudio.paused) {
-         if (fadeOutInterval) clearInterval(fadeOutInterval); // Останавливаем 5-секундный таймер затухания, если он уже запустился
-         
+         if (fadeOutInterval) clearInterval(fadeOutInterval);
          let vol = currentSceneAudio.volume;
          const fastFadeOut = setInterval(() => {
-            vol -= 0.15; // Очень быстрый фейд-аут при тапе
+            vol -= 0.15;
             if (vol <= 0.05) {
                clearInterval(fastFadeOut);
                currentSceneAudio.pause();
                currentSceneAudio.currentTime = 0;
-               setupNextGuesser(); // Переходим дальше только когда звук затих (это займет миллисекунды)
+               setupNextGuesser();
             } else {
                currentSceneAudio.volume = vol;
             }

@@ -21,7 +21,7 @@
     h3 { font-size: 12px; color: #fff; background: rgba(140, 108, 255, 0.2); padding: 6px 10px; border-radius: 6px; margin: 10px 0; text-transform: uppercase; letter-spacing: 0.05em; }
     
     .col-left { width: 320px; background: var(--panel); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-    .col-center { flex: 1; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
+    .col-center { flex: 1; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; position: relative; }
     .col-right { width: 340px; background: var(--panel); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); overflow-y: auto; display: flex; flex-direction: column; }
 
     .control-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
@@ -40,6 +40,7 @@
     .btn-small { padding: 6px 10px; font-size: 12px; }
     .btn-danger { background: rgba(255, 85, 85, 0.2); color: #ff5555; border: 1px solid rgba(255, 85, 85, 0.4); }
     .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--text); }
+    .btn-action { background: rgba(255, 255, 255, 0.1); border: 1px dashed var(--positive); color: var(--positive); }
     .value-display { font-family: monospace; color: #fff; }
 
     .scene-preview-container { background: var(--panel); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; padding: 20px; flex-shrink: 0; min-height: 250px; }
@@ -66,10 +67,9 @@
       position: absolute;
       left: var(--x); top: var(--y);
       transform: translate(-50%, -50%) scale(calc(var(--s) * var(--flip)), var(--s)) rotate(var(--r));
-      font-size: 40px; /* ЗАПАСНОЙ РАЗМЕР */
+      font-size: 40px; 
       font-size: 12.5cqi; 
       display: flex; align-items: center; justify-content: center;
-      white-space: nowrap; 
       line-height: 1;
     }
     
@@ -92,24 +92,26 @@
     }
 
     .export-box { background: rgba(0,0,0,0.5); padding: 16px; border-radius: 12px; border: 1px solid var(--positive); font-family: monospace; font-size: 11px; white-space: pre-wrap; color: #8be9fd; user-select: all; cursor: copy; }
+
+    #draw-modal { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; border-radius: 16px; }
+    canvas { background: transparent; border: 2px dashed rgba(255,255,255,0.3); border-radius: 12px; cursor: crosshair; touch-action: none; margin-bottom: 16px; }
   </style>
 </head>
 <body>
 
   <!-- ЛЕВАЯ ПАНЕЛЬ -->
   <div class="col-left">
-    <h2>1. Глобальные настройки</h2>
+    <h2>1. Настройки</h2>
     <div class="control-group">
       <label style="color: var(--positive);">ID Сцены (Тег)</label>
       <input type="text" id="scene-id" value="custom_scene" style="border-color: var(--positive);">
     </div>
     
     <div class="control-group">
-      <label style="color: #a5a1c8;">Комментарий для ИИ (Экстра)</label>
+      <label style="color: #a5a1c8;">Комментарий для ИИ</label>
       <textarea id="scene-note" rows="2" placeholder="Например: добавь конфетти..." style="resize: vertical;"></textarea>
     </div>
 
-    <!-- SFX БЛОК -->
     <div class="control-group">
       <label style="color: var(--warning);">SFX (Звук сцены)</label>
       <div style="display: flex; gap: 8px;">
@@ -120,63 +122,84 @@
     
     <div class="control-row" style="margin-top: 8px;">
       <label style="color: var(--warning); flex:1;">Эмодзи Responder</label>
-      <input type="text" id="test-resp-emo" value="🐼" style="width: 60px; text-align: center;">
+      <input type="text" id="test-resp-emo" value="🐼" style="width: 50px; text-align: center;">
     </div>
     <div class="control-row">
-      <label style="color: var(--warning); flex:1;">Эмодзи Picker</label>
-      <input type="text" id="test-pick-emo" value="👽" style="width: 60px; text-align: center;">
+      <label style="color: var(--warning); flex:1;">Эмодзи Guesser</label>
+      <input type="text" id="test-guess-emo" value="👽" style="width: 50px; text-align: center;">
+    </div>
+    
+    <div class="control-row" style="margin-top: 8px;">
+      <label style="color: #a5a1c8; flex:1;">Имя Responder</label>
+      <input type="text" id="test-resp-name" value="ALEX" style="width: 80px; text-align: center;">
     </div>
     <div class="control-row">
+      <label style="color: #a5a1c8; flex:1;">Имя Guesser</label>
+      <input type="text" id="test-guess-name" value="SAM" style="width: 80px; text-align: center;">
+    </div>
+
+    <div class="control-row" style="margin-top: 8px;">
       <label style="color: #50fa7b; flex:1;">Слово [GUESS_WORD]</label>
       <input type="text" id="test-guess-word" value="ОТВЕТ" style="width: 100px; text-align: center; border-color: #50fa7b;">
     </div>
 
+    <div class="control-row" style="margin-top: 8px;">
+      <label style="color: #ff9d4a; flex:1;">Комбо [PREV_CHOICE]</label>
+      <input type="text" id="test-prev-choice" value="ПРОШЛЫЙ ОТВЕТ" style="width: 100px; text-align: center; border-color: #ff9d4a;">
+    </div>
+
     <div class="control-row" style="margin-top: 10px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px;">
-      <label style="color: var(--warning); width: 100%; display: flex; align-items: center;">📱 Симулятор ОС
-        <select id="os-simulator" style="width: 150px; margin-left: auto;">
-          <option value="native">Мой ПК (Native)</option>
-          <option value="'Noto Color Emoji', sans-serif">Android (Google)</option>
-          <option value="'Apple Color Emoji', sans-serif">iPhone / Mac</option>
+      <label style="color: var(--warning); width: 100%; display: flex; align-items: center;">📱 Эмуляция шрифта
+        <select id="os-simulator" style="width: 140px; margin-left: auto;">
+          <option value="native">Мой ПК</option>
+          <option value="'Noto Color Emoji', sans-serif">Android</option>
+          <option value="'Apple Color Emoji', sans-serif">iPhone</option>
           <option value="'Segoe UI Emoji', sans-serif">Windows</option>
         </select>
       </label>
     </div>
 
-    <!-- БЛОК ОВЕРЛЕЕВ -->
     <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-top: 8px;">
-      <label style="color: var(--positive); margin-bottom: 6px;">Сценарий превью (влияет на очки/слезы)</label>
-      <select id="test-overlay-type" style="margin-bottom: 6px;">
-        <option value="win">😎 Игрок Угадал (Win)</option>
-        <option value="lose">💧 Игрок Ошибся (Lose)</option>
+      <label style="color: var(--positive); margin-bottom: 6px;">Эмоция Гессера (очки/слезы)</label>
+      <select id="test-overlay-type" style="margin-bottom: 0;">
+        <option value="win">😎 Гессер угадал (Win)</option>
+        <option value="lose">💧 Гессер ошибся (Lose)</option>
       </select>
     </div>
 
     <h3>🖼️ Фон сцены</h3>
     <div class="control-group">
       <input type="text" id="bg-url" placeholder="URL картинки (из интернета)">
-      <input type="text" id="bg-local" placeholder="Имя файла (напр. coolBg.jpg)">
-      <label style="margin-top: 6px; color: var(--positive);">Или загрузи с ПК (без перезапуска):</label>
+      <input type="text" id="bg-local" placeholder="Имя файла из src/ui (напр. bg.jpg)">
+      <label style="margin-top: 6px; color: var(--positive);">Загрузить превью с ПК:</label>
       <input type="file" id="bg-file" accept="image/*">
     </div>
     <div class="control-row"><label>X</label><input type="range" id="bg-x" min="0" max="100" value="50"><span class="value-display" id="val-bg-x">50%</span></div>
     <div class="control-row"><label>Y</label><input type="range" id="bg-y" min="0" max="100" value="50"><span class="value-display" id="val-bg-y">50%</span></div>
     <div class="control-row"><label>Zoom</label><input type="range" id="bg-s" min="10" max="300" value="100"><span class="value-display" id="val-bg-s">100%</span></div>
-    <div class="control-row" style="margin-top: 6px;"><input type="checkbox" id="bg-cover"> <label for="bg-cover" style="cursor:pointer; color:#fff;">Заполнить весь блок (Cover)</label></div>
+    <div class="control-row" style="margin-top: 6px;"><input type="checkbox" id="bg-cover"> <label for="bg-cover" style="cursor:pointer; color:#fff;">Cover</label></div>
 
     <h3>📑 Слои (Элементы)</h3>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px;">
-      <button class="btn-small btn-outline" onclick="addLayer('[RESPONDER]', 'emoji')">+ Responder</button>
-      <button class="btn-small btn-outline" onclick="addLayer('[PICKER]', 'emoji')">+ Picker</button>
-      <button class="btn-small btn-outline" onclick="addLayer('[SMART_PROP]', 'emoji')">+ Умный Пропс</button>
-      <button class="btn-small btn-outline" style="background: rgba(80, 250, 123, 0.2); color: #50fa7b; border-color: #50fa7b;" onclick="addLayer('[GUESS_WORD]', 'text')">+ Текст Ответа</button>
-      <button class="btn-small btn-outline" onclick="addLayer('Текст', 'text')">+ Текст</button>
-      <button class="btn-small btn-outline" style="grid-column: span 2;" onclick="addLayer('👀', 'emoji')">+ Свой Эмодзи</button>
+      <button class="btn-small btn-outline" onclick="addLayer('[RESPONDER]', 'emoji')">+ Эмодзи Resp</button>
+      <button class="btn-small btn-outline" onclick="addLayer('[GUESSER]', 'emoji')">+ Эмодзи Guess</button>
+      
+      <button class="btn-small btn-outline" onclick="addLayer('[RESPONDER_NAME]', 'text')">+ Имя Resp</button>
+      <button class="btn-small btn-outline" onclick="addLayer('[GUESSER_NAME]', 'text')">+ Имя Guess</button>
+      
+      <button class="btn-small btn-outline" style="grid-column: span 2; border-color: #ff9d4a; color: #ff9d4a;" onclick="addLayer('[PREV_CHOICE]', 'text')">+ Комбо [PREV_CHOICE]</button>
+
+      <button class="btn-small btn-outline" style="grid-column: span 2;" onclick="addLayer('Текст', 'text')">+ Блок Текста</button>
+      
+      <button class="btn-small btn-action" onclick="document.getElementById('img-upload-hidden').click()">+ Картинка</button>
+      <button class="btn-small btn-action" onclick="openDrawModal()">+ Рисунок</button>
+      <input type="file" id="img-upload-hidden" accept="image/*" style="display: none;">
     </div>
     <div id="layers-list"></div>
 
     <div class="control-row" style="margin-top: auto; padding-top: 10px;">
       <button id="save-report-btn" style="flex: 2;">💾 В Рапорт</button>
-      <button id="delete-report-btn" class="btn-danger" style="flex: 1;" title="Удалить сцену из рапорта">🗑 Удалить</button>
+      <button id="delete-report-btn" class="btn-danger" style="flex: 1;" title="Удалить сцену">🗑 Удалить</button>
     </div>
   </div>
 
@@ -187,16 +210,35 @@
         <div id="elements-container"></div>
       </div>
     </div>
+
+    <!-- CANVAS MODAL -->
+    <div id="draw-modal">
+      <h3 style="margin-bottom: 10px;">Нарисуйте пропс (Белым цветом)</h3>
+      <canvas id="draw-canvas" width="250" height="250"></canvas>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-small btn-danger" onclick="clearCanvas()">Очистить</button>
+        <button class="btn-small" onclick="closeDrawModal(false)">Отмена</button>
+        <button class="btn-small btn-action" style="background: var(--positive); color: #000;" onclick="closeDrawModal(true)">Сохранить слой</button>
+      </div>
+    </div>
     
     <div id="active-layer-settings" style="background: var(--panel); border: 1px solid rgba(255,255,255,0.08); padding: 16px; border-radius: 16px; display: none;">
       <h3 style="margin-top:0;">Настройки слоя: <span id="layer-title-display"></span></h3>
-      <div class="control-group"><label>Контент</label><input type="text" id="el-content"></div>
+      <div class="control-group">
+        <label>Контент (Текст или Base64)</label>
+        <textarea id="el-content" rows="3" style="resize: vertical; font-family: inherit;"></textarea>
+      </div>
       
+      <!-- ПОЯВЛЯЕТСЯ ТОЛЬКО ДЛЯ ТЕКСТА -->
       <div id="text-specific-settings" style="display: none; gap: 10px; margin-bottom: 10px;">
         <div class="control-group" style="flex:1;"><label>Цвет</label><input type="color" id="el-color" value="#ffffff" style="height:32px;"></div>
         <div class="control-group" style="flex:2;"><label>Шрифт</label>
           <select id="el-font"><option value="inherit">По умолчанию</option><option value="Impact">Impact (Мем)</option><option value="monospace">Моноширинный</option><option value="serif">С засечками</option></select>
         </div>
+      </div>
+      <!-- ПРЕДУПРЕЖДЕНИЕ ЕСЛИ ВЫБРАН ЭМОДЗИ -->
+      <div id="emoji-notice" style="display: none; color: var(--muted); font-size: 11px; margin-bottom: 10px; text-align: center; border: 1px dashed rgba(255,255,255,0.1); padding: 6px;">
+        🎨 Цвет и шрифт настраиваются только для текстовых слоев
       </div>
 
       <div class="control-row"><label>X</label><input type="range" id="el-x" min="0" max="100" value="50"><span class="value-display" id="val-el-x">50%</span></div>
@@ -220,7 +262,7 @@
       </div>
 
       <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.05);">
-        <label><input type="checkbox" id="el-emo-enabled"> 🔴 Отметить положение глаз (Для очков и словаря)</label>
+        <label><input type="checkbox" id="el-emo-enabled"> 🔴 Отметить положение глаз</label>
         <div id="el-emo-settings" style="display: none; margin-top: 8px; flex-direction: column; gap: 4px;">
           <div class="control-row"><label>Сдвиг X</label><input type="range" id="el-emo-x" min="-100" max="100" value="0"><span class="value-display" id="val-el-emo-x">0%</span></div>
           <div class="control-row"><label>Сдвиг Y</label><input type="range" id="el-emo-y" min="-100" max="100" value="0"><span class="value-display" id="val-el-emo-y">0%</span></div>
@@ -244,8 +286,7 @@
     <h4 style="color: var(--warning); margin-bottom: 8px; margin-top: 10px;">📋 Автоматический JSON Рапорт:</h4>
     <div id="export-instructions" style="font-family: monospace; font-size: 11px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; display: none;">
       // ИНСТРУКЦИЯ ДЛЯ ИИ:<br>
-      // Вставь этот код внутрь объекта SCENE_REGISTRY (файл src/data/scenes.js).<br>
-      // Если есть "note", примени описанные там экстра-эффекты.
+      // Вставь этот код внутрь объекта SCENE_REGISTRY (файл src/data/scenes.js).
     </div>
     <div class="export-box" id="export-box">// Настрой сцену и нажми "В Рапорт"...</div>
   </div>
@@ -273,7 +314,6 @@
   <script type="module">
     import { SCENE_REGISTRY } from './src/data/scenes.js';
     import { questionsDatabase } from './src/data/questions.js';
-    // Импортируем словари и генератор SMART_PROP
     import { EYE_ANCHORS, getSmartProp } from './src/main.js';
 
     const sceneSelect = document.getElementById('load-scene-select');
@@ -304,7 +344,7 @@
     let elementIdCounter = 0;
 
     const state = { id: 'custom_scene', note: '', sfx: '', bg: { url: '', local: '', base64: '', x: 50, y: 50, s: 100, cover: false }, elements: [] };
-    let currentContext = { responder: '🐼', picker: '👽', guessWord: 'ОТВЕТ' };
+    let currentContext = { responder: '🐼', guesser: '👽', responderName: 'ALEX', guesserName: 'SAM', guessWord: 'ОТВЕТ', prevChoice: 'ПРОШЛЫЙ ОТВЕТ' };
 
     document.getElementById('load-scene-btn').onclick = () => {
        const key = sceneSelect.value;
@@ -328,9 +368,9 @@
        
        document.getElementById('bg-url').value = state.bg.url || '';
        document.getElementById('bg-local').value = state.bg.local || '';
-       document.getElementById('bg-x').value = state.bg.x || 50;
-       document.getElementById('bg-y').value = state.bg.y || 50;
-       document.getElementById('bg-s').value = state.bg.s || 100;
+       document.getElementById('bg-x').value = state.bg.x !== undefined ? state.bg.x : 50;
+       document.getElementById('bg-y').value = state.bg.y !== undefined ? state.bg.y : 50;
+       document.getElementById('bg-s').value = state.bg.s !== undefined ? state.bg.s : 100;
        document.getElementById('bg-cover').checked = state.bg.cover || false;
        
        activeLayerId = state.elements.length > 0 ? state.elements[state.elements.length-1].id : null;
@@ -382,31 +422,79 @@
     };
     window.selectLayer = (id) => { activeLayerId = id; renderApp(); };
 
+    // --- ЛОГИКА РИСОВАЛКИ И КАРТИНОК ---
+    document.getElementById('img-upload-hidden').onchange = e => {
+      const file = e.target.files[0]; if(!file) return;
+      const reader = new FileReader(); 
+      reader.onload = ev => { addLayer(ev.target.result, 'image'); };
+      reader.readAsDataURL(file);
+    };
+
+    const drawModal = document.getElementById('draw-modal');
+    const canvas = document.getElementById('draw-canvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+
+    window.openDrawModal = () => {
+      drawModal.style.display = 'flex';
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#ffffff';
+    };
+    window.closeDrawModal = (save) => {
+      drawModal.style.display = 'none';
+      if (save) {
+        addLayer(canvas.toDataURL("image/png"), 'image');
+      }
+    };
+    window.clearCanvas = () => ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const getPos = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    };
+    const startDraw = (e) => { isDrawing = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); };
+    const draw = (e) => { if (!isDrawing) return; e.preventDefault(); const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); };
+    const stopDraw = () => { isDrawing = false; };
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDraw);
+    canvas.addEventListener('mouseleave', stopDraw);
+    canvas.addEventListener('touchstart', startDraw, {passive: false});
+    canvas.addEventListener('touchmove', draw, {passive: false});
+    canvas.addEventListener('touchend', stopDraw);
+    // -----------------------------------
+
     function renderApp() {
-      // 1. Отрисовка фона
       const box = document.getElementById('scene-box');
       if (state.bg.base64) { box.style.backgroundImage = `url('${state.bg.base64}')`; box.classList.remove('stars-bg'); }
       else if (state.bg.url) { box.style.backgroundImage = `url('${state.bg.url}')`; box.classList.remove('stars-bg'); }
       else if (state.bg.local) { box.style.backgroundImage = `url('./src/ui/${state.bg.local}')`; box.classList.remove('stars-bg'); }
       else { box.style.backgroundImage = 'none'; box.classList.add('stars-bg'); }
 
-      box.style.backgroundPosition = `${state.bg.x}% ${state.bg.y}%`;
-      box.style.backgroundSize = state.bg.cover ? 'cover' : `${state.bg.s}%`;
+      box.style.backgroundPosition = `${state.bg.x !== undefined ? state.bg.x : 50}% ${state.bg.y !== undefined ? state.bg.y : 50}%`;
+      box.style.backgroundSize = state.bg.cover ? 'cover' : `${state.bg.s !== undefined ? state.bg.s : 100}%`;
 
-      document.getElementById('val-bg-x').innerText = `${state.bg.x}%`;
-      document.getElementById('val-bg-y').innerText = `${state.bg.y}%`;
-      document.getElementById('val-bg-s').innerText = `${state.bg.s}%`;
+      document.getElementById('val-bg-x').innerText = `${state.bg.x !== undefined ? state.bg.x : 50}%`;
+      document.getElementById('val-bg-y').innerText = `${state.bg.y !== undefined ? state.bg.y : 50}%`;
+      document.getElementById('val-bg-s').innerText = `${state.bg.s !== undefined ? state.bg.s : 100}%`;
 
-      // 2. Список слоев
       const layersList = document.getElementById('layers-list');
       layersList.innerHTML = '';
       [...state.elements].reverse().forEach(el => {
         const item = document.createElement('div');
         item.className = `layer-item ${el.id === activeLayerId ? 'active' : ''}`;
-        let previewTxt = el.content;
+        
+        let previewTxt = el.type === 'image' ? 'Картинка/Рисунок' : el.content;
+        let icon = el.type === 'image' ? '🖼️' : (el.type === 'text' ? '📝' : '🤩');
+        
         item.innerHTML = `
           <span style="font-size: 13px; font-weight: bold; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer;" onclick="selectLayer(${el.id})">
-            ${el.type === 'text' ? '📝' : '🤩'} ${previewTxt}
+            ${icon} ${previewTxt}
           </span>
           <div style="display: flex; gap: 4px;">
             <button class="btn-small btn-outline" onclick="copyLayer(${el.id})" title="Дублировать слой">📄</button>
@@ -418,48 +506,71 @@
         layersList.appendChild(item);
       });
 
-      // 3. Генерация DOM элементов сцены (Ручной рендер редактора)
       const container = document.getElementById('elements-container');
       container.innerHTML = '';
       let inlineExportText = "";
 
-      // Подбор пропса по логике из игры
       const smartProp = getSmartProp(currentContext.guessWord) || '';
 
       state.elements.forEach((el, index) => {
         const div = document.createElement('div');
-        div.className = `scene-element ${el.anim}`;
+        div.className = `scene-element ${el.anim || 'none'}`;
         
         let renderContent = String(el.content);
         renderContent = renderContent.replace(/\[RESPONDER\]/g, currentContext.responder);
-        renderContent = renderContent.replace(/\[PICKER\]/g, currentContext.picker);
+        renderContent = renderContent.replace(/\[GUESSER\]/g, currentContext.guesser);
+        renderContent = renderContent.replace(/\[RESPONDER_NAME\]/g, currentContext.responderName);
+        renderContent = renderContent.replace(/\[GUESSER_NAME\]/g, currentContext.guesserName);
         renderContent = renderContent.replace(/\[SMART_PROP\]/g, smartProp);
         renderContent = renderContent.replace(/\[GUESS_WORD\]/g, currentContext.guessWord);
-
-        let finalS = el.s;
-        if (el.type === 'text' && !el.fixedText && renderContent.length > 8) {
-          finalS = el.s * Math.max(0.25, 8 / renderContent.length);
-        }
-
-        if (el.type === 'text' && el.fixedText) {
+        renderContent = renderContent.replace(/\[PREV_CHOICE\]/g, currentContext.prevChoice);
+        
+        let finalS = el.s !== undefined ? el.s : 1;
+        
+        if (el.type === 'text') {
+            div.style.whiteSpace = 'pre-wrap';
+            div.style.textAlign = 'center';
+            div.style.maxWidth = '90vw';
+            if (!el.fixedText && renderContent.length > 8) {
+              finalS = finalS * Math.max(0.25, 8 / renderContent.length);
+            }
+            if (el.fixedText) {
+                div.style.whiteSpace = 'nowrap';
+                div.style.maxWidth = 'none';
+            }
+        } else {
             div.style.whiteSpace = 'nowrap';
-            div.style.maxWidth = 'none';
         }
 
-        div.style.setProperty('--x', `${el.x}%`); div.style.setProperty('--y', `${el.y}%`);
-        div.style.setProperty('--s', finalS); div.style.setProperty('--r', `${el.r}deg`);
-        div.style.setProperty('--flip', el.flipX ? -1 : 1); div.style.zIndex = index + 2;
+        div.style.setProperty('--x', `${el.x !== undefined ? el.x : 50}%`); 
+        div.style.setProperty('--y', `${el.y !== undefined ? el.y : 50}%`);
+        div.style.setProperty('--s', finalS); 
+        div.style.setProperty('--r', `${el.r !== undefined ? el.r : 0}deg`);
+        div.style.setProperty('--flip', el.flipX ? -1 : 1); 
+        div.style.zIndex = index + 2;
 
         if (el.type === 'text') {
-          div.innerText = renderContent; div.style.color = el.color; div.style.fontFamily = el.font;
+          div.innerText = renderContent; div.style.color = el.color || '#ffffff'; div.style.fontFamily = el.font || 'inherit';
           div.style.fontWeight = '900'; div.style.textTransform = 'uppercase'; div.style.letterSpacing = '1px';
-        } else { div.innerText = renderContent; }
+        } else if (el.type === 'image') {
+          div.innerHTML = `<img src="${el.content}" style="height: 1em; width: auto; object-fit: contain; display: block;">`;
+        } else { 
+          div.innerText = renderContent; 
+        }
         
         let currentFilter = 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))';
         if (el.glow) currentFilter = 'drop-shadow(0 0 15px var(--positive))';
         div.style.filter = currentFilter;
 
-        // Генерация глаз/очков
+        const isCorrect = document.getElementById('test-overlay-type').value === 'win';
+
+        if (renderContent === '🏳️') {
+            renderContent = '⚑\uFE0E'; 
+            div.innerText = renderContent;
+            div.style.color = isCorrect ? 'var(--positive)' : 'var(--danger)'; 
+            div.style.fontFamily = 'sans-serif';
+        }
+
         if (el.emo && el.emo.enabled) {
           if (el.emo.x === undefined) {
              if (EYE_ANCHORS[renderContent]) {
@@ -471,12 +582,11 @@
 
           let overlayContent = '';
           let finalOverlayScale = el.emo.s;
-          const overlayType = document.getElementById('test-overlay-type').value;
 
-          if (overlayType === 'win') {
+          if (isCorrect) {
              overlayContent = `<img src="./src/ui/acostajnalec-sunglasses-5040012_1280.png" style="width: 1.15em; height: auto; object-fit: contain;">`;
              finalOverlayScale = el.emo.s;
-          } else if (overlayType === 'lose') {
+          } else {
              overlayContent = `<div style="transform: translate(0.45em, 0.05em);"><span style="font-size: 0.35em; text-shadow: 0 2px 4px rgba(0,0,0,0.4); display: inline-block; animation: dropTear 1.2s infinite ease-in;">💧</span></div>`;
              finalOverlayScale = el.emo.s;
           }
@@ -497,36 +607,44 @@
         container.appendChild(div);
       });
 
-      // Применяем рамку ответа (Красный/Бирюзовый)
-      const isLose = document.getElementById('test-overlay-type').value === 'lose';
-      box.style.borderBottomColor = isLose ? 'var(--danger)' : 'var(--positive)';
+      box.style.borderBottomColor = document.getElementById('test-overlay-type').value === 'win' ? 'var(--positive)' : 'var(--danger)';
 
-      // 4. Панель свойств слоя
       const activePanel = document.getElementById('active-layer-settings');
       const activeEl = state.elements.find(e => e.id === activeLayerId);
       const eyeBox = document.getElementById('eye-calibration-box');
       
       if (activeEl) {
         activePanel.style.display = 'block';
-        document.getElementById('layer-title-display').innerText = activeEl.content;
+        document.getElementById('layer-title-display').innerText = activeEl.type === 'image' ? 'Картинка/Рисунок' : activeEl.content;
         document.getElementById('el-content').value = activeEl.content;
-        document.getElementById('el-x').value = activeEl.x; document.getElementById('val-el-x').innerText = `${activeEl.x}%`;
-        document.getElementById('el-y').value = activeEl.y; document.getElementById('val-el-y').innerText = `${activeEl.y}%`;
-        document.getElementById('el-s').value = activeEl.s; document.getElementById('val-el-s').innerText = activeEl.s;
-        document.getElementById('el-r').value = activeEl.r; document.getElementById('val-el-r').innerText = `${activeEl.r}deg`;
-        document.getElementById('el-flip').checked = activeEl.flipX;
+        document.getElementById('el-content').disabled = activeEl.type === 'image'; 
+        
+        document.getElementById('el-x').value = activeEl.x !== undefined ? activeEl.x : 50; 
+        document.getElementById('val-el-x').innerText = `${activeEl.x !== undefined ? activeEl.x : 50}%`;
+        document.getElementById('el-y').value = activeEl.y !== undefined ? activeEl.y : 50; 
+        document.getElementById('val-el-y').innerText = `${activeEl.y !== undefined ? activeEl.y : 50}%`;
+        document.getElementById('el-s').value = activeEl.s !== undefined ? activeEl.s : 1; 
+        document.getElementById('val-el-s').innerText = activeEl.s !== undefined ? activeEl.s : 1;
+        document.getElementById('el-r').value = activeEl.r !== undefined ? activeEl.r : 0; 
+        document.getElementById('val-el-r').innerText = `${activeEl.r !== undefined ? activeEl.r : 0}deg`;
+        
+        document.getElementById('el-flip').checked = activeEl.flipX || false;
         document.getElementById('el-glow').checked = activeEl.glow || false;
-        document.querySelectorAll('input[name="el_anim"]').forEach(r => r.checked = (r.value === activeEl.anim));
+        document.querySelectorAll('input[name="el_anim"]').forEach(r => r.checked = (r.value === (activeEl.anim || 'none')));
 
         const textSettings = document.getElementById('text-specific-settings');
+        const emojiNotice = document.getElementById('emoji-notice');
+
         if (activeEl.type === 'text') { 
             textSettings.style.display = 'flex'; 
-            document.getElementById('el-color').value = activeEl.color; 
-            document.getElementById('el-font').value = activeEl.font; 
+            emojiNotice.style.display = 'none';
+            document.getElementById('el-color').value = activeEl.color || '#ffffff'; 
+            document.getElementById('el-font').value = activeEl.font || 'inherit'; 
             document.getElementById('el-fixed-text-row').style.display = 'flex';
             document.getElementById('el-fixed-text').checked = activeEl.fixedText || false;
         } else { 
             textSettings.style.display = 'none'; 
+            emojiNotice.style.display = 'block';
             document.getElementById('el-fixed-text-row').style.display = 'none';
         }
 
@@ -535,9 +653,12 @@
           document.getElementById('el-emo-settings').style.display = activeEl.emo.enabled ? 'flex' : 'none';
           
           if (activeEl.emo.enabled) {
-              document.getElementById('el-emo-x').value = activeEl.emo.x; document.getElementById('val-el-emo-x').innerText = `${activeEl.emo.x}%`;
-              document.getElementById('el-emo-y').value = activeEl.emo.y; document.getElementById('val-el-emo-y').innerText = `${activeEl.emo.y}%`;
-              document.getElementById('el-emo-s').value = activeEl.emo.s; document.getElementById('val-el-emo-s').innerText = activeEl.emo.s;
+              document.getElementById('el-emo-x').value = activeEl.emo.x !== undefined ? activeEl.emo.x : 0; 
+              document.getElementById('val-el-emo-x').innerText = `${activeEl.emo.x !== undefined ? activeEl.emo.x : 0}%`;
+              document.getElementById('el-emo-y').value = activeEl.emo.y !== undefined ? activeEl.emo.y : 0; 
+              document.getElementById('val-el-emo-y').innerText = `${activeEl.emo.y !== undefined ? activeEl.emo.y : 0}%`;
+              document.getElementById('el-emo-s').value = activeEl.emo.s !== undefined ? activeEl.emo.s : 1; 
+              document.getElementById('val-el-emo-s').innerText = activeEl.emo.s !== undefined ? activeEl.emo.s : 1;
               
               const inlineExport = document.getElementById('eye-inline-export');
               if (inlineExport) inlineExport.innerText = inlineExportText;
@@ -546,17 +667,18 @@
               if (eyeBox) eyeBox.style.display = 'none';
           }
         }
-      } else { activePanel.style.display = 'none'; if(eyeBox) eyeBox.style.display = 'none'; }
+      } else { 
+        activePanel.style.display = 'none'; 
+        if(eyeBox) eyeBox.style.display = 'none'; 
+      }
     }
 
-    // Привязки кнопок и инпутов
     document.getElementById('test-overlay-type').onchange = () => renderApp();
     
     document.getElementById('scene-id').oninput = e => state.id = e.target.value;
     document.getElementById('scene-note').oninput = e => state.note = e.target.value;
     document.getElementById('scene-sfx').oninput = e => state.sfx = e.target.value;
-    
-    // Аудио движок (как в main.js)
+
     let testBaseAudio = null;
     let testSfxAudio = null;
     let fadeOutInterval = null;
@@ -608,32 +730,13 @@
     };
 
     document.getElementById('test-sfx-btn').onclick = () => playTestSequence();
-    
-    document.getElementById('test-resp-emo').oninput = e => { 
-      const newEmoji = e.target.value || '🐼'; currentContext.responder = newEmoji; 
-      state.elements.forEach(el => {
-         if (String(el.content).includes('[RESPONDER]') && el.emo && el.emo.enabled) {
-             if (EYE_ANCHORS[newEmoji]) { el.emo.x = EYE_ANCHORS[newEmoji].x; el.emo.y = EYE_ANCHORS[newEmoji].y; el.emo.s = EYE_ANCHORS[newEmoji].s; } 
-             else { el.emo.x = 0; el.emo.y = 0; el.emo.s = 1; }
-         }
-      }); renderApp(); 
-    };
-    
-    document.getElementById('test-pick-emo').oninput = e => { 
-      const newEmoji = e.target.value || '👽'; currentContext.picker = newEmoji; 
-      state.elements.forEach(el => {
-         if (String(el.content).includes('[PICKER]') && el.emo && el.emo.enabled) {
-             if (EYE_ANCHORS[newEmoji]) { el.emo.x = EYE_ANCHORS[newEmoji].x; el.emo.y = EYE_ANCHORS[newEmoji].y; el.emo.s = EYE_ANCHORS[newEmoji].s; } 
-             else { el.emo.x = 0; el.emo.y = 0; el.emo.s = 1; }
-         }
-      }); renderApp(); 
-    };
 
-    document.getElementById('test-guess-word').oninput = e => {
-      currentContext.guessWord = e.target.value || '';
-      renderApp();
-    };
-
+    document.getElementById('test-resp-emo').oninput = e => { currentContext.responder = e.target.value || '🐼'; renderApp(); };
+    document.getElementById('test-guess-emo').oninput = e => { currentContext.guesser = e.target.value || '👽'; renderApp(); };
+    document.getElementById('test-resp-name').oninput = e => { currentContext.responderName = e.target.value || 'ALEX'; renderApp(); };
+    document.getElementById('test-guess-name').oninput = e => { currentContext.guesserName = e.target.value || 'SAM'; renderApp(); };
+    document.getElementById('test-guess-word').oninput = e => { currentContext.guessWord = e.target.value || ''; renderApp(); };
+    document.getElementById('test-prev-choice').oninput = e => { currentContext.prevChoice = e.target.value || ''; renderApp(); };
     document.getElementById('os-simulator').onchange = e => {
       const val = e.target.value;
       const box = document.getElementById('scene-box');
