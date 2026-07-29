@@ -230,7 +230,6 @@ export const SCENE_REGISTRY = {
   }
 ,
   "switch": {
-    "sfx": "benkirb-magic-descend-3-259525.mp3",
     "bg": {
       "url": "",
       "local": "",
@@ -509,7 +508,6 @@ export const SCENE_REGISTRY = {
   }
 ,
   "report": {
-    "sfx": "shrek_30-pop-wow-323262.mp3",
     "bg": {
       "url": "https://cdn-useast1.kapwing.com/static/templates/charlie-conspiracy-always-sunny-in-philidelphia-meme-template-full-1b6bf049.webp",
       "local": "",
