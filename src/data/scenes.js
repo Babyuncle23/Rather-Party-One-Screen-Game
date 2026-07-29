@@ -298,7 +298,7 @@ export const SCENE_REGISTRY = {
         "id": 4,
         "type": "emoji",
         "content": "[PICKER]",
-        "x": "64",
+        "x": "66",
         "y": "52",
         "s": "1.7",
         "r": 0,
@@ -834,6 +834,63 @@ export const SCENE_REGISTRY = {
         "r": 0,
         "flipX": false,
         "anim": "anim-bounce-talk",
+        "emo": {
+          "enabled": false
+        }
+      }
+    ]
+  }
+,
+  "money": {
+    "sfx": "modestas123123-cash-register-kaching-sound-effect-125042.mp3",
+    "bg": {
+      "url": "",
+      "local": "",
+      "x": 50,
+      "y": 50,
+      "s": 100
+    },
+    "elements": [
+      {
+        "id": 2,
+        "type": "emoji",
+        "content": "💸",
+        "x": 35,
+        "y": 50,
+        "s": 2.45,
+        "r": 0,
+        "flipX": false,
+        "anim": "none",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 1,
+        "type": "emoji",
+        "content": "[RESPONDER]",
+        "x": "68",
+        "y": "46",
+        "s": "2.3",
+        "r": 0,
+        "flipX": true,
+        "anim": "none",
+        "emo": {
+          "enabled": true
+        }
+      },
+      {
+        "id": 5,
+        "type": "text",
+        "content": "[GUESS_WORD]",
+        "x": "36",
+        "y": "49",
+        "s": 0.3,
+        "r": -43,
+        "flipX": false,
+        "anim": "none",
+        "color": "#09090d",
+        "font": "serif",
         "emo": {
           "enabled": false
         }

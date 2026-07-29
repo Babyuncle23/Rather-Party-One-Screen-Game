@@ -2159,7 +2159,7 @@ export const questionsDatabase = [
         options: [
           { text: "make everyone in the room suddenly start", type: "start", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.humanActivity, PROMPTS.creativeHobby] },
           { text: "instantly stop anyone from", type: "stop", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.humanActivity] },
-          { text: "earn $10 every time you finish", type: "earn", scene: "106", hints: [PROMPTS.chore, PROMPTS.humanActivity] }
+          { text: "earn $10 every time you finish", type: "earn", scene: "money", hints: [PROMPTS.chore, PROMPTS.humanActivity] }
         ]
       },
       {
@@ -2566,7 +2566,7 @@ hints: [
       {
         options: [
           { text: "a giant [ ... ] or a giant [ ... ] on your state flag?" },
-          { text: "a picture of [ ... ] or [ ... ] on your national currency?", scene: "106" }
+          { text: "a picture of [ ... ] or [ ... ] on your national currency?", scene: "money" }
         ]
       }
     ],
