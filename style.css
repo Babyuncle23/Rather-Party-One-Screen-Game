@@ -2239,43 +2239,91 @@ p {
 }
 
 /* =========================================
-   ЗАГОЛОВОК С ПОЛНЫМ ГРАДИЕНТОМ
+   ВИЗУАЛЬНЫЙ ГЕНЕРАТОР СЦЕН (ALERTS)
    ========================================= */
-
-.header-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-bottom: 20px;
+.alert-visual-scene {
+  width: 100%; max-width: 320px;
+  margin: 12px auto 16px;
+  aspect-ratio: 16 / 9;
+  background-color: transparent; background-repeat: no-repeat;
+  border-radius: 14px; position: relative; overflow: hidden;
+  border-bottom: 2px solid var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  container-type: inline-size;
 }
 
-.animated-text-outline {
-  font-style: italic;
-  position: relative;
-  display: inline-block;
-  margin: 0 auto 16px;
-  text-align: center;
-  color: #ffffff;
-  z-index: 1;
+/* Звездный фон */
+.stars-bg {
+  background-color: #08080d;
+  background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 4px),
+                    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 3px),
+                    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 4px);
+  background-size: 550px 550px, 350px 350px, 250px 250px;
+  background-position: 0 0, 40px 60px, 130px 270px;
+  animation: starTwinkle 4s infinite linear;
 }
+@keyframes starTwinkle { 0% {opacity:0.7;} 50% {opacity:1;} 100% {opacity:0.7;} }
 
-.animated-text-outline::before {
-  content: attr(data-text);
+/* ГЛАВНЫЙ КЛАСС ДЛЯ ЭЛЕМЕНТОВ СЦЕНЫ */
+.scene-element {
   position: absolute;
-  left: 0;
-  top: 0;
-  z-index: -1;
-  width: 100%;
-  
-  /* Возвращаем все цвета из бейджа: #ff6b6b, #feca57, #1dd1a1, #5f27cd, #ff9ff3 */
-background: #5F27CD;
-background: linear-gradient(90deg, rgba(95, 39, 205, 1) 64%, rgba(255, 159, 243, 1) 75%, rgba(255, 107, 107, 1) 85%, rgba(254, 202, 87, 1) 93%, rgba(29, 209, 161, 1) 100%);
-  background-size: 250% 300%;
-  animation: rainbowBadge 15s ease infinite;
-  
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -webkit-text-stroke: 4px transparent;
+  left: var(--x); top: var(--y);
+  transform: translate(-50%, -50%) scale(calc(var(--s) * var(--flip)), var(--s)) rotate(var(--r));
+  font-size: 40px; /* ЗАПАСНОЙ РАЗМЕР для старых телефонов */
+  font-size: 12.5cqi; /* Современный динамический размер */
+  display: flex; align-items: center; justify-content: center;
+  white-space: nowrap;
+  line-height: 1;
 }
 
+/* Старые классы (на случай если где-то остались хвосты) */
+.scene-actor {
+  position: absolute; z-index: 2;
+  transform: translate(var(--ax), var(--ay)) scale(calc(var(--as) * var(--a-flip)), var(--as));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px; line-height: 1; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+}
+.scene-prop {
+  position: absolute; pointer-events: none;
+  transform: translate(var(--px), var(--py)) scale(calc(var(--ps) * var(--p-flip)), var(--ps)) rotate(var(--pr));
+  font-size: 40px; z-index: 3; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+/* --- Анимации --- */
+.anim-run-left { animation: runLeft 3s linear infinite; }
+.anim-chase-follow { animation: runLeft 3s linear infinite; animation-delay: 0.35s; }
+@keyframes runLeft {
+  0% { margin-left: 200px; }
+  100% { margin-left: -200px; }
+}
+
+.anim-bounce-talk { animation: bounceTalk 1.5s ease-in-out infinite; }
+@keyframes bounceTalk {
+  0%, 100% { margin-top: 0; }
+  50% { margin-top: -15px; }
+}
+
+.anim-float { animation: floatProp 3s ease-in-out infinite; }
+@keyframes floatProp {
+  0%, 100% { margin-top: 0; transform: translate(-50%, -50%) scale(calc(var(--s) * var(--flip)), var(--s)) rotate(var(--r)); }
+  50% { margin-top: -15px; transform: translate(-50%, -50%) scale(calc(var(--s) * var(--flip)), var(--s)) rotate(calc(var(--r) + 5deg)); }
+}
+
+.anim-shake { animation: shakeScene 2s ease-in-out infinite; }
+@keyframes shakeScene {
+  0%, 100% { margin-left: 0; }
+  25% { margin-left: -5px; }
+  75% { margin-left: 5px; }
+}
+
+.anim-worship { animation: worship 1.5s ease-in-out infinite; }
+@keyframes worship {
+  0%, 100% { margin-top: 15px; opacity: 0.5; }
+  50% { margin-top: 0; opacity: 1; }
+}
+
+@keyframes dropTear {
+  0% { transform: translateY(-0.1em); opacity: 0; }
+  20% { transform: translateY(0); opacity: 1; }
+  70% { transform: translateY(0.4em); opacity: 1; }
+  100% { transform: translateY(0.6em); opacity: 0; }
+}
