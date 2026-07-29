@@ -1,5 +1,5 @@
 export const SCENE_REGISTRY = {
-   "102": {
+  "102": {
     "sfx": "universfield-cartoon-running-footsteps-250962.mp3",
     "bg": {
       "url": "",
@@ -43,7 +43,7 @@ export const SCENE_REGISTRY = {
         "content": "[GUESS_WORD]",
         "x": 64,
         "y": 50,
-        "s": 0.5,
+        "s": "1.15",
         "r": 0,
         "flipX": false,
         "anim": "anim-run-left",
@@ -51,7 +51,8 @@ export const SCENE_REGISTRY = {
         "font": "inherit",
         "emo": {
           "enabled": false
-        }
+        },
+        "glow": true
       },
       {
         "id": 4,
@@ -100,30 +101,21 @@ export const SCENE_REGISTRY = {
 ,
   "104": {
     "sfx": "freesound_community-rally-102090.mp3",
-    bg: { url: "", local: "", x: 50, y: 50, s: 100 },
-    elements: [
-      { id: 1, type: "emoji", content: "🏳️", x: "53", y: "53", s: "3.95", r: 0, flipX: false, anim: "none", emo: { enabled: false } },
-      { id: 2, type: "emoji", content: "[RESPONDER]", x: 53, y: 40, s: 1.35, r: 0, flipX: false, anim: "none", emo: { enabled: true } },
-{ id: 3, type: "text", content: "[GUESS_WORD]", x: "51", y: "85", s: 0.55, r: 0, flipX: false, anim: "none", color: "#ffffff", font: "inherit", emo: { enabled: false } }    ]
-  },
-  "106": {
-    "sfx": "modestas123123-cash-register-kaching-sound-effect-125042.mp3",
     "bg": {
-      
       "url": "",
-      "local": "",
+      "local": "nikkigocom-hands-up-6321013.svg",
       "x": 50,
       "y": 50,
       "s": 100
     },
     "elements": [
       {
-        "id": 2,
+        "id": 1,
         "type": "emoji",
-        "content": "💸",
-        "x": 35,
-        "y": 50,
-        "s": 2.45,
+        "content": "🏳️",
+        "x": "53",
+        "y": "53",
+        "s": "3.95",
         "r": 0,
         "flipX": false,
         "anim": "none",
@@ -132,42 +124,40 @@ export const SCENE_REGISTRY = {
         }
       },
       {
-        "id": 1,
+        "id": 2,
         "type": "emoji",
         "content": "[RESPONDER]",
-        "x": "68",
-        "y": "46",
-        "s": "2.3",
+        "x": 53,
+        "y": 40,
+        "s": 1.35,
         "r": 0,
-        "flipX": true,
+        "flipX": false,
         "anim": "none",
         "emo": {
           "enabled": true
         }
       },
       {
-        "id": 5,
+        "id": 3,
         "type": "text",
         "content": "[GUESS_WORD]",
-        "x": "36",
-        "y": "49",
-        "s": 0.3,
-        "r": -43,
+        "x": "51",
+        "y": "85",
+        "s": "1",
+        "r": 0,
         "flipX": false,
         "anim": "none",
-        "color": "#09090d",
-        "font": "serif",
+        "color": "#ffffff",
+        "font": "inherit",
         "emo": {
           "enabled": false
         }
       }
     ]
-  }
-,
+  },
   "fanfic": {
     "sfx": "pwlpl-paper-page-flip-and-document-rustle-481168.mp3",
     "bg": {
-      
       "url": "",
       "local": "",
       "x": "51",
@@ -179,9 +169,9 @@ export const SCENE_REGISTRY = {
         "id": 1,
         "type": "emoji",
         "content": "[RESPONDER]",
-        "x": "72",
-        "y": "47",
-        "s": "3",
+        "x": "78",
+        "y": "61",
+        "s": "2.15",
         "r": 0,
         "flipX": false,
         "anim": "none",
@@ -193,7 +183,7 @@ export const SCENE_REGISTRY = {
         "id": 2,
         "type": "emoji",
         "content": "📖",
-        "x": "49",
+        "x": "58",
         "y": "88",
         "s": "2.4",
         "r": 0,
@@ -207,8 +197,8 @@ export const SCENE_REGISTRY = {
         "id": 3,
         "type": "text",
         "content": "ALL ABOUT",
-        "x": "27",
-        "y": "13",
+        "x": "45",
+        "y": "19",
         "s": "0.6",
         "r": 0,
         "flipX": false,
@@ -223,17 +213,18 @@ export const SCENE_REGISTRY = {
         "id": 4,
         "type": "text",
         "content": "[GUESS_WORD]",
-        "x": "27",
-        "y": "40",
-        "s": "1.1",
+        "x": "33",
+        "y": "50",
+        "s": "1.25",
         "r": "0",
         "flipX": false,
         "anim": "anim-shake",
-        "color": "#37ffe2",
+        "color": "#ffffff",
         "font": "serif",
         "emo": {
           "enabled": false
-        }
+        },
+        "glow": true
       }
     ]
   }
@@ -324,7 +315,6 @@ export const SCENE_REGISTRY = {
   "drink": {
     "sfx": "freesound_community-gulp-103200.mp3",
     "bg": {
-      
       "url": "",
       "local": "",
       "x": 50,
@@ -355,7 +345,7 @@ export const SCENE_REGISTRY = {
         "s": "1.45",
         "r": 0,
         "flipX": false,
-        "anim": "none",
+        "anim": "anim-float",
         "emo": {
           "enabled": false
         },
@@ -396,10 +386,9 @@ export const SCENE_REGISTRY = {
     ]
   }
 ,
-  "island": {
+   "island": {
     "sfx": "freesound_community-ukewave-74471.mp3",
     "bg": {
-      
       "url": "",
       "local": "litemon-island-4888462.jpg",
       "cover": true,
@@ -412,9 +401,9 @@ export const SCENE_REGISTRY = {
         "id": 1,
         "type": "emoji",
         "content": "[RESPONDER]",
-        "x": "56",
-        "y": "41",
-        "s": 1.55,
+        "x": "58",
+        "y": "40",
+        "s": "1.3",
         "r": 0,
         "flipX": false,
         "anim": "none",
@@ -423,33 +412,17 @@ export const SCENE_REGISTRY = {
         }
       },
       {
-        "id": 2,
-        "type": "text",
-        "content": "Well, I think ",
-        "x": "27",
-        "y": "15",
-        "s": "0.95",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "Impact",
-        "emo": {
-          "enabled": false
-        }
-      },
-      {
         "id": 3,
         "type": "text",
         "content": "[GUESS_WORD]",
-        "x": "27",
-        "y": "42",
+        "x": "20",
+        "y": "67",
         "s": "0.65",
         "r": "0",
         "flipX": false,
         "anim": "none",
         "color": "#ffffff",
-        "font": "Impact",
+        "font": "inherit",
         "emo": {
           "enabled": false
         }
@@ -457,15 +430,15 @@ export const SCENE_REGISTRY = {
       {
         "id": 4,
         "type": "text",
-        "content": "is just what I need 🌚!",
-        "x": "36",
-        "y": "83",
+        "content": "is just what I need !",
+        "x": "44",
+        "y": "86",
         "s": "1.25",
         "r": 0,
         "flipX": false,
         "anim": "none",
         "color": "#ffffff",
-        "font": "Impact",
+        "font": "inherit",
         "emo": {
           "enabled": false
         }
@@ -473,10 +446,9 @@ export const SCENE_REGISTRY = {
     ]
   }
 ,
-  "woods": {
+    "woods": {
     "sfx": "dariocoiro-forest-sound-530682.mp3",
     "bg": {
-      
       "url": "",
       "local": "temperatesage-forest-4395986.jpg",
       "cover": true,
@@ -489,8 +461,8 @@ export const SCENE_REGISTRY = {
         "id": 1,
         "type": "emoji",
         "content": "[RESPONDER]",
-        "x": 51,
-        "y": "47",
+        "x": "59",
+        "y": "44",
         "s": 1.55,
         "r": 0,
         "flipX": false,
@@ -500,52 +472,38 @@ export const SCENE_REGISTRY = {
         }
       },
       {
-        "id": 2,
-        "type": "text",
-        "content": "Well, I think ",
-        "x": "26",
-        "y": "22",
-        "s": "1.05",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffffff",
-        "font": "Impact",
-        "emo": {
-          "enabled": false
-        }
-      },
-      {
         "id": 3,
         "type": "text",
         "content": "[GUESS_WORD]",
-        "x": 71,
-        "y": 22,
+        "x": "22",
+        "y": "66",
         "s": "0.75",
         "r": 0,
         "flipX": false,
         "anim": "none",
         "color": "#ffffff",
-        "font": "Impact",
+        "font": "inherit",
         "emo": {
           "enabled": false
-        }
+        },
+        "glow": true
       },
       {
         "id": 4,
         "type": "text",
-        "content": "is just what I need 🌚!",
-        "x": "29",
-        "y": "81",
-        "s": "1.15",
+        "content": "survival🌚(?)",
+        "x": "74",
+        "y": "86",
+        "s": "0.7",
         "r": 0,
         "flipX": false,
         "anim": "none",
         "color": "#ffffff",
-        "font": "Impact",
+        "font": "inherit",
         "emo": {
           "enabled": false
-        }
+        },
+        "glow": true
       }
     ]
   }
@@ -553,7 +511,6 @@ export const SCENE_REGISTRY = {
   "report": {
     "sfx": "shrek_30-pop-wow-323262.mp3",
     "bg": {
-      
       "url": "https://cdn-useast1.kapwing.com/static/templates/charlie-conspiracy-always-sunny-in-philidelphia-meme-template-full-1b6bf049.webp",
       "local": "",
       "x": 32,
@@ -581,23 +538,53 @@ export const SCENE_REGISTRY = {
         "content": "[GUESS_WORD]",
         "x": "65",
         "y": "16",
-        "s": "0.85",
+        "s": "0.75",
         "r": "7",
         "flipX": false,
         "anim": "none",
-        "color": "#ff0000",
-        "font": "Impact",
+        "color": "#ffde0a",
+        "font": "monospace",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 4,
+        "type": "text",
+        "content": "[GUESS_WORD]",
+        "x": "72",
+        "y": "42",
+        "s": "1.1",
+        "r": "7",
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffde0a",
+        "font": "monospace",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 5,
+        "type": "text",
+        "content": "[GUESS_WORD]",
+        "x": "73",
+        "y": "70",
+        "s": "1.55",
+        "r": "7",
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffde0a",
+        "font": "monospace",
         "emo": {
           "enabled": false
         }
       }
     ]
-  }
-,
+  },
   "city": {
     "sfx": "alex_jauk-nearby-city-street-ambience-192219.mp3",
     "bg": {
-      
       "url": "",
       "local": "grzyzz-zhongjiang-bridge-991057.jpg",
       "cover": true,
@@ -611,7 +598,7 @@ export const SCENE_REGISTRY = {
         "type": "emoji",
         "content": "[RESPONDER]",
         "x": "73",
-        "y": "38",
+        "y": "15",
         "s": 1.55,
         "r": 0,
         "flipX": false,
@@ -621,33 +608,17 @@ export const SCENE_REGISTRY = {
         }
       },
       {
-        "id": 2,
-        "type": "text",
-        "content": "Well, I think ",
-        "x": "24",
-        "y": "36",
-        "s": "0.8",
-        "r": 0,
-        "flipX": false,
-        "anim": "none",
-        "color": "#ffd642",
-        "font": "Impact",
-        "emo": {
-          "enabled": false
-        }
-      },
-      {
         "id": 3,
         "type": "text",
         "content": "[GUESS_WORD]",
-        "x": "21",
-        "y": "56",
+        "x": "24",
+        "y": "57",
         "s": "0.75",
         "r": 0,
         "flipX": false,
         "anim": "none",
         "color": "#ffd642",
-        "font": "Impact",
+        "font": "inherit",
         "emo": {
           "enabled": false
         }
@@ -655,15 +626,31 @@ export const SCENE_REGISTRY = {
       {
         "id": 4,
         "type": "text",
-        "content": "is just what I need 🌚!",
-        "x": "38",
+        "content": "save me?",
+        "x": "39",
         "y": "78",
-        "s": "1.3",
+        "s": "0.9",
         "r": "0",
         "flipX": false,
         "anim": "none",
         "color": "#ffd642",
-        "font": "Impact",
+        "font": "inherit",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 5,
+        "type": "text",
+        "content": "will",
+        "x": "22",
+        "y": "40",
+        "s": "0.9",
+        "r": "0",
+        "flipX": false,
+        "anim": "none",
+        "color": "#ffd642",
+        "font": "inherit",
         "emo": {
           "enabled": false
         }
@@ -718,32 +705,17 @@ export const SCENE_REGISTRY = {
         }
       }
     ]
-  }
-,
+  },
   "dog": {
     "sfx": "fnx_sound-animated-dog-panting-287307.mp3",
     "bg": {
-      "url": "",
+      "url": "https://cdn.pixabay.com/photo/2017/04/13/23/24/grass-2228960_1280.jpg",
       "local": "",
       "x": 50,
       "y": 50,
       "s": 100
     },
     "elements": [
-      {
-        "id": 1,
-        "type": "emoji",
-        "content": "🐕",
-        "x": 69,
-        "y": 70,
-        "s": "2.25",
-        "r": 0,
-        "flipX": false,
-        "anim": "anim-bounce-talk",
-        "emo": {
-          "enabled": false
-        }
-      },
       {
         "id": 2,
         "type": "text",
@@ -754,7 +726,7 @@ export const SCENE_REGISTRY = {
         "r": 0,
         "flipX": false,
         "anim": "none",
-        "color": "#ffffff",
+        "color": "#ffd642",
         "font": "inherit",
         "emo": {
           "enabled": false
@@ -771,20 +743,20 @@ export const SCENE_REGISTRY = {
         "flipX": false,
         "anim": "none",
         "emo": {
-          "enabled": true
+          "enabled": false
         }
       },
       {
         "id": 4,
         "type": "text",
-        "content": "is a really",
-        "x": "64",
+        "content": "is a",
+        "x": "85",
         "y": "36",
-        "s": "0.35",
-        "r": "-8",
+        "s": "0.6",
+        "r": "0",
         "flipX": false,
         "anim": "none",
-        "color": "#ffffff",
+        "color": "#ffd642",
         "font": "inherit",
         "emo": {
           "enabled": false
@@ -800,7 +772,7 @@ export const SCENE_REGISTRY = {
         "r": 0,
         "flipX": false,
         "anim": "none",
-        "color": "#ffffff",
+        "color": "#ffd642",
         "font": "inherit",
         "emo": {
           "enabled": false
@@ -816,12 +788,59 @@ export const SCENE_REGISTRY = {
         "r": "-1",
         "flipX": false,
         "anim": "none",
-        "color": "#ffffff",
+        "color": "#ffce1f",
         "font": "inherit",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 9,
+        "type": "text",
+        "content": "/// ",
+        "x": "14",
+        "y": "39",
+        "s": "0.55",
+        "r": "15",
+        "flipX": false,
+        "anim": "none",
+        "color": "#fe8181",
+        "font": "serif",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 10,
+        "type": "text",
+        "content": "/// ",
+        "x": "29",
+        "y": "45",
+        "s": "0.55",
+        "r": "15",
+        "flipX": false,
+        "anim": "none",
+        "color": "#fe8181",
+        "font": "serif",
+        "emo": {
+          "enabled": false
+        }
+      },
+      {
+        "id": 1,
+        "type": "emoji",
+        "content": "🐕",
+        "x": 69,
+        "y": "72",
+        "s": "2.25",
+        "r": 0,
+        "flipX": false,
+        "anim": "anim-bounce-talk",
         "emo": {
           "enabled": false
         }
       }
     ]
   }
+,
 };

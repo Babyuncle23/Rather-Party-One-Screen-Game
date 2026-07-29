@@ -1633,10 +1633,10 @@ export function generateVisualScene(isCorrect, activeTypes, involvesPicker, resp
     let bgUrl = sceneData.bg.local ? `src/ui/${sceneData.bg.local}` : sceneData.bg.url;
     let bgSize = sceneData.bg.cover ? 'cover' : `${sceneData.bg.s}%`;
     bgStyle = `background-image: url('${bgUrl}'); background-position: ${sceneData.bg.x}% ${sceneData.bg.y}%; background-size: ${bgSize};`;
-    bgClass = ""; // Убираем звезды, если есть картинка
+    bgClass = ""; 
   }
 
-let elementsHtml = sceneData.elements.map((el, index) => {
+  let elementsHtml = sceneData.elements.map((el, index) => {
     let renderContent = String(el.content);
     renderContent = renderContent.replace(/\[RESPONDER\]/g, responderEmoji);
     renderContent = renderContent.replace(/\[PICKER\]/g, pickerEmoji);
@@ -1655,6 +1655,18 @@ let elementsHtml = sceneData.elements.map((el, index) => {
       }
     }
 
+    let filterStyle = el.glow ? 'filter: drop-shadow(0 0 15px var(--positive));' : 'filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));';
+
+    // --- ИДЕАЛЬНЫЙ СИЛУЭТ ФЛАГА ---
+    if (renderContent === '🏳️') {
+      // Подставляем текстовый юникод-символ флага (⚑). 
+      // Суффикс \uFE0E гарантирует, что iPhone/Android не попытаются превратить его обратно в цветной эмодзи.
+      renderContent = '⚑\uFE0E'; 
+      // Отключаем эмодзи-шрифты и задаем чистый, 100% сплошной неоновый цвет
+      extraStyles += `color: ${isCorrect ? 'var(--positive)' : 'var(--danger)'} !important; font-family: sans-serif !important; `;
+    }
+    // --------------------------------------------------
+
     let overlayHtml = '';
     if (el.emo && el.emo.enabled) {
       const anchor = EYE_ANCHORS[renderContent] || EYE_ANCHORS["default"];
@@ -1670,8 +1682,6 @@ let elementsHtml = sceneData.elements.map((el, index) => {
     }
 
     let textStyles = el.type === 'text' ? `color: ${el.color || '#ffffff'}; font-family: ${el.font || 'inherit'}; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;` : '';
-    
-    let filterStyle = el.glow ? 'filter: drop-shadow(0 0 15px var(--positive));' : 'filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));';
 
     return `<div class="scene-element ${el.anim}" style="--x: ${el.x}%; --y: ${el.y}%; --s: ${finalS}; --r: ${el.r}deg; --flip: ${el.flipX ? -1 : 1}; z-index: ${index + 2}; ${textStyles} ${filterStyle} ${extraStyles}">${renderContent}${overlayHtml}</div>`;
   }).join('');
