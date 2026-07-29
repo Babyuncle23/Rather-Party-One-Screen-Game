@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ultimate Scene Studio (JSON & Eye Tracker)</title>
+  <style>
+    :root {
+      --bg: #08080d; --panel: rgba(255, 255, 255, 0.04);
+      --text: #e8e9f1; --accent: #8c6cff; --positive: #37ffe2; --danger: #ff6f7a;
+      --warning: #ffd56b;
+    }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0; padding: 20px; box-sizing: border-box;
+      display: flex; gap: 20px; height: 100vh; overflow: hidden;
+    }
+    h2, h3, h4 { margin: 0; color: var(--positive); }
+    h2 { font-size: 18px; margin-bottom: 12px; }
+    h3 { font-size: 12px; color: #fff; background: rgba(140, 108, 255, 0.2); padding: 6px 10px; border-radius: 6px; margin: 10px 0; text-transform: uppercase; letter-spacing: 0.05em; }
+    
+    .col-left { width: 320px; background: var(--panel); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .col-center { flex: 1; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
+    .col-right { width: 340px; background: var(--panel); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); overflow-y: auto; display: flex; flex-direction: column; }
+
+    .control-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+    .control-row { display: flex; flex-direction: row; align-items: center; gap: 8px; }
+    label { font-size: 11px; font-weight: 600; color: #a5a1c8; display: flex; justify-content: space-between; }
+    input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--accent); }
+    input[type="checkbox"], input[type="radio"], input[type="color"] { accent-color: var(--accent); cursor: pointer; }
+    input[type="text"], input[type="number"], select, textarea { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 6px; border-radius: 6px; outline: none; font-size: 13px; width: 100%; box-sizing: border-box; }
+    input[type="file"] { font-size: 11px; color: var(--muted); }
+    
+    .anim-checkboxes { display: flex; flex-wrap: wrap; gap: 8px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px; margin-top: 4px; }
+    .anim-checkboxes label { color: #fff; font-weight: normal; cursor: pointer; }
+
+    button { background: linear-gradient(135deg, #7f65ff, #4d5dff); border: none; color: white; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.1s; }
+    button:active { transform: scale(0.98); }
+    .btn-small { padding: 6px 10px; font-size: 12px; }
+    .btn-danger { background: rgba(255, 85, 85, 0.2); color: #ff5555; border: 1px solid rgba(255, 85, 85, 0.4); }
+    .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--text); }
+    .value-display { font-family: monospace; color: #fff; }
+
+    .scene-preview-container { background: var(--panel); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; padding: 20px; flex-shrink: 0; min-height: 250px; }
+    
+    .alert-visual-scene {
+      width: 100%; max-width: 320px;
+      aspect-ratio: 16 / 9;
+      background-color: transparent; background-repeat: no-repeat;
+      border-radius: 14px; position: relative; overflow: hidden;
+      border-bottom: 2px solid var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      margin: 0 auto;
+      container-type: inline-size;
+    }
+
+    .stars-bg {
+      background-color: #08080d;
+      background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 4px), radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 3px), radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 4px);
+      background-size: 550px 550px, 350px 350px, 250px 250px; background-position: 0 0, 40px 60px, 130px 270px;
+      animation: starTwinkle 4s infinite linear;
+    }
+    @keyframes starTwinkle { 0% {opacity:0.7;} 50% {opacity:1;} 100% {opacity:0.7;} }
+
+    .scene-element {
+      position: absolute;
+      left: var(--x); top: var(--y);
+      transform: translate(-50%, -50%) scale(calc(var(--s) * var(--flip)), var(--s)) rotate(var(--r));
+      font-size: 12.5cqi; 
+      display: flex; align-items: center; justify-content: center;
+      
+      white-space: nowrap; /* ВОЗВРАЩАЕМ В ОДНУ СТРОКУ */
+      line-height: 1;
+    }
+    
+    .anim-run-left { animation: runLeft 3s linear infinite; }
+    @keyframes runLeft { 0% { margin-left: 200px; } 100% { margin-left: -200px; } }
+    .anim-bounce-talk { animation: bounceTalk 1.5s ease-in-out infinite; }
+    @keyframes bounceTalk { 0%, 100% { margin-top: 0; } 50% { margin-top: -15px; } }
+    .anim-float { animation: floatProp 3s ease-in-out infinite; }
+    @keyframes floatProp { 0%, 100% { margin-top: 0; transform: translate(-50%, -50%) scale(calc(var(--s) * var(--flip)), var(--s)) rotate(var(--r)); } 50% { margin-top: -15px; transform: translate(-50%, -50%) scale(calc(var(--s) * var(--flip)), var(--s)) rotate(calc(var(--r) + 5deg)); } }
+    .anim-shake { animation: shakeScene 2s ease-in-out infinite; }
+    @keyframes shakeScene { 0%, 100% { margin-left: 0; } 25% { margin-left: -5px; } 75% { margin-left: 5px; } }
+    .anim-worship { animation: worship 1.5s ease-in-out infinite; }
+    @keyframes worship { 0%, 100% { margin-top: 15px; opacity: 0.5; } 50% { margin-top: 0; opacity: 1; } }
+
+    @keyframes dropTear { 
+      0% { transform: translateY(-0.1em); opacity: 0; } 
+      20% { transform: translateY(0); opacity: 1; } 
+      70% { transform: translateY(0.4em); opacity: 1; } 
+      100% { transform: translateY(0.6em); opacity: 0; } 
+    }
+
+    .export-box { background: rgba(0,0,0,0.5); padding: 16px; border-radius: 12px; border: 1px solid var(--positive); font-family: monospace; font-size: 11px; white-space: pre-wrap; color: #8be9fd; user-select: all; cursor: copy; }
+  </style>
+</head>
+<body>
+
+  <!-- ЛЕВАЯ ПАНЕЛЬ -->
+  <div class="col-left">
+    <h2>1. Глобальные настройки</h2>
+    <div class="control-group">
+      <label style="color: var(--positive);">ID Сцены (Тег)</label>
+      <input type="text" id="scene-id" value="custom_scene" style="border-color: var(--positive);">
+    </div>
+    
+    <div class="control-group">
+      <label style="color: #a5a1c8;">Комментарий для ИИ (Экстра)</label>
+      <textarea id="scene-note" rows="2" placeholder="Например: добавь конфетти..." style="resize: vertical;"></textarea>
+    </div>
+    
+    <div class="control-row">
+      <label style="color: var(--warning);">Эмодзи Responder</label>
+      <input type="text" id="test-resp-emo" value="🐼" style="width: 50px; text-align: center;">
+    </div>
+    <div class="control-row">
+      <label style="color: var(--warning);">Эмодзи Picker</label>
+      <input type="text" id="test-pick-emo" value="👽" style="width: 50px; text-align: center;">
+    </div>
+
+    <!-- БЛОК ОВЕРЛЕЕВ -->
+    <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-top: 8px;">
+      <label style="color: var(--positive); margin-bottom: 6px;">Превью эмоций (Для слоев с глазами)</label>
+      <select id="test-overlay-type" style="margin-bottom: 6px;">
+        <option value="win">😎 Победа (Оригинальный размер)</option>
+        <option value="lose">💧 Поражение (Капающая слеза)</option>
+        <option value="custom">✍️ Свой кастом...</option>
+      </select>
+      <div id="custom-overlay-row" style="display:none; gap: 6px;">
+        <input type="text" id="test-overlay-custom" value="🔥" placeholder="Текст">
+        <input type="number" id="test-overlay-scale" value="1.0" step="0.1" style="width: 60px;" title="Множитель">
+      </div>
+    </div>
+
+    <h3>🖼️ Фон сцены</h3>
+    <div class="control-group">
+      <input type="text" id="bg-url" placeholder="URL картинки (из интернета)">
+      <input type="text" id="bg-local" placeholder="Имя файла (напр. coolBg.jpg)">
+      <label style="margin-top: 6px; color: var(--positive);">Или загрузи с ПК (без перезапуска):</label>
+      <input type="file" id="bg-file" accept="image/*">
+    </div>
+    <div class="control-row"><label>X</label><input type="range" id="bg-x" min="0" max="100" value="50"><span class="value-display" id="val-bg-x">50%</span></div>
+    <div class="control-row"><label>Y</label><input type="range" id="bg-y" min="0" max="100" value="50"><span class="value-display" id="val-bg-y">50%</span></div>
+    <div class="control-row"><label>Zoom</label><input type="range" id="bg-s" min="10" max="300" value="100"><span class="value-display" id="val-bg-s">100%</span></div>
+    <div class="control-row" style="margin-top: 6px;"><input type="checkbox" id="bg-cover"> <label for="bg-cover" style="cursor:pointer; color:#fff;">Заполнить весь блок (Cover)</label></div>
+
+    <h3>📑 Слои (Элементы)</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px;">
+      <button class="btn-small btn-outline" onclick="addLayer('[RESPONDER]', 'emoji')">+ Responder</button>
+      <button class="btn-small btn-outline" onclick="addLayer('[PICKER]', 'emoji')">+ Picker</button>
+      <button class="btn-small btn-outline" onclick="addLayer('[SMART_PROP]', 'emoji')">+ Умный Пропс</button>
+      <button class="btn-small btn-outline" style="background: rgba(80, 250, 123, 0.2); color: #50fa7b; border-color: #50fa7b;" onclick="addLayer('[GUESS_WORD]', 'text')">+ Текст Ответа</button>
+      <button class="btn-small btn-outline" onclick="addLayer('Текст', 'text')">+ Текст</button>
+      <button class="btn-small btn-outline" style="grid-column: span 2;" onclick="addLayer('👀', 'emoji')">+ Свой Эмодзи</button>
+    </div>
+    <div id="layers-list"></div>
+
+    <div class="control-row" style="margin-top: auto; padding-top: 10px;">
+      <button id="save-report-btn" style="flex: 2;">💾 В Рапорт</button>
+      <button id="delete-report-btn" class="btn-danger" style="flex: 1;" title="Удалить сцену из рапорта">🗑 Удалить</button>
+    </div>
+  </div>
+
+  <!-- ЦЕНТРАЛЬНАЯ ПАНЕЛЬ -->
+  <div class="col-center">
+    <div class="scene-preview-container">
+      <div class="alert-visual-scene stars-bg" id="scene-box">
+        <div id="elements-container"></div>
+      </div>
+    </div>
+    
+    <div id="active-layer-settings" style="background: var(--panel); border: 1px solid rgba(255,255,255,0.08); padding: 16px; border-radius: 16px; display: none;">
+      <h3 style="margin-top:0;">Настройки слоя: <span id="layer-title-display"></span></h3>
+      <div class="control-group"><label>Контент</label><input type="text" id="el-content"></div>
+      
+      <div id="text-specific-settings" style="display: none; gap: 10px; margin-bottom: 10px;">
+        <div class="control-group" style="flex:1;"><label>Цвет</label><input type="color" id="el-color" value="#ffffff" style="height:32px;"></div>
+        <div class="control-group" style="flex:2;"><label>Шрифт</label>
+          <select id="el-font"><option value="inherit">По умолчанию</option><option value="Impact">Impact (Мем)</option><option value="monospace">Моноширинный</option><option value="serif">С засечками</option></select>
+        </div>
+      </div>
+
+      <div class="control-row"><label>X</label><input type="range" id="el-x" min="0" max="100" value="50"><span class="value-display" id="val-el-x">50%</span></div>
+      <div class="control-row"><label>Y</label><input type="range" id="el-y" min="0" max="100" value="50"><span class="value-display" id="val-el-y">50%</span></div>
+      <div class="control-row"><label>Масштаб</label><input type="range" id="el-s" min="0.1" max="5.0" step="0.05" value="1.0"><span class="value-display" id="val-el-s">1.0</span></div>
+      <div class="control-row"><label>Поворот</label><input type="range" id="el-r" min="-180" max="180" value="0"><span class="value-display" id="val-el-r">0deg</span></div>
+      
+      <div class="control-row" style="margin-top: 10px;">
+          <input type="checkbox" id="el-flip"> 
+          <label for="el-flip" style="color:#fff; cursor:pointer;">Отразить (Flip X)</label>
+      </div>
+
+      <div class="control-row" style="margin-top: 6px;">
+          <input type="checkbox" id="el-glow"> 
+          <label for="el-glow" style="color:var(--positive); cursor:pointer;">✨ Неоновое сияние (Glow)</label>
+      </div>
+      
+      <div class="control-row" id="el-fixed-text-row" style="margin-top: 6px; display: none;">
+          <input type="checkbox" id="el-fixed-text"> 
+          <label for="el-fixed-text" style="color:var(--danger); cursor:pointer;">🛑 Фикс. размер (Без авто-сжатия)</label>
+      </div>
+
+      <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.05);">
+        <label><input type="checkbox" id="el-emo-enabled"> 🔴 Отметить положение глаз (Для очков и словаря)</label>
+        <div id="el-emo-settings" style="display: none; margin-top: 8px; flex-direction: column; gap: 4px;">
+          <div class="control-row"><label>Сдвиг X</label><input type="range" id="el-emo-x" min="-100" max="100" value="0"><span class="value-display" id="val-el-emo-x">0%</span></div>
+          <div class="control-row"><label>Сдвиг Y</label><input type="range" id="el-emo-y" min="-100" max="100" value="0"><span class="value-display" id="val-el-emo-y">0%</span></div>
+          <div class="control-row"><label>Масштаб</label><input type="range" id="el-emo-s" min="0.1" max="2.0" step="0.05" value="1.0"><span class="value-display" id="val-el-emo-s">1.0</span></div>
+          
+          <div id="eye-inline-export" style="margin-top: 8px; padding: 10px; background: rgba(55, 255, 226, 0.1); border: 1px dashed var(--positive); border-radius: 8px; font-family: monospace; color: var(--positive); font-size: 13px; text-align: center; user-select: all; font-weight: bold; cursor: copy;" title="Копировать в словарь"></div>
+        </div>
+      </div>
+
+      <label style="margin-top: 10px;">Анимация</label>
+      <div class="anim-checkboxes">
+        <label><input type="radio" name="el_anim" value="none"> Нет</label>
+        <label><input type="radio" name="el_anim" value="anim-bounce-talk"> Bounce</label>
+        <label><input type="radio" name="el_anim" value="anim-float"> Float</label>
+        <label><input type="radio" name="el_anim" value="anim-shake"> Shake</label>
+        <label><input type="radio" name="el_anim" value="anim-run-left"> Run (Погоня)</label>
+        <label><input type="radio" name="el_anim" value="anim-worship"> Worship (Руки)</label>
+      </div>
+    </div>
+    
+    <h4 style="color: var(--warning); margin-bottom: 8px; margin-top: 10px;">📋 Автоматический JSON Рапорт:</h4>
+    <div id="export-instructions" style="font-family: monospace; font-size: 11px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; display: none;">
+      // ИНСТРУКЦИЯ ДЛЯ ИИ:<br>
+      // Вставь этот код внутрь объекта SCENE_REGISTRY (файл src/data/scenes.js).<br>
+      // Если есть "note", примени описанные там экстра-эффекты.
+    </div>
+    <div class="export-box" id="export-box">// Настрой сцену и нажми "В Рапорт"...</div>
+  </div>
+
+  <!-- ПРАВАЯ ПАНЕЛЬ -->
+  <div class="col-right">
+    <h2 style="text-align: center;">🎲 Загрузка и Навигация</h2>
+    <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px; text-align: center;">Выбери сцену или тег для создания</p>
+    
+    <h3 style="margin-top: 10px;">Сцены из scenes.js</h3>
+    <select id="load-scene-select" style="margin-bottom: 8px;"></select>
+    <button id="load-scene-btn" style="width: 100%; margin-bottom: 16px;">📂 Загрузить в редактор</button>
+
+    <h3>Теги из questions.js</h3>
+    <select id="q-tags-select" style="margin-bottom: 8px;"></select>
+    <button id="new-from-tag-btn" style="width: 100%; margin-bottom: 16px;" class="btn-outline">✨ Создать новую для тега</button>
+
+    <div id="eye-calibration-box" style="background: rgba(140, 108, 255, 0.1); padding: 12px; border-radius: 8px; border: 1px solid var(--accent); margin-top: auto; display: none;">
+      <h4 style="margin-bottom: 8px; color: var(--accent);">🛠 Словарь Глаз (EYE_ANCHORS)</h4>
+      <p style="font-size: 10px; color: var(--muted); margin-top: 0;">Скопируй эту строку в main.js:</p>
+      <div id="eye-export-code" class="value-display" style="font-size: 11px; user-select: all; word-break: break-all; font-weight: bold; color: #fff;"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { SCENE_REGISTRY } from './src/data/scenes.js';
+    import { questionsDatabase } from './src/data/questions.js';
+    import { EYE_ANCHORS } from './src/main.js';
+
+    const sceneSelect = document.getElementById('load-scene-select');
+    Object.keys(SCENE_REGISTRY).forEach(key => {
+       const opt = document.createElement('option');
+       opt.value = key; opt.innerText = key;
+       sceneSelect.appendChild(opt);
+    });
+
+    const qTags = new Set();
+    questionsDatabase.forEach(q => {
+       qTags.add(q.id.toString());
+       if (q.tags) q.tags.forEach(t => qTags.add(t));
+       if (q.fragments) q.fragments.forEach(f => f.options.forEach(o => { 
+           if (o.type) qTags.add(o.type); 
+           if (o.scene) qTags.add(o.scene);
+       }));
+    });
+    const tagSelect = document.getElementById('q-tags-select');
+    Array.from(qTags).sort().forEach(tag => {
+       const opt = document.createElement('option');
+       opt.value = tag; opt.innerText = tag;
+       tagSelect.appendChild(opt);
+    });
+
+    let reportData = {};
+    let activeLayerId = null;
+    let elementIdCounter = 0;
+
+    const state = { id: 'custom_scene', note: '', bg: { url: '', local: '', base64: '', x: 50, y: 50, s: 100, cover: false }, elements: [] };
+    let currentContext = { responder: '🐼', picker: '👽', smartProp: '💸', guessWord: 'ОТВЕТ' };
+
+    document.getElementById('load-scene-btn').onclick = () => {
+       const key = sceneSelect.value;
+       const data = SCENE_REGISTRY[key];
+       if(!data) return;
+       
+       state.id = key;
+       document.getElementById('scene-id').value = key;
+       
+       state.note = data.note || '';
+       document.getElementById('scene-note').value = state.note;
+       
+       state.bg = JSON.parse(JSON.stringify(data.bg));
+       state.bg.base64 = '';
+       state.elements = JSON.parse(JSON.stringify(data.elements));
+       
+       elementIdCounter = state.elements.length > 0 ? Math.max(...state.elements.map(e => e.id)) : 0;
+       
+       document.getElementById('bg-url').value = state.bg.url || '';
+       document.getElementById('bg-local').value = state.bg.local || '';
+       document.getElementById('bg-x').value = state.bg.x || 50;
+       document.getElementById('bg-y').value = state.bg.y || 50;
+       document.getElementById('bg-s').value = state.bg.s || 100;
+       document.getElementById('bg-cover').checked = state.bg.cover || false;
+       
+       activeLayerId = state.elements.length > 0 ? state.elements[state.elements.length-1].id : null;
+       renderApp();
+    };
+
+    document.getElementById('new-from-tag-btn').onclick = () => {
+       const tag = tagSelect.value;
+       state.id = tag;
+       document.getElementById('scene-id').value = tag;
+       state.note = '';
+       document.getElementById('scene-note').value = '';
+       state.bg = { url: '', local: '', base64: '', x: 50, y: 50, s: 100, cover: false };
+       state.elements = [];
+       elementIdCounter = 0; 
+       document.getElementById('bg-url').value = '';
+       document.getElementById('bg-local').value = '';
+       document.getElementById('bg-cover').checked = false;
+       addLayer('[RESPONDER]', 'emoji');
+    };
+
+    window.addLayer = (content, type) => {
+      const id = ++elementIdCounter;
+      state.elements.push({ id, type, content, x: 50, y: 50, s: 1, r: 0, flipX: false, anim: 'none', color: '#ffffff', font: 'inherit', glow: false, emo: { enabled: false } });
+      activeLayerId = id; renderApp();
+    };
+    
+    window.copyLayer = (id) => {
+      const elToCopy = state.elements.find(el => el.id === id);
+      if (!elToCopy) return;
+      const newEl = JSON.parse(JSON.stringify(elToCopy));
+      newEl.id = ++elementIdCounter;
+      newEl.x += 4; 
+      newEl.y += 4;
+      state.elements.push(newEl);
+      activeLayerId = newEl.id;
+      renderApp();
+    };
+    
+    window.removeLayer = (id) => { state.elements = state.elements.filter(el => el.id !== id); if (activeLayerId === id) activeLayerId = null; renderApp(); };
+    window.moveLayer = (id, dir) => {
+      const index = state.elements.findIndex(el => el.id === id); if (index < 0) return;
+      if (dir === 'up' && index < state.elements.length - 1) [state.elements[index], state.elements[index + 1]] = [state.elements[index + 1], state.elements[index]];
+      else if (dir === 'down' && index > 0) [state.elements[index], state.elements[index - 1]] = [state.elements[index - 1], state.elements[index]];
+      renderApp();
+    };
+    window.selectLayer = (id) => { activeLayerId = id; renderApp(); };
+
+    function renderApp() {
+      const box = document.getElementById('scene-box');
+      if (state.bg.base64) { box.style.backgroundImage = `url('${state.bg.base64}')`; box.classList.remove('stars-bg'); }
+      else if (state.bg.url) { box.style.backgroundImage = `url('${state.bg.url}')`; box.classList.remove('stars-bg'); }
+      else if (state.bg.local) { box.style.backgroundImage = `url('./src/ui/${state.bg.local}')`; box.classList.remove('stars-bg'); }
+      else { box.style.backgroundImage = 'none'; box.classList.add('stars-bg'); }
+
+      box.style.backgroundPosition = `${state.bg.x}% ${state.bg.y}%`;
+      box.style.backgroundSize = state.bg.cover ? 'cover' : `${state.bg.s}%`;
+
+      document.getElementById('val-bg-x').innerText = `${state.bg.x}%`;
+      document.getElementById('val-bg-y').innerText = `${state.bg.y}%`;
+      document.getElementById('val-bg-s').innerText = `${state.bg.s}%`;
+
+      const layersList = document.getElementById('layers-list');
+      layersList.innerHTML = '';
+      [...state.elements].reverse().forEach(el => {
+        const item = document.createElement('div');
+        item.className = `layer-item ${el.id === activeLayerId ? 'active' : ''}`;
+        let previewTxt = el.content;
+        item.innerHTML = `
+          <span style="font-size: 13px; font-weight: bold; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer;" onclick="selectLayer(${el.id})">
+            ${el.type === 'text' ? '📝' : '🤩'} ${previewTxt}
+          </span>
+          <div style="display: flex; gap: 4px;">
+            <button class="btn-small btn-outline" onclick="copyLayer(${el.id})" title="Дублировать слой">📄</button>
+            <button class="btn-small btn-outline" onclick="moveLayer(${el.id}, 'up')">↑</button>
+            <button class="btn-small btn-outline" onclick="moveLayer(${el.id}, 'down')">↓</button>
+            <button class="btn-small btn-danger" onclick="removeLayer(${el.id})">✖</button>
+          </div>
+        `;
+        layersList.appendChild(item);
+      });
+
+      const container = document.getElementById('elements-container');
+      container.innerHTML = '';
+      let inlineExportText = "";
+
+      state.elements.forEach((el, index) => {
+        const div = document.createElement('div');
+        div.className = `scene-element ${el.anim}`;
+        
+let renderContent = String(el.content);
+        renderContent = renderContent.replace(/\[RESPONDER\]/g, currentContext.responder);
+        renderContent = renderContent.replace(/\[PICKER\]/g, currentContext.picker);
+        renderContent = renderContent.replace(/\[SMART_PROP\]/g, currentContext.smartProp);
+        renderContent = renderContent.replace(/\[GUESS_WORD\]/g, currentContext.guessWord);
+
+        let finalS = el.s;
+        if (el.type === 'text' && !el.fixedText && renderContent.length > 8) {
+          // Уменьшили лимит до 0.25, чтобы слова влезали в одну строчку
+          finalS = el.s * Math.max(0.25, 8 / renderContent.length);
+        }
+
+        if (el.type === 'text' && el.fixedText) {
+            div.style.whiteSpace = 'nowrap';
+            div.style.maxWidth = 'none';
+        }
+
+        div.style.setProperty('--x', `${el.x}%`); div.style.setProperty('--y', `${el.y}%`);
+        div.style.setProperty('--s', finalS); div.style.setProperty('--r', `${el.r}deg`);
+        div.style.setProperty('--flip', el.flipX ? -1 : 1); div.style.zIndex = index + 2;
+
+        if (el.type === 'text') {
+          div.innerText = renderContent; div.style.color = el.color; div.style.fontFamily = el.font;
+          div.style.fontWeight = '900'; div.style.textTransform = 'uppercase'; div.style.letterSpacing = '1px';
+        } else { div.innerText = renderContent; }
+        
+        let currentFilter = 'drop-shadow(0 4px 6px rgba(0,0,0,0.4))';
+        if (el.glow) currentFilter = 'drop-shadow(0 0 15px var(--positive))';
+        div.style.filter = currentFilter;
+
+        if (el.emo && el.emo.enabled) {
+          if (el.emo.x === undefined) {
+             if (EYE_ANCHORS[renderContent]) {
+                 el.emo.x = EYE_ANCHORS[renderContent].x; el.emo.y = EYE_ANCHORS[renderContent].y; el.emo.s = EYE_ANCHORS[renderContent].s;
+             } else {
+                 el.emo.x = 0; el.emo.y = 0; el.emo.s = 1;
+             }
+          }
+
+          let overlayContent = '';
+          let finalOverlayScale = el.emo.s;
+          const overlayType = document.getElementById('test-overlay-type').value;
+
+          if (overlayType === 'win') {
+             overlayContent = `<img src="./src/ui/acostajnalec-sunglasses-5040012_1280.png" style="width: 1.15em; height: auto; object-fit: contain;">`;
+             finalOverlayScale = el.emo.s;
+          } else if (overlayType === 'lose') {
+             overlayContent = `<div style="transform: translate(0.45em, 0.05em);"><span style="font-size: 0.35em; text-shadow: 0 2px 4px rgba(0,0,0,0.4); display: inline-block; animation: dropTear 1.2s infinite ease-in;">💧</span></div>`;
+             finalOverlayScale = el.emo.s;
+          } else {
+             const custVal = document.getElementById('test-overlay-custom').value || '';
+             const custScale = parseFloat(document.getElementById('test-overlay-scale').value) || 1.0;
+             overlayContent = `<span>${custVal}</span>`;
+             finalOverlayScale = el.emo.s * custScale;
+          }
+
+          const emoDiv = document.createElement('div');
+          emoDiv.innerHTML = overlayContent;
+          emoDiv.style.position = 'absolute'; emoDiv.style.left = '50%'; emoDiv.style.top = '50%'; 
+          emoDiv.style.display = 'flex'; emoDiv.style.justifyContent = 'center'; emoDiv.style.alignItems = 'center';
+          emoDiv.style.transform = `translate(calc(-50% + ${el.emo.x}%), calc(-50% + ${el.emo.y}%)) scale(${finalOverlayScale})`;
+          emoDiv.style.zIndex = '4'; emoDiv.style.pointerEvents = 'none';
+          div.appendChild(emoDiv);
+          
+          if (el.id === activeLayerId) {
+             inlineExportText = `"${renderContent}": { x: ${el.emo.x}, y: ${el.emo.y}, s: ${el.emo.s} },`;
+          }
+        }
+        
+        container.appendChild(div);
+      });
+
+      const activePanel = document.getElementById('active-layer-settings');
+      const activeEl = state.elements.find(e => e.id === activeLayerId);
+      const eyeBox = document.getElementById('eye-calibration-box');
+      
+      if (activeEl) {
+        activePanel.style.display = 'block';
+        document.getElementById('layer-title-display').innerText = activeEl.content;
+        document.getElementById('el-content').value = activeEl.content;
+        document.getElementById('el-x').value = activeEl.x; document.getElementById('val-el-x').innerText = `${activeEl.x}%`;
+        document.getElementById('el-y').value = activeEl.y; document.getElementById('val-el-y').innerText = `${activeEl.y}%`;
+        document.getElementById('el-s').value = activeEl.s; document.getElementById('val-el-s').innerText = activeEl.s;
+        document.getElementById('el-r').value = activeEl.r; document.getElementById('val-el-r').innerText = `${activeEl.r}deg`;
+        document.getElementById('el-flip').checked = activeEl.flipX;
+        document.getElementById('el-glow').checked = activeEl.glow || false;
+        document.querySelectorAll('input[name="el_anim"]').forEach(r => r.checked = (r.value === activeEl.anim));
+
+        const textSettings = document.getElementById('text-specific-settings');
+        if (activeEl.type === 'text') { 
+            textSettings.style.display = 'flex'; 
+            document.getElementById('el-color').value = activeEl.color; 
+            document.getElementById('el-font').value = activeEl.font; 
+            document.getElementById('el-fixed-text-row').style.display = 'flex';
+            document.getElementById('el-fixed-text').checked = activeEl.fixedText || false;
+        } else { 
+            textSettings.style.display = 'none'; 
+            document.getElementById('el-fixed-text-row').style.display = 'none';
+        }
+
+        if (activeEl.emo) {
+          document.getElementById('el-emo-enabled').checked = activeEl.emo.enabled;
+          document.getElementById('el-emo-settings').style.display = activeEl.emo.enabled ? 'flex' : 'none';
+          
+          if (activeEl.emo.enabled) {
+              document.getElementById('el-emo-x').value = activeEl.emo.x; document.getElementById('val-el-emo-x').innerText = `${activeEl.emo.x}%`;
+              document.getElementById('el-emo-y').value = activeEl.emo.y; document.getElementById('val-el-emo-y').innerText = `${activeEl.emo.y}%`;
+              document.getElementById('el-emo-s').value = activeEl.emo.s; document.getElementById('val-el-emo-s').innerText = activeEl.emo.s;
+              
+              const inlineExport = document.getElementById('eye-inline-export');
+              if (inlineExport) inlineExport.innerText = inlineExportText;
+              if (eyeBox) { eyeBox.style.display = 'block'; document.getElementById('eye-export-code').innerText = inlineExportText; }
+          } else {
+              if (eyeBox) eyeBox.style.display = 'none';
+          }
+        }
+      } else { activePanel.style.display = 'none'; if(eyeBox) eyeBox.style.display = 'none'; }
+    }
+
+    document.getElementById('test-overlay-type').onchange = e => {
+      document.getElementById('custom-overlay-row').style.display = e.target.value === 'custom' ? 'flex' : 'none';
+      renderApp();
+    };
+    document.getElementById('test-overlay-custom').oninput = () => renderApp();
+    document.getElementById('test-overlay-scale').oninput = () => renderApp();
+
+    document.getElementById('scene-id').oninput = e => state.id = e.target.value;
+    document.getElementById('scene-note').oninput = e => state.note = e.target.value;
+    
+document.getElementById('test-resp-emo').oninput = e => { 
+      const newEmoji = e.target.value || '🐼'; currentContext.responder = newEmoji; 
+      state.elements.forEach(el => {
+         if (String(el.content).includes('[RESPONDER]') && el.emo && el.emo.enabled) {
+             if (EYE_ANCHORS[newEmoji]) { el.emo.x = EYE_ANCHORS[newEmoji].x; el.emo.y = EYE_ANCHORS[newEmoji].y; el.emo.s = EYE_ANCHORS[newEmoji].s; } 
+             else { el.emo.x = 0; el.emo.y = 0; el.emo.s = 1; }
+         }
+      }); renderApp(); 
+    };
+    
+    document.getElementById('test-pick-emo').oninput = e => { 
+      const newEmoji = e.target.value || '👽'; currentContext.picker = newEmoji; 
+      state.elements.forEach(el => {
+         if (String(el.content).includes('[PICKER]') && el.emo && el.emo.enabled) {
+             if (EYE_ANCHORS[newEmoji]) { el.emo.x = EYE_ANCHORS[newEmoji].x; el.emo.y = EYE_ANCHORS[newEmoji].y; el.emo.s = EYE_ANCHORS[newEmoji].s; } 
+             else { el.emo.x = 0; el.emo.y = 0; el.emo.s = 1; }
+         }
+      }); renderApp(); 
+    };
+    
+    document.getElementById('bg-url').oninput = e => { state.bg.url = e.target.value; state.bg.base64 = ''; renderApp(); };
+    document.getElementById('bg-local').oninput = e => { state.bg.local = e.target.value; state.bg.base64 = ''; renderApp(); };
+    document.getElementById('bg-cover').onchange = e => { state.bg.cover = e.target.checked; renderApp(); };
+    document.getElementById('bg-file').onchange = e => {
+      const file = e.target.files[0]; if(!file) return;
+      document.getElementById('bg-local').value = file.name; state.bg.local = file.name;
+      const reader = new FileReader(); reader.onload = ev => { state.bg.base64 = ev.target.result; renderApp(); };
+      reader.readAsDataURL(file);
+    };
+    ['bg-x', 'bg-y', 'bg-s'].forEach(id => document.getElementById(id).oninput = e => { state.bg[id.split('-')[1]] = e.target.value; renderApp(); });
+
+    const updateActiveLayer = (key, val) => { const el = state.elements.find(e => e.id === activeLayerId); if(el) { el[key] = val; renderApp(); } };
+    document.getElementById('el-content').oninput = e => updateActiveLayer('content', e.target.value);
+    document.getElementById('el-x').oninput = e => updateActiveLayer('x', e.target.value);
+    document.getElementById('el-y').oninput = e => updateActiveLayer('y', e.target.value);
+    document.getElementById('el-s').oninput = e => updateActiveLayer('s', e.target.value);
+    document.getElementById('el-r').oninput = e => updateActiveLayer('r', e.target.value);
+    document.getElementById('el-flip').onchange = e => updateActiveLayer('flipX', e.target.checked);
+    document.getElementById('el-glow').onchange = e => updateActiveLayer('glow', e.target.checked);
+    document.getElementById('el-fixed-text').onchange = e => updateActiveLayer('fixedText', e.target.checked);
+    document.querySelectorAll('input[name="el_anim"]').forEach(r => r.onchange = e => updateActiveLayer('anim', e.target.value));
+    document.getElementById('el-color').oninput = e => updateActiveLayer('color', e.target.value);
+    document.getElementById('el-font').onchange = e => updateActiveLayer('font', e.target.value);
+
+    document.getElementById('el-emo-enabled').onchange = e => { 
+       const el = state.elements.find(e => e.id === activeLayerId);
+       if(el) { 
+           el.emo.enabled = e.target.checked; 
+           if (el.emo.enabled) { delete el.emo.x; delete el.emo.y; delete el.emo.s; }
+           renderApp(); 
+       }
+    };
+    document.getElementById('el-emo-x').oninput = e => { const el = state.elements.find(e => e.id === activeLayerId); if(el && el.emo) { el.emo.x = parseFloat(e.target.value); renderApp(); } };
+    document.getElementById('el-emo-y').oninput = e => { const el = state.elements.find(e => e.id === activeLayerId); if(el && el.emo) { el.emo.y = parseFloat(e.target.value); renderApp(); } };
+    document.getElementById('el-emo-s').oninput = e => { const el = state.elements.find(e => e.id === activeLayerId); if(el && el.emo) { el.emo.s = parseFloat(e.target.value); renderApp(); } };
+
+    function updateExportBox() {
+      const outputObj = {};
+      for (let key in reportData) { 
+        outputObj[key] = { 
+          ...(reportData[key].note ? { note: reportData[key].note } : {}),
+          bg: reportData[key].bg, 
+          elements: reportData[key].elements 
+        }; 
+      }
+      
+      const box = document.getElementById('export-box');
+      const instr = document.getElementById('export-instructions');
+
+      if (Object.keys(reportData).length === 0) {
+        box.innerText = '// Рапорт пуст...';
+        instr.style.display = 'none';
+      } else {
+        let jsonString = JSON.stringify(outputObj, null, 2);
+        jsonString = jsonString.substring(1, jsonString.length - 1).replace(/^\n/, '');
+        if (jsonString.trim().length > 0) {
+          jsonString += ",";
+        }
+        box.innerText = jsonString;
+        instr.style.display = 'block';
+      }
+    }
+
+    document.getElementById('save-report-btn').onclick = () => {
+      const cleanElements = state.elements.map(el => {
+          const cleanEl = JSON.parse(JSON.stringify(el));
+          if (cleanEl.emo && cleanEl.emo.enabled) cleanEl.emo = { enabled: true };
+          else if (cleanEl.emo) cleanEl.emo = { enabled: false };
+          if (!cleanEl.glow) delete cleanEl.glow; 
+          if (!cleanEl.fixedText) delete cleanEl.fixedText;
+          return cleanEl;
+      });
+        
+      reportData[state.id] = { 
+        note: state.note,
+        bg: { url: state.bg.url, local: state.bg.local, cover: state.bg.cover, x: state.bg.x, y: state.bg.y, s: state.bg.s },
+        elements: cleanElements 
+      }; 
+      updateExportBox();
+    };
+
+    document.getElementById('delete-report-btn').onclick = () => {
+      if (reportData[state.id]) {
+        delete reportData[state.id];
+        updateExportBox();
+      } else {
+        alert('Этой сцены еще нет в рапорте.');
+      }
+    };
+    
+    document.getElementById('new-from-tag-btn').click();
+  </script>
+</body>
+</html>
