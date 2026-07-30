@@ -1872,7 +1872,7 @@ export const SCENE_REGISTRY = {
       {
         "id": 6,
         "type": "text",
-        "content": "🎵\n[PICKER_NAME]\nWant It \n\"[GUESS_WORD]\"\nWay \n🎵",
+        "content": "🎵\n[PICKER_NAME]\nWants It \n\"[GUESS_WORD]\"\nWay \n🎵",
         "x": 50,
         "y": 50,
         "s": "1.4",
@@ -1953,7 +1953,7 @@ export const SCENE_REGISTRY = {
       {
         "id": 6,
         "type": "text",
-        "content": "🎵\n[RESPONDER_NAME]\nWant It \n\"[GUESS_WORD]\"\nWay \n🎵",
+        "content": "🎵\n[RESPONDER_NAME]\nWants It \n\"[GUESS_WORD]\"\nWay \n🎵",
         "x": 50,
         "y": 50,
         "s": "1.4",
