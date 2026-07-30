@@ -5,7 +5,6 @@ import { AudioManager } from './audio/AudioManager.js';
 import { SIMPLE_COLORS, SIMPLE_MATERIALS, SIMPLE_MOODS, SIMPLE_ERAS, SIMPLE_COUNTRIES, SIMPLE_CITIES, SIMPLE_FOODS, SIMPLE_SPORTS, SIMPLE_PROFESSIONS, SIMPLE_VEGETABLES, SIMPLE_FRUITS, SIMPLE_CLOTHES } from './data/nerfWords.js';
 import { SCENE_REGISTRY } from './data/scenes.js';
 
-
 export const PLAYER_EMOJIS = [
   "🔥", "⚠️", "🦊", "🐼", "🐱", "🐶", "🐰", "🐯", "🐨", "🐷", "🐮", "🐵", "🐺", "🦁", "🐸", 
   "👽", "🤖", "👶", "👴", "😎", "🥳", "🤡", 
@@ -24,7 +23,6 @@ const EMOJI_NAMES = {
   "🌸": "Flower", "🍄": "Mushroom", "🌹": "Rose", "🌝": "Moonface"
 };
 
-// Словарь координат глаз для эмодзи (x, y - сдвиг, s - масштаб)
 export const EYE_ANCHORS = {
   "🐼": { x: -7, y: 8, s: 1.05 },
   "🔥": { x: -2, y: 16, s: 0.65 },
@@ -41,7 +39,7 @@ export const EYE_ANCHORS = {
   "🐺": { x: -5, y: 14, s: 0.9 },
   "🦁": { x: -5, y: -10, s: 0.8 },
   "🐸": { x: -5, y: -31, s: 1.05 },
-  "👽": { x: -5, y: 13, s: 1.05 }, // Второй дубликат из исходного кода
+  "👽": { x: -5, y: 13, s: 1.05 }, 
   "🤖": { x: -4, y: 1, s: 1.05 },
   "👶": { x: -5, y: 24, s: 0.85 },
   "👴": { x: -5, y: 24, s: 0.85 },
@@ -233,6 +231,7 @@ let currentHintObject = null;
 let isCustomHintActive = false; 
 let shifter = null;
 let responderChoice = "";
+let unchosenChoice = ""; 
 let activeSuffix = "";
 let activePrefix = "";
 
@@ -1291,6 +1290,7 @@ function startResponderPhase() {
 function confirmResponderChoice(w1, w2, choice) {
   try {
     responderChoice = choice;
+    unchosenChoice = (choice === w1) ? w2 : w1; // <--- ДОБАВЛЕН ОТВЕРГНУТЫЙ ОТВЕТ
     const responder = game.players[game.getResponderIndex()];
    
     const plainQuestionText = getCompiledQuestionString("___", "___", false);
@@ -1612,7 +1612,7 @@ export function getSmartProp(word) {
   return null;
 }
 
-export function generateVisualScene(isCorrect, activeTypes, involvesGuesser, responder, guesser, trueWord, prevChoice = "") {
+export function generateVisualScene(isCorrect, sceneKeys, involvesGuesser, responder, guesser, picker, trueWord, prevChoice = "", unchosenWord = "") {
   const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   if (conn && (conn.saveData || conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g')) {
     return ''; 
@@ -1620,7 +1620,7 @@ export function generateVisualScene(isCorrect, activeTypes, involvesGuesser, res
 
   const smartProp = getSmartProp(trueWord);
 
-  let activeSceneKey = activeTypes.find(t => SCENE_REGISTRY[t]);
+  let activeSceneKey = sceneKeys.find(t => SCENE_REGISTRY[t]);
   if (!activeSceneKey) return '';
   const sceneData = SCENE_REGISTRY[activeSceneKey];
 
@@ -1636,21 +1636,36 @@ export function generateVisualScene(isCorrect, activeTypes, involvesGuesser, res
 
   let elementsHtml = sceneData.elements.map((el, index) => {
     let renderContent = String(el.content);
-    // ПОДСТАНОВКА ЭМОДЗИ, ИМЕН И КОМБО
+    renderContent = renderContent.replace(/\[PICKER\]/g, picker.emoji);
     renderContent = renderContent.replace(/\[RESPONDER\]/g, responder.emoji);
     renderContent = renderContent.replace(/\[GUESSER\]/g, guesser.emoji);
+    renderContent = renderContent.replace(/\[PICKER_NAME\]/g, picker.name);
     renderContent = renderContent.replace(/\[RESPONDER_NAME\]/g, responder.name);
     renderContent = renderContent.replace(/\[GUESSER_NAME\]/g, guesser.name);
+    
     renderContent = renderContent.replace(/\[SMART_PROP\]/g, smartProp || '');
     renderContent = renderContent.replace(/\[GUESS_WORD\]/g, trueWord || ''); 
     renderContent = renderContent.replace(/\[PREV_CHOICE\]/g, prevChoice || '');
+    renderContent = renderContent.replace(/\[UNCHOSEN_WORD\]/g, unchosenWord || '');
 
     let finalS = el.s;
     let extraStyles = "";
     let contentHtml = renderContent;
     
     if (el.type === 'text') {
-      extraStyles += "white-space: pre-wrap; text-align: center; max-width: 90vw; ";
+      const align = el.textAlign || 'center';
+      const maxW = el.maxWidth !== undefined ? el.maxWidth : 90;
+      const lh = el.lineHeight !== undefined ? el.lineHeight : 1.2;
+      const tBg = el.textBg || 'none';
+      
+      extraStyles += `white-space: pre-wrap; text-align: ${align}; max-width: ${maxW}vw; line-height: ${lh}; `;
+      
+      if (tBg === 'black') {
+          extraStyles += `background: rgba(0,0,0,0.85); padding: 0.15em 0.35em; border-radius: 0.25em; box-decoration-break: clone; -webkit-box-decoration-break: clone; `;
+      } else if (tBg === 'white') {
+          extraStyles += `background: rgba(255,255,255,0.95); padding: 0.15em 0.35em; border-radius: 0.25em; box-decoration-break: clone; -webkit-box-decoration-break: clone; `;
+      }
+
       if (!el.fixedText && renderContent.length > 8) {
         finalS = el.s * Math.max(0.25, 8 / renderContent.length);
       }
@@ -1699,18 +1714,23 @@ function makeGuess(word) {
    
     guesser.lastGuessCorrect = isCorrect;
 
-    const activeTypes = [];
-    if (currentQuestion) activeTypes.push(currentQuestion.id.toString());
+    const candidateScenes = [];
+
     if (currentQuestion && currentQuestion.fragments) {
       currentQuestion.fragments.forEach((frag, i) => {
         const stateIndex = currentFragmentsState[i];
         if (stateIndex !== undefined && stateIndex !== -1) {
           const selectedOpt = frag.options[stateIndex];
-          if (selectedOpt && selectedOpt.type) activeTypes.push(selectedOpt.type);
-          if (selectedOpt && selectedOpt.scene) activeTypes.push(selectedOpt.scene);
+          if (selectedOpt && selectedOpt.scene) candidateScenes.push(selectedOpt.scene);
         }
       });
     }
+
+    candidateScenes.sort(() => Math.random() - 0.5);
+
+    const sceneKeys = [...candidateScenes];
+    if (currentQuestion && currentQuestion.scene) sceneKeys.push(currentQuestion.scene); 
+    if (currentQuestion) sceneKeys.push(currentQuestion.id.toString());
 
     if (isCorrect) {
       guesser.gold += FIXED_REWARD;
@@ -1726,22 +1746,22 @@ function makeGuess(word) {
     const finalWallet = guesser.gold;
     const guessColor = isCorrect ? 'var(--positive)' : 'var(--danger)';
 
+    const picker = game.players[game.pickerIndex];
     const responder = game.players[game.getResponderIndex()];
     const rawText = currentQuestion.customCompiledText || currentQuestion.text || "";
     const involvesGuesser = rawText.includes('[GUESSER]');
     const prevChoiceText = currentQuestion.comboWord || "";
     
-    // ПЕРЕДАЕМ ОБЪЕКТЫ ЦЕЛИКОМ (Эмодзи + Имя) И КОМБО
-    const visualScene = generateVisualScene(isCorrect, activeTypes, involvesGuesser, responder, guesser, responderChoice, prevChoiceText);
+    // ВЫЗЫВАЕМ ГЕНЕРАТОР С ПОЛНЫМ НАБОРОМ ДАННЫХ
+    const visualScene = generateVisualScene(isCorrect, sceneKeys, involvesGuesser, responder, guesser, picker, responderChoice, prevChoiceText, unchosenChoice);
 
     const alertMessage = `<div style="text-align: center; margin-bottom: 10px;"><span style="font-size: 1.1rem; font-weight: 800; color: #ffd56b;">Score: ${goldBefore} ➔ ${finalWallet}</span></div>` +
       visualScene + 
       `<div style="background: rgba(255,255,255,0.04); padding: 14px; border-radius: 14px; border: 1px dashed rgba(255,255,255,0.15); font-size: 0.95rem; text-align: center; white-space: normal;"><div style="margin-bottom: 10px; font-weight: 700;">Your guess: <span style="color: ${guessColor}; text-transform: uppercase;">"${word}"</span></div><div style="line-height: 1.5; color: #e8e9f1;">${formattedSentence}</div></div>`;
 
-    // === ИНТЕГРАЦИЯ ЗВУКА СЦЕНЫ ===
     let currentSceneAudio = null;
     let fadeOutInterval = null; 
-    let activeSceneKey = activeTypes.find(t => SCENE_REGISTRY[t]);
+    let activeSceneKey = sceneKeys.find(t => SCENE_REGISTRY[t]);
     let activeScene = activeSceneKey ? SCENE_REGISTRY[activeSceneKey] : null;
 
     if (activeScene && activeScene.sfx) {

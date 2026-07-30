@@ -20,7 +20,7 @@
     h2 { font-size: 18px; margin-bottom: 12px; }
     h3 { font-size: 12px; color: #fff; background: rgba(140, 108, 255, 0.2); padding: 6px 10px; border-radius: 6px; margin: 10px 0; text-transform: uppercase; letter-spacing: 0.05em; }
     
-    .col-left { width: 320px; background: var(--panel); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .col-left { width: 340px; background: var(--panel); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
     .col-center { flex: 1; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; position: relative; }
     .col-right { width: 340px; background: var(--panel); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); overflow-y: auto; display: flex; flex-direction: column; }
 
@@ -121,26 +121,47 @@
     </div>
     
     <div class="control-row" style="margin-top: 8px;">
-      <label style="color: var(--warning); flex:1;">Эмодзи Responder</label>
-      <input type="text" id="test-resp-emo" value="🐼" style="width: 50px; text-align: center;">
+      <label style="color: var(--warning); flex:1;">Эмодзи Picker</label>
+      <button id="pick-prev" class="btn-small btn-outline" style="padding: 4px 8px;">&lt;</button>
+      <input type="text" id="test-pick-emo" value="🦊" style="width: 45px; text-align: center;">
+      <button id="pick-next" class="btn-small btn-outline" style="padding: 4px 8px;">&gt;</button>
     </div>
-    <div class="control-row">
+    <div class="control-row" style="margin-top: 4px;">
+      <label style="color: var(--warning); flex:1;">Эмодзи Responder</label>
+      <button id="resp-prev" class="btn-small btn-outline" style="padding: 4px 8px;">&lt;</button>
+      <input type="text" id="test-resp-emo" value="🐼" style="width: 45px; text-align: center;">
+      <button id="resp-next" class="btn-small btn-outline" style="padding: 4px 8px;">&gt;</button>
+    </div>
+    <div class="control-row" style="margin-top: 4px;">
       <label style="color: var(--warning); flex:1;">Эмодзи Guesser</label>
-      <input type="text" id="test-guess-emo" value="👽" style="width: 50px; text-align: center;">
+      <button id="guess-prev" class="btn-small btn-outline" style="padding: 4px 8px;">&lt;</button>
+      <input type="text" id="test-guess-emo" value="👽" style="width: 45px; text-align: center;">
+      <button id="guess-next" class="btn-small btn-outline" style="padding: 4px 8px;">&gt;</button>
     </div>
     
-    <div class="control-row" style="margin-top: 8px;">
-      <label style="color: #a5a1c8; flex:1;">Имя Responder</label>
-      <input type="text" id="test-resp-name" value="ALEX" style="width: 80px; text-align: center;">
-    </div>
-    <div class="control-row">
-      <label style="color: #a5a1c8; flex:1;">Имя Guesser</label>
-      <input type="text" id="test-guess-name" value="SAM" style="width: 80px; text-align: center;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-top: 10px;">
+        <div class="control-group">
+          <label style="color: #a5a1c8;">Picker</label>
+          <input type="text" id="test-pick-name" value="TAYLOR" style="text-align: center; padding: 4px;">
+        </div>
+        <div class="control-group">
+          <label style="color: #a5a1c8;">Responder</label>
+          <input type="text" id="test-resp-name" value="ALEX" style="text-align: center; padding: 4px;">
+        </div>
+        <div class="control-group">
+          <label style="color: #a5a1c8;">Guesser</label>
+          <input type="text" id="test-guess-name" value="SAM" style="text-align: center; padding: 4px;">
+        </div>
     </div>
 
     <div class="control-row" style="margin-top: 8px;">
-      <label style="color: #50fa7b; flex:1;">Слово [GUESS_WORD]</label>
+      <label style="color: #50fa7b; flex:1;">Выбрано [GUESS_WORD]</label>
       <input type="text" id="test-guess-word" value="ОТВЕТ" style="width: 100px; text-align: center; border-color: #50fa7b;">
+    </div>
+
+    <div class="control-row" style="margin-top: 8px;">
+      <label style="color: var(--danger); flex:1;">Отвергнуто [UNCHOSEN_WORD]</label>
+      <input type="text" id="test-unchosen-word" value="ОТВЕРГНУТО" style="width: 100px; text-align: center; border-color: var(--danger);">
     </div>
 
     <div class="control-row" style="margin-top: 8px;">
@@ -150,9 +171,10 @@
 
     <div class="control-row" style="margin-top: 10px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px;">
       <label style="color: var(--warning); width: 100%; display: flex; align-items: center;">📱 Эмуляция шрифта
+        <!-- УСТАНОВИЛ АНДРОИД ПО УМОЛЧАНИЮ -->
         <select id="os-simulator" style="width: 140px; margin-left: auto;">
+          <option value="'Noto Color Emoji', sans-serif" selected>Android</option>
           <option value="native">Мой ПК</option>
-          <option value="'Noto Color Emoji', sans-serif">Android</option>
           <option value="'Apple Color Emoji', sans-serif">iPhone</option>
           <option value="'Segoe UI Emoji', sans-serif">Windows</option>
         </select>
@@ -180,19 +202,24 @@
     <div class="control-row" style="margin-top: 6px;"><input type="checkbox" id="bg-cover"> <label for="bg-cover" style="cursor:pointer; color:#fff;">Cover</label></div>
 
     <h3>📑 Слои (Элементы)</h3>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px;">
-      <button class="btn-small btn-outline" onclick="addLayer('[RESPONDER]', 'emoji')">+ Эмодзи Resp</button>
-      <button class="btn-small btn-outline" onclick="addLayer('[GUESSER]', 'emoji')">+ Эмодзи Guess</button>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 10px;">
+      <button class="btn-small btn-outline" style="padding: 6px 4px;" onclick="addLayer('[PICKER]', 'emoji')">+ 🦊 Pick</button>
+      <button class="btn-small btn-outline" style="padding: 6px 4px;" onclick="addLayer('[RESPONDER]', 'emoji')">+ 🐼 Resp</button>
+      <button class="btn-small btn-outline" style="padding: 6px 4px;" onclick="addLayer('[GUESSER]', 'emoji')">+ 👽 Guess</button>
       
-      <button class="btn-small btn-outline" onclick="addLayer('[RESPONDER_NAME]', 'text')">+ Имя Resp</button>
-      <button class="btn-small btn-outline" onclick="addLayer('[GUESSER_NAME]', 'text')">+ Имя Guess</button>
+      <button class="btn-small btn-outline" style="padding: 6px 4px;" onclick="addLayer('[PICKER_NAME]', 'text')">+ 🦊 Имя</button>
+      <button class="btn-small btn-outline" style="padding: 6px 4px;" onclick="addLayer('[RESPONDER_NAME]', 'text')">+ 🐼 Имя</button>
+      <button class="btn-small btn-outline" style="padding: 6px 4px;" onclick="addLayer('[GUESSER_NAME]', 'text')">+ 👽 Имя</button>
       
-      <button class="btn-small btn-outline" style="grid-column: span 2; border-color: #ff9d4a; color: #ff9d4a;" onclick="addLayer('[PREV_CHOICE]', 'text')">+ Комбо [PREV_CHOICE]</button>
+      <!-- ДОБАВЛЕНА НОВАЯ КНОПКА ОТВЕТА В РЯД -->
+      <button class="btn-small btn-outline" style="border-color: #50fa7b; color: #50fa7b; padding: 6px 4px;" onclick="addLayer('[GUESS_WORD]', 'text')">+ Ответ</button>
+      <button class="btn-small btn-outline" style="border-color: #ff9d4a; color: #ff9d4a; padding: 6px 4px;" onclick="addLayer('[PREV_CHOICE]', 'text')">+ Комбо</button>
+      <button class="btn-small btn-outline" style="border-color: var(--danger); color: var(--danger); padding: 6px 4px;" onclick="addLayer('[UNCHOSEN_WORD]', 'text')">+ Отвергнуто</button>
 
-      <button class="btn-small btn-outline" style="grid-column: span 2;" onclick="addLayer('Текст', 'text')">+ Блок Текста</button>
+      <button class="btn-small btn-outline" style="grid-column: span 3;" onclick="addLayer('Текст', 'text')">+ Блок Текста</button>
       
-      <button class="btn-small btn-action" onclick="document.getElementById('img-upload-hidden').click()">+ Картинка</button>
-      <button class="btn-small btn-action" onclick="openDrawModal()">+ Рисунок</button>
+      <button class="btn-small btn-action" style="grid-column: span 1;" onclick="document.getElementById('img-upload-hidden').click()">+ Картинка</button>
+      <button class="btn-small btn-action" style="grid-column: span 2;" onclick="openDrawModal()">+ Рисунок</button>
       <input type="file" id="img-upload-hidden" accept="image/*" style="display: none;">
     </div>
     <div id="layers-list"></div>
@@ -206,15 +233,19 @@
   <!-- ЦЕНТРАЛЬНАЯ ПАНЕЛЬ -->
   <div class="col-center">
     <div class="scene-preview-container">
-      <div class="alert-visual-scene stars-bg" id="scene-box">
+      <div class="alert-visual-scene stars-bg" id="scene-box" style="font-family: 'Noto Color Emoji', sans-serif;">
         <div id="elements-container"></div>
       </div>
     </div>
 
-    <!-- CANVAS MODAL -->
+    <!-- CANVAS MODAL (С ВЫБОРОМ ЦВЕТА) -->
     <div id="draw-modal">
-      <h3 style="margin-bottom: 10px;">Нарисуйте пропс (Белым цветом)</h3>
+      <h3 style="margin-bottom: 10px;">Нарисуйте пропс</h3>
       <canvas id="draw-canvas" width="250" height="250"></canvas>
+      <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 8px;">
+        <label style="color: white; font-size: 12px; margin: 0;">Цвет линии:</label>
+        <input type="color" id="draw-color" value="#ffffff" style="height: 30px; width: 60px; padding: 0; border: none; background: transparent; cursor: pointer;">
+      </div>
       <div style="display: flex; gap: 10px;">
         <button class="btn-small btn-danger" onclick="clearCanvas()">Очистить</button>
         <button class="btn-small" onclick="closeDrawModal(false)">Отмена</button>
@@ -229,16 +260,46 @@
         <textarea id="el-content" rows="3" style="resize: vertical; font-family: inherit;"></textarea>
       </div>
       
-      <!-- ПОЯВЛЯЕТСЯ ТОЛЬКО ДЛЯ ТЕКСТА -->
-      <div id="text-specific-settings" style="display: none; gap: 10px; margin-bottom: 10px;">
-        <div class="control-group" style="flex:1;"><label>Цвет</label><input type="color" id="el-color" value="#ffffff" style="height:32px;"></div>
-        <div class="control-group" style="flex:2;"><label>Шрифт</label>
-          <select id="el-font"><option value="inherit">По умолчанию</option><option value="Impact">Impact (Мем)</option><option value="monospace">Моноширинный</option><option value="serif">С засечками</option></select>
+      <div id="text-specific-settings" style="display: none; flex-direction: column; gap: 8px; margin-bottom: 10px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+        <h4 style="margin: 0 0 4px 0; color: var(--accent); font-size: 11px; text-transform: uppercase;">📝 Настройки Типографики</h4>
+        
+        <div style="display: flex; gap: 10px;">
+          <div class="control-group" style="flex:1;"><label>Цвет текста</label><input type="color" id="el-color" value="#ffffff" style="height:32px;"></div>
+          <div class="control-group" style="flex:2;"><label>Шрифт</label>
+            <select id="el-font"><option value="inherit">По умолчанию</option><option value="Impact">Impact (Мем)</option><option value="monospace">Моноширинный</option><option value="serif">С засечками</option></select>
+          </div>
+        </div>
+
+        <!-- НОВАЯ ФУНКЦИЯ: ЧИТАЕМОСТЬ (ФОН) -->
+        <div class="control-group">
+          <label>Фон текста (Плашка читаемости)</label>
+          <select id="el-text-bg">
+            <option value="none">Нет (Прозрачный)</option>
+            <option value="black">⚫ Черная полупрозрачная</option>
+            <option value="white">⚪ Белая полупрозрачная</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label>Выравнивание (Align)</label>
+          <select id="el-text-align">
+            <option value="center">По центру (Center)</option>
+            <option value="left">По левому краю (Left)</option>
+            <option value="right">По правому краю (Right)</option>
+          </select>
+        </div>
+        
+        <div class="control-row"><label>Ширина колонки (MaxWidth)</label><input type="range" id="el-max-width" min="10" max="100" value="90"><span class="value-display" id="val-el-max-width">90%</span></div>
+        <div class="control-row"><label>Интервал строк (LineHeight)</label><input type="range" id="el-line-height" min="0.5" max="3.0" step="0.1" value="1.2"><span class="value-display" id="val-el-line-height">1.2</span></div>
+        
+        <div class="control-row" id="el-fixed-text-row" style="margin-top: 6px;">
+            <input type="checkbox" id="el-fixed-text"> 
+            <label for="el-fixed-text" style="color:var(--danger); cursor:pointer;">🛑 В одну строку (Без переносов)</label>
         </div>
       </div>
-      <!-- ПРЕДУПРЕЖДЕНИЕ ЕСЛИ ВЫБРАН ЭМОДЗИ -->
-      <div id="emoji-notice" style="display: none; color: var(--muted); font-size: 11px; margin-bottom: 10px; text-align: center; border: 1px dashed rgba(255,255,255,0.1); padding: 6px;">
-        🎨 Цвет и шрифт настраиваются только для текстовых слоев
+
+      <div id="emoji-notice" style="display: none; color: var(--muted); font-size: 11px; margin-bottom: 10px; text-align: center; border: 1px dashed rgba(255,255,255,0.1); padding: 8px; border-radius: 8px;">
+        🎨 Типографика, цвет и шрифты настраиваются только для текстовых слоев (📝)
       </div>
 
       <div class="control-row"><label>X</label><input type="range" id="el-x" min="0" max="100" value="50"><span class="value-display" id="val-el-x">50%</span></div>
@@ -254,11 +315,6 @@
       <div class="control-row" style="margin-top: 6px;">
           <input type="checkbox" id="el-glow"> 
           <label for="el-glow" style="color:var(--positive); cursor:pointer;">✨ Неоновое сияние (Glow)</label>
-      </div>
-      
-      <div class="control-row" id="el-fixed-text-row" style="margin-top: 6px; display: none;">
-          <input type="checkbox" id="el-fixed-text"> 
-          <label for="el-fixed-text" style="color:var(--danger); cursor:pointer;">🛑 Фикс. размер (Без авто-сжатия)</label>
       </div>
 
       <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.05);">
@@ -293,16 +349,13 @@
 
   <!-- ПРАВАЯ ПАНЕЛЬ -->
   <div class="col-right">
-    <h2 style="text-align: center;">🎲 Загрузка и Навигация</h2>
-    <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px; text-align: center;">Выбери сцену или тег для создания</p>
+    <h2 style="text-align: center;">🎲 База Сцен и Тегов</h2>
+    <p style="font-size: 11px; color: var(--muted); margin-bottom: 10px; text-align: center;">Все теги из игры собраны здесь</p>
     
-    <h3 style="margin-top: 10px;">Сцены из scenes.js</h3>
-    <select id="load-scene-select" style="margin-bottom: 8px;"></select>
-    <button id="load-scene-btn" style="width: 100%; margin-bottom: 16px;">📂 Загрузить в редактор</button>
-
-    <h3>Теги из questions.js</h3>
-    <select id="q-tags-select" style="margin-bottom: 8px;"></select>
-    <button id="new-from-tag-btn" style="width: 100%; margin-bottom: 16px;" class="btn-outline">✨ Создать новую для тега</button>
+    <select id="unified-scene-select" style="margin-bottom: 12px; font-size: 14px; padding: 8px;"></select>
+    
+    <button id="load-scene-btn" style="width: 100%; margin-bottom: 8px;">📂 Открыть / Создать</button>
+    <button id="copy-scene-btn" style="width: 100%; margin-bottom: 16px;" class="btn-outline">📄 Скопировать текущую</button>
 
     <div id="eye-calibration-box" style="background: rgba(140, 108, 255, 0.1); padding: 12px; border-radius: 8px; border: 1px solid var(--accent); margin-top: auto; display: none;">
       <h4 style="margin-bottom: 8px; color: var(--accent);">🛠 Словарь Глаз (EYE_ANCHORS)</h4>
@@ -314,29 +367,25 @@
   <script type="module">
     import { SCENE_REGISTRY } from './src/data/scenes.js';
     import { questionsDatabase } from './src/data/questions.js';
-    import { EYE_ANCHORS, getSmartProp } from './src/main.js';
+    import { EYE_ANCHORS, getSmartProp, PLAYER_EMOJIS } from './src/main.js';
 
-    const sceneSelect = document.getElementById('load-scene-select');
-    Object.keys(SCENE_REGISTRY).forEach(key => {
-       const opt = document.createElement('option');
-       opt.value = key; opt.innerText = key;
-       sceneSelect.appendChild(opt);
-    });
+    const allTags = new Set();
+    Object.keys(SCENE_REGISTRY).forEach(k => allTags.add(k));
 
-    const qTags = new Set();
     questionsDatabase.forEach(q => {
-       qTags.add(q.id.toString());
-       if (q.tags) q.tags.forEach(t => qTags.add(t));
+       if (q.scene) allTags.add(q.scene);
        if (q.fragments) q.fragments.forEach(f => f.options.forEach(o => { 
-           if (o.type) qTags.add(o.type); 
-           if (o.scene) qTags.add(o.scene);
+           if (o.scene) allTags.add(o.scene);
        }));
     });
-    const tagSelect = document.getElementById('q-tags-select');
-    Array.from(qTags).sort().forEach(tag => {
+
+    const unifiedSelect = document.getElementById('unified-scene-select');
+    Array.from(allTags).sort().forEach(tag => {
        const opt = document.createElement('option');
-       opt.value = tag; opt.innerText = tag;
-       tagSelect.appendChild(opt);
+       opt.value = tag;
+       const isReady = !!SCENE_REGISTRY[tag];
+       opt.innerText = isReady ? `✅ ${tag}` : `❌ ${tag} (не создана)`;
+       unifiedSelect.appendChild(opt);
     });
 
     let reportData = {};
@@ -344,56 +393,78 @@
     let elementIdCounter = 0;
 
     const state = { id: 'custom_scene', note: '', sfx: '', bg: { url: '', local: '', base64: '', x: 50, y: 50, s: 100, cover: false }, elements: [] };
-    let currentContext = { responder: '🐼', guesser: '👽', responderName: 'ALEX', guesserName: 'SAM', guessWord: 'ОТВЕТ', prevChoice: 'ПРОШЛЫЙ ОТВЕТ' };
+    let currentContext = { picker: '🦊', responder: '🐼', guesser: '👽', pickerName: 'TAYLOR', responderName: 'ALEX', guesserName: 'SAM', guessWord: 'ОТВЕТ', prevChoice: 'ПРОШЛЫЙ ОТВЕТ', unchosenWord: 'ОТВЕРГНУТО' };
 
     document.getElementById('load-scene-btn').onclick = () => {
-       const key = sceneSelect.value;
+       const key = unifiedSelect.value;
        const data = SCENE_REGISTRY[key];
-       if(!data) return;
        
-       state.id = key;
-       document.getElementById('scene-id').value = key;
-       
-       state.note = data.note || '';
-       document.getElementById('scene-note').value = state.note;
-
-       state.sfx = data.sfx || '';
-       document.getElementById('scene-sfx').value = state.sfx;
-       
-       state.bg = JSON.parse(JSON.stringify(data.bg));
-       state.bg.base64 = '';
-       state.elements = JSON.parse(JSON.stringify(data.elements));
-       
-       elementIdCounter = state.elements.length > 0 ? Math.max(...state.elements.map(e => e.id)) : 0;
-       
-       document.getElementById('bg-url').value = state.bg.url || '';
-       document.getElementById('bg-local').value = state.bg.local || '';
-       document.getElementById('bg-x').value = state.bg.x !== undefined ? state.bg.x : 50;
-       document.getElementById('bg-y').value = state.bg.y !== undefined ? state.bg.y : 50;
-       document.getElementById('bg-s').value = state.bg.s !== undefined ? state.bg.s : 100;
-       document.getElementById('bg-cover').checked = state.bg.cover || false;
-       
-       activeLayerId = state.elements.length > 0 ? state.elements[state.elements.length-1].id : null;
+       if (data) {
+           state.id = key;
+           document.getElementById('scene-id').value = key;
+           state.note = data.note || '';
+           document.getElementById('scene-note').value = state.note;
+           state.sfx = data.sfx || '';
+           document.getElementById('scene-sfx').value = state.sfx;
+           
+           state.bg = JSON.parse(JSON.stringify(data.bg));
+           state.bg.base64 = '';
+           state.elements = JSON.parse(JSON.stringify(data.elements));
+           
+           elementIdCounter = state.elements.length > 0 ? Math.max(...state.elements.map(e => e.id)) : 0;
+           
+           document.getElementById('bg-url').value = state.bg.url || '';
+           document.getElementById('bg-local').value = state.bg.local || '';
+           document.getElementById('bg-x').value = state.bg.x !== undefined ? state.bg.x : 50;
+           document.getElementById('bg-y').value = state.bg.y !== undefined ? state.bg.y : 50;
+           document.getElementById('bg-s').value = state.bg.s !== undefined ? state.bg.s : 100;
+           document.getElementById('bg-cover').checked = state.bg.cover || false;
+           
+           activeLayerId = state.elements.length > 0 ? state.elements[state.elements.length-1].id : null;
+       } else {
+           state.id = key;
+           document.getElementById('scene-id').value = key;
+           state.note = '';
+           document.getElementById('scene-note').value = '';
+           state.sfx = '';
+           document.getElementById('scene-sfx').value = '';
+           state.bg = { url: '', local: '', base64: '', x: 50, y: 50, s: 100, cover: false };
+           state.elements = [];
+           elementIdCounter = 0; 
+           document.getElementById('bg-url').value = '';
+           document.getElementById('bg-local').value = '';
+           document.getElementById('bg-cover').checked = false;
+           addLayer('[RESPONDER]', 'emoji');
+       }
        renderApp();
-       if (window.playTestSequence) window.playTestSequence();
+       if (window.playTestSequence && data) window.playTestSequence();
     };
 
-    document.getElementById('new-from-tag-btn').onclick = () => {
-       const tag = tagSelect.value;
-       state.id = tag;
-       document.getElementById('scene-id').value = tag;
-       state.note = '';
-       document.getElementById('scene-note').value = '';
-       state.sfx = '';
-       document.getElementById('scene-sfx').value = '';
-       state.bg = { url: '', local: '', base64: '', x: 50, y: 50, s: 100, cover: false };
-       state.elements = [];
-       elementIdCounter = 0; 
-       document.getElementById('bg-url').value = '';
-       document.getElementById('bg-local').value = '';
-       document.getElementById('bg-cover').checked = false;
-       addLayer('[RESPONDER]', 'emoji');
+    document.getElementById('copy-scene-btn').onclick = () => {
+       const newId = prompt("Введите ID для копии сцены:", state.id + "_copy");
+       if (newId) {
+           state.id = newId;
+           document.getElementById('scene-id').value = newId;
+           alert(`Сцена скопирована как "${newId}". Настрой её и нажми "В Рапорт" для сохранения.`);
+       }
     };
+
+    const cycleEmoji = (key, dir, inputId) => {
+      let current = currentContext[key];
+      let idx = PLAYER_EMOJIS.indexOf(current);
+      if (idx === -1) idx = 0;
+      idx = (idx + dir + PLAYER_EMOJIS.length) % PLAYER_EMOJIS.length;
+      currentContext[key] = PLAYER_EMOJIS[idx];
+      document.getElementById(inputId).value = PLAYER_EMOJIS[idx];
+      renderApp();
+    };
+
+    document.getElementById('pick-prev').onclick = () => cycleEmoji('picker', -1, 'test-pick-emo');
+    document.getElementById('pick-next').onclick = () => cycleEmoji('picker', 1, 'test-pick-emo');
+    document.getElementById('resp-prev').onclick = () => cycleEmoji('responder', -1, 'test-resp-emo');
+    document.getElementById('resp-next').onclick = () => cycleEmoji('responder', 1, 'test-resp-emo');
+    document.getElementById('guess-prev').onclick = () => cycleEmoji('guesser', -1, 'test-guess-emo');
+    document.getElementById('guess-next').onclick = () => cycleEmoji('guesser', 1, 'test-guess-emo');
 
     window.addLayer = (content, type) => {
       const id = ++elementIdCounter;
@@ -422,7 +493,6 @@
     };
     window.selectLayer = (id) => { activeLayerId = id; renderApp(); };
 
-    // --- ЛОГИКА РИСОВАЛКИ И КАРТИНОК ---
     document.getElementById('img-upload-hidden').onchange = e => {
       const file = e.target.files[0]; if(!file) return;
       const reader = new FileReader(); 
@@ -433,6 +503,7 @@
     const drawModal = document.getElementById('draw-modal');
     const canvas = document.getElementById('draw-canvas');
     const ctx = canvas.getContext('2d');
+    const drawColorInput = document.getElementById('draw-color');
     let isDrawing = false;
 
     window.openDrawModal = () => {
@@ -440,7 +511,7 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.lineWidth = 6;
       ctx.lineCap = 'round';
-      ctx.strokeStyle = '#ffffff';
+      ctx.strokeStyle = drawColorInput.value;
     };
     window.closeDrawModal = (save) => {
       drawModal.style.display = 'none';
@@ -448,7 +519,9 @@
         addLayer(canvas.toDataURL("image/png"), 'image');
       }
     };
-    window.clearCanvas = () => ctx.clearRect(0, 0, canvas.width, canvas.height);
+    window.clearCanvas = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    };
 
     const getPos = (e) => {
       const rect = canvas.getBoundingClientRect();
@@ -456,7 +529,13 @@
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
       return { x: clientX - rect.left, y: clientY - rect.top };
     };
-    const startDraw = (e) => { isDrawing = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); };
+    const startDraw = (e) => { 
+        isDrawing = true; 
+        const pos = getPos(e); 
+        ctx.strokeStyle = drawColorInput.value; 
+        ctx.beginPath(); 
+        ctx.moveTo(pos.x, pos.y); 
+    };
     const draw = (e) => { if (!isDrawing) return; e.preventDefault(); const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); };
     const stopDraw = () => { isDrawing = false; };
 
@@ -467,7 +546,6 @@
     canvas.addEventListener('touchstart', startDraw, {passive: false});
     canvas.addEventListener('touchmove', draw, {passive: false});
     canvas.addEventListener('touchend', stopDraw);
-    // -----------------------------------
 
     function renderApp() {
       const box = document.getElementById('scene-box');
@@ -517,20 +595,44 @@
         div.className = `scene-element ${el.anim || 'none'}`;
         
         let renderContent = String(el.content);
+        renderContent = renderContent.replace(/\[PICKER\]/g, currentContext.picker);
         renderContent = renderContent.replace(/\[RESPONDER\]/g, currentContext.responder);
         renderContent = renderContent.replace(/\[GUESSER\]/g, currentContext.guesser);
+        renderContent = renderContent.replace(/\[PICKER_NAME\]/g, currentContext.pickerName);
         renderContent = renderContent.replace(/\[RESPONDER_NAME\]/g, currentContext.responderName);
         renderContent = renderContent.replace(/\[GUESSER_NAME\]/g, currentContext.guesserName);
         renderContent = renderContent.replace(/\[SMART_PROP\]/g, smartProp);
         renderContent = renderContent.replace(/\[GUESS_WORD\]/g, currentContext.guessWord);
         renderContent = renderContent.replace(/\[PREV_CHOICE\]/g, currentContext.prevChoice);
+        renderContent = renderContent.replace(/\[UNCHOSEN_WORD\]/g, currentContext.unchosenWord);
         
         let finalS = el.s !== undefined ? el.s : 1;
         
         if (el.type === 'text') {
             div.style.whiteSpace = 'pre-wrap';
-            div.style.textAlign = 'center';
-            div.style.maxWidth = '90vw';
+            div.style.textAlign = el.textAlign || 'center';
+            div.style.maxWidth = `${el.maxWidth !== undefined ? el.maxWidth : 90}vw`;
+            div.style.lineHeight = el.lineHeight !== undefined ? el.lineHeight : 1.2;
+            
+            // ПРИМЕНЯЕМ ПЛАШКИ
+            const bgType = el.textBg || 'none';
+            if (bgType === 'black') {
+                div.style.background = 'rgba(0,0,0,0.85)';
+                div.style.padding = '0.15em 0.35em';
+                div.style.borderRadius = '0.25em';
+                div.style.boxDecorationBreak = 'clone';
+                div.style.webkitBoxDecorationBreak = 'clone';
+            } else if (bgType === 'white') {
+                div.style.background = 'rgba(255,255,255,0.95)';
+                div.style.padding = '0.15em 0.35em';
+                div.style.borderRadius = '0.25em';
+                div.style.boxDecorationBreak = 'clone';
+                div.style.webkitBoxDecorationBreak = 'clone';
+            } else {
+                div.style.background = 'transparent';
+                div.style.padding = '0';
+            }
+            
             if (!el.fixedText && renderContent.length > 8) {
               finalS = finalS * Math.max(0.25, 8 / renderContent.length);
             }
@@ -640,6 +742,13 @@
             emojiNotice.style.display = 'none';
             document.getElementById('el-color').value = activeEl.color || '#ffffff'; 
             document.getElementById('el-font').value = activeEl.font || 'inherit'; 
+            document.getElementById('el-text-align').value = activeEl.textAlign || 'center';
+            document.getElementById('el-max-width').value = activeEl.maxWidth !== undefined ? activeEl.maxWidth : 90;
+            document.getElementById('val-el-max-width').innerText = `${activeEl.maxWidth !== undefined ? activeEl.maxWidth : 90}%`;
+            document.getElementById('el-line-height').value = activeEl.lineHeight !== undefined ? activeEl.lineHeight : 1.2;
+            document.getElementById('val-el-line-height').innerText = activeEl.lineHeight !== undefined ? activeEl.lineHeight : 1.2;
+            document.getElementById('el-text-bg').value = activeEl.textBg || 'none';
+            
             document.getElementById('el-fixed-text-row').style.display = 'flex';
             document.getElementById('el-fixed-text').checked = activeEl.fixedText || false;
         } else { 
@@ -731,12 +840,17 @@
 
     document.getElementById('test-sfx-btn').onclick = () => playTestSequence();
 
+    document.getElementById('test-pick-emo').oninput = e => { currentContext.picker = e.target.value || '🦊'; renderApp(); };
     document.getElementById('test-resp-emo').oninput = e => { currentContext.responder = e.target.value || '🐼'; renderApp(); };
     document.getElementById('test-guess-emo').oninput = e => { currentContext.guesser = e.target.value || '👽'; renderApp(); };
+    document.getElementById('test-pick-name').oninput = e => { currentContext.pickerName = e.target.value || 'TAYLOR'; renderApp(); };
     document.getElementById('test-resp-name').oninput = e => { currentContext.responderName = e.target.value || 'ALEX'; renderApp(); };
     document.getElementById('test-guess-name').oninput = e => { currentContext.guesserName = e.target.value || 'SAM'; renderApp(); };
+    
     document.getElementById('test-guess-word').oninput = e => { currentContext.guessWord = e.target.value || ''; renderApp(); };
     document.getElementById('test-prev-choice').oninput = e => { currentContext.prevChoice = e.target.value || ''; renderApp(); };
+    document.getElementById('test-unchosen-word').oninput = e => { currentContext.unchosenWord = e.target.value || ''; renderApp(); };
+    
     document.getElementById('os-simulator').onchange = e => {
       const val = e.target.value;
       const box = document.getElementById('scene-box');
@@ -764,8 +878,13 @@
     document.getElementById('el-glow').onchange = e => updateActiveLayer('glow', e.target.checked);
     document.getElementById('el-fixed-text').onchange = e => updateActiveLayer('fixedText', e.target.checked);
     document.querySelectorAll('input[name="el_anim"]').forEach(r => r.onchange = e => updateActiveLayer('anim', e.target.value));
+    
     document.getElementById('el-color').oninput = e => updateActiveLayer('color', e.target.value);
     document.getElementById('el-font').onchange = e => updateActiveLayer('font', e.target.value);
+    document.getElementById('el-text-align').onchange = e => updateActiveLayer('textAlign', e.target.value);
+    document.getElementById('el-max-width').oninput = e => updateActiveLayer('maxWidth', parseInt(e.target.value));
+    document.getElementById('el-line-height').oninput = e => updateActiveLayer('lineHeight', parseFloat(e.target.value));
+    document.getElementById('el-text-bg').onchange = e => updateActiveLayer('textBg', e.target.value);
 
     document.getElementById('el-emo-enabled').onchange = e => { 
        const el = state.elements.find(e => e.id === activeLayerId);
@@ -810,10 +929,24 @@
     document.getElementById('save-report-btn').onclick = () => {
       const cleanElements = state.elements.map(el => {
           const cleanEl = JSON.parse(JSON.stringify(el));
+          
           if (cleanEl.emo && cleanEl.emo.enabled) cleanEl.emo = { enabled: true };
           else if (cleanEl.emo) cleanEl.emo = { enabled: false };
           if (!cleanEl.glow) delete cleanEl.glow; 
           if (!cleanEl.fixedText) delete cleanEl.fixedText;
+          
+          if (cleanEl.type === 'text') {
+              if (cleanEl.textAlign === 'center') delete cleanEl.textAlign;
+              if (cleanEl.maxWidth === 90) delete cleanEl.maxWidth;
+              if (cleanEl.lineHeight === 1.2) delete cleanEl.lineHeight;
+              if (cleanEl.textBg === 'none') delete cleanEl.textBg;
+          } else {
+              delete cleanEl.textAlign;
+              delete cleanEl.maxWidth;
+              delete cleanEl.lineHeight;
+              delete cleanEl.textBg;
+          }
+
           return cleanEl;
       });
         
@@ -835,7 +968,8 @@
       }
     };
     
-    document.getElementById('new-from-tag-btn').click();
+    const firstOption = unifiedSelect.querySelector('option');
+    if (firstOption) document.getElementById('load-scene-btn').click();
   </script>
 </body>
 </html>

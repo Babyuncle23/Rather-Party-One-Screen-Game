@@ -1673,11 +1673,11 @@ complicatedTopic: {
   },
   famousCity: { 
     text: "Famous city", 
-    brainstorm: ["Tokyo", "New York", "Paris", "London", "Dubai"] 
+    brainstorm: ["Tokyo", "New York", "Paris", "London", "Dubai"],
   },
   specificLocation: { 
     text: "Specific location", 
-    brainstorm: ["A nightclub", "A maternity ward", "A public toilet", "A bank vault", "A police station"] 
+    brainstorm: ["A nightclub", "A maternity ward", "A public toilet", "A bank vault", "A police station"]
   },
   publicPlace: { 
     text: "Random public place", 
@@ -1767,9 +1767,9 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "playing", requires: ["time", "compete", "sacrifice", "weekends"], hints: [PROMPTS.videoGame, PROMPTS.boardGame, PROMPTS.sport, PROMPTS.mobileGame, PROMPTS.instrument] },
-          { text: "doing", requires: ["sacrifice", "weekends"], hints: [PROMPTS.annoyingHabit, PROMPTS.chore, PROMPTS.humanActivity, PROMPTS.creativeHobby] },
-          { text: "mastering", requires: ["future", "sacrifice", "time", "weekends"], hints: [PROMPTS.professionalSkill, PROMPTS.creativeHobby, PROMPTS.instrument, PROMPTS.foreignLanguage] },
+          { text: "playing", requires: ["time", "compete", "sacrifice", "weekends"], scene: "playing", hints: [PROMPTS.videoGame, PROMPTS.boardGame, PROMPTS.sport, PROMPTS.mobileGame] },
+          { text: "doing", requires: ["sacrifice", "weekends"], scene: "doing", hints: [PROMPTS.annoyingHabit, PROMPTS.chore, PROMPTS.humanActivity, PROMPTS.creativeHobby] },
+          { text: "mastering", scene: "mastering", requires: ["future", "sacrifice", "time", "weekends"], hints: [PROMPTS.professionalSkill, PROMPTS.creativeHobby, PROMPTS.instrument, PROMPTS.foreignLanguage] },
           { text: "watching", requires: ["time", "weekends"], hints: [PROMPTS.tvShow, PROMPTS.youtuber, PROMPTS.sport] },
           { text: "obsessively analyzing", requires: ["future", "time"], scene: "report", hints: [PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical, PROMPTS.country, PROMPTS.mediaPersonality, PROMPTS.personalInterest] },
           { text: "aggressively teaching people about", requires: ["future", "weekends"], scene: "report", hints: [PROMPTS.schoolSubject, PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical] }
@@ -1778,7 +1778,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: "[ ... ] or [ ... ]?" },
-          { text: "[ ... ] or [ ... ] for a million dollars?", requires: ["compete"] }
+          { text: "[ ... ] or [ ... ] for a million dollars?", requires: ["compete"], scene: "money" }
         ]
       }
     ],
@@ -1864,7 +1864,7 @@ export const questionsDatabase = [
         options: [
           { text: "have to brush your teeth with", type: "hygiene", hints: [PROMPTS.sauce, PROMPTS.stickyThing, PROMPTS.sweetLiquid, { text: "Strong-smelling food", brainstorm: ["onion", "garlic", "blue cheese", "rotten eggs"] }] },
           { text: "have to wash your clothes in", type: "hygiene", hints: [PROMPTS.sauce, PROMPTS.sweetLiquid, PROMPTS.hotDrink, PROMPTS.popularDrink] },
-          { text: "have to drink a full glass of", type: "drink", hints: [PROMPTS.sauce, PROMPTS.sweetLiquid, PROMPTS.hotDrink] } // <-- Заменили тег
+          { text: "have to drink a full glass of", type: "drink", scene: "drink", hints: [PROMPTS.sauce, PROMPTS.sweetLiquid, PROMPTS.hotDrink] } // <-- Заменили тег
         ]
       },
       {
@@ -2065,10 +2065,10 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "get a small tattoo of", type: "tattoo", hints: [PROMPTS.fastFood, PROMPTS.animalFunny, PROMPTS.politician, PROMPTS.actor] },
+          { text: "get a small tattoo of", type: "tattoo", scene: "tattoo", hints: [PROMPTS.fastFood, PROMPTS.animalFunny, PROMPTS.politician, PROMPTS.actor] },
           { text: "give a 1-hour presentation on their relationship with", type: "presentation", scene: "report", hints: [PROMPTS.chore, PROMPTS.everyday, PROMPTS.animalFunny, PROMPTS.snack] },
-          { text: "write a heartfelt song about", type: "song", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.everyday, PROMPTS.candyType] },
-          { text: "star in a low-budget musical about", type: "musical", hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame] }
+          { text: "write a heartfelt song about", type: "song", scene: "song", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.everyday, PROMPTS.candyType] },
+          { text: "star in a low-budget musical about", type: "musical", scene: "song",  hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame] }
 
         ]
       },
@@ -2101,8 +2101,8 @@ export const questionsDatabase = [
           // Уже со встроенным условием
           { text: "be able to teleport, but always arrive covered in", type: "has_condition", hints: [{ text: "Sticky substance", brainstorm: ["Honey", "Mud", "Slime", "Glue"] }, { text: "Sauce", brainstorm: ["Ketchup", "Mayonnaise", "Mustard", "Soy sauce"] }, { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] }, PROMPTS.strongFood] },
           { text: "become invisible, but only while holding", type: "has_condition", hints: [{ text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] }, { text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] }, { text: "Food item", brainstorm: ["Pizza", "Cheese", "Cake", "Chocolate"] }] },
-          { text: "have super strength, but only while singing about", type: "has_condition", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, PROMPTS.schoolSubject, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
-          { text: "have super strength, but only while singing songs by", type: "has_condition", hints: [PROMPTS.singer, PROMPTS.band] },
+          { text: "have super strength, but only while singing about", type: "has_condition", scene: "songResponder", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, PROMPTS.schoolSubject, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] },
+          { text: "have super strength, but only while singing songs by", type: "has_condition", scene: "songResponder", hints: [PROMPTS.singer, PROMPTS.band] },
           { text: "be able to read minds, but only hear thoughts about", type: "has_condition", hints: [{ text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] }, PROMPTS.fastFood, { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] }] }
         ]
       },
@@ -2273,9 +2273,9 @@ hints: [
     fragments: [
       {
         options: [
-          { text: "be randomly teleported to", type: "location", hints: [PROMPTS.country, PROMPTS.famousCity] },
-          { text: "instantly teleport into the home of", type: "person", hints: [PROMPTS.actor, PROMPTS.singer, PROMPTS.politician, PROMPTS.historical, PROMPTS.youtuber] },
-          { text: "be magically teleported into", type: "place", hints: [PROMPTS.specificLocation, PROMPTS.publicPlace] }
+          { text: "be randomly teleported to", type: "location", scene: "welcomeTo", hints: [PROMPTS.country, PROMPTS.famousCity] },
+          { text: "instantly teleport into the home of", scene: "welcomeTo", type: "person", hints: [PROMPTS.actor, PROMPTS.singer, PROMPTS.politician, PROMPTS.historical, PROMPTS.youtuber] },
+          { text: "be magically teleported into", type: "place", scene: "welcomeTo", hints: [PROMPTS.specificLocation, PROMPTS.publicPlace] }
         ]
       },
       {
@@ -2334,21 +2334,20 @@ hints: [
       },
       {
         options: [
-          { text: "as your boss?", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.youtuber, PROMPTS.actor, PROMPTS.personRespect] },
-          { text: "as your best friend?", hints: [PROMPTS.cartoonChar, PROMPTS.chubbyAnimal, PROMPTS.dogBreed, PROMPTS.fictionalChar] },
-{ text: "as your sworn enemy?", hints: [PROMPTS.villain, PROMPTS.historical, PROMPTS.youtuber, PROMPTS.mediaPersonality] },
-          { text: "as your psychotherapist?", type: "therapist", hints: [PROMPTS.historical, PROMPTS.actor, PROMPTS.singer, PROMPTS.mediaPersonality, PROMPTS.personRespect] },
-          { text: "as your martial art sparring partner?", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.youtuber, PROMPTS.historical] },
-          { text: "as your cleaner?", hints: [PROMPTS.politician, PROMPTS.historical, PROMPTS.villain, PROMPTS.youtuber] },
-          { text: "as your fitness trainer?", hints: [PROMPTS.actor, PROMPTS.fastAnimal, PROMPTS.villain, PROMPTS.singer] },
-          { text: "as your obedient subordinate?", hints: [PROMPTS.politician, PROMPTS.villain, PROMPTS.historical, PROMPTS.actor] },
+          { text: "as your boss?", scene: "boss", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.youtuber, PROMPTS.actor, PROMPTS.personRespect] },
+          { text: "as your best friend?", scene: "bestFriend", hints: [PROMPTS.cartoonChar, PROMPTS.chubbyAnimal, PROMPTS.dogBreed, PROMPTS.fictionalChar] },
+{ text: "as your sworn enemy?", scene: "enemy", hints: [PROMPTS.villain, PROMPTS.historical, PROMPTS.youtuber, PROMPTS.mediaPersonality] },
+          { text: "as your psychotherapist?", scene: "psychotherapist", type: "therapist", hints: [PROMPTS.historical, PROMPTS.actor, PROMPTS.singer, PROMPTS.mediaPersonality, PROMPTS.personRespect] },
+          { text: "as your martial art sparring partner?", scene: "sparringPartner", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.youtuber, PROMPTS.historical] },
+          { text: "as your fitness trainer?", scene: "danceFitness", hints: [PROMPTS.actor, PROMPTS.fastAnimal, PROMPTS.villain, PROMPTS.singer] },
+          { text: "as your obedient subordinate?", scene: "subordinate", hints: [PROMPTS.politician, PROMPTS.villain, PROMPTS.historical, PROMPTS.actor] },
           { text: "as your butler?", hints: [PROMPTS.actor, PROMPTS.historical, PROMPTS.villain, PROMPTS.fictionalChar] },
           { text: "as your nanny?", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.actor, PROMPTS.cartoonChar] },
-          { text: "as your math teacher?", hints: [PROMPTS.youtuber, PROMPTS.historical, PROMPTS.villain, PROMPTS.singer] },
-          { text: "as your art teacher?", hints: [PROMPTS.actor, PROMPTS.historical, PROMPTS.villain, PROMPTS.heavyAnimal] },
-          { text: "as your dance teacher?", hints: [PROMPTS.politician, PROMPTS.heavyAnimal, PROMPTS.villain, PROMPTS.cartoonChar] },
-          { text: "as your yoga teacher?", hints: [PROMPTS.villain, PROMPTS.dangerousAnimal, PROMPTS.politician, PROMPTS.actor] },
-          { text: "as your uber driver?", hints: [PROMPTS.historical, PROMPTS.villain, PROMPTS.chubbyAnimal, PROMPTS.singer] }
+          { text: "as your math teacher?", scene: "mathTeacher", hints: [PROMPTS.youtuber, PROMPTS.historical, PROMPTS.villain, PROMPTS.singer] },
+          { text: "as your art teacher?", hints: "artTeacher" [PROMPTS.actor, PROMPTS.historical, PROMPTS.villain, PROMPTS.heavyAnimal] },
+          { text: "as your dance teacher?", scene: "danceFitness", hints: [PROMPTS.politician, PROMPTS.heavyAnimal, PROMPTS.villain, PROMPTS.cartoonChar] },
+          { text: "as your yoga teacher?", scene: "yogaTeacher", hints: [PROMPTS.villain, PROMPTS.dangerousAnimal, PROMPTS.politician, PROMPTS.actor] },
+          { text: "as your uber driver?", scene: "uberDriver", hints: [PROMPTS.historical, PROMPTS.villain, PROMPTS.chubbyAnimal, PROMPTS.singer] }
         ]
       }
     ],
@@ -2362,16 +2361,16 @@ hints: [
     fragments: [
       {
         options: [
-          { text: "rename your country to", type: "country", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.company, PROMPTS.chubbyAnimal, PROMPTS.everyday, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.letterM] },
-          { text: "rename your city to", type: "city", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.snack, PROMPTS.everyday, PROMPTS.company, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.letterM] }
+          { text: "rename your country to", type: "renameCountry", scene: "welcomeTo", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.company, PROMPTS.chubbyAnimal, PROMPTS.everyday, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.letterM] },
+          { text: "rename your city to", type: "renameCity", scene: "welcomeTo", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.snack, PROMPTS.everyday, PROMPTS.company, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.letterM] }
         ]
       },
       {
         options: [
-          { text: "[ ... ]land or [ ... ]land?", requires: ["country", "city"] },
-          { text: "[ ... ]ville or [ ... ]ville?", requires: ["city"] },
-          { text: "[ ... ]field or [ ... ]field?", requires: ["city"] },
-          { text: "The Republic of [ ... ] or The Republic of [ ... ]?", requires: ["country"] }
+          { text: "[ ... ]land or [ ... ]land?", requires: ["renameCountry", "renameCity"] },
+          { text: "[ ... ]ville or [ ... ]ville?", requires: ["renameCity"] },
+          { text: "[ ... ]field or [ ... ]field?", requires: ["renameCity"] },
+          { text: "The Republic of [ ... ] or The Republic of [ ... ]?", requires: ["renameCountry"] }
         ]
       }
     ],
@@ -2427,7 +2426,7 @@ hints: [
           { text: "become the spiritual leader of", scene: "spiritual" },
           { text: "write a 1000-page manifesto about", type: "manifesto", scene: "fanfic" },
           { text: "strictly live by", scene: "report" },
-          { text: "have your government adopt", scene: "104" },
+          { text: "have your government adopt", scene: "ideology" },
           { text: "try to convince your parents to follow", scene: "report" },
           { text: "try to convince your friends to follow", scene: "report" },
           { text: "permanently ban", scene: "ban" },
@@ -2466,8 +2465,8 @@ hints: [
         options: [
           { text: "change your surname to", type: "own_name", hints: [PROMPTS.nickname, PROMPTS.title, PROMPTS.app, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.personRespect, PROMPTS.letterM] },
           { text: "have a national holiday called The Day of", type: "holiday", hints: [PROMPTS.chore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday, PROMPTS.personalInterest, PROMPTS.personRespect, PROMPTS.personalLike] },
-          { text: "adopt a dog and name it", type: "dog", hints: [PROMPTS.title, PROMPTS.politician, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personRespect, PROMPTS.personalLike, PROMPTS.letterM] },
-          { text: "adopt a cat and name it", type: "cat", hints: [PROMPTS.terriblePlace, PROMPTS.villain, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personRespect, PROMPTS.personalLike, PROMPTS.letterM] }
+          { text: "adopt a dog and name it", type: "dog", scene: "dog", hints: [PROMPTS.title, PROMPTS.politician, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personRespect, PROMPTS.personalLike, PROMPTS.letterM] },
+          { text: "adopt a cat and name it", type: "cat", scene: "cat", hints: [PROMPTS.terriblePlace, PROMPTS.villain, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personRespect, PROMPTS.personalLike, PROMPTS.letterM] }
         ]
       },
       {
@@ -2488,7 +2487,7 @@ hints: [
       {
         options: [
           // Вернули твою идею! Идеально подходит для спасения от животных.
-          { text: "[ ... ] or [ ... ] as your protector?" }
+          { text: "[ ... ] or [ ... ] as your protector?", scene: "protector" }
         ]
       }
     ],
@@ -2503,7 +2502,7 @@ hints: [
     fragments: [
       {
         options: [
-          { text: "[ ... ] or [ ... ] by your side?" }
+          { text: "[ ... ] or [ ... ] by your side?", scene: "protector"}
         ]
       }
     ],
@@ -2519,7 +2518,7 @@ hints: [
     fragments: [
       {
         options: [
-          { text: "a 100-page report about [ ... ] or about [ ... ]?", type: "report", scene: "report" }
+          { text: "a 100-page report about [ ... ] or about [ ... ]?", scene: "report" }
         ]
       }
     ],
@@ -2535,7 +2534,7 @@ hints: [
       {
         options: [
           // Движок корректно заменит скобки, и суффикс "ism" приклеится к слову игрока
-          { text: "[ ... ]ism or [ ... ]ism as your state ideology?" }
+          { text: "[ ... ]ism or [ ... ]ism as your state ideology?", scene: "ideology"  }
         ]
       }
     ],

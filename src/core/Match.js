@@ -13,7 +13,7 @@ export class Match {
     this.history = [];
     
     // --- ЛОГИКА КОМБО ---
-    this.comboUsedThisGame = false; // Теперь лимит действует на всю игру
+    this.comboUsedThisGame = false; 
     this.queuedComboWord = null;
     this.queuedComboCategory = null;
     this.comboDatabase = questionsDatabase.filter(q => q.isCombo);
@@ -23,7 +23,6 @@ export class Match {
   }
 
   resetAndShuffleQuestions() {
-    // Исключаем комбо-вопросы из обычной случайной ротации
     this.shuffledQuestions = questionsDatabase.filter(q => !q.isCombo);
     for (let i = this.shuffledQuestions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -31,13 +30,8 @@ export class Match {
     }
   }
 
-setQueuedCombo(chosenWord, category) {
-    // 1. Проверка: если комбо уже было в этой ИГРЕ — отменяем
-    // ЗАКОММЕНТИРУЙ ДЛЯ ТЕСТОВ, чтобы комбо могли выпадать несколько раз за игру
+  setQueuedCombo(chosenWord, category) {
     if (this.comboUsedThisGame) return;
-    
-    // 2. Бросаем кубик: 60% шанс, что комбо зарядится
-    // ЗАКОММЕНТИРУЙ ДЛЯ ТЕСТОВ, чтобы шанс был 100%
     if (Math.random() > 0.6) return; 
 
     this.queuedComboWord = chosenWord.toUpperCase();
@@ -45,10 +39,7 @@ setQueuedCombo(chosenWord, category) {
   }
 
   getRandomQuestion() {
-    // Если комбо заряжено и в этой игре еще не использовалось
-    // ДЛЯ ТЕСТОВ можешь убрать проверку !this.comboUsedThisGame
-    if (this.queuedComboWord /* && !this.comboUsedThisGame */) { 
-      
+    if (this.queuedComboWord) { 
       const matchingCombos = this.comboDatabase.filter(q => {
         if (!q.triggerCategory) return false;
         if (Array.isArray(q.triggerCategory)) {
@@ -66,14 +57,15 @@ setQueuedCombo(chosenWord, category) {
       
       comboQ.text = comboQ.text.replace("[PREV_CHOICE]", this.queuedComboWord);
       
-      // ЗАКОММЕНТИРУЙ ДЛЯ ТЕСТОВ, чтобы игра не блокировала следующие комбо
+      // ВОТ ОНО! Сохраняем чистое слово для генератора графики
+      comboQ.comboWord = this.queuedComboWord; 
+      
       this.comboUsedThisGame = true; 
       this.queuedComboWord = null;
       this.queuedComboCategory = null; 
       return comboQ;
     }
     
-    // Очищаем очередь, если комбо не сработало
     this.queuedComboWord = null; 
     this.queuedComboCategory = null;
 
@@ -114,7 +106,6 @@ setQueuedCombo(chosenWord, category) {
     this.pickerIndex = (this.pickerIndex + 1) % this.players.length;
     if (this.pickerIndex === 0) {
       this.currentRound++;
-      // Удален сброс комбо, чтобы лимит держался до конца матча
     }
   }
 
