@@ -346,23 +346,30 @@
           <br>
           <p><i>* Visible for next player only after they answered the prompt</i></p>
         </div>
-        <p class="prompt-summary">Choose a prompt and pass the device:</p>
-        <button id="hint-btn-1" class="btn btn-secondary spaced-button"></button>
-        <button id="hint-btn-2" class="btn btn-secondary spaced-button"></button>
-        <div class="custom-hint-block spaced-section">
-          <input id="custom-hint-input" type="text" placeholder="Custom prompt..." class="input-field">
-          <button id="custom-hint-btn" class="btn btn-accent">Use Custom Prompt</button>
+<p class="prompt-summary" style="margin-bottom: 12px;">Choose a prompt for the next player:</p>
+        
+        <div class="prompt-carousel-container" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 12px; margin-bottom: 16px; transition: opacity 0.3s ease;">
+          <button id="prompt-prev-btn" class="carousel-btn" style="font-size: 20px; padding: 8px 14px;">←</button>
+          <div id="prompt-display-text" style="flex: 1; text-align: center; font-weight: 700; color: #ffffff; font-size: 1rem; line-height: 1.4;">Loading...</div>
+          <button id="prompt-next-btn" class="carousel-btn" style="font-size: 20px; padding: 8px 14px;">→</button>
         </div>
+        
+        <div class="custom-hint-block" style="margin-top: 0; margin-bottom: 24px;">
+          <p style="text-align: center; font-size: 0.9rem; margin-bottom: 8px; color: var(--muted);">Or type your own:</p>
+          <input id="custom-hint-input" type="text" placeholder="Name two: " class="input-field" style="margin-bottom: 0;">
+        </div>
+
+        <button id="confirm-prompt-btn" class="btn btn-primary spaced-button" style="box-shadow: 0 12px 30px rgba(93, 75, 255, 0.3); font-size: 1.1rem; padding: 18px;">Submit</button>
       </div>
     </div>
 
-    <!-- ХОД ИГРОКА 2 (ВВОД СЛОВ И ВЫБОР) -->
+<!-- ХОД ИГРОКА 2 (ВВОД СЛОВ И ВЫБОР) -->
     <div id="responder-screen" class="hidden">
       <h2><span id="responder-name" class="player-name-game-slow"></span>'s Turn</h2>
       
-      <div class="gameplay-zone">
-<p class="prompt-summary text-center">Prompt: <span id="displayed-hint" class="highlight-subtext"></span></p>
-        
+<div class="gameplay-zone">
+        <p class="prompt-summary text-center" style="margin-bottom: 6px;"><span id="displayed-hint" class="highlight-text" style="color: #ffffff;"></span></p>
+        <p id="responder-plural-warning" style="display: none; text-align: center; color: var(--accent); font-size: 0.85rem; font-weight: 700; margin-top: 0; margin-bottom: 14px; opacity: 0.9;">* Please write both answers in plural (e.g. cats, apples)</p>
         <!-- ИНТЕРАКТИВНЫЙ СПОЙЛЕР ДЛЯ ШПАРГАЛКИ -->
         <div id="responder-helper-box" style="text-align: center; margin-bottom: 14px;">
           <button id="responder-helper-toggle" class="btn-small icon-btn-small" style="width: auto; padding: 6px 16px;">💡 Ideas</button>

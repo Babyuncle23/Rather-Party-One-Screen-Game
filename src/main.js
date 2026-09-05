@@ -828,47 +828,97 @@ function randomizeCurrentFragments() {
 
 function updatePickerHints() {
   if (!currentQuestion) return;
-  const btn1 = document.getElementById('hint-btn-1');
-  const btn2 = document.getElementById('hint-btn-2');
-  if (!btn1 || !btn2) return;
-
+  
   let availableHints = currentQuestion.hints ? [...currentQuestion.hints] : [];
- 
   currentQuestion.fragments.forEach((frag, i) => {
-    const selectedOption = frag.options[currentFragmentsState[i]];
-    if (selectedOption.hints && Array.isArray(selectedOption.hints)) {
-      availableHints.push(...selectedOption.hints);
+    const stateIndex = currentFragmentsState[i];
+    if (stateIndex !== undefined && stateIndex !== -1) {
+        const selectedOption = frag.options[stateIndex];
+        if (selectedOption && selectedOption.hints && Array.isArray(selectedOption.hints)) {
+          availableHints.push(...selectedOption.hints);
+        }
     }
   });
- 
+  
   availableHints = [...new Set(availableHints)];
-
-  if (availableHints.length < 2) {
-    availableHints.push("Name two weird things", "Name two objects");
+  if (availableHints.length === 0) {
+    availableHints.push({ text: "interesting things", isPlural: true });
   }
 
-  const randomIndex1 = Math.floor(Math.random() * availableHints.length);
-  const hint1 = availableHints.splice(randomIndex1, 1)[0];
-  const randomIndex2 = Math.floor(Math.random() * availableHints.length);
-  const hint2 = availableHints[randomIndex2];
- 
-  const formatHintText = (hint) => {
-    let text = typeof hint === 'object' ? hint.text : hint;
-    if (!text.toLowerCase().startsWith('name')) text = `Name two: ${text}`;
-    if (typeof hint === 'object' && hint.isPlural) text += " (plural)";
-    return text;
+  window.questionRequiresPlural = availableHints.some(h => h.isPlural === true);
+
+  window.promptHistory = [];
+  window.promptHistoryIndex = -1;
+  const displayEl = document.getElementById('prompt-display-text');
+
+window.generateNextPrompt = () => {
+    if (window.promptHistoryIndex < window.promptHistory.length - 1) {
+      window.promptHistoryIndex++;
+      window.renderCurrentPrompt();
+      return;
+    }
+    
+    let newHint = null;
+    let attempts = 0;
+    let lastHintText = window.promptHistory.length > 0 ? window.promptHistory[window.promptHistory.length - 1].text : "";
+    
+    do {
+      const hintBase = availableHints[Math.floor(Math.random() * availableHints.length)];
+      newHint = { 
+          text: typeof hintBase === 'object' ? hintBase.text : hintBase,
+          isPlural: typeof hintBase === 'object' ? !!hintBase.isPlural : false,
+          brainstorm: typeof hintBase === 'object' ? (hintBase.brainstorm || []) : []
+      };
+      
+      if (typeof hintBase === 'object' && hintBase.modifiers && hintBase.modifiers.length > 0) {
+          const mod = hintBase.modifiers[Math.floor(Math.random() * hintBase.modifiers.length)];
+          if (mod !== "") newHint.modifier = mod;
+      }
+      attempts++;
+    } while (attempts < 10 && availableHints.length > 1 && newHint.text === lastHintText);
+    
+    window.promptHistory.push(newHint);
+    window.promptHistoryIndex++;
+    window.renderCurrentPrompt();
   };
- 
-  btn1.innerText = formatHintText(hint1);
-  btn2.innerText = formatHintText(hint2);
- 
-  btn1.onclick = () => { isCustomHintActive = false; selectHint(hint1); };
-  btn2.onclick = () => { isCustomHintActive = false; selectHint(hint2); };
+
+  window.renderCurrentPrompt = () => {
+    if (!displayEl) return;
+    const h = window.promptHistory[window.promptHistoryIndex];
+    let str = h.text;
+    if (!str.toLowerCase().startsWith('name')) {
+        str = `Name two: ${str}`;
+    }
+    if (h.modifier) {
+        str += ` <span style="font-weight: 400; opacity: 0.65;">(${h.modifier})</span>`;
+    }
+    displayEl.innerHTML = str;
+  };
+
+  window.generateNextPrompt();
+  
+  const nextBtn = document.getElementById('prompt-next-btn');
+  const prevBtn = document.getElementById('prompt-prev-btn');
+  
+  if (nextBtn) {
+      nextBtn.onclick = () => {
+          if (audioManager) audioManager.play('click');
+          window.generateNextPrompt();
+      };
+  }
+  if (prevBtn) {
+      prevBtn.onclick = () => {
+          if (audioManager) audioManager.play('click');
+          if (window.promptHistoryIndex > 0) {
+              window.promptHistoryIndex--;
+              window.renderCurrentPrompt();
+          }
+      };
+  }
 }
 
 function renderInteractiveQuestion() {
   const container = document.getElementById('secret-question-text');
-  
   if (currentQuestion.customCompiledText) {
       container.innerHTML = injectPlayerNames(currentQuestion.customCompiledText);
   } else {
@@ -885,7 +935,6 @@ function renderInteractiveQuestion() {
 
 function getCompiledQuestionString(w1 = "[ ... ]", w2 = "[ ... ]", useHtml = false) {
   let str = "";
-  
   if (currentQuestion.customCompiledText) {
       str = currentQuestion.customCompiledText;
   } else {
@@ -894,16 +943,13 @@ function getCompiledQuestionString(w1 = "[ ... ]", w2 = "[ ... ]", useHtml = fal
         str += frag.options[currentFragmentsState[i]].text + " ";
       });
   }
- 
   if (useHtml) {
     str = str.replace("[ ... ]", `<span style="color: #00ffb3; font-weight: bold;">${w1}</span>`);
     str = str.replace("[ ... ]", `<span style="color: #ff4a4a; font-weight: bold;">${w2}</span>`);
   } else {
     str = str.replace("[ ... ]", w1).replace("[ ... ]", w2);
   }
-  
-  str = injectPlayerNames(str);
-  return str.trim();
+  return injectPlayerNames(str).trim();
 }
 
 function injectPlayerNames(text) {
@@ -911,6 +957,31 @@ function injectPlayerNames(text) {
   const pickerName = window.game.players[window.game.pickerIndex].name;
   const responderName = window.game.players[window.game.getResponderIndex()].name;
   return text.replace(/\[PICKER\]/g, pickerName).replace(/\[RESPONDER\]/g, responderName);
+}
+
+function selectHint(hintObj) {
+  try {
+    currentHintObject = hintObj;
+    
+    let str = hintObj.text;
+    if (!str.toLowerCase().startsWith('name')) {
+        str = `Name two: ${str}`;
+    }
+    if (hintObj.modifier) {
+        str += ` <span style="font-weight: 400; opacity: 0.65;">(${hintObj.modifier})</span>`;
+    }
+    currentHint = str;
+    window.currentHintRequiresPlural = hintObj.isPlural;
+    
+    const responder = game.players[game.getResponderIndex()];
+    passPhoneWithSpeech(
+      responder,
+      startResponderPhase,
+      "Only the next player should look at the phone. Keep it hidden from others."
+    );
+  } catch (err) {
+    screens.showAlert("Error", "Error inside selectHint: " + err.message);
+  }
 }
 
 function initRound() {
@@ -926,6 +997,7 @@ function initRound() {
     currentFragmentsState = []; 
     activeSuffix = "";
     activePrefix = "";
+    
     const undoBtn = document.getElementById('undo-options-btn');
     if (undoBtn) {
       undoBtn.disabled = true;
@@ -1034,37 +1106,79 @@ function initRound() {
         audioManager.play('click');
       };
     }
-   
-    const customInput = document.getElementById('custom-hint-input');
-    customInput.value = "";
-    document.getElementById('custom-hint-btn').onclick = () => {
-      if (customInput.value.trim().length > 0) {
-        isCustomHintActive = true;
-        selectHint(customInput.value.trim());
-      }
-    };
+
+const customInput = document.getElementById('custom-hint-input');
+    const carousel = document.querySelector('.prompt-carousel-container');
+    if (customInput) {
+        customInput.value = "";
+        if (carousel) {
+            carousel.style.opacity = '1';
+            carousel.style.pointerEvents = 'auto';
+        }
+        
+        customInput.onfocus = () => {
+            if (customInput.value.trim() === "") {
+                customInput.value = "Name two: ";
+            }
+        };
+        
+        customInput.onblur = () => {
+            if (customInput.value.trim().toLowerCase() === "name two:") {
+                customInput.value = "";
+                if (carousel) {
+                    carousel.style.opacity = '1';
+                    carousel.style.pointerEvents = 'auto';
+                }
+            }
+        };
+
+        customInput.oninput = () => {
+            const val = customInput.value.trim().toLowerCase();
+            if (val.length > 0 && val !== "name two:") {
+                if (carousel) {
+                    carousel.style.opacity = '0.3';
+                    carousel.style.pointerEvents = 'none';
+                }
+            } else {
+                if (carousel) {
+                    carousel.style.opacity = '1';
+                    carousel.style.pointerEvents = 'auto';
+                }
+            }
+        };
+    }
+    
+const confirmBtn = document.getElementById('confirm-prompt-btn');
+    if (confirmBtn) {
+        confirmBtn.onclick = () => {
+            let chosenHintObj = null;
+            
+const val = customInput ? customInput.value.trim() : "";
+            if (val.length > 0 && val.toLowerCase() !== "name two:") {
+                isCustomHintActive = true;
+                chosenHintObj = {
+                    text: val,
+                    isPlural: false, // Всегда отключаем для кастомного ввода
+                    brainstorm: []
+                };
+            } else {
+                isCustomHintActive = false;
+                if (window.promptHistory && window.promptHistory[window.promptHistoryIndex]) {
+                    chosenHintObj = window.promptHistory[window.promptHistoryIndex];
+                }
+            }
+            
+            if (!chosenHintObj) return;
+            selectHint(chosenHintObj); 
+        };
+    }
   } catch (err) {
     screens.showAlert("Error", "Error inside initRound: " + err.message);
     console.error(err);
   }
 }
 
-function selectHint(hint) {
-  try {
-    currentHintObject = hint;
-    let hintStr = typeof hint === 'object' ? hint.text : hint;
-    if (typeof hint === 'object' && hint.isPlural) hintStr += " (plural)";
-    currentHint = hintStr;
-    const responder = game.players[game.getResponderIndex()];
-    passPhoneWithSpeech(
-      responder,
-      startResponderPhase,
-      "Only the next player should look at the phone. Keep it hidden from others."
-    );
-  } catch (err) {
-    screens.showAlert("Error", "Error inside selectHint: " + err.message);
-  }
-}
+
 
 function startResponderPhase() {
   try {
@@ -1076,8 +1190,18 @@ function startResponderPhase() {
     const in1 = document.getElementById('word-input-1');
     const in2 = document.getElementById('word-input-2');
 
-    document.getElementById('displayed-hint').innerText = currentHint.toUpperCase();
+document.getElementById('displayed-hint').innerHTML = currentHint;
     
+    const pluralWarning = document.getElementById('responder-plural-warning');
+    if (pluralWarning) {
+        // Если Пикер отредактировал секретный вопрос или написал свой промпт — скрываем подсказку
+        if (currentQuestion.customCompiledText || isCustomHintActive) {
+            pluralWarning.style.display = 'none';
+        } else {
+            pluralWarning.style.display = window.currentHintRequiresPlural ? 'block' : 'none';
+        }
+    }
+
     in1.placeholder = "First answer";
     in2.placeholder = "Second answer";
 
@@ -1489,7 +1613,7 @@ function updateGuesserUI() {
     const guess1Btn = document.getElementById('guess-word-1');
     const guess2Btn = document.getElementById('guess-word-2');
 
-    if (hintEl) hintEl.innerText = currentHint;
+    if (hintEl) hintEl.innerHTML = currentHint;
     if (scoreEl) scoreEl.innerText = `Win: +${FIXED_REWARD} points`;
     if (balanceEl) balanceEl.innerText = `${game.players[currentGuesserIndex].name}'s score: ${game.players[currentGuesserIndex].gold}`;
 
