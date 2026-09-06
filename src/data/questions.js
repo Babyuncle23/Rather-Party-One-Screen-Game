@@ -7,20 +7,18 @@ export const PROMPTS = {
   actionIllegal: { text: "Minor illegal act", brainstorm: ["pirating a movie", "jaywalking", "stealing a pen", "sneaking into a concert", "shoplifting a candy", "vandalizing a wall", "speeding in a school zone", "riding the train without a ticket", "using a fake name", "jerking the emergency brake", "bribing a parking guard", "stealing wifi from neighbors", "forging a doctor note"] },
   actionEmbarrassing: { text: "Embarrassing action", brainstorm: ["forgetting a name", "snorting while laughing", "waving at a stranger", "replying wrong to a text", "having toilet paper on shoe", "forgetting to zip pants", "calling teacher mom", "accidentally liking an old post", "having spinach in teeth", "walking into a glass door", "forgetting your own password"] },
   actionParty: { text: "Funny party trick", brainstorm: ["swallowing a sword", "juggling apples", "doing a backflip", "eating a glass", "holding breath for two minutes", "solving a rubiks cube blindfolded", "peeling a banana with feet", "guessing the secret ingredient in drink", "singing a song backwards", "breaking a wooden board with head", "speaking with two voices at once", "wobbling eyeballs in different directions", "tying a cherry stem with tongue", "finding a needle in a haystack"] },
-  actionChore: { text: "Annoying chore", modifiers: ["that you often procrastinate on"], brainstorm: ["washing the dishes", "ironing clothes", "vacuuming", "taking out the trash", "folding the laundry", "making the bed", "dusting the shelves", "cleaning the toilet", "sorting out the recycling bin", "changing bed sheets", "unloading the dishwasher", "wiping all the windows"] },
+  actionChore: { text: "Dayly chore", modifiers: ["that you often procrastinate on"], brainstorm: ["washing the dishes", "ironing clothes", "vacuuming", "taking out the trash", "folding the laundry", "making the bed", "dusting the shelves", "cleaning the toilet", "sorting out the recycling bin", "changing bed sheets", "unloading the dishwasher", "wiping all the windows"] },
   actionRelax: { text: "Relaxing activity", modifiers: ["you enjoy"], brainstorm: ["sleeping for 10 hours", "taking a hot bath", "reading a book", "staring at the wall", "watching the sunset", "going for a walk", "meditating", "drinking herbal tea", "doing absolutely nothing", "lying on the beach", "watching clouds floating by", "taking a bubble bath", "listening to ocean", "getting a massage", "breathing deeply", "watching rain hit the window", "painting a canvas"] },
   actionExtreme: { text: "Extreme sport action", modifiers: ["you would never try"], brainstorm: ["surfing a huge wave", "going skydiving", "riding a dirt bike", "climbing a rock", "flying in a wingsuit", "doing a backflip", "running an ultra marathon", "jumping across two buildings", "skating down a massive hill"] }, 
   actionAlone: { text: "Something you do when alone", modifiers: ["that you catch yourself doing"], brainstorm: ["singing loudly", "talking to yourself", "eating from the fridge", "binge watching cartoons", "searching your own name online", "rehearsing a fake argument", "dancing in front of the mirror", "staring into the fridge for no reason"] },
   humanActivity: { text: "Basic human activity", modifiers: ["you enjoy doing", "you do not like doing"], brainstorm: ["Sleeping", "Eating", "Walking", "Reading", "Writing", "Brushing teeth", "Drinking water", "Taking a shower", "Cooking dinner", "Driving a car", "Watching movies", "Listening to music", "Exercising daily", "Talking with friends", "Working on computer"] },
-  hobby: { text: "Hobby", modifiers: ["you would like to start", "you are interested in"], brainstorm: ["Drawing", "Painting", "Sewing", "Writing", "Knitting", "Digital photography", "Graphic design", "Playing guitar", "Oil painting", "Creative writing", "Woodworking", "Pottery making", "Jewelry making", "Song writing", "Video editing"] },
+  hobby: { text: "Hobby", modifiers: ["you would like to start", "you are interested in", "you would never do", "you liked when you were younger"], brainstorm: ["Drawing", "Painting", "Sewing", "Writing", "Knitting", "Digital photography", "Graphic design", "Playing guitar", "Oil painting", "Creative writing", "Woodworking", "Pottery making", "Jewelry making", "Song writing", "Video editing"] },
   annoyingHabit: { text: "Annoying habit", brainstorm: ["Smoking", "Snoring", "Clicking", "Interrupting", "Chewing", "Biting fingernails", "Talking too loud", "Checking phone constantly", "Leaving lights on", "Cracking knuckles", "Arriving late", "Playing loud music", "Interrupting conversations", "Leaving doors open"] },
   
   // WORDS & ABSTRACTIONS
-  personalLike: { text: "Things you genuinely like", isPlural: true, modifiers: ["you could recommend to other players"], brainstorm: [] },
-  personalInterest: { text: "Topics you are interested in", isPlural: true, brainstorm: [] },
-  letterM: { text: "Words starting with the letter M", isPlural: true, brainstorm: [] },
-  nickname: { text: "Nickname", brainstorm: ["Stinky", "Crybaby", "Pookie", "Snookums", "Goofball", "Peanut"] },
-  title: { text: "Title", brainstorm: ["Supreme Overlord", "Grand Poobah", "Chief Executive", "His Majesty", "The Great"] },
+  personalLike: { text: "Things you genuinely like", brainstorm: [] },
+  personalInterest: { text: "Topics you are interested in", brainstorm: [] },
+  letterM: { text: "Words starting with the letter M", brainstorm: [] },
   madeUpCompound: { text: "Made-up compound word", brainstorm: ["Thunderfluff", "Doomwaffle", "Slimebucket", "Laserpants", "Gigachad"] },
   madeUpHyphenated: { text: "Made-up hyphenated word", brainstorm: ["Bongo-bongo", "Wibbly-wobbly", "Dilly-dally", "Mumbo-jumbo", "Flim-flam"] },
   abstractMood: { text: "Abstract feeling or concept", modifiers: ["you experienced recently", "you haven't experienced in a while"], brainstorm: ["Joy", "Despair", "Confusion", "Apathy", "Panic", "Melancholy", "Euphoria", "Boredom", "Nostalgia"] },
@@ -79,8 +77,8 @@ export const PROMPTS = {
   exoticAnimal: { text: "Exotic animal", brainstorm: ["Panda", "Koala", "Iguana", "Toucan"] },
 
   // ITEMS & OBJECTS
-  everyday: { text: "Everyday object", isPlural: true, modifiers: ["you use quite often", "you want to have more of"], brainstorm: ["Keys", "Cups", "Pens", "Books", "Lamps", "Bags", "Socks", "Smartphones", "Toasters", "Fidget spinners", "Vinyl records", "Coffee mugs", "Wrist watches", "Sunglasses", "Power banks", "Backpacks", "Headphones", "Remote controls"] },  
-  expensive: { text: "Expensive item", isPlural: true, modifiers: ["you want to have"], brainstorm: ["Jets", "Yachts", "Gold", "Diamonds", "Mansions", "Sports cars", "Designer bags", "Fine art", "Statues", "Private islands", "Luxury watches", "Racing horses", "Rare coins", "Super yachts", "Antique furniture", "Diamond necklaces"] },
+  everyday: { text: "Everyday object", modifiers: ["you use quite often", "you want to have more of"], brainstorm: ["Keys", "Cups", "Pens", "Books", "Lamps", "Bags", "Socks", "Smartphones", "Toasters", "Fidget spinners", "Vinyl records", "Coffee mugs", "Wrist watches", "Sunglasses", "Power banks", "Backpacks", "Headphones", "Remote controls"] },  
+  expensive: { text: "Expensive item", modifiers: ["you want to have"], brainstorm: ["Jets", "Yachts", "Gold", "Diamonds", "Mansions", "Sports cars", "Designer bags", "Fine art", "Statues", "Private islands", "Luxury watches", "Racing horses", "Rare coins", "Super yachts", "Antique furniture", "Diamond necklaces"] },
   gadget: { text: "Gadget", modifiers: ["you use quite often"], brainstorm: ["iPad", "iPod", "Kindle", "Walkman", "Pager", "Camera", "iPhone", "Game Boy", "Electric razor", "Smart speaker", "Wireless mouse", "Gaming console", "Polaroid", "Computer"] },  
   smallObj: { text: "Small object", isPlural: true, brainstorm: ["Coins", "Pins", "Dice", "Keys", "Rings", "Seeds", "Bottle caps", "Paperclips", "Buttons", "Rubber bands", "Thumb tacks", "Earring studs", "Coffee beans", "Safety pins", "Match sticks", "Guitar picks", "Memory cards"] },
   techOld: { text: "Outdated technology", modifiers: ["you remember using"], brainstorm: ["Pager", "Modem", "Cassette", "Fax machines", "Floppy disks", "VHS tapes", "Landline phones", "Typewriters", "CD players", "Portable tape recorders"] },
@@ -89,9 +87,9 @@ export const PROMPTS = {
   householdItem: { text: "Common household item", modifiers: ["you use quite often", "you can't live without"], brainstorm: ["Toaster", "Lamp", "Sponge", "Broom", "Chair", "Vacuum cleaner", "Coffee maker", "Wall clock", "Laundry basket", "Cutting board", "Remote control", "Bed sheet", "Shower curtain", "Trash can", "Washing machine"] },
   clothingItem: { text: "Common piece of clothing", brainstorm: ["Shirt", "Jeans", "Skirt", "Dress", "Hat", "Winter jacket", "Leather belt", "Sweater", "T-shirt", "Rain coat"] },
   survivalTool: { text: "Basic survival tool", brainstorm: ["Knife", "Axe", "Saw", "Lighter", "Rope", "Multi tool", "First aid kit", "Flashlight", "Sleeping bag", "Compass"] },
-  shape: { text: "Shape / object with a recognizable shape", isPlural: true, brainstorm: ["Cube", "Triangle", "Peanut", "Balloon", "Lightbulb", "Pear", "Egg", "Brick", "Heart", "Diamond", "Cylinder", "Cone", "Donut", "Banana", "Pyramid", "Star", "Arrow", "Pill"] },
+  shape: { text: "Shape / object with a recognizable shape", brainstorm: ["Cube", "Triangle", "Peanut", "Balloon", "Lightbulb", "Pear", "Egg", "Brick", "Heart", "Diamond", "Cylinder", "Cone", "Donut", "Banana", "Pyramid", "Star", "Arrow", "Pill"] },
   hygieneProduct: { text: "Hygiene product", brainstorm: ["Soap", "Toothpaste", "Shampoo", "Deodorant"] },
-  smallPocketItem: { text: "Small pocket item", isPlural: true, modifiers: ["you carry everywhere"], brainstorm: ["Keys", "Phone", "Wallet", "Chapstick"] },
+  smallPocketItem: { text: "Small pocket item", brainstorm: ["Keys", "Phone", "Wallet", "Chapstick"] },
   badSmellingThing: { text: "Thing that smells bad", brainstorm: ["Garbage", "Skunk", "Rotten egg", "Mud"] },
   largeHouseItem: { text: "Large item in a house", isPlural: true, brainstorm: ["Sofas", "Beds", "Fridges", "Tables"] },
   fridgeItem: { text: "Thing you find in your refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] },
@@ -101,15 +99,15 @@ export const PROMPTS = {
   valuableResource: { text: "Valuable resource", brainstorm: ["Gold", "Silver", "Diamonds", "Oil"] },
   cheapItem: { text: "Cheap item", isPlural: true, modifiers: ["that you would often buy"], brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] },
   bathroomItem: { text: "Thing you find in a bathroom", brainstorm: ["Soap", "Shampoo", "Toothpaste", "Toilet paper"] },
-  roomItem: { text: "Random thing in your room", isPlural: true, modifiers: ["that have sentimental value"], brainstorm: ["Books", "Cables", "Pillows", "Cups"] },
-  minorInconvenience: { text: "Minor inconvenience", isPlural: true, modifiers: ["that ruin your mood", "you experience often"], brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] },
-  disease: { text: "Disease", isPlural: true, brainstorm: ["Flus", "Colds", "Headaches", "Allergies"] },
+  roomItem: { text: "Random thing in your room", modifiers: ["that have sentimental value", ""], brainstorm: ["Books", "Cables", "Pillows", "Cups"] },
+  minorInconvenience: { text: "Minor inconvenience", modifiers: ["that ruin your mood", "you experience often", ""], brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] },
+  disease: { text: "Disease", brainstorm: ["Flus", "Colds", "Headaches", "Allergies"] },
   officeSupply: { text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] },
   fragileObject: { text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] },
   inanimateObject: { text: "Inanimate object", brainstorm: ["Chair", "Lamp", "Car", "Tree"] },
   stickySubstance: { text: "Sticky substance", brainstorm: ["Honey", "Mud", "Slime", "Glue"] },
   chemical: { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] },
-  boringTopic: { text: "Boring topic", isPlural: true, brainstorm: ["Taxes", "Weather", "Traffic", "Math"] },
+  boringTopic: { text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] },
   vegetable: { text: "Vegetable", modifiers: ["you like"], brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] },
 
   // MEDIA & BRANDS & CONCEPTS
@@ -880,7 +878,7 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "change your surname to", type: "own_name", hints: [PROMPTS.nickname, PROMPTS.title, PROMPTS.app, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.personLike, PROMPTS.letterM] },
+          { text: "change your surname to", type: "own_name", hints: [PROMPTS.title, PROMPTS.app, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.personLike, PROMPTS.letterM] },
           { text: "have a national holiday called The Day of", type: "holiday", hints: [PROMPTS.actionChore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday, PROMPTS.personalInterest, PROMPTS.personLike, PROMPTS.personalLike] },
           { text: "adopt a dog and name it", type: "dog", scene: "dog", hints: [PROMPTS.title, PROMPTS.politician, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personLike, PROMPTS.personalLike, PROMPTS.letterM] },
           { text: "adopt a cat and name it", type: "cat", scene: "cat", hints: [PROMPTS.terriblePlace, PROMPTS.villain, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personLike, PROMPTS.personalLike, PROMPTS.letterM] }
