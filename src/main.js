@@ -829,73 +829,96 @@ function randomizeCurrentFragments() {
 function updatePickerHints() {
   if (!currentQuestion) return;
   
-  let availableHints = currentQuestion.hints ? [...currentQuestion.hints] : [];
+  let rawHints = currentQuestion.hints ? [...currentQuestion.hints] : [];
   currentQuestion.fragments.forEach((frag, i) => {
     const stateIndex = currentFragmentsState[i];
     if (stateIndex !== undefined && stateIndex !== -1) {
         const selectedOption = frag.options[stateIndex];
         if (selectedOption && selectedOption.hints && Array.isArray(selectedOption.hints)) {
-          availableHints.push(...selectedOption.hints);
+          rawHints.push(...selectedOption.hints);
         }
     }
   });
   
-  availableHints = [...new Set(availableHints)];
+  // Убираем дубликаты базовых подсказок
+  const uniqueHintsMap = new Map();
+  rawHints.forEach(h => {
+      const text = typeof h === 'object' ? h.text : h;
+      if (!uniqueHintsMap.has(text)) {
+          uniqueHintsMap.set(text, typeof h === 'object' ? h : { text: text, isPlural: false });
+      }
+  });
+  
+  let availableHints = Array.from(uniqueHintsMap.values());
   if (availableHints.length === 0) {
     availableHints.push({ text: "interesting things", isPlural: true });
   }
 
   window.questionRequiresPlural = availableHints.some(h => h.isPlural === true);
 
-  window.promptHistory = [];
-  window.promptHistoryIndex = -1;
-  const displayEl = document.getElementById('prompt-display-text');
-
-window.generateNextPrompt = () => {
-    if (window.promptHistoryIndex < window.promptHistory.length - 1) {
-      window.promptHistoryIndex++;
-      window.renderCurrentPrompt();
-      return;
-    }
-    
-    let newHint = null;
-    let attempts = 0;
-    let lastHintText = window.promptHistory.length > 0 ? window.promptHistory[window.promptHistory.length - 1].text : "";
-    
-    do {
-      const hintBase = availableHints[Math.floor(Math.random() * availableHints.length)];
-      newHint = { 
-          text: typeof hintBase === 'object' ? hintBase.text : hintBase,
-          isPlural: typeof hintBase === 'object' ? !!hintBase.isPlural : false,
-          brainstorm: typeof hintBase === 'object' ? (hintBase.brainstorm || []) : []
-      };
+  // Собираем ВСЕ возможные комбинации (база + модификатор)
+  let allPermutations = [];
+  availableHints.forEach(hintBase => {
+      const baseText = hintBase.text;
+      const isPlural = !!hintBase.isPlural;
+      const brainstorm = hintBase.brainstorm || [];
       
-      if (typeof hintBase === 'object' && hintBase.modifiers && hintBase.modifiers.length > 0) {
-          const mod = hintBase.modifiers[Math.floor(Math.random() * hintBase.modifiers.length)];
-          if (mod !== "") newHint.modifier = mod;
+      if (hintBase.modifiers && hintBase.modifiers.length > 0) {
+          hintBase.modifiers.forEach(mod => {
+              allPermutations.push({
+                  text: baseText,
+                  isPlural: isPlural,
+                  brainstorm: brainstorm,
+                  modifier: mod !== "" ? mod : null // Пустые строки превращаем в null
+              });
+          });
+      } else {
+          allPermutations.push({
+              text: baseText,
+              isPlural: isPlural,
+              brainstorm: brainstorm,
+              modifier: null
+          });
       }
-      attempts++;
-    } while (attempts < 10 && availableHints.length > 1 && newHint.text === lastHintText);
-    
-    window.promptHistory.push(newHint);
-    window.promptHistoryIndex++;
-    window.renderCurrentPrompt();
-  };
+  });
 
+  // Перемешиваем получившуюся колоду
+  for (let i = allPermutations.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allPermutations[i], allPermutations[j]] = [allPermutations[j], allPermutations[i]];
+  }
+
+  window.promptHistory = allPermutations;
+  window.promptHistoryIndex = 0;
+  
+  const displayEl = document.getElementById('prompt-display-text');
+  const headerEl = document.getElementById('prompt-carousel-header');
+
+  // Функция отрисовки (и текста, и счетчика)
   window.renderCurrentPrompt = () => {
     if (!displayEl) return;
+    
+    // Обновляем заголовок со счетчиком
+    const total = window.promptHistory.length;
+    const current = window.promptHistoryIndex + 1;
+    if (headerEl) {
+        headerEl.innerText = `Choose a prompt (${current} of ${total}):`;
+    }
+
+    // Собираем и выводим сам промпт
     const h = window.promptHistory[window.promptHistoryIndex];
     let str = h.text;
     if (!str.toLowerCase().startsWith('name')) {
         str = `Name two: ${str}`;
     }
     if (h.modifier) {
-        str += ` <span style="font-weight: 400; opacity: 0.65;">(${h.modifier})</span>`;
+        str += ` <span style="font-weight: 400; opacity: 0.65; color: #ffffff;">(${h.modifier})</span>`;
     }
     displayEl.innerHTML = str;
   };
 
-  window.generateNextPrompt();
+  // Отрисовываем первый вариант сразу
+  window.renderCurrentPrompt();
   
   const nextBtn = document.getElementById('prompt-next-btn');
   const prevBtn = document.getElementById('prompt-prev-btn');
@@ -903,16 +926,17 @@ window.generateNextPrompt = () => {
   if (nextBtn) {
       nextBtn.onclick = () => {
           if (audioManager) audioManager.play('click');
-          window.generateNextPrompt();
+          // Крутим вперед (с возвратом в начало)
+          window.promptHistoryIndex = (window.promptHistoryIndex + 1) % window.promptHistory.length;
+          window.renderCurrentPrompt();
       };
   }
   if (prevBtn) {
       prevBtn.onclick = () => {
           if (audioManager) audioManager.play('click');
-          if (window.promptHistoryIndex > 0) {
-              window.promptHistoryIndex--;
-              window.renderCurrentPrompt();
-          }
+          // Крутим назад (с переходом в конец)
+          window.promptHistoryIndex = (window.promptHistoryIndex - 1 + window.promptHistory.length) % window.promptHistory.length;
+          window.renderCurrentPrompt();
       };
   }
 }
