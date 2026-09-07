@@ -1,5 +1,4 @@
-const MOD_PLACES = ["where you could start a new life", "that interest you"];
-const MOD_SUBJECTS = ["you actually enjoyed", "you were struggling with", "you wish you paid more attention to"];
+const MOD_SUBJECTS = ["you enjoyed", "you were struggling with", "you wish you paid more attention to"];
 
 export const PROMPTS = {
   // ACTIONS
@@ -7,84 +6,75 @@ export const PROMPTS = {
   actionIllegal: { text: "Minor illegal act", brainstorm: ["pirating a movie", "jaywalking", "stealing a pen", "sneaking into a concert", "shoplifting a candy", "vandalizing a wall", "speeding in a school zone", "riding the train without a ticket", "using a fake name", "jerking the emergency brake", "bribing a parking guard", "stealing wifi from neighbors", "forging a doctor note"] },
   actionEmbarrassing: { text: "Embarrassing action", brainstorm: ["forgetting a name", "snorting while laughing", "waving at a stranger", "replying wrong to a text", "having toilet paper on shoe", "forgetting to zip pants", "calling teacher mom", "accidentally liking an old post", "having spinach in teeth", "walking into a glass door", "forgetting your own password"] },
   actionParty: { text: "Funny party trick", brainstorm: ["swallowing a sword", "juggling apples", "doing a backflip", "eating a glass", "holding breath for two minutes", "solving a rubiks cube blindfolded", "peeling a banana with feet", "guessing the secret ingredient in drink", "singing a song backwards", "breaking a wooden board with head", "speaking with two voices at once", "wobbling eyeballs in different directions", "tying a cherry stem with tongue", "finding a needle in a haystack"] },
-  actionChore: { text: "Dayly chore", modifiers: ["that you often procrastinate on"], brainstorm: ["washing the dishes", "ironing clothes", "vacuuming", "taking out the trash", "folding the laundry", "making the bed", "dusting the shelves", "cleaning the toilet", "sorting out the recycling bin", "changing bed sheets", "unloading the dishwasher", "wiping all the windows"] },
-  actionRelax: { text: "Relaxing activity", modifiers: ["you enjoy"], brainstorm: ["sleeping for 10 hours", "taking a hot bath", "reading a book", "staring at the wall", "watching the sunset", "going for a walk", "meditating", "drinking herbal tea", "doing absolutely nothing", "lying on the beach", "watching clouds floating by", "taking a bubble bath", "listening to ocean", "getting a massage", "breathing deeply", "watching rain hit the window", "painting a canvas"] },
-  actionExtreme: { text: "Extreme sport action", modifiers: ["you would never try"], brainstorm: ["surfing a huge wave", "going skydiving", "riding a dirt bike", "climbing a rock", "flying in a wingsuit", "doing a backflip", "running an ultra marathon", "jumping across two buildings", "skating down a massive hill"] }, 
-  actionAlone: { text: "Something you do when alone", modifiers: ["that you catch yourself doing"], brainstorm: ["singing loudly", "talking to yourself", "eating from the fridge", "binge watching cartoons", "searching your own name online", "rehearsing a fake argument", "dancing in front of the mirror", "staring into the fridge for no reason"] },
-  humanActivity: { text: "Basic human activity", modifiers: ["you enjoy doing", "you do not like doing"], brainstorm: ["Sleeping", "Eating", "Walking", "Reading", "Writing", "Brushing teeth", "Drinking water", "Taking a shower", "Cooking dinner", "Driving a car", "Watching movies", "Listening to music", "Exercising daily", "Talking with friends", "Working on computer"] },
-  hobby: { text: "Hobby", modifiers: ["you would like to start", "you are interested in", "you would never do", "you liked when you were younger"], brainstorm: ["Drawing", "Painting", "Sewing", "Writing", "Knitting", "Digital photography", "Graphic design", "Playing guitar", "Oil painting", "Creative writing", "Woodworking", "Pottery making", "Jewelry making", "Song writing", "Video editing"] },
-  annoyingHabit: { text: "Annoying habit", brainstorm: ["Smoking", "Snoring", "Clicking", "Interrupting", "Chewing", "Biting fingernails", "Talking too loud", "Checking phone constantly", "Leaving lights on", "Cracking knuckles", "Arriving late", "Playing loud music", "Interrupting conversations", "Leaving doors open"] },
+  actionChore: { text: "Your regular chore (e.g washing the dishes, ironing clothes)", brainstorm: ["vacuuming", "taking out the trash", "folding the laundry", "making the bed", "dusting the shelves", "cleaning the toilet", "sorting out the recycling bin", "changing bed sheets", "unloading the dishwasher", "wiping all the windows"] },
+  actionRelax: { text: "Relaxing activity you enjoy", brainstorm: ["sleeping for 10 hours", "taking a hot bath", "reading a book", "staring at the wall", "watching the sunset", "going for a walk", "meditating", "drinking herbal tea", "doing absolutely nothing", "lying on the beach", "watching clouds floating by", "taking a bubble bath", "listening to ocean", "getting a massage", "breathing deeply", "watching rain hit the window", "painting a canvas"] },
+  actionExtreme: { text: "Extreme sport action you would never try", brainstorm: ["surfing a huge wave", "going skydiving", "riding a dirt bike", "climbing a rock", "flying in a wingsuit", "doing a backflip", "running an ultra marathon", "jumping across two buildings", "skating down a massive hill"] }, 
+  humanActivity: { text: "Activity", modifiers: ["you enjoy doing", "you do not like doing"], brainstorm: ["Sleeping", "Eating", "Walking", "Reading", "Writing", "Brushing teeth", "Drinking water", "Taking a shower", "Cooking dinner", "Driving a car", "Watching movies", "Listening to music", "Exercising daily", "Talking with friends", "Working on computer"] },
+  hobby: { text: "Hobby", modifiers: ["you would like to start", "you are interested in", "you would never do"], brainstorm: ["Drawing", "Painting", "Sewing", "Writing", "Knitting", "Digital photography", "Graphic design", "Playing guitar", "Oil painting", "Creative writing", "Woodworking", "Pottery making", "Jewelry making", "Song writing", "Video editing"] },
+  annoyingHabit: { text: "Habit", modifiers: ["good", "bad"], brainstorm: [] },
   
   // WORDS & ABSTRACTIONS
   personalLike: { text: "Things you genuinely like", brainstorm: [] },
   personalInterest: { text: "Topics you are interested in", brainstorm: [] },
   letterM: { text: "Words starting with the letter M", brainstorm: [] },
-  madeUpCompound: { text: "Made-up compound word", brainstorm: ["Thunderfluff", "Doomwaffle", "Slimebucket", "Laserpants", "Gigachad"] },
-  madeUpHyphenated: { text: "Made-up hyphenated word", brainstorm: ["Bongo-bongo", "Wibbly-wobbly", "Dilly-dally", "Mumbo-jumbo", "Flim-flam"] },
+  madeUpCompound: { text: "Made-up compound word (that combine two things you like e.g. snackgames, chocomoney)",  brainstorm: [] },
+  madeUpHyphenated: { text: "Made-up hyphenated word (that has one thing you like in it e.g. cuddling-machine, snack-show)", brainstorm: []},
   abstractMood: { text: "Abstract feeling or concept", modifiers: ["you experienced recently", "you haven't experienced in a while"], brainstorm: ["Joy", "Despair", "Confusion", "Apathy", "Panic", "Melancholy", "Euphoria", "Boredom", "Nostalgia"] },
-  superpower: { text: "Superpower", brainstorm: ["Flight", "Invisibility", "Telepathy", "Super strength", "Regeneration", "Time manipulation", "Telekinetic powers", "Shape shifting", "Super speed", "Elemental control", "Energy projection", "Mind control", "X-ray vision", "Density control", "Matter transmutation"] },
   
   // PLACES
-  fantasyKingdom: { text: "Fantasy kingdom", brainstorm: ["Mordor", "Narnia", "Westeros", "Hogwarts", "Wakanda", "Asgard"] },
-  terriblePlace: { text: "Terrible place to be", brainstorm: ["Dentist office", "Traffic jam", "Public toilet", "Prison", "Tax office"] },
-  country: { text: "Country", modifiers: MOD_PLACES, brainstorm: ["USA", "Japan", "Brazil", "Egypt", "Canada", "United Kingdom", "South Korea", "Saudi Arabia", "New Zealand", "South Africa", "Czech Republic", "United Arab Emirates", "Dominican Republic", "Costa Rica", "Sri Lanka"] },
-  famousCity: { text: "Famous city", modifiers: MOD_PLACES, brainstorm: ["Tokyo", "New York", "Paris", "London", "Dubai"] },
-  specificLocation: { text: "Specific location", modifiers: ["you visit often"], brainstorm: ["A nightclub", "A maternity ward", "A public toilet", "A bank vault", "A police station"] },
-  publicPlace: { text: "Random public place", modifiers: ["you visit often"], brainstorm: ["A shopping mall", "A crowded elevator", "A busy intersection"] },
-  fantasyWorld: { text: "Fantasy world", brainstorm: ["Middle-earth", "Westeros", "Narnia", "Hogwarts", "Hyrule", "The Witcher universe", "Azeroth"] },
-  sciFiWorld: { text: "Sci-Fi universe", brainstorm: ["Star Wars galaxy", "Cyberpunk Night City", "The Matrix", "Dune universe", "Star Trek universe", "Fallout wasteland"] },
+  country: { text: "Country that interests you", brainstorm: ["USA", "Japan", "Brazil", "Egypt", "Canada", "United Kingdom", "South Korea", "Saudi Arabia", "New Zealand", "South Africa", "Czech Republic", "United Arab Emirates", "Dominican Republic", "Costa Rica", "Sri Lanka"] },
+  famousCity: { text: "Famous city that interests you", brainstorm: ["Tokyo", "New York", "Paris", "London", "Dubai"] },
+  specificLocation: { text: "Location you visit often", brainstorm: ["A nightclub", "A maternity ward", "A public toilet", "A bank vault", "A police station"] },
+  publicPlace: { text: "Public place you often visit", brainstorm: ["A shopping mall", "A crowded elevator", "A busy intersection"] },
 
   // PEOPLE & ROLES
-  fictionalChar: { text: "Fictional character", modifiers: ["you relate to", "you like"], brainstorm: ["Shrek", "Yoda", "Goku", "Link", "Mario", "Thor", "Stitch", "Elmo", "Batman", "Homer Simpson", "Pikachu", "SpongeBob", "Darth Vader", "Harry Potter", "Sherlock Holmes", "Mickey Mouse", "Bugs Bunny", "Iron Man", "Peter Pan", "Wonder Woman", "Captain America"] }, 
+  fictionalChar: { text: "Fictional character you like or relate to", brainstorm: ["Shrek", "Yoda", "Goku", "Link", "Mario", "Thor", "Stitch", "Elmo", "Batman", "Homer Simpson", "Pikachu", "SpongeBob", "Darth Vader", "Harry Potter", "Sherlock Holmes", "Mickey Mouse", "Bugs Bunny", "Iron Man", "Peter Pan", "Wonder Woman", "Captain America"] }, 
   villain: { text: "Horror movie villain", brainstorm: ["Dracula", "Pennywise", "Chucky", "Hannibal", "Mummy", "Alien", "Freddy Krueger", "Michael Myers", "Predator", "Jigsaw"] },
-  youtuber: { text: "Famous YouTuber", modifiers: ["you have watched", "you like"], brainstorm: ["PewDiePie", "MrBeast", "Logan Paul", "KSI", "Ninja", "Hasan Piker", "Johnny Harris"] },
-  politician: { text: "Famous politician", brainstorm: ["Putin", "Macron", "Merkel", "Stalin", "Lenin", "Nixon", "Donald Trump", "Joe Biden", "Boris Johnson", "Kim Jong Un", "Barack Obama", "Winston Churchill", "Nelson Mandela", "Mahatma Gandhi", "Abraham Lincoln", "Benjamin Franklin", "Queen Elizabeth", "Margaret Thatcher", "Kamala Harris"] },  
-  historical: { text: "Historical figure", modifiers: ["you would NOT ask for life advice", "you would ask for life advice"], brainstorm: ["Nero", "Plato", "Dante", "Galileo", "Mozart", "Abraham Lincoln", "Cleopatra", "Napoleon", "Julius Caesar", "Isaac Newton", "Albert Einstein", "Joan of Arc", "Martin Luther King", "Marco Polo", "Alexander the Great", "Genghis Khan", "Marie Curie"] },
-  singer: { text: "Singer", modifiers: ["you like", "you enjoy listening to", "you would NOT ask for life advice"], brainstorm: ["Prince", "Adele", "Drake", "Sia", "Sting", "Bowie", "Taylor Swift", "Michael Jackson", "Freddie Mercury", "Beyoncé", "Lady Gaga", "Frank Sinatra", "Elvis Presley", "Whitney Houston", "Billie Eilish", "Justin Bieber"] },
-  band: { text: "Music band", modifiers: ["you like", "you enjoy listening to"], brainstorm: ["Queen", "KISS", "Muse", "Blur", "Nirvana", "The Beatles", "Metallica", "Pink Floyd", "Led Zeppelin", "Rolling Stones", "Red Hot Chili Peppers", "Guns N' Roses", "Arctic Monkeys", "Linkin Park", "Foo Fighters", "Black Sabbath", "Radiohead"] },  
-  actor: { text: "Famous actor", modifiers: ["you like", "whose movies you like to watch"], brainstorm: ["Brad Pitt", "Tom Cruise", "Jim Carrey", "Tom Hanks", "Vin Diesel", "Will Smith", "Leonardo DiCaprio", "Robert Downey Jr", "Matthew McConaughey", "Scarlett Johansson", "Johnny Depp", "Christian Bale", "Morgan Freeman", "Ryan Reynolds", "Jennifer Lawrence", "Samuel L Jackson", "Joaquin Phoenix"] },
-  profession: { text: "Profession", modifiers: ["that sound exhausting", "that sound fun"], brainstorm: ["Chef", "Pilot", "Judge", "Nurse", "Artist", "Manager", "Software developer", "Graphic designer", "Engineer", "Primary school teacher", "Financial advisor", "Professional athlete", "Surgeon", "Security guard", "Construction worker"] },
-  cartoonChar: { text: "Cartoon character", modifiers: ["you relate to", "you like"], brainstorm: ["Popeye", "Gumball", "Scooby", "Stewie", "Bugs Bunny", "Mickey Mouse", "Homer Simpson", "SpongeBob SquarePants", "Tom Cat", "Jerry Mouse", "Charlie Brown", "Winnie the Pooh", "Rick Sanchez"] },
-  mediaPersonality: { text: "Famous media personality", modifiers: ["you find entertaining", "you like"], brainstorm: ["Oprah Winfrey", "Ellen DeGeneres", "Conan O'Brien", "Jimmy Fallon", "Jimmy Kimmel", "Joe Rogan", "Larry King", "David Letterman", "Gordon Ramsay", "Tucker Carlson", "Trevor Noah"] },
+  politician: { text: "Politician", brainstorm: ["Putin", "Macron", "Merkel", "Stalin", "Lenin", "Nixon", "Donald Trump", "Joe Biden", "Boris Johnson", "Kim Jong Un", "Barack Obama", "Winston Churchill", "Nelson Mandela", "Mahatma Gandhi", "Abraham Lincoln", "Benjamin Franklin", "Queen Elizabeth", "Margaret Thatcher", "Kamala Harris"] },  
+  historical: { text: "Historical figure", brainstorm: ["Nero", "Plato", "Dante", "Galileo", "Mozart", "Abraham Lincoln", "Cleopatra", "Napoleon", "Julius Caesar", "Isaac Newton", "Albert Einstein", "Joan of Arc", "Martin Luther King", "Marco Polo", "Alexander the Great", "Genghis Khan", "Marie Curie"] },
+  singer: { text: "Singer/musician you like", brainstorm: ["Prince", "Adele", "Drake", "Sia", "Sting", "Bowie", "Taylor Swift", "Michael Jackson", "Freddie Mercury", "Beyoncé", "Lady Gaga", "Frank Sinatra", "Elvis Presley", "Whitney Houston", "Billie Eilish", "Justin Bieber"] },
+  band: { text: "Music band you like", brainstorm: ["Queen", "KISS", "Muse", "Blur", "Nirvana", "The Beatles", "Metallica", "Pink Floyd", "Led Zeppelin", "Rolling Stones", "Red Hot Chili Peppers", "Guns N' Roses", "Arctic Monkeys", "Linkin Park", "Foo Fighters", "Black Sabbath", "Radiohead"] },  
+  actor: { text: "Actor you like", brainstorm: ["Brad Pitt", "Tom Cruise", "Jim Carrey", "Tom Hanks", "Vin Diesel", "Will Smith", "Leonardo DiCaprio", "Robert Downey Jr", "Matthew McConaughey", "Scarlett Johansson", "Johnny Depp", "Christian Bale", "Morgan Freeman", "Ryan Reynolds", "Jennifer Lawrence", "Samuel L Jackson", "Joaquin Phoenix"] },
+  profession: { text: "Profession", modifiers: ["that sound exhausting", "that sound fun", "you wanted to pursue as a child"], brainstorm: ["Chef", "Pilot", "Judge", "Nurse", "Artist", "Manager", "Software developer", "Graphic designer", "Engineer", "Primary school teacher", "Financial advisor", "Professional athlete", "Surgeon", "Security guard", "Construction worker"] },
+  cartoonChar: { text: "Cartoon character", brainstorm: ["Popeye", "Gumball", "Scooby", "Stewie", "Bugs Bunny", "Mickey Mouse", "Homer Simpson", "SpongeBob SquarePants", "Tom Cat", "Jerry Mouse", "Charlie Brown", "Winnie the Pooh", "Rick Sanchez"] },
+  mediaPersonality: { text: "Media personality", brainstorm: ["Oprah Winfrey", "Ellen DeGeneres", "Conan O'Brien", "Jimmy Fallon", "Jimmy Kimmel", "Joe Rogan", "Larry King", "David Letterman", "Gordon Ramsay", "Tucker Carlson", "Trevor Noah"] },
 
   // FOOD & DRINKS
-  fastFood: { text: "Fast food", modifiers: ["you are not a fan of"], brainstorm: ["burger", "pizza", "french fries", "hot dog", "fried chicken", "taco", "burrito", "onion rings"] },
-  snack: { text: "Snack food", modifiers: ["you often crave", "you ate recently", "you like"], brainstorm: ["skittles", "doritos", "cheetos", "popcorn", "pretzels", "peanuts", "cookies", "jerky"] },  
+  fastFood: { text: "Fast food", brainstorm: ["burger", "pizza", "french fries", "hot dog", "fried chicken", "taco", "burrito", "onion rings"] },
+  snack: { text: "Snack food", brainstorm: ["skittles", "doritos", "cheetos", "popcorn", "pretzels", "peanuts", "cookies", "jerky"] },  
   sweetLiquid: { text: "Sweet liquid", brainstorm: ["honey", "syrup", "juice", "soda", "milk", "nectar", "maple syrup", "melted chocolate", "apple juice", "orange juice", "grape soda", "condensed milk"] },
   strongFood: { text: "Strong-smelling food", brainstorm: ["onion", "garlic", "fish", "tuna", "kimchi", "curry", "blue cheese", "pickled herring", "rotten eggs", "canned sardines", "durian fruit"] },  
-  sauce: { text: "Sauce", modifiers: ["you like"], brainstorm: ["Pesto", "Salsa", "Gravy", "Tahini", "Hummus", "Tomato basil sauce", "Creamy mushroom sauce", "Spicy barbecue sauce", "Teriyaki glaze", "Garlic aioli", "Honey mustard", "Classic hollandaise", "Buffalo hot sauce", "Sweet chili sauce", "Blue cheese dressing"] },
-  hotDrink: { text: "Hot drink", modifiers: ["you enjoy"], brainstorm: ["Tea", "Coffee", "Cocoa", "Latte", "Chai", "Hot chocolate", "Herbal infusion", "Earl grey tea", "Green tea", "Cappuccino", "Espresso shot", "Matcha latte", "Peppermint tea", "Flat white", "Warm apple cider"] },
-  popularDrink: { text: "Popular drink", modifiers: ["you like"], brainstorm: ["Water", "Coffee", "Tea", "Beer", "Soda", "Orange juice", "Coca cola", "Red wine", "Iced tea", "Lemonade", "Hot chocolate", "Apple juice", "Craft beer", "Energy drink", "Sparkling water"] },
-  candyType: { text: "Type of candy", modifiers: ["you ate recently"], brainstorm: ["Gummy bears", "Chocolate", "Lollipop", "Skittles", "Marshmallow", "Licorice ", "Dark chocolate", "Cotton candy"] },
-  strongSpice: { text: "Strong spice", brainstorm: ["Chili", "Pepper", "Clove", "Ginger", "Cumin", "Cayenne pepper", "Black pepper", "Ground cinnamon", "Crushed red pepper", "Hot paprika", "Wasabi powder", "Grated horseradish", "Cardamom pod", "Star anise", "Curry powder"] },
+  sauce: { text: "Sauce", brainstorm: ["Pesto", "Salsa", "Gravy", "Tahini", "Hummus", "Tomato basil sauce", "Creamy mushroom sauce", "Spicy barbecue sauce", "Teriyaki glaze", "Garlic aioli", "Honey mustard", "Classic hollandaise", "Buffalo hot sauce", "Sweet chili sauce", "Blue cheese dressing"] },
+  hotDrink: { text: "Hot drink", brainstorm: ["Tea", "Coffee", "Cocoa", "Latte", "Chai", "Hot chocolate", "Herbal infusion", "Earl grey tea", "Green tea", "Cappuccino", "Espresso shot", "Matcha latte", "Peppermint tea", "Flat white", "Warm apple cider"] },
+  popularDrink: { text: "Drink you enjoy", brainstorm: ["Water", "Coffee", "Tea", "Beer", "Soda", "Orange juice", "Coca cola", "Red wine", "Iced tea", "Lemonade", "Hot chocolate", "Apple juice", "Craft beer", "Energy drink", "Sparkling water"] },
+  candyType: { text: "Type of candy", brainstorm: ["Gummy bears", "Chocolate", "Lollipop", "Skittles", "Marshmallow", "Licorice ", "Dark chocolate", "Cotton candy"] },
   fruit: { text: "Fruit", brainstorm: ["Apple", "Pear", "Peach", "Plum", "Grape", "Watermelon", "Strawberry", "Pineapple", "Pomegranate", "Grapefruit", "Blueberry", "Raspberry", "Passion fruit", "Kiwi fruit", "Dragon fruit"] },
   foodItem: { text: "Food item", modifiers: ["you could eat every day", "you like", "you do not eat"], brainstorm: ["Pizza", "Cheese", "Cake", "Chocolate"] },
 
   // ANIMALS
-  animalFunny: { text: "Funny-looking animal", modifiers: ["you would want as your pet", "that make you smile", "you relate to"], brainstorm: ["sloth", "pug", "frog", "llama", "koala", "monkey", "platypus", "capybara", "fruit bat", "emue"] },  
+  animalFunny: { text: "Funny-looking animal", brainstorm: ["sloth", "pug", "frog", "llama", "koala", "monkey", "platypus", "capybara", "fruit bat", "emue"] },  
   animalFarm: { text: "Farm animal", brainstorm: ["cow", "pig", "horse", "goat", "sheep", "duck", "hen", "bull", "ram", "chicken", "rooster", "donkey", "mule", "turkey"] },
-  chubbyAnimal: { text: "Chubby animal", modifiers: ["you relate to", "that make you smile"], brainstorm: ["Seal", "Panda", "Hamster", "Penguin", "Bear", "Red panda", "Guinea pig", "Hippopotamus", "Groundhog", "Hedgehog"] },
+  chubbyAnimal: { text: "Chubby animal", brainstorm: ["Seal", "Panda", "Hamster", "Penguin", "Bear", "Red panda", "Guinea pig", "Hippopotamus", "Groundhog", "Hedgehog"] },
   fastAnimal: { text: "Fast animal", brainstorm: ["Lion", "Hare", "Hawk", "Shark", "Eagle", "Peregrine falcon", "Cheetah", "Sailfish", "Black marlin", "Pronghorn antelope", "Springbok", "Wildebeest", "Quarter horse", "Ostrich", "Greyhound"] },
-  angryAnimal: { text: "Angry animal", modifiers: ["you wouldn't want as a pet"], brainstorm: ["Wasp", "Bull", "Badger", "Boar", "Snake", "Grizzly", "Silverback gorilla", "Cape buffalo", "Honey badger", "Hippopotamus", "Wolverine", "Rhinoceros", "Chihuahua", "Wild boar"] },
-  loudAnimal: { text: "Very loud animal", brainstorm: ["Lion", "Wolf", "Crow", "Hyena", "Geese", "Blue whale", "Peacock", "Donkey", "Sea lion", "Bullfrog"] },
-  dangerousAnimal: { text: "Dangerous animal", brainstorm: ["Lion", "Shark", "Cobra", "Wolf", "Bear", "Tiger", "Crocodile", "Black mamba", "Box jellyfish", "Komodo dragon", "Poison dart frog", "Hippopotamus"] },
-  insect: { text: "Common insect", brainstorm: ["Ant", "Bee", "Fly", "Wasp", "Flea", "Honey bee", "House fly", "Dragonfly", "Butterfly", "Ladybug", "Grasshopper", "Cockroach", "Mosquito", "Bumblebee", "Praying mantis"] },
-  heavyAnimal: { text: "Heavy animal", modifiers: ["you would want as your pet"], brainstorm: ["Cow", "Bear", "Bull", "Seal", "Horse", "Blue whale", "African elephant", "White rhinoceros", "Hippopotamus", "Walrus", "Giraffe", "Bison", "Gaur", "Southern elephant seal", "Asian elephant"] },
+  angryAnimal: { text: "Angry-looking animal", brainstorm: ["Wasp", "Bull", "Badger", "Boar", "Snake", "Grizzly", "Silverback gorilla", "Cape buffalo", "Honey badger", "Hippopotamus", "Wolverine", "Rhinoceros", "Chihuahua", "Wild boar"] },
+  loudAnimal: { text: "Animal that could be loud", brainstorm: ["Lion", "Wolf", "Crow", "Hyena", "Geese", "Blue whale", "Peacock", "Donkey", "Sea lion", "Bullfrog"] },
+  dangerousAnimal: { text: "Animal that could be dangerous", brainstorm: ["Lion", "Shark", "Cobra", "Wolf", "Bear", "Tiger", "Crocodile", "Black mamba", "Box jellyfish", "Komodo dragon", "Poison dart frog", "Hippopotamus"] },
+  insect: { text: "Insect", brainstorm: ["Ant", "Bee", "Fly", "Wasp", "Flea", "Honey bee", "House fly", "Dragonfly", "Butterfly", "Ladybug", "Grasshopper", "Cockroach", "Mosquito", "Bumblebee", "Praying mantis"] },
+  heavyAnimal: { text: "Heavy animal", brainstorm: ["Cow", "Bear", "Bull", "Seal", "Horse", "Blue whale", "African elephant", "White rhinoceros", "Hippopotamus", "Walrus", "Giraffe", "Bison", "Gaur", "Southern elephant seal", "Asian elephant"] },
   bitingAnimal: { text: "Animal that bites", brainstorm: ["Dog", "Cat", "Ant", "Wasp", "Rat", "German shepherd", "Snapping turtle", "Black mamba", "Komodo dragon", "Fruit bat", "Grizzly bear", "Wild boar", "Fire ant", "Mosquito", "Great white shark"] },
   nocturnalAnimal: { text: "Nocturnal animal", brainstorm: ["Owl", "Bat", "Fox", "Wolf", "Mole", "Raccoon", "Hedgehog", "Flying squirrel", "Badger", "Opossum", "Lemur", "Aye-aye", "Sugar glider", "Fruit bat", "Nightjar"] },
-  wildAnimal: { text: "Wild animal", modifiers: ["you relate to"], brainstorm: ["Wolf", "Bear", "Lion", "Deer", "Fox", "Bengal tiger", "African elephant", "Grizzly bear", "Red kangaroo", "Snow leopard", "Polar bear", "Bald eagle", "Grey wolf", "Mountain gorilla", "African lion"] },
-  dogBreed: { text: "Dog breed", modifiers: ["you would want as your pet"], brainstorm: ["Pug", "Boxer", "Husky", "Beagle", "Collie", "Poodle", "Akita", "Corgi", "Chow", "Vizsla", "German shepherd", "Golden retriever", "French bulldog", "Border collie", "Labrador retriever", "Siberian husky", "Great dane", "Australian shepherd", "Bernese mountain dog", "Cavalier king charles spaniel", "Doberman pinscher", "Rottweiler", "Alaskan malamute", "Newfoundland", "Saint bernard"] },
+  wildAnimal: { text: "Wild animal", brainstorm: ["Wolf", "Bear", "Lion", "Deer", "Fox", "Bengal tiger", "African elephant", "Grizzly bear", "Red kangaroo", "Snow leopard", "Polar bear", "Bald eagle", "Grey wolf", "Mountain gorilla", "African lion"] },
+  dogBreed: { text: "Dog breed", brainstorm: ["Pug", "Boxer", "Husky", "Beagle", "Collie", "Poodle", "Akita", "Corgi", "Chow", "Vizsla", "German shepherd", "Golden retriever", "French bulldog", "Border collie", "Labrador retriever", "Siberian husky", "Great dane", "Australian shepherd", "Bernese mountain dog", "Cavalier king charles spaniel", "Doberman pinscher", "Rottweiler", "Alaskan malamute", "Newfoundland", "Saint bernard"] },
   exoticAnimal: { text: "Exotic animal", brainstorm: ["Panda", "Koala", "Iguana", "Toucan"] },
 
   // ITEMS & OBJECTS
-  everyday: { text: "Everyday object", modifiers: ["you use quite often", "you want to have more of"], brainstorm: ["Keys", "Cups", "Pens", "Books", "Lamps", "Bags", "Socks", "Smartphones", "Toasters", "Fidget spinners", "Vinyl records", "Coffee mugs", "Wrist watches", "Sunglasses", "Power banks", "Backpacks", "Headphones", "Remote controls"] },  
-  expensive: { text: "Expensive item", modifiers: ["you want to have"], brainstorm: ["Jets", "Yachts", "Gold", "Diamonds", "Mansions", "Sports cars", "Designer bags", "Fine art", "Statues", "Private islands", "Luxury watches", "Racing horses", "Rare coins", "Super yachts", "Antique furniture", "Diamond necklaces"] },
-  gadget: { text: "Gadget", modifiers: ["you use quite often"], brainstorm: ["iPad", "iPod", "Kindle", "Walkman", "Pager", "Camera", "iPhone", "Game Boy", "Electric razor", "Smart speaker", "Wireless mouse", "Gaming console", "Polaroid", "Computer"] },  
+  everyday: { text: "Material thing/things", modifiers: ["you use quite often", "you want to have more of"], brainstorm: ["Keys", "Cups", "Pens", "Books", "Lamps", "Bags", "Socks", "Smartphones", "Toasters", "Fidget spinners", "Vinyl records", "Coffee mugs", "Wrist watches", "Sunglasses", "Power banks", "Backpacks", "Headphones", "Remote controls"] },  
+  expensive: { text: "Expensive item/items you want to have", brainstorm: ["Jets", "Yachts", "Gold", "Diamonds", "Mansions", "Sports cars", "Designer bags", "Fine art", "Statues", "Private islands", "Luxury watches", "Racing horses", "Rare coins", "Super yachts", "Antique furniture", "Diamond necklaces"] },
+  gadget: { text: "Electronic gadget", brainstorm: ["iPad", "iPod", "Kindle", "Walkman", "Pager", "Camera", "iPhone", "Game Boy", "Electric razor", "Smart speaker", "Wireless mouse", "Gaming console", "Polaroid", "Computer"] },  
   smallObj: { text: "Small object", isPlural: true, brainstorm: ["Coins", "Pins", "Dice", "Keys", "Rings", "Seeds", "Bottle caps", "Paperclips", "Buttons", "Rubber bands", "Thumb tacks", "Earring studs", "Coffee beans", "Safety pins", "Match sticks", "Guitar picks", "Memory cards"] },
-  techOld: { text: "Outdated technology", modifiers: ["you remember using"], brainstorm: ["Pager", "Modem", "Cassette", "Fax machines", "Floppy disks", "VHS tapes", "Landline phones", "Typewriters", "CD players", "Portable tape recorders"] },
   stickyThing: { text: "Sticky thing", brainstorm: ["Glue", "Honey", "Tape", "Gum", "Sap", "Double sided tape", "Sticky note", "Molasses", "Maple syrup", "Super glue", "Chewing gum", "Tree resin", "Caramel sauce", "Masking tape", "Glue stick"] },
   kitchenItem: { text: "Kitchen item", isPlural: true, brainstorm: ["Spoons", "Plates", "Blenders", "Knives", "Forks", "Cutting boards", "Measuring cups", "Frying pans", "Mixing bowls", "Coffee makers", "Toaster ovens", "Baking sheets", "Wooden spoons", "Dish racks", "Food processors"] },
-  householdItem: { text: "Common household item", modifiers: ["you use quite often", "you can't live without"], brainstorm: ["Toaster", "Lamp", "Sponge", "Broom", "Chair", "Vacuum cleaner", "Coffee maker", "Wall clock", "Laundry basket", "Cutting board", "Remote control", "Bed sheet", "Shower curtain", "Trash can", "Washing machine"] },
+  householdItem: { text: "Common household item you use quite often", brainstorm: ["Toaster", "Lamp", "Sponge", "Broom", "Chair", "Vacuum cleaner", "Coffee maker", "Wall clock", "Laundry basket", "Cutting board", "Remote control", "Bed sheet", "Shower curtain", "Trash can", "Washing machine"] },
   clothingItem: { text: "Common piece of clothing", brainstorm: ["Shirt", "Jeans", "Skirt", "Dress", "Hat", "Winter jacket", "Leather belt", "Sweater", "T-shirt", "Rain coat"] },
   survivalTool: { text: "Basic survival tool", brainstorm: ["Knife", "Axe", "Saw", "Lighter", "Rope", "Multi tool", "First aid kit", "Flashlight", "Sleeping bag", "Compass"] },
   shape: { text: "Shape / object with a recognizable shape", brainstorm: ["Cube", "Triangle", "Peanut", "Balloon", "Lightbulb", "Pear", "Egg", "Brick", "Heart", "Diamond", "Cylinder", "Cone", "Donut", "Banana", "Pyramid", "Star", "Arrow", "Pill"] },
@@ -95,43 +85,36 @@ export const PROMPTS = {
   fridgeItem: { text: "Thing you find in your refrigerator", isPlural: true, brainstorm: ["Eggs", "Apples", "Carrots", "Sausages"] },
   headwear: { text: "Thing you wear on your head", isPlural: true, brainstorm: ["Hats", "Helmets", "Caps", "Headbands"] },
   richPerson: { text: "Type of rich person", isPlural: true, brainstorm: ["Billionaires", "Aristocrats", "Celebrities", "Royals"] },
-  groupOfPeople: { text: "Group of people", isPlural: true, modifiers: ["you would invite to party", "you would NOT invite to a serious important event"], brainstorm: ["Tourists", "Teenagers", "Politicians", "Clowns"] },
   valuableResource: { text: "Valuable resource", brainstorm: ["Gold", "Silver", "Diamonds", "Oil"] },
-  cheapItem: { text: "Cheap item", isPlural: true, modifiers: ["that you would often buy"], brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] },
+  cheapItem: { text: "Cheap item that you would often buy", isPlural: true, brainstorm: ["Paperclips", "Rubber bands", "Pencils", "Matches"] },
   bathroomItem: { text: "Thing you find in a bathroom", brainstorm: ["Soap", "Shampoo", "Toothpaste", "Toilet paper"] },
-  roomItem: { text: "Random thing in your room", modifiers: ["that have sentimental value", ""], brainstorm: ["Books", "Cables", "Pillows", "Cups"] },
-  minorInconvenience: { text: "Minor inconvenience", modifiers: ["that ruin your mood", "you experience often", ""], brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] },
-  disease: { text: "Disease", brainstorm: ["Flus", "Colds", "Headaches", "Allergies"] },
+  roomItem: { text: "Thing in your living room", isPlural: true,  brainstorm: ["Books", "Cables", "Pillows", "Cups"] },
+  minorInconvenience: { text: "Minor inconvenience", brainstorm: ["Slow Wi-Fi", "Stubbed toes", "Traffic lights", "Paper cuts"] },
   officeSupply: { text: "Office supply", brainstorm: ["Stapler", "Paperclip", "Sticky note", "Pen"] },
   fragileObject: { text: "Fragile object", brainstorm: ["Raw egg", "Glass cup", "Flower", "Paper cup"] },
   inanimateObject: { text: "Inanimate object", brainstorm: ["Chair", "Lamp", "Car", "Tree"] },
   stickySubstance: { text: "Sticky substance", brainstorm: ["Honey", "Mud", "Slime", "Glue"] },
-  chemical: { text: "Chemical", brainstorm: ["Gasoline", "Bleach", "Chlorine", "Vinegar"] },
-  boringTopic: { text: "Boring topic", brainstorm: ["Taxes", "Weather", "Traffic", "Math"] },
-  vegetable: { text: "Vegetable", modifiers: ["you like"], brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] },
+  vegetable: { text: "Vegetable", brainstorm: ["Broccoli", "Carrot", "Onion", "Cabbage"] },
 
   // MEDIA & BRANDS & CONCEPTS
-  company: { text: "Famous company", modifiers: ["whose products you recently used"], brainstorm: ["Sony", "Apple", "Nokia", "Yahoo", "Tesla", "SpaceX", "Intel", "Meta", "Blockbuster", "Netflix", "Google", "Amazon", "Microsoft", "Samsung", "Toyota", "General Electric", "Coca Cola Company"] },  
-  app: { text: "Modern app", modifiers: ["you use a lot", "you don't use anymore"], brainstorm: ["Zoom", "Uber", "Slack", "Tinder", "Discord", "Reddit", "BeReal", "TikTok", "Instagram", "Google Maps", "Spotify", "YouTube", "WhatsApp", "Twitter", "Apple Music", "Netflix", "Facebook", "Snapchat"] },
-  website: { text: "Website", modifiers: ["you visit quite often"], brainstorm: ["eBay", "Bing", "Twitch", "Reddit", "Tumblr", "Github", "YouTube", "Wikipedia", "Amazon", "Google", "Facebook", "Instagram", "Pinterest", "LinkedIn", "Netflix", "SoundCloud"] },
-  videoGame: { text: "video game", modifiers: ["you would like to play"], brainstorm: ["Doom", "Halo", "Tetris", "Portal", "Skyrim", "Fortnite", "Grand Theft Auto", "World of Warcraft", "The Witcher", "Red Dead Redemption", "Super Mario Bros", "Minecraft", "Elden Ring", "Call of Duty", "Final Fantasy", "League of Legends"] },
-  boardGame: { text: "board game", modifiers: ["you would like to play"], brainstorm: ["Monopoly", "Uno", "Chess", "Twister", "Jenga", "Scrabble", "Catan"] },
-  sport: { text: "Sport", modifiers: ["you enjoy watching", "you want to try", "you like"], brainstorm: ["Golf", "Rugby", "Tennis", "Soccer", "Boxing", "Basketball", "Volleyball", "Ice hockey", "Table tennis", "American football", "Formula one", "Rock climbing", "Figure skating", "Horse racing", "Ultimate frisbee"] },
+  company: { text: "Company whose products you recently used", brainstorm: ["Sony", "Apple", "Nokia", "Yahoo", "Tesla", "SpaceX", "Intel", "Meta", "Blockbuster", "Netflix", "Google", "Amazon", "Microsoft", "Samsung", "Toyota", "General Electric", "Coca Cola Company"] },  
+  app: { text: "Modern app", brainstorm: ["Zoom", "Uber", "Slack", "Tinder", "Discord", "Reddit", "BeReal", "TikTok", "Instagram", "Google Maps", "Spotify", "YouTube", "WhatsApp", "Twitter", "Apple Music", "Netflix", "Facebook", "Snapchat"] },
+  website: { text: "Website", brainstorm: ["eBay", "Bing", "Twitch", "Reddit", "Tumblr", "Github", "YouTube", "Wikipedia", "Amazon", "Google", "Facebook", "Instagram", "Pinterest", "LinkedIn", "Netflix", "SoundCloud"] },
+  videoGame: { text: "video game", brainstorm: ["Doom", "Halo", "Tetris", "Portal", "Skyrim", "Fortnite", "Grand Theft Auto", "World of Warcraft", "The Witcher", "Red Dead Redemption", "Super Mario Bros", "Minecraft", "Elden Ring", "Call of Duty", "Final Fantasy", "League of Legends"] },
+  boardGame: { text: "board game", brainstorm: ["Monopoly", "Uno", "Chess", "Twister", "Jenga", "Scrabble", "Catan"] },
+  sport: { text: "Sport", brainstorm: ["Golf", "Rugby", "Tennis", "Soccer", "Boxing", "Basketball", "Volleyball", "Ice hockey", "Table tennis", "American football", "Formula one", "Rock climbing", "Figure skating", "Horse racing", "Ultimate frisbee"] },
   mobileGame: { text: "Mobile game", brainstorm: ["Alto", "Snake", "Plague", "Threes", "Monument", "Candy Crush Saga", "Clash of Clans", "Subway Surfers", "Angry Birds", "Temple Run", "Among Us", "Genshin Impact", "Pokémon GO", "PUBG Mobile", "Plants vs Zombies"] },
-  instrument: { text: "Musical instrument", modifiers: ["you would like to learn", "you enjoy listening to"], brainstorm: ["Piano", "Drum", "Harp", "Flute", "Cello", "Acoustic guitar", "Electric guitar", "Grand piano", "Violin", "Saxophone", "Trumpet", "Clarinet", "Trombone", "Bass guitar", "Synthesizer"] },
-  tvShow: { text: "TV show", modifiers: ["you like", "you can watch for hours"], brainstorm: ["Lost", "Fargo", "Friends", "The Wire", "Succession", "Breaking Bad", "Game of Thrones", "The Sopranos", "Stranger Things", "The Office", "Better Call Saul", "Black Mirror", "Chernobyl", "The Crown", "House of the Dragon"] },
-  conspiracyTheory: { text: "Conspiracy theory", brainstorm: ["Flat Earth", "Moon landing", "Chemtrails", "Area 51", "Bigfoot", "Simulation theory", "Reptilian elite", "Hollow Earth", "Birds are drones", "Phantom time hypothesis", "Mandela effect", "New World Order", "Underground alien base", "Illuminati control", "Lost continent of Atlantis"] },
+  instrument: { text: "Musical instrument", brainstorm: ["Piano", "Drum", "Harp", "Flute", "Cello", "Acoustic guitar", "Electric guitar", "Grand piano", "Violin", "Saxophone", "Trumpet", "Clarinet", "Trombone", "Bass guitar", "Synthesizer"] },
+  tvShow: { text: "TV show you like", brainstorm: ["Lost", "Fargo", "Friends", "The Wire", "Succession", "Breaking Bad", "Game of Thrones", "The Sopranos", "Stranger Things", "The Office", "Better Call Saul", "Black Mirror", "Chernobyl", "The Crown", "House of the Dragon"] },
   schoolSubject: { text: "School subject", modifiers: MOD_SUBJECTS, brainstorm: ["Math", "Art", "Music", "History", "Physics", "Computer science", "Physical education", "Foreign language", "Social studies", "Political science", "Environmental science", "English literature", "Graphic design", "Religious studies", "Business economics"] },
   complicatedTopic: { text: "Complicated topic", brainstorm: ["Cryptocurrency", "Taxes", "Artificial intelligence", "Astrology", "Quantum physics", "The Matrix", "NFTs"] },
   foreignLanguage: { text: "Foreign language", modifiers: ["you would like to learn", "that would be useful to know"], brainstorm: ["French", "German", "Spanish", "Italian", "Arabic", "Mandarin chinese", "Japanese", "Portuguese", "Russian", "Korean", "Hindi", "Dutch", "Turkish", "Swedish", "Vietnamese"] },
-  professionalField: { text: "Professional field", modifiers: ["that sound exhausting"], brainstorm: ["Medicine", "Law", "Engineering", "Finance", "Design", "Software development", "Project management", "Data science", "Digital marketing", "Business administration", "Human resources", "Environmental science", "Graphic design", "Artificial intelligence", "Public relations"] },
-  martialArt: { text: "Martial art", modifiers: ["you would love to learn"], brainstorm: ["Judo", "Karate", "Aikido", "Kung fu", "Sumo", "Brazilian jiu jitsu", "Muay thai", "Mixed martial arts", "Taekwondo", "Krav maga", "Capoeira", "Jeet kune do", "Kendo", "Hapkido", "Wing chun", "Shorinji Kempo"] },
-  professionalSkill: { text: "Professional skill", modifiers: ["that you wold like to learn more of"], brainstorm: ["Coding", "Writing", "Design", "Selling", "Analysis", "Project management", "Data visualization", "Public speaking", "Strategic planning", "Software development", "Search engine optimization", "Technical writing", "Conflict resolution", "Financial modeling", "User interface design"] },
+  professionalField : { text: "Professional field", brainstorm: ["Medicine", "Law", "Engineering", "Finance", "Design", "Software development", "Project management", "Data science", "Digital marketing", "Business administration", "Human resources", "Environmental science", "Graphic design", "Artificial intelligence", "Public relations"] },
+  martialArt: { text: "Martial art", brainstorm: ["Judo", "Karate", "Aikido", "Kung fu", "Sumo", "Brazilian jiu jitsu", "Muay thai", "Mixed martial arts", "Taekwondo", "Krav maga", "Capoeira", "Jeet kune do", "Kendo", "Hapkido", "Wing chun", "Shorinji Kempo"] },
   smallTalkTopic: { text: "Small talk topic", brainstorm: ["Weather", "Travel", "Hobbies", "Movies", "Music", "Weekend plans", "Favorite local restaurants", "Current technology trends", "Recent books read", "Work life balance", "Holiday experiences", "Fitness goals", "Upcoming local events", "Cooking experiments", "Career growth"] },
-  movie: { text: "Movie", modifiers: ["you like"], brainstorm: ["Titanic", "Star Wars", "The Matrix", "Shrek", "Harry Potter", "Jurassic Park", "Avatar", "The Lord of the Rings", "The Avengers", "Spider-Man"] },
-  movieGenre: { text: "Movie genre", modifiers: ["you like the most"], brainstorm: ["Horror", "Romantic Comedy", "Sci-Fi", "Musical", "Western", "Silent film", "True crime", "Action", "Fantasy"] },
-  artGenre: { text: "Art genre", brainstorm: ["Surrealism", "Cyberpunk", "Abstract expressionism", "Gothic horror", "High fantasy", "True crime", "Musical theater", "Anime", "Steampunk"] },
-  musicGenre: { text: "Music genre", modifiers: ["that make you want to dance"], brainstorm: ["Heavy metal", "Classical", "K-pop", "Jazz", "Country", "Dubstep", "Opera", "Punk rock", "Techno"] }
+  movie: { text: "Movie you like", brainstorm: ["Titanic", "Star Wars", "The Matrix", "Shrek", "Harry Potter", "Jurassic Park", "Avatar", "The Lord of the Rings", "The Avengers", "Spider-Man"] },
+  movieGenre: { text: "Movie genre you like", brainstorm: ["Horror", "Romantic Comedy", "Sci-Fi", "Musical", "Western", "Silent film", "True crime", "Action", "Fantasy"] },
+  musicGenre: { text: "Music genre you enjoy", brainstorm: ["Heavy metal", "Classical", "K-pop", "Jazz", "Country", "Dubstep", "Opera", "Punk rock", "Techno"] }
 };
 export const questionsDatabase = [
   {
@@ -170,7 +153,7 @@ export const questionsDatabase = [
       }
     ],
     hints: [
-      PROMPTS.singer, PROMPTS.youtuber, 
+      PROMPTS.singer,
       PROMPTS.fictionalChar, PROMPTS.politician, PROMPTS.profession, 
       PROMPTS.cartoonChar, PROMPTS.mediaPersonality, PROMPTS.actor
     ]
@@ -193,10 +176,10 @@ export const questionsDatabase = [
         options: [
           { text: "playing", requires: ["time", "compete", "sacrifice", "weekends"], scene: "playing", hints: [PROMPTS.videoGame, PROMPTS.boardGame, PROMPTS.sport, PROMPTS.mobileGame] },
           { text: "doing", requires: ["sacrifice", "weekends"], scene: "doing", hints: [PROMPTS.annoyingHabit, PROMPTS.actionChore, PROMPTS.humanActivity, PROMPTS.hobby] },
-          { text: "mastering", scene: "mastering", requires: ["future", "sacrifice", "time", "weekends"], hints: [PROMPTS.professionalSkill, PROMPTS.hobby, PROMPTS.instrument, PROMPTS.foreignLanguage] },
-          { text: "watching", requires: ["time", "weekends"], hints: [PROMPTS.tvShow, PROMPTS.youtuber, PROMPTS.sport] },
-          { text: "obsessively analyzing", requires: ["future", "time"], scene: "report", hints: [PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical, PROMPTS.country, PROMPTS.mediaPersonality, PROMPTS.personalInterest] },
-          { text: "aggressively teaching people about", requires: ["future", "weekends"], scene: "report", hints: [PROMPTS.schoolSubject, PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.historical] }
+          { text: "mastering", scene: "mastering", requires: ["future", "sacrifice", "time", "weekends"], hints: [PROMPTS.hobby, PROMPTS.instrument, PROMPTS.foreignLanguage] },
+          { text: "watching", requires: ["time", "weekends"], hints: [PROMPTS.tvShow, PROMPTS.sport] },
+          { text: "obsessively analyzing", requires: ["future", "time"], scene: "report", hints: [PROMPTS.complicatedTopic, PROMPTS.historical, PROMPTS.country, PROMPTS.mediaPersonality, PROMPTS.personalInterest, PROMPTS.movieGenre, PROMPTS.musicGenre] },
+          { text: "aggressively teaching people about", requires: ["future", "weekends"], scene: "report", hints: [PROMPTS.schoolSubject, PROMPTS.complicatedTopic, PROMPTS.historical] }
         ]
       },
       {
@@ -219,7 +202,7 @@ export const questionsDatabase = [
           { text: "have a pet", type: "possession", hints: [PROMPTS.animalFarm, PROMPTS.dogBreed, PROMPTS.chubbyAnimal, PROMPTS.animalFunny] },
           { text: "be chased by a", type: "threat_run", scene: "chase", hints: [PROMPTS.fastAnimal, PROMPTS.angryAnimal, PROMPTS.dangerousAnimal, PROMPTS.wildAnimal, PROMPTS.heavyAnimal] },
           { text: "be trapped alone with a", type: "threat_close", hints: [PROMPTS.dangerousAnimal, PROMPTS.angryAnimal, PROMPTS.bitingAnimal, PROMPTS.loudAnimal] },
-          { text: "have to play with a", type: "threat_close", hints: [PROMPTS.insect, PROMPTS.animalFunny, PROMPTS.dogBreed, PROMPTS.nocturnalAnimal] }
+          { text: "have to play with a", type: "threat_close", hints: [PROMPTS.insect, PROMPTS.animalFunny, PROMPTS.dogBreed, PROMPTS.nocturnalAnimal, PROMPTS.wildAnimal] }
         ]
       },
       {
@@ -266,7 +249,6 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "the first person you meet on the street?", requires: ["context"] },
           { text: "the hiring manager?", requires: ["context"] },
           { text: "your parents?", requires: ["context"] },
           { text: "half asleep?", requires: ["condition"] },
@@ -431,13 +413,13 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "be adopted by a family of", type: "adopted", hints: [PROMPTS.wildAnimal, PROMPTS.richPerson, PROMPTS.groupOfPeople] },
-          { text: "start a cult based around", type: "cult", scene: "spiritual", hints: [PROMPTS.richPerson, PROMPTS.groupOfPeople] }, 
+          { text: "be adopted by a family of", type: "adopted", hints: [PROMPTS.wildAnimal, PROMPTS.richPerson, PROMPTS.animalFunny] },
+          { text: "start a cult based around", type: "cult", scene: "spiritual", hints: [PROMPTS.actionChore, PROMPTS.personalLike] }, 
           { text: "be raised by a pack of", type: "raised", hints: [PROMPTS.wildAnimal, PROMPTS.angryAnimal, PROMPTS.animalFunny] },
           { text: "go to a magic school where you can only summon", type: "society", hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
           { text: "have the power to turn gold into", type: "society", hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.snack, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
-          { text: "have the power to turn water into", type: "society", hints: [PROMPTS.sweetLiquid, PROMPTS.sauce, PROMPTS.hotDrink] },
-          { text: "have the power to turn dirt into", type: "society", hints: [PROMPTS.expensive, PROMPTS.valuableResource, PROMPTS.fastFood, PROMPTS.candyType] }
+          { text: "have the power to turn water into", type: "society", hints: [PROMPTS.sweetLiquid, PROMPTS.sauce, PROMPTS.hotDrink, PROMPTS.abstractMood] },
+          { text: "have the power to turn dirt into", type: "society", hints: [PROMPTS.expensive, PROMPTS.valuableResource, PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.abstractMood] }
         ]
       },
       {
@@ -456,13 +438,13 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "start a business that only sells", type: "business", hints: [PROMPTS.cheapItem, PROMPTS.expensive, PROMPTS.techOld, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
-          { text: "start a cult based around", type: "cult", hints: [PROMPTS.everyday, PROMPTS.techOld, PROMPTS.bathroomItem, PROMPTS.roomItem] },
+          { text: "start a business that only sells", type: "business", hints: [PROMPTS.cheapItem, PROMPTS.expensive, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
+          { text: "start a cult based around", type: "cult", hints: [PROMPTS.everyday, PROMPTS.bathroomItem, PROMPTS.roomItem] },
           { text: "start a protest movement against", type: "movement", hints: [PROMPTS.minorInconvenience, PROMPTS.annoyingHabit] },
-          { text: "open a restaurant where everything tastes like", type: "restaurant", hints: [PROMPTS.strongFood, PROMPTS.disease] },
-          { text: "host a podcast about", type: "podcast", scene: "report", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, PROMPTS.minorInconvenience, PROMPTS.personalInterest] },
-          { text: "run a YouTube channel about", type: "podcast", scene: "report", hints: [PROMPTS.conspiracyTheory, PROMPTS.humanActivity, PROMPTS.annoyingHabit] },
-          { text: "become CEO of a company making", type: "business", hints: [PROMPTS.bathroomItem, PROMPTS.officeSupply, PROMPTS.techOld] },
+          { text: "open a restaurant where everything tastes like", type: "restaurant", hints: [PROMPTS.strongFood, PROMPTS.abstractMood] },
+          { text: "host a podcast about", type: "podcast", scene: "report", hints: [PROMPTS.humanActivity, PROMPTS.minorInconvenience, PROMPTS.personalInterest, PROMPTS.movieGenre, PROMPTS.musicGenre] },
+          { text: "run a YouTube channel about", type: "podcast", scene: "report", hints: [PROMPTS.humanActivity, PROMPTS.annoyingHabit] },
+          { text: "become CEO of a company making", type: "business", hints: [PROMPTS.bathroomItem, PROMPTS.officeSupply] },
           { text: "start a street gang that only steals", type: "gang", hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.bathroomItem] }
         ]
       },
@@ -518,11 +500,11 @@ export const questionsDatabase = [
         options: [
           { text: "be able to turn any object into", type: "clean_power", hints: [PROMPTS.foodItem, PROMPTS.officeSupply, PROMPTS.animalFunny, PROMPTS.fragileObject] },
           { text: "be able to turn yourself into", type: "clean_power_self", hints: [PROMPTS.animalFunny, PROMPTS.exoticAnimal, PROMPTS.inanimateObject] },
-          { text: "be able to teleport, but always arrive covered in", type: "has_condition", hints: [PROMPTS.stickySubstance, PROMPTS.sauce, PROMPTS.chemical, PROMPTS.strongFood] },
+          { text: "be able to teleport, but always arrive covered in", type: "has_condition", hints: [PROMPTS.stickySubstance, PROMPTS.sauce, PROMPTS.strongFood] },
           { text: "become invisible, but only while holding", type: "has_condition", hints: [PROMPTS.officeSupply, PROMPTS.fragileObject, PROMPTS.foodItem] },
-          { text: "have super strength, but only while singing about", type: "has_condition", scene: "songResponder", hints: [PROMPTS.boringTopic, PROMPTS.schoolSubject, PROMPTS.vegetable] },
+          { text: "have super strength, but only while singing about", type: "has_condition", scene: "songResponder", hints: [PROMPTS.schoolSubject, PROMPTS.vegetable, PROMPTS.abstractMood, PROMPTS.actionChore, PROMPTS.personalLike] },
           { text: "have super strength, but only while singing songs by", type: "has_condition", scene: "songResponder", hints: [PROMPTS.singer, PROMPTS.band] },
-          { text: "be able to read minds, but only hear thoughts about", type: "has_condition", hints: [PROMPTS.boringTopic, PROMPTS.fastFood, PROMPTS.vegetable] }
+          { text: "be able to read minds, but only hear thoughts about", type: "has_condition", hints: [PROMPTS.fastFood, PROMPTS.vegetable, PROMPTS.schoolSubject, PROMPTS.abstractMood, PROMPTS.actionChore] }
         ]
       },
       {
@@ -632,7 +614,7 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "switch bodies with", type: "switch", hints: [PROMPTS.youtuber, PROMPTS.profession, PROMPTS.mediaPersonality] }
+          { text: "switch bodies with", type: "switch", hints: [PROMPTS.profession, PROMPTS.mediaPersonality] }
         ]
       },
       {
@@ -659,10 +641,10 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "host a 12-hour watch party of", type: "watch", hints: [PROMPTS.movie, PROMPTS.tvShow] },
-          { text: "star in a low-budget musical about/based on", type: "musical", hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame] },
-          { text: "write a 100-page fanfiction about", type: "fanfic", hints: [PROMPTS.movie, PROMPTS.tvShow, PROMPTS.videoGame] },
-          { text: "record a 3-hour rant about", type: "rant", scene: "report",  hints: [PROMPTS.movie, PROMPTS.videoGame, PROMPTS.tvShow] }
+          { text: "host a 12-hour watch party of", type: "watch", hints: [PROMPTS.movie, PROMPTS.tvShow, PROMPTS.sport, PROMPTS.actionEmbarrassing] },
+          { text: "star in a low-budget musical about/based on", type: "musical", hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame, PROMPTS.actionChore, PROMPTS.personalInterest] },
+          { text: "write a 100-page fanfiction about", type: "fanfic", hints: [PROMPTS.movie, PROMPTS.tvShow, PROMPTS.videoGame, PROMPTS.politician, PROMPTS.abstractMood] },
+          { text: "record a 3-hour rant about", type: "rant", scene: "report",  hints: [PROMPTS.movie, PROMPTS.videoGame, PROMPTS.tvShow, PROMPTS.annoyingHabit] }
         ]
       },
       {
@@ -689,7 +671,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: "be randomly teleported to", type: "location", scene: "welcomeTo", hints: [PROMPTS.country, PROMPTS.famousCity] },
-          { text: "instantly teleport into the home of", scene: "welcomeTo", type: "person", hints: [PROMPTS.actor, PROMPTS.singer, PROMPTS.politician, PROMPTS.historical, PROMPTS.youtuber] },
+          { text: "instantly teleport into the home of", scene: "welcomeTo", type: "person", hints: [PROMPTS.actor, PROMPTS.singer, PROMPTS.politician, PROMPTS.historical] },
           { text: "be magically teleported into", type: "place", scene: "welcomeTo", hints: [PROMPTS.specificLocation, PROMPTS.publicPlace] }
         ]
       },
@@ -749,16 +731,16 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "as your boss?", scene: "boss", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.youtuber, PROMPTS.actor, PROMPTS.personLike] },
+          { text: "as your boss?", scene: "boss", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.actor] },
           { text: "as your best friend?", scene: "bestFriend", hints: [PROMPTS.cartoonChar, PROMPTS.chubbyAnimal, PROMPTS.dogBreed, PROMPTS.fictionalChar] },
-          { text: "as your sworn enemy?", scene: "enemy", hints: [PROMPTS.villain, PROMPTS.historical, PROMPTS.youtuber, PROMPTS.mediaPersonality] },
-          { text: "as your psychotherapist?", scene: "psychotherapist", type: "therapist", hints: [PROMPTS.historical, PROMPTS.actor, PROMPTS.singer, PROMPTS.mediaPersonality, PROMPTS.personLike] },
-          { text: "as your martial art sparring partner?", scene: "sparringPartner", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.youtuber, PROMPTS.historical] },
+          { text: "as your sworn enemy?", scene: "enemy", hints: [PROMPTS.villain, PROMPTS.historical, PROMPTS.mediaPersonality] },
+          { text: "as your psychotherapist?", scene: "psychotherapist", type: "therapist", hints: [PROMPTS.historical, PROMPTS.actor, PROMPTS.singer, PROMPTS.mediaPersonality] },
+          { text: "as your martial art sparring partner?", scene: "sparringPartner", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.historical] },
           { text: "as your fitness trainer?", scene: "danceFitness", hints: [PROMPTS.actor, PROMPTS.fastAnimal, PROMPTS.villain, PROMPTS.singer] },
           { text: "as your obedient subordinate?", scene: "subordinate", hints: [PROMPTS.politician, PROMPTS.villain, PROMPTS.historical, PROMPTS.actor] },
           { text: "as your butler?", hints: [PROMPTS.actor, PROMPTS.historical, PROMPTS.villain, PROMPTS.fictionalChar] },
           { text: "as your nanny?", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.actor, PROMPTS.cartoonChar] },
-          { text: "as your math teacher?", scene: "mathTeacher", hints: [PROMPTS.youtuber, PROMPTS.historical, PROMPTS.villain, PROMPTS.singer] },
+          { text: "as your math teacher?", scene: "mathTeacher", hints: [PROMPTS.historical, PROMPTS.villain, PROMPTS.singer] },
           { text: "as your art teacher?", hints: "artTeacher", hints: [PROMPTS.actor, PROMPTS.historical, PROMPTS.villain, PROMPTS.heavyAnimal] },
           { text: "as your dance teacher?", scene: "danceFitness", hints: [PROMPTS.politician, PROMPTS.heavyAnimal, PROMPTS.villain, PROMPTS.cartoonChar] },
           { text: "as your yoga teacher?", scene: "yogaTeacher", hints: [PROMPTS.villain, PROMPTS.dangerousAnimal, PROMPTS.politician, PROMPTS.actor] },
@@ -776,8 +758,8 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "rename your country to", type: "renameCountry", scene: "welcomeTo", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.company, PROMPTS.chubbyAnimal, PROMPTS.everyday, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.letterM] },
-          { text: "rename your city to", type: "renameCity", scene: "welcomeTo", hints: [PROMPTS.fantasyKingdom, PROMPTS.terriblePlace, PROMPTS.snack, PROMPTS.everyday, PROMPTS.company, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.letterM] }
+          { text: "rename your country to", type: "renameCountry", scene: "welcomeTo", hints: [PROMPTS.company, PROMPTS.chubbyAnimal, PROMPTS.everyday, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.movieGenre, PROMPTS.musicGenre] },
+          { text: "rename your city to", type: "renameCity", scene: "welcomeTo", hints: [PROMPTS.snack, PROMPTS.everyday, PROMPTS.company, PROMPTS.abstractMood, PROMPTS.personalLike, PROMPTS.personalInterest, PROMPTS.movieGenre, PROMPTS.musicGenre] }
         ]
       },
       {
@@ -856,17 +838,11 @@ export const questionsDatabase = [
     ],
     hints: [
       PROMPTS.fastFood,
-      PROMPTS.animalFunny,
       PROMPTS.everyday,
-      PROMPTS.techOld,
-      PROMPTS.actor,
       PROMPTS.actionChore,
       PROMPTS.annoyingHabit,
-      PROMPTS.company,
       PROMPTS.abstractMood,
       PROMPTS.personalInterest,
-      PROMPTS.personLike,
-      PROMPTS.letterM,
       PROMPTS.personalLike
     ]
   },
@@ -878,10 +854,10 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: "change your surname to", type: "own_name", hints: [PROMPTS.title, PROMPTS.app, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.personLike, PROMPTS.letterM] },
-          { text: "have a national holiday called The Day of", type: "holiday", hints: [PROMPTS.actionChore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday, PROMPTS.personalInterest, PROMPTS.personLike, PROMPTS.personalLike] },
-          { text: "adopt a dog and name it", type: "dog", scene: "dog", hints: [PROMPTS.title, PROMPTS.politician, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personLike, PROMPTS.personalLike, PROMPTS.letterM] },
-          { text: "adopt a cat and name it", type: "cat", scene: "cat", hints: [PROMPTS.terriblePlace, PROMPTS.villain, PROMPTS.company, PROMPTS.app, PROMPTS.techOld, PROMPTS.personLike, PROMPTS.personalLike, PROMPTS.letterM] }
+          { text: "change your surname to", type: "own_name", hints: [PROMPTS.title, PROMPTS.app, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.letterM] },
+          { text: "have a national holiday called The Day of", type: "holiday", hints: [PROMPTS.actionChore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday, PROMPTS.personalInterest, PROMPTS.personalLike] },
+          { text: "adopt a dog and name it", type: "dog", scene: "dog", hints: [PROMPTS.title, PROMPTS.politician, PROMPTS.company, PROMPTS.app, PROMPTS.personalLike, PROMPTS.letterM] },
+          { text: "adopt a cat and name it", type: "cat", scene: "cat", hints: [PROMPTS.villain, PROMPTS.company, PROMPTS.app, PROMPTS.personalLike, PROMPTS.letterM] }
         ]
       },
       {
@@ -912,7 +888,7 @@ export const questionsDatabase = [
     isCombo: true,
     triggerCategory: ["animals", "survival", "lifestyle", "social", "mind", "identity"],
     category: "combo",
-    text: "If you were trapped in a room with mutated angry [PREV_CHOICE], would you rather have",
+    text: "If you were trapped in a room with angry [PREV_CHOICE], would you rather have",
     fragments: [
       {
         options: [
@@ -935,7 +911,7 @@ export const questionsDatabase = [
         ]
       }
     ],
-    hints: [PROMPTS.conspiracyTheory, PROMPTS.complicatedTopic, PROMPTS.annoyingHabit, PROMPTS.humanActivity]
+    hints: [PROMPTS.complicatedTopic, PROMPTS.annoyingHabit, PROMPTS.humanActivity]
   },
   {
     id: 104,
@@ -950,7 +926,7 @@ export const questionsDatabase = [
         ]
       }
     ],
-    hints: [PROMPTS.fastFood, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.techOld, PROMPTS.actionChore, PROMPTS.annoyingHabit, PROMPTS.company, PROMPTS.abstractMood]
+    hints: [PROMPTS.fastFood, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.actionChore, PROMPTS.annoyingHabit, PROMPTS.company, PROMPTS.abstractMood]
   },
   {
     id: 105,
