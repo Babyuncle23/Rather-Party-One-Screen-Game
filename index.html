@@ -313,43 +313,39 @@
       
       <div class="gameplay-zone">
 <div class="card-question">
-          <!-- ВЕРХНЯЯ АНИМИРОВАННАЯ ПЛАШКА (Объяснение вопроса) -->
-          <div class="info-pulse-box" style="background: rgba(55, 255, 226, 0.05); border: 1px dashed rgba(55, 255, 226, 0.3); border-radius: 12px; padding: 12px 16px; margin-bottom: 18px; text-align: center;">
+          <!-- ВЕРХНЯЯ АНИМИРОВАННАЯ ПЛАШКА -->
+          <div class="info-pulse-box" style="background: rgba(55, 255, 226, 0.05); border: 1px dashed rgba(55, 255, 226, 0.3); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; text-align: center;">
             <p style="color: var(--positive); font-size: 1.05rem; font-weight: 800; margin: 0 0 6px 0; text-transform: uppercase;">
-              A question for <span id="top-info-responder"></span>
+              Select a question for <span id="top-info-responder"></span>
             </p>
             <p style="color: var(--muted); font-size: 0.9rem; font-weight: 600; margin: 0; line-height: 1.4;">
               The blank spaces will be filled in with <span id="top-info-responder-2"></span>'s answers later.
             </p>
           </div>
           
-          <p id="secret-question-text" class="highlight-text text-center spaced-bottom" style="margin-top: 10px; font-size: 1.15rem;"></p>
-          
-          <!-- ТРИ ПОЛЯ РЕДАКТИРОВАНИЯ (СКРЫТЫ ПО УМОЛЧАНИЮ) -->
-          <div id="edit-question-block" style="display: none; margin-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px;">
-            <textarea id="edit-q-part1" class="input-field" rows="2" style="margin-bottom: 8px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4;"></textarea>
-            <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;">[ ___ ANSWER 1 ___ ]</div>
-            <textarea id="edit-q-part2" class="input-field" rows="2" style="margin-bottom: 8px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4;"></textarea>
-            <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;">[ ___ ANSWER 2 ___ ]</div>
-            <textarea id="edit-q-part3" class="input-field" rows="2" style="margin-bottom: 12px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4;"></textarea>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-              <button id="edit-q-cancel-btn" class="btn btn-small" style="background: rgba(255,111,122,0.1); color: var(--danger); border: 1px solid rgba(255,111,122,0.2);">Cancel</button>
-              <button id="edit-q-save-btn" class="btn btn-small" style="background: rgba(55,255,226,0.1); color: var(--positive); border: 1px solid rgba(55,255,226,0.2);">Save</button>
+          <!-- БЛОК ВОПРОСА (Счетчик сверху, текст широкий, стрелки снизу) -->
+          <div id="question-carousel-wrapper" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; margin-bottom: 16px;">
+            <div id="question-carousel-index" style="text-align: center; color: var(--accent); font-weight: 800; font-size: 0.9rem; letter-spacing: 0.05em; margin-bottom: 12px;">1/3</div>
+            <p id="secret-question-text" class="highlight-text text-center" style="margin: 0 0 16px 0; font-size: 1.15rem; line-height: 1.5; width: 100%;"></p>
+            <div style="display: flex; justify-content: center; gap: 16px;">
+              <button id="prev-question-btn" class="carousel-btn" style="font-size: 20px; padding: 6px 24px;">←</button>
+              <button id="next-question-btn" class="carousel-btn" style="font-size: 20px; padding: 6px 24px;">→</button>
             </div>
+          </div>
+          
+          <!-- КНОПКА РЕДАКТИРОВАНИЯ (Серая) -->
+          <button id="edit-question-toggle-btn" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: var(--muted); font-size: 0.9rem; font-weight: 700; padding: 12px; margin-bottom: 16px; cursor: pointer; width: 100%; transition: transform 0.2s ease;">✍️ EDIT THE QUESTION</button>
+          
+          <!-- ПОЛЯ РЕДАКТИРОВАНИЯ (Скрыты по умолчанию) -->
+          <div id="edit-question-block" style="display: none; margin-bottom: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px;">
+            <textarea id="edit-q-part1" class="input-field" rows="2" style="margin-bottom: 8px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4; text-align: center;"></textarea>
+            <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;">[ ___ ANSWER 1 ___ ]</div>
+            <textarea id="edit-q-part2" class="input-field" rows="2" style="margin-bottom: 8px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4; text-align: center;"></textarea>
+            <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;">[ ___ ANSWER 2 ___ ]</div>
+            <textarea id="edit-q-part3" class="input-field" rows="2" style="margin-bottom: 12px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4; text-align: center;"></textarea>
+<button id="edit-q-save-btn" class="btn btn-small" style="width: 100%; background: rgba(55,255,226,0.1); color: var(--positive); border: 1px solid rgba(55,255,226,0.2); padding: 12px; font-size: 1rem; border-radius: 12px; font-weight: 700;">Save Changes</button>
           </div>
 
-          <!-- БЛОК НАВИГАЦИИ ПО ВОПРОСАМ И КНОПКА РЕДАКТИРОВАНИЯ РЯДОМ -->
-          <div class="btn-inline-group" id="picker-btn-group" style="margin-top: 16px;">
-            <div style="display: flex; gap: 10px; width: 100%;">
-              <div class="prompt-carousel-container" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 12px; flex: 1;">
-                <button id="prev-question-btn" class="carousel-btn" style="font-size: 20px; padding: 8px 14px;">←</button>
-                <div id="question-carousel-index" style="flex: 1; text-align: center; font-weight: 800; color: var(--accent); font-size: 1rem; letter-spacing: 0.05em;">Question 1/3</div>
-                <button id="next-question-btn" class="carousel-btn" style="font-size: 20px; padding: 8px 14px;">→</button>
-              </div>
-              <button id="edit-question-toggle-btn" class="btn btn-small" style="flex: 0 0 auto; width: 54px; border-radius: 16px; font-size: 1.2rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);" title="Edit Question">✏️</button>
-            </div>
-          </div>
-          
           <!-- НИЖНЯЯ АНИМИРОВАННАЯ ПЛАШКА (Задача Пикера) -->
           <div class="info-pulse-box" style="background: rgba(55, 255, 226, 0.05); border: 1px dashed rgba(55, 255, 226, 0.3); border-radius: 12px; padding: 14px; margin: 24px 0 16px 0;">
             <p style="color: var(--positive); font-size: 1rem; font-weight: 800; margin: 0; text-align: center; text-transform: uppercase;">
@@ -360,19 +356,22 @@
 
         <!-- БЛОК 1: ГОТОВЫЕ ПРОМПТЫ (Показываем по умолчанию) -->
         <div id="preset-prompt-block">
-          <div class="prompt-carousel-container" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 12px; margin-bottom: 12px;">
-            <button id="prompt-prev-btn" class="carousel-btn" style="font-size: 20px; padding: 8px 14px;">←</button>
-            <div id="prompt-display-text" style="flex: 1; text-align: center; font-weight: 700; color: #ffffff; font-size: 1rem; line-height: 1.4;">Loading...</div>
-            <button id="prompt-next-btn" class="carousel-btn" style="font-size: 20px; padding: 8px 14px;">→</button>
+          <!-- БЛОК ПРОМПТА (Счетчик сверху, текст широкий, стрелки снизу) -->
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; margin-bottom: 12px;">
+            <div id="prompt-carousel-index" style="text-align: center; color: var(--accent); font-weight: 800; font-size: 0.9rem; letter-spacing: 0.05em; margin-bottom: 12px;">1/X</div>
+            <div id="prompt-display-text" style="text-align: center; font-weight: 700; color: #ffffff; font-size: 1.15rem; line-height: 1.5; margin-bottom: 16px; width: 100%;">Loading...</div>
+            <div style="display: flex; justify-content: center; gap: 16px;">
+              <button id="prompt-prev-btn" class="carousel-btn" style="font-size: 20px; padding: 6px 24px;">←</button>
+              <button id="prompt-next-btn" class="carousel-btn" style="font-size: 20px; padding: 6px 24px;">→</button>
+            </div>
           </div>
-          <!-- КНОПКА СВОЕГО ПРОМПТА В СТИЛЕ КНОПКИ НАЗАД -->
+          <!-- КНОПКА СВОЕГО ПРОМПТА (Серая) -->
           <button id="toggle-custom-prompt-btn" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: var(--muted); font-size: 0.9rem; font-weight: 700; padding: 12px; margin-bottom: 16px; cursor: pointer; width: 100%; transition: transform 0.2s ease;">✍️ OR WRITE YOUR OWN PROMPT</button>
         </div>
 
         <!-- БЛОК 2: СВОЙ ПРОМПТ (Скрыт по умолчанию) -->
         <div id="custom-prompt-block" style="display: none; margin-bottom: 8px;">
-          <!-- Убрали placeholder -->
-          <input id="custom-hint-input" type="text" class="input-field" style="margin-bottom: 12px; font-weight: 700; color: var(--positive);">
+          <input id="custom-hint-input" type="text" class="input-field" style="margin-bottom: 12px; font-weight: 700; color: var(--positive); text-align: center;">
           <button id="toggle-preset-prompt-btn" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: var(--muted); font-size: 0.9rem; font-weight: 700; padding: 12px; margin-bottom: 16px; cursor: pointer; width: 100%; transition: transform 0.2s ease;">← BACK TO READY-MADE TOPICS</button>
         </div>
 

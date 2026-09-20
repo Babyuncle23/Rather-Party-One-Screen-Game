@@ -892,15 +892,15 @@ function updatePickerHints() {
   window.promptHistoryIndex = 0;
   
 const displayEl = document.getElementById('prompt-display-text');
+  const indexEl = document.getElementById('prompt-carousel-index');
 
-  // Функция отрисовки текста со встроенным счетчиком
+  // Функция отрисовки текста со счетчиком
   window.renderCurrentPrompt = () => {
     if (!displayEl) return;
     
     const total = window.promptHistory.length;
     const current = window.promptHistoryIndex + 1;
 
-    // Собираем сам текст промпта
     const h = window.promptHistory[window.promptHistoryIndex];
     let str = h.text;
     if (!str.toLowerCase().startsWith('name')) {
@@ -910,13 +910,8 @@ const displayEl = document.getElementById('prompt-display-text');
         str += ` <span style="font-weight: 400; opacity: 0.65; color: #ffffff;">(${h.modifier})</span>`;
     }
     
-    // Встраиваем счетчик (1/4) прямо внутрь карусели над текстом
-    displayEl.innerHTML = `
-      <div style="font-size: 0.8rem; color: var(--accent); font-weight: 800; letter-spacing: 0.05em; margin-bottom: 4px;">
-        ${current}/${total}
-      </div>
-      ${str}
-    `;
+    if (indexEl) indexEl.innerText = `${current}/${total}`;
+    displayEl.innerHTML = str;
   };
 
   // Отрисовываем первый вариант сразу
@@ -1082,21 +1077,19 @@ function initRound() {
 
     updateHelpTargetText();
 
-    // Логика редактирования
+// === ЛОГИКА РЕДАКТИРОВАНИЯ ВОПРОСА ===
     const editToggleBtn = document.getElementById('edit-question-toggle-btn');
     const editBlock = document.getElementById('edit-question-block');
+    const questionCarouselWrapper = document.getElementById('question-carousel-wrapper');
     const editPart1 = document.getElementById('edit-q-part1');
     const editPart2 = document.getElementById('edit-q-part2');
     const editPart3 = document.getElementById('edit-q-part3');
-    const editCancelBtn = document.getElementById('edit-q-cancel-btn');
     const editSaveBtn = document.getElementById('edit-q-save-btn');
-    const secretTextDisplay = document.getElementById('secret-question-text');
-    const btnGroup = document.getElementById('picker-btn-group');
 
-    if (editToggleBtn && editBlock) {
+    if (editToggleBtn && editBlock && questionCarouselWrapper) {
       editBlock.style.display = 'none';
-      secretTextDisplay.style.display = 'block';
-      if (btnGroup) btnGroup.style.display = 'flex';
+      questionCarouselWrapper.style.display = 'block';
+      editToggleBtn.innerHTML = "✍️ EDIT THE QUESTION";
 
       const toggleEdit = () => {
         const isEditing = editBlock.style.display === 'block';
@@ -1108,28 +1101,26 @@ function initRound() {
           editPart3.value = (parts[2] || "").trim();
 
           editBlock.style.display = 'block';
-          secretTextDisplay.style.display = 'none';
-          if (btnGroup) btnGroup.style.display = 'none';
-          editToggleBtn.innerHTML = "✖";
-          editToggleBtn.style.color = "var(--danger)";
+          questionCarouselWrapper.style.display = 'none';
+          editToggleBtn.innerHTML = "← CANCEL EDITING";
         } else {
           editBlock.style.display = 'none';
-          secretTextDisplay.style.display = 'block';
-          if (btnGroup) btnGroup.style.display = 'flex';
-          editToggleBtn.innerHTML = "✏️";
-          editToggleBtn.style.color = "inherit";
+          questionCarouselWrapper.style.display = 'block';
+          editToggleBtn.innerHTML = "✍️ EDIT THE QUESTION";
         }
       };
 
-      editToggleBtn.onclick = toggleEdit;
-      editCancelBtn.onclick = toggleEdit;
+      editToggleBtn.onclick = () => { if (audioManager) audioManager.play('click'); toggleEdit(); };
 
-      editSaveBtn.onclick = () => {
-        currentQuestion.customCompiledText = `${editPart1.value.trim()} [ ... ] ${editPart2.value.trim()} [ ... ] ${editPart3.value.trim()}`;
-        window.generatedQuestions[window.viewIndex].c = currentQuestion.customCompiledText;
-        renderInteractiveQuestion();
-        toggleEdit();
-      };
+      if (editSaveBtn) {
+        editSaveBtn.onclick = () => {
+          if (audioManager) audioManager.play('click');
+          currentQuestion.customCompiledText = `${editPart1.value.trim()} [ ... ] ${editPart2.value.trim()} [ ... ] ${editPart3.value.trim()}`;
+          window.generatedQuestions[window.viewIndex].c = currentQuestion.customCompiledText;
+          renderInteractiveQuestion();
+          toggleEdit();
+        };
+      }
     }
 
     // === НАВИГАЦИЯ ПО 3 ВОПРОСАМ (Карусель) ===
@@ -1144,7 +1135,8 @@ function initRound() {
       currentQuestion.customCompiledText = state.c;
       renderInteractiveQuestion();
       if (qIndexDisplay) {
-        qIndexDisplay.innerText = `Question ${index + 1}/3`;
+        // Убрали слово Question, оставили только счетчик 1/3
+        qIndexDisplay.innerText = `${index + 1}/3`;
       }
     };
 

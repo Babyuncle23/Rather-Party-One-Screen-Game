@@ -481,11 +481,11 @@ export const questionsDatabase = [
           { text: "[ ... ] or [ ... ]" }
         ]
       },
-      {
+{
         options: [
           { text: "on their back?", requires: ["tattoo"] },
           { text: "?", requires: ["presentation"] },
-          { text: "and perform it at your birthday?", requires: ["song"] }
+          { text: "and perform it at your birthday?", requires: ["song", "musical"] }
         ]
       }
     ],
