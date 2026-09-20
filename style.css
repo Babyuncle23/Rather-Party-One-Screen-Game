@@ -2366,3 +2366,11 @@ p {
   70% { transform: translateY(0.4em); opacity: 1; }
   100% { transform: translateY(0.6em); opacity: 0; }
 }
+
+@keyframes softPulseGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(55, 255, 226, 0.1); border-color: rgba(55, 255, 226, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(55, 255, 226, 0.4); border-color: rgba(55, 255, 226, 0.7); transform: scale(1.01); }
+}
+.info-pulse-box {
+  animation: softPulseGlow 2.5s infinite ease-in-out;
+}

@@ -891,21 +891,16 @@ function updatePickerHints() {
   window.promptHistory = allPermutations;
   window.promptHistoryIndex = 0;
   
-  const displayEl = document.getElementById('prompt-display-text');
-  const headerEl = document.getElementById('prompt-carousel-header');
+const displayEl = document.getElementById('prompt-display-text');
 
-  // Функция отрисовки (и текста, и счетчика)
+  // Функция отрисовки текста со встроенным счетчиком
   window.renderCurrentPrompt = () => {
     if (!displayEl) return;
     
-    // Обновляем заголовок со счетчиком
     const total = window.promptHistory.length;
     const current = window.promptHistoryIndex + 1;
-    if (headerEl) {
-        headerEl.innerText = `Choose a prompt (${current} of ${total}):`;
-    }
 
-    // Собираем и выводим сам промпт
+    // Собираем сам текст промпта
     const h = window.promptHistory[window.promptHistoryIndex];
     let str = h.text;
     if (!str.toLowerCase().startsWith('name')) {
@@ -914,32 +909,58 @@ function updatePickerHints() {
     if (h.modifier) {
         str += ` <span style="font-weight: 400; opacity: 0.65; color: #ffffff;">(${h.modifier})</span>`;
     }
-    displayEl.innerHTML = str;
+    
+    // Встраиваем счетчик (1/4) прямо внутрь карусели над текстом
+    displayEl.innerHTML = `
+      <div style="font-size: 0.8rem; color: var(--accent); font-weight: 800; letter-spacing: 0.05em; margin-bottom: 4px;">
+        ${current}/${total}
+      </div>
+      ${str}
+    `;
   };
 
   // Отрисовываем первый вариант сразу
   window.renderCurrentPrompt();
   
-  const nextBtn = document.getElementById('prompt-next-btn');
+const nextBtn = document.getElementById('prompt-next-btn');
   const prevBtn = document.getElementById('prompt-prev-btn');
+  // Ссылки на поле и карусель
+  const customInput = document.getElementById('custom-hint-input');
+  const carousel = document.querySelector('.prompt-carousel-container');
   
   if (nextBtn) {
       nextBtn.onclick = () => {
           if (audioManager) audioManager.play('click');
-          // Крутим вперед (с возвратом в начало)
           window.promptHistoryIndex = (window.promptHistoryIndex + 1) % window.promptHistory.length;
           window.renderCurrentPrompt();
+          
+          // Сбрасываем кастомное поле при клике на стрелки
+          if (customInput && customInput.value !== "") {
+              customInput.value = "";
+              if (carousel) {
+                  carousel.style.opacity = '1';
+                  carousel.style.pointerEvents = 'auto';
+              }
+          }
       };
   }
   if (prevBtn) {
       prevBtn.onclick = () => {
           if (audioManager) audioManager.play('click');
-          // Крутим назад (с переходом в конец)
           window.promptHistoryIndex = (window.promptHistoryIndex - 1 + window.promptHistory.length) % window.promptHistory.length;
           window.renderCurrentPrompt();
+          
+          // Сбрасываем кастомное поле при клике на стрелки
+          if (customInput && customInput.value !== "") {
+              customInput.value = "";
+              if (carousel) {
+                  carousel.style.opacity = '1';
+                  carousel.style.pointerEvents = 'auto';
+              }
+          }
       };
   }
-}
+} // Конец функции updatePickerHints
 
 function renderInteractiveQuestion() {
   const container = document.getElementById('secret-question-text');
@@ -997,11 +1018,12 @@ function selectHint(hintObj) {
     currentHint = str;
     window.currentHintRequiresPlural = hintObj.isPlural;
     
+const picker = game.players[game.pickerIndex];
     const responder = game.players[game.getResponderIndex()];
     passPhoneWithSpeech(
       responder,
       startResponderPhase,
-      "Only the next player should look at the phone. Keep it hidden from others."
+      `Now it's ${responder.name}'s turn to answer ${picker.name}'s prompt.\nKeep the phone hidden from others!`
     );
   } catch (err) {
     screens.showAlert("Error", "Error inside selectHint: " + err.message);
@@ -1014,49 +1036,53 @@ function initRound() {
       roundScoresSnapshot = game.players.map(p => ({ id: p.id, gold: p.gold }));
     }
 
-    currentQuestion = game.getRandomQuestion();
-    currentQuestion.customCompiledText = null;
-    fragmentsHistory = [];
-    questionHistory = [];
-    currentFragmentsState = []; 
-    activeSuffix = "";
-    activePrefix = "";
+    // Генерируем ровно 3 вопроса для выбора
+    window.generatedQuestions = [];
+    window.viewIndex = 0;
     
-    const undoBtn = document.getElementById('undo-options-btn');
-    if (undoBtn) {
-      undoBtn.disabled = true;
-      undoBtn.onclick = () => {
-        if (questionHistory.length > 0) {
-          const previousState = questionHistory.pop();
-          currentQuestion = previousState.question;
-          currentFragmentsState = previousState.fragments;
-          currentQuestion.customCompiledText = previousState.customText; 
-          renderInteractiveQuestion();
-          updatePickerHints();
-          audioManager.play('click');
-          if (questionHistory.length === 0) undoBtn.disabled = true;
-        }
-      };
-      undoBtn.addEventListener('mousedown', (e) => {
-        if (undoBtn.disabled) {
-          e.preventDefault();
-          screens.showAlert('Undo Blocked', '⏸️ Reroll first to enable undo. Then you can switch back to the previous question and options.');
-          audioManager.play('error');
-        }
+    for (let i = 0; i < 3; i++) {
+      let q = game.getRandomQuestion();
+      q.customCompiledText = null;
+      
+      currentQuestion = q;
+      currentFragmentsState = [];
+      
+      q.fragments.forEach((frag, idx) => {
+        const validOptions = getValidFragmentOptions(idx);
+        const randIdx = Math.floor(Math.random() * validOptions.length);
+        currentFragmentsState.push(frag.options.indexOf(validOptions[randIdx]));
+      });
+
+      window.generatedQuestions.push({
+        q: q,
+        f: [...currentFragmentsState],
+        c: null
       });
     }
 
-    randomizeCurrentFragments();
+    activeSuffix = "";
+    activePrefix = "";
 
     const picker = game.players[game.pickerIndex];
     screens.switchScreen('picker');
-   
     document.getElementById('picker-name').innerText = `${picker.emoji} ${picker.name}`;
     const responder = game.players[game.getResponderIndex()];
-    document.getElementById('responder-target-name').innerText = `${responder.emoji} ${responder.name}`;
-   
+
+    // Обновляем имена в плашках
+    const rName = responder.name.toUpperCase();
+    const elTop1 = document.getElementById('top-info-responder');
+    const elTop2 = document.getElementById('top-info-responder-2');
+    const elBottom = document.getElementById('bottom-info-responder');
+    if (elTop1) elTop1.innerText = rName;
+    if (elTop2) elTop2.innerText = rName;
+    if (elBottom) elBottom.innerText = rName;
+
+    const sendBtn = document.getElementById('confirm-prompt-btn');
+    if (sendBtn) sendBtn.innerHTML = `Send to ${responder.name} ➜`;
+
     updateHelpTargetText();
 
+    // Логика редактирования
     const editToggleBtn = document.getElementById('edit-question-toggle-btn');
     const editBlock = document.getElementById('edit-question-block');
     const editPart1 = document.getElementById('edit-q-part1');
@@ -1080,120 +1106,134 @@ function initRound() {
           editPart1.value = (parts[0] || "").trim();
           editPart2.value = (parts[1] || "").trim();
           editPart3.value = (parts[2] || "").trim();
-          
+
           editBlock.style.display = 'block';
           secretTextDisplay.style.display = 'none';
           if (btnGroup) btnGroup.style.display = 'none';
-          editToggleBtn.innerHTML = "✖"; 
+          editToggleBtn.innerHTML = "✖";
+          editToggleBtn.style.color = "var(--danger)";
         } else {
           editBlock.style.display = 'none';
           secretTextDisplay.style.display = 'block';
           if (btnGroup) btnGroup.style.display = 'flex';
           editToggleBtn.innerHTML = "✏️";
+          editToggleBtn.style.color = "inherit";
         }
       };
 
       editToggleBtn.onclick = toggleEdit;
-      editCancelBtn.onclick = toggleEdit; 
+      editCancelBtn.onclick = toggleEdit;
 
       editSaveBtn.onclick = () => {
-        const p1 = editPart1.value.trim();
-        const p2 = editPart2.value.trim();
-        const p3 = editPart3.value.trim();
-
-        currentQuestion.customCompiledText = `${p1} [ ... ] ${p2} [ ... ] ${p3}`;
+        currentQuestion.customCompiledText = `${editPart1.value.trim()} [ ... ] ${editPart2.value.trim()} [ ... ] ${editPart3.value.trim()}`;
+        window.generatedQuestions[window.viewIndex].c = currentQuestion.customCompiledText;
         renderInteractiveQuestion();
-        
-        toggleEdit(); 
+        toggleEdit();
       };
     }
 
-    const rerollOptionsBtn = document.getElementById('reroll-options-btn');
-    if (rerollOptionsBtn) {
-      rerollOptionsBtn.onclick = () => {
-        if (currentQuestion && currentFragmentsState.length > 0) {
-          questionHistory.push({
-            question: currentQuestion,
-            fragments: [...currentFragmentsState],
-            customText: currentQuestion.customCompiledText
-          });
-          const undoBtn = document.getElementById('undo-options-btn');
-          if (undoBtn) undoBtn.disabled = false;
-        }
-        
-        game.shuffledQuestions.unshift(currentQuestion);
-        currentQuestion = game.getRandomQuestion();
-        currentQuestion.customCompiledText = null; 
-        currentFragmentsState = [];
-        randomizeCurrentFragments();
-        updatePickerHints();
-        audioManager.play('click');
+    // === НАВИГАЦИЯ ПО 3 ВОПРОСАМ (Карусель) ===
+    const prevBtn = document.getElementById('prev-question-btn');
+    const nextBtn = document.getElementById('next-question-btn');
+    const qIndexDisplay = document.getElementById('question-carousel-index');
+
+    const applyHistoryState = (index) => {
+      const state = window.generatedQuestions[index];
+      currentQuestion = state.q;
+      currentFragmentsState = [...state.f];
+      currentQuestion.customCompiledText = state.c;
+      renderInteractiveQuestion();
+      if (qIndexDisplay) {
+        qIndexDisplay.innerText = `Question ${index + 1}/3`;
+      }
+    };
+
+    if (prevBtn) {
+      prevBtn.onclick = () => {
+        window.generatedQuestions[window.viewIndex].c = currentQuestion.customCompiledText;
+        window.viewIndex = (window.viewIndex - 1 + 3) % 3; // Бесконечная прокрутка назад
+        applyHistoryState(window.viewIndex);
+        if (audioManager) audioManager.play('click');
       };
     }
 
-const customInput = document.getElementById('custom-hint-input');
-    const carousel = document.querySelector('.prompt-carousel-container');
-    if (customInput) {
-        customInput.value = "";
-        if (carousel) {
-            carousel.style.opacity = '1';
-            carousel.style.pointerEvents = 'auto';
-        }
-        
-        customInput.onfocus = () => {
-            if (customInput.value.trim() === "") {
+    if (nextBtn) {
+      nextBtn.onclick = () => {
+        window.generatedQuestions[window.viewIndex].c = currentQuestion.customCompiledText;
+        window.viewIndex = (window.viewIndex + 1) % 3; // Бесконечная прокрутка вперед
+        applyHistoryState(window.viewIndex);
+        if (audioManager) audioManager.play('click');
+      };
+    }
+
+    // Применяем первый вопрос при старте
+    applyHistoryState(0);
+
+    // Логика кастомного и готового промпта
+    const presetBlock = document.getElementById('preset-prompt-block');
+    const customBlock = document.getElementById('custom-prompt-block');
+    const toggleToCustom = document.getElementById('toggle-custom-prompt-btn');
+    const toggleToPreset = document.getElementById('toggle-preset-prompt-btn');
+    const customInput = document.getElementById('custom-hint-input');
+
+    if (presetBlock && customBlock) {
+        presetBlock.style.display = 'block';
+        customBlock.style.display = 'none';
+        isCustomHintActive = false;
+        if (customInput) customInput.value = "";
+    }
+
+    if (toggleToCustom) {
+        toggleToCustom.onclick = () => {
+            if (audioManager) audioManager.play('click');
+            presetBlock.style.display = 'none';
+            customBlock.style.display = 'block';
+            isCustomHintActive = true;
+            
+            if (customInput) {
                 customInput.value = "Name two: ";
-            }
-        };
-        
-        customInput.onblur = () => {
-            if (customInput.value.trim().toLowerCase() === "name two:") {
-                customInput.value = "";
-                if (carousel) {
-                    carousel.style.opacity = '1';
-                    carousel.style.pointerEvents = 'auto';
-                }
-            }
-        };
-
-        customInput.oninput = () => {
-            const val = customInput.value.trim().toLowerCase();
-            if (val.length > 0 && val !== "name two:") {
-                if (carousel) {
-                    carousel.style.opacity = '0.3';
-                    carousel.style.pointerEvents = 'none';
-                }
-            } else {
-                if (carousel) {
-                    carousel.style.opacity = '1';
-                    carousel.style.pointerEvents = 'auto';
-                }
+                customInput.focus();
+                const val = customInput.value;
+                customInput.value = '';
+                customInput.value = val;
             }
         };
     }
-    
-const confirmBtn = document.getElementById('confirm-prompt-btn');
+
+    if (toggleToPreset) {
+        toggleToPreset.onclick = () => {
+            if (audioManager) audioManager.play('click');
+            customBlock.style.display = 'none';
+            presetBlock.style.display = 'block';
+            isCustomHintActive = false;
+            if (customInput) customInput.value = "";
+        };
+    }
+
+    const confirmBtn = document.getElementById('confirm-prompt-btn');
     if (confirmBtn) {
         confirmBtn.onclick = () => {
             let chosenHintObj = null;
-            
-const val = customInput ? customInput.value.trim() : "";
-            if (val.length > 0 && val.toLowerCase() !== "name two:") {
-                isCustomHintActive = true;
-                chosenHintObj = {
-                    text: val,
-                    isPlural: false, // Всегда отключаем для кастомного ввода
-                    brainstorm: []
-                };
+
+            if (isCustomHintActive) {
+                let val = customInput ? customInput.value.trim() : "";
+                if (val.length > 0 && val.toLowerCase() !== "name two:") {
+                    if (!val.toLowerCase().startsWith('name')) {
+                        val = "Name two: " + val;
+                    }
+                    chosenHintObj = { text: val, isPlural: false, brainstorm: [] };
+                } else {
+                    screens.showAlert("Notice", "Please write a topic or go back to the ready-made ones!");
+                    return;
+                }
             } else {
-                isCustomHintActive = false;
                 if (window.promptHistory && window.promptHistory[window.promptHistoryIndex]) {
                     chosenHintObj = window.promptHistory[window.promptHistoryIndex];
                 }
             }
-            
+
             if (!chosenHintObj) return;
-            selectHint(chosenHintObj); 
+            selectHint(chosenHintObj);
         };
     }
   } catch (err) {
@@ -1201,7 +1241,6 @@ const val = customInput ? customInput.value.trim() : "";
     console.error(err);
   }
 }
-
 
 
 function startResponderPhase() {
