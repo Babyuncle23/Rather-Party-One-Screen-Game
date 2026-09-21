@@ -7,13 +7,14 @@ export class AudioManager {
     this.isVoiceWarmedUp = false;    // Прогрев TTS
     this.cancelQueue = false;        // Флаг прерывания очереди TTS
     this.isRallyEnglish = false;     // Режим финского акцента
+    this.resumeBound = false;
     
-    this.audioPool.click = this.createAudioPool('src/audio/click.mp3', 3);
-    this.audioPool.win = this.createAudioPool('src/audio/win.mp3', 2);
-    this.audioPool.lose = this.createAudioPool('src/audio/lose.ogg', 2);
+    this.audioPool.click = this.createAudioPool('./src/audio/click.mp3', 3);
+    this.audioPool.win = this.createAudioPool('./src/audio/win.mp3', 2);
+    this.audioPool.lose = this.createAudioPool('./src/audio/lose.ogg', 2);
     
     // Пул для фанфар (одного инстанса достаточно)
-    this.audioPool.fanfare = this.createAudioPool('src/audio/fanfare.mp3', 1);
+    this.audioPool.fanfare = this.createAudioPool('./src/audio/fanfare.mp3', 1);
     
     this.loadSettings();
     
@@ -21,17 +22,61 @@ export class AudioManager {
     this.typewriterBuffer = null;
     this.flapBuffer = null;
     this.isPreloaded = false;
+
+    this.bindUnlockHandlers();
+  }
+
+  normalizeAudioSrc(src) {
+    return String(src || '').replace(/^\.\//, '').replace(/\\/g, '/');
+  }
+
+  bindUnlockHandlers() {
+    if (this.resumeBound || typeof window === 'undefined') return;
+    this.resumeBound = true;
+
+    const unlock = () => this.unlockAudio();
+    ['pointerdown', 'touchstart', 'keydown'].forEach(eventName => {
+      window.addEventListener(eventName, unlock, { once: true, passive: true });
+    });
+  }
+
+  async unlockAudio() {
+    try {
+      if (window.AudioContext || window.webkitAudioContext) {
+        this.audioCtx = this.audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        if (this.audioCtx.state === 'suspended') {
+          await this.audioCtx.resume();
+        }
+      }
+    } catch (err) {
+      console.debug('Audio unlock failed:', err.message);
+    }
+
+    Object.values(this.audioPool).forEach(pool => {
+      pool.forEach(audio => {
+        if (audio) {
+          audio.muted = false;
+          audio.load();
+        }
+      });
+    });
   }
 
   createAudioPool(src, count) {
     const pool = [];
+    const normalizedSrc = this.normalizeAudioSrc(src);
     for (let i = 0; i < count; i++) {
-      // Ищем уже существующий элемент в DOM (полезно для предзагрузки)
-      let audio = document.querySelector(`audio[src="${src}"]`);
+      let audio = Array.from(document.querySelectorAll('audio')).find(el => {
+        const candidate = this.normalizeAudioSrc(el.getAttribute('src'));
+        return candidate === normalizedSrc;
+      });
       if (!audio) {
         audio = new Audio(src);
+        audio.preload = 'auto';
       }
       audio.volume = this.volume;
+      audio.muted = false;
+      audio.load();
       pool.push(audio);
     }
     return pool;
@@ -53,12 +98,25 @@ export class AudioManager {
     return audio;
   }
 
-  play(type, volumeOverride = null) {
+  async play(type, volumeOverride = null) {
     if (!this.enabled) return;
     const audio = this.getPooledAudio(type);
     if (!audio) return;
-    
+
+    try {
+      if (window.AudioContext || window.webkitAudioContext) {
+        this.audioCtx = this.audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        if (this.audioCtx.state === 'suspended') {
+          await this.audioCtx.resume();
+        }
+      }
+    } catch (err) {
+      console.debug('Audio resume failed:', err.message);
+    }
+
     audio.volume = volumeOverride !== null ? volumeOverride : this.volume;
+    audio.muted = false;
+    audio.load();
     audio.play().catch(err => console.debug(`Audio prevented: ${err.message}`));
   }
 

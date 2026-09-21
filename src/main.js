@@ -130,100 +130,6 @@ let game = null;
 let screens = null;
 let audioManager = null;
 
-let touchStartX = 0;
-let touchStartY = 0;
-let currentSwipeDeltaX = 0;
-let isSwiping = false;
-
-document.addEventListener('touchstart', (e) => { 
-    const guesserScreen = document.getElementById('guesser-screen');
-    if (!guesserScreen || guesserScreen.classList.contains('hidden') || guesserScreen.style.display === 'none') return;
-    
-    touchStartX = e.changedTouches[0].screenX;
-    touchStartY = e.changedTouches[0].screenY;
-    isSwiping = true;
-    currentSwipeDeltaX = 0;
-    
-    const btn1 = document.getElementById('guess-word-1');
-    const btn2 = document.getElementById('guess-word-2');
-    if(btn1) btn1.style.transition = 'none';
-    if(btn2) btn2.style.transition = 'none';
-}, { passive: true });
-
-document.addEventListener('touchmove', (e) => {
-    if (!isSwiping || !shifter) return;
-    
-    const touchCurrentX = e.changedTouches[0].screenX;
-    const touchCurrentY = e.changedTouches[0].screenY;
-    const deltaX = touchCurrentX - touchStartX;
-    const deltaY = touchCurrentY - touchStartY;
-
-    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 20) {
-        resetSwipeVisuals();
-        isSwiping = false;
-        return;
-    }
-
-    currentSwipeDeltaX = deltaX;
-    const btn1 = document.getElementById('guess-word-1');
-    const btn2 = document.getElementById('guess-word-2');
-    
-    const maxDrag = 35; 
-    const pullDistance = Math.abs(deltaX);
-    const glowIntensity = Math.min(0.9, 0.2 + (pullDistance / 100)); 
-    const glowRadius = pullDistance * 0.4; 
-
-    if (deltaX < -15 && btn1) { 
-        const pull = Math.max(-maxDrag, deltaX * 0.4);
-        btn1.style.transform = `translateX(${pull}px) scale(0.98)`;
-        btn1.style.boxShadow = `0 0 ${10 + glowRadius}px rgba(55, 255, 226, ${glowIntensity})`;
-        btn1.style.borderColor = `rgba(55, 255, 226, ${glowIntensity})`;
-        btn1.style.textShadow = `0 0 ${5 + glowRadius * 0.5}px rgba(55, 255, 226, ${glowIntensity + 0.1})`;
-    } else if (deltaX > 15 && btn2) { 
-        const pull = Math.min(maxDrag, deltaX * 0.4);
-        btn2.style.transform = `translateX(${pull}px) scale(0.98)`;
-        btn2.style.boxShadow = `0 0 ${10 + glowRadius}px rgba(55, 255, 226, ${glowIntensity})`;
-        btn2.style.borderColor = `rgba(55, 255, 226, ${glowIntensity})`;
-        btn2.style.textShadow = `0 0 ${5 + glowRadius * 0.5}px rgba(55, 255, 226, ${glowIntensity + 0.1})`;
-    }
-}, { passive: true });
-
-document.addEventListener('touchend', (e) => {
-    if (!isSwiping) return;
-    isSwiping = false;
-    
-    const threshold = 75; 
-    
-    if (currentSwipeDeltaX < -threshold) {
-        makeGuess(shifter.orig1);
-    } else if (currentSwipeDeltaX > threshold) {
-        makeGuess(shifter.orig2);
-    }
-    
-    resetSwipeVisuals();
-}, { passive: true });
-
-function resetSwipeVisuals() {
-    const btn1 = document.getElementById('guess-word-1');
-    const btn2 = document.getElementById('guess-word-2');
-    const transitionStyle = 'transform 0.3s ease-out, box-shadow 0.3s ease-out, border-color 0.3s ease-out, text-shadow 0.3s ease-out';
-    
-    if (btn1) {
-        btn1.style.transition = transitionStyle;
-        btn1.style.transform = '';
-        btn1.style.boxShadow = '';
-        btn1.style.borderColor = '';
-        btn1.style.textShadow = '';
-    }
-    if (btn2) {
-        btn2.style.transition = transitionStyle;
-        btn2.style.transform = '';
-        btn2.style.boxShadow = '';
-        btn2.style.borderColor = '';
-        btn2.style.textShadow = '';
-    }
-}
-
 let currentQuestion = null;
 let roundScoresSnapshot = null;
 let currentHint = "";
@@ -253,6 +159,9 @@ document.addEventListener("DOMContentLoaded", () => {
   try {
     if (!document.getElementById('setup-screen')) return;
 
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }), 50);
+
     audioManager = new AudioManager();
     screens = new ScreenController();
     screens.setupAudioControl(audioManager);
@@ -274,7 +183,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     setupInitialEventListeners();
-    setupHelpPanel();
     setupGlobalButtonSounds();
     setupPsychologicalSafetySystem(); 
     
@@ -393,6 +301,9 @@ function resetToSetupState() {
   const stopVoiceBtn = document.getElementById('stop-voice-btn');
   if (stopVoiceBtn) stopVoiceBtn.style.display = 'none';
 
+  const helpSection = document.querySelector('.help-section');
+  if (helpSection) helpSection.style.display = 'block';
+
   game = null;
   currentQuestion = null;
   currentHint = "";
@@ -478,65 +389,6 @@ function closeEmojiPicker() {
   modal.classList.add('hidden');
   modal.style.display = 'none';
   activeEmojiPickerIndex = null;
-}
-
-function setupHelpPanel() {
-  const helpToggle = document.getElementById('help-toggle-btn');
-  const helpPanel = document.getElementById('help-panel');
-  const prevBtn = document.getElementById('help-prev-btn');
-  const nextBtn = document.getElementById('help-next-btn');
-  const indexDisplay = document.getElementById('carousel-index');
-
-  if (!helpToggle || !helpPanel) return;
-
-  let currentHelpStep = 1;
-
-  function determineCurrentStep() {
-    if (document.getElementById('picker-screen').style.display === 'block') return 1;
-    if (document.getElementById('responder-screen').style.display === 'block') return 2;
-    if (document.getElementById('guesser-screen').style.display === 'block') return 3;
-    return 1; 
-  }
-
-  function renderHelpCarousel() {
-    const steps = helpPanel.querySelectorAll('.help-step');
-    steps.forEach(step => {
-      const stepNum = parseInt(step.dataset.step);
-      step.style.display = stepNum === currentHelpStep ? 'block' : 'none';
-    });
-    if (indexDisplay) indexDisplay.innerText = `Step ${currentHelpStep} / 3`;
-  }
-
-  helpToggle.onclick = () => {
-    const isOpen = helpPanel.style.display === 'block';
-    if (!isOpen) {
-      currentHelpStep = determineCurrentStep();
-      renderHelpCarousel();
-      helpPanel.style.display = 'block';
-      helpToggle.innerText = '🔼 Hide'; 
-    } else {
-      helpPanel.style.display = 'none';
-      helpToggle.innerText = 'How to play?'; 
-    }
-    audioManager.play('click');
-  };
-
-  if (prevBtn && nextBtn) {
-    prevBtn.onclick = (e) => {
-      e.stopPropagation();
-      currentHelpStep = currentHelpStep > 1 ? currentHelpStep - 1 : 3;
-      renderHelpCarousel();
-    };
-    nextBtn.onclick = (e) => {
-      e.stopPropagation();
-      currentHelpStep = currentHelpStep < 3 ? currentHelpStep + 1 : 1;
-      renderHelpCarousel();
-    };
-  }
-
-  helpPanel.style.display = 'none';
-  helpToggle.innerText = 'How to play?'; 
-  updateHelpTargetText();
 }
 
 function setupGlobalButtonSounds() {
@@ -1571,16 +1423,10 @@ function startGuesserPhase() {
     const btn2 = document.getElementById('guess-word-2');
    
     if (btn1 && shifter) {
-      btn1.onclick = () => {
-        if (typeof currentSwipeDeltaX !== 'undefined' && Math.abs(currentSwipeDeltaX) > 15) return; 
-        makeGuess(shifter.orig1);
-      };
+      btn1.onclick = () => makeGuess(shifter.orig1);
     }
     if (btn2 && shifter) {
-      btn2.onclick = () => {
-        if (typeof currentSwipeDeltaX !== 'undefined' && Math.abs(currentSwipeDeltaX) > 15) return; 
-        makeGuess(shifter.orig2);
-      };
+      btn2.onclick = () => makeGuess(shifter.orig2);
     }
   } catch (err) {
     console.error("Error inside startGuesserPhase:", err);
@@ -1693,13 +1539,13 @@ function updateGuesserUI() {
     if (rollStatusEl) {
       if (revealCount === 1) {
         rollStatusEl.style.display = 'block';
-        rollStatusEl.innerHTML = `💡 You can buy one word reveal:`;
+        rollStatusEl.innerHTML = `💡 Spend 15 points for one reveal.`;
       } else {
         rollStatusEl.style.display = 'block';
-        rollStatusEl.innerHTML = `🔒 Reveal already used`;
+        rollStatusEl.innerHTML = `🔒 Reveal spent`;
       }
     }
-    
+
     updateStatsBarVisibility();
 
     const renderAbility = (btn, label, icon) => {
@@ -1707,9 +1553,10 @@ function updateGuesserUI() {
       const row = btn.closest('.ability-row');
 
       btn.innerHTML = `
-        <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 4px;">
-          <strong style="font-size: 15px;">${icon} ${label}</strong>
+        <div class="ability-main-line">
+          <strong>${icon} ${label}</strong>
         </div>
+        <span class="ability-cost">-15 pts</span>
       `;
      
       if (btn.disabled) {
@@ -1733,13 +1580,13 @@ function updateGuesserUI() {
       }
     };
 
-    renderAbility(randBtn, 'Open random letters', '🎲');
-    renderAbility(lengthBtn, "Show words' length and first letters", '📏');
+    renderAbility(randBtn, 'Random letters', '🎲');
+    renderAbility(lengthBtn, "Word length", '📏');
 
     const abilitiesContainer = document.querySelector('.abilities-list-vertical');
     if (abilitiesContainer) {
       if (revealCount >= 2) {
-        setTimeout(() => { abilitiesContainer.style.display = 'none'; }, 400); 
+        setTimeout(() => { abilitiesContainer.style.display = 'none'; }, 400);
       } else {
         abilitiesContainer.style.display = 'flex';
       }
@@ -2186,18 +2033,6 @@ if (installBtn) {
   });
 }
 
-let ytPlayer = null;
-let isYtApiReady = false;
-
-const ytScriptTag = document.createElement('script');
-ytScriptTag.src = "https://www.youtube.com/iframe_api";
-const firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(ytScriptTag, firstScriptTag);
-
-window.onYouTubeIframeAPIReady = function() {
-  isYtApiReady = true;
-};
-
 function setupVideoTutorial() {
   const tutorialBtn = document.getElementById('tutorial-btn');
   const videoModal = document.getElementById('video-modal');
@@ -2205,28 +2040,38 @@ function setupVideoTutorial() {
   const tutorialVideo = document.getElementById('tutorial-video');
   const speedBtns = document.querySelectorAll('.speed-btn');
 
-  if (!tutorialBtn || !videoModal) return;
+  if (!tutorialBtn || !videoModal || !tutorialVideo) return;
 
-  const initOrResetPlayer = () => {
-    if (isYtApiReady && !ytPlayer && typeof YT !== 'undefined') {
-      ytPlayer = new YT.Player('tutorial-video', {
-        events: {
-          'onReady': (event) => {
-             event.target.setPlaybackRate(0.75);
-          },
-          'onStateChange': (event) => {
-             if (event.data === YT.PlayerState.PLAYING) {
-                const currentActive = document.querySelector('.speed-btn[style*="var(--accent)"]');
-                if (currentActive) {
-                  event.target.setPlaybackRate(parseFloat(currentActive.dataset.speed));
-                }
-             }
-          }
-        }
-      });
-    } else if (ytPlayer && typeof ytPlayer.setPlaybackRate === 'function') {
-      ytPlayer.setPlaybackRate(0.75);
+  const defaultVideoSrc = 'https://www.youtube.com/embed/TU6HCiXeL0A?rel=0&playsinline=1&modestbranding=1&enablejsapi=1';
+  tutorialVideo.removeAttribute('src');
+
+  const setSpeedActive = (targetBtn) => {
+    speedBtns.forEach(btn => {
+      const active = btn === targetBtn;
+      btn.style.background = active ? 'var(--accent)' : 'rgba(255,255,255,0.05)';
+      btn.style.borderColor = active ? 'var(--accent)' : 'rgba(255,255,255,0.1)';
+      btn.style.color = active ? '#fff' : 'var(--text)';
+    });
+  };
+
+  const applyVideoSpeed = (speed) => {
+    const numericSpeed = Number(speed);
+    if (!Number.isFinite(numericSpeed)) return;
+
+    try {
+      if (tutorialVideo && tutorialVideo.contentWindow) {
+        tutorialVideo.contentWindow.postMessage(JSON.stringify({
+          event: 'command',
+          func: 'setPlaybackRate',
+          args: [numericSpeed]
+        }), '*');
+      }
+    } catch (error) {
+      console.warn('Unable to change tutorial video speed:', error);
     }
+
+    const matchingBtn = document.querySelector(`.speed-btn[data-speed="${String(numericSpeed)}"]`);
+    setSpeedActive(matchingBtn || speedBtns[0]);
   };
 
   speedBtns.forEach(btn => {
@@ -2234,78 +2079,52 @@ function setupVideoTutorial() {
       e.preventDefault();
       e.stopPropagation();
       if (window.audioManager) window.audioManager.play('click');
-      
-      const speed = parseFloat(btn.dataset.speed);
-      
-      if (ytPlayer && typeof ytPlayer.setPlaybackRate === 'function') {
-        ytPlayer.setPlaybackRate(speed);
-      }
-      
-      speedBtns.forEach(b => {
-        b.style.background = 'rgba(255,255,255,0.05)';
-        b.style.borderColor = 'rgba(255,255,255,0.1)';
-        b.style.color = 'var(--text)';
-      });
-      btn.style.background = 'var(--accent)';
-      btn.style.borderColor = 'var(--accent)';
-      btn.style.color = '#fff';
+      applyVideoSpeed(btn.dataset.speed);
     });
   });
 
   const closeVideo = () => {
     videoModal.style.display = 'none';
     videoModal.classList.add('hidden');
-    
+
     if (document.fullscreenElement || document.webkitFullscreenElement) {
       if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
       else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
     }
-    
-    if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
-      ytPlayer.pauseVideo();
-    } else if (tutorialVideo) {
-      const currentSrc = tutorialVideo.src;
-      tutorialVideo.src = currentSrc; 
+
+    if (tutorialVideo) {
+      tutorialVideo.src = 'about:blank';
+      tutorialVideo.removeAttribute('src');
     }
-    
-    speedBtns.forEach(b => {
-        b.style.background = 'rgba(255,255,255,0.05)';
-        b.style.borderColor = 'rgba(255,255,255,0.1)';
-        b.style.color = 'var(--text)';
-    });
-    const defaultBtn = document.querySelector('.speed-btn[data-speed="0.75"]');
-    if (defaultBtn) {
-       defaultBtn.style.background = 'var(--accent)';
-       defaultBtn.style.borderColor = 'var(--accent)';
-       defaultBtn.style.color = '#fff';
-    }
+
+    setSpeedActive(document.querySelector('.speed-btn[data-speed="1"]') || speedBtns[0]);
   };
 
   tutorialBtn.onclick = (e) => {
     e.preventDefault();
     if (window.audioManager) window.audioManager.play('click');
-    
+
     const elem = document.documentElement;
     if (elem.requestFullscreen) {
       elem.requestFullscreen().catch(() => {});
-    } else if (elem.webkitRequestFullscreen) { 
+    } else if (elem.webkitRequestFullscreen) {
       elem.webkitRequestFullscreen();
     }
 
+    tutorialVideo.src = defaultVideoSrc + '&autoplay=1';
     videoModal.classList.remove('hidden');
     videoModal.style.display = 'flex';
-    
-    initOrResetPlayer(); 
+    setTimeout(() => applyVideoSpeed(1), 250);
   };
 
   if (closeVideoBtn) {
     const handleClose = (e) => {
       e.preventDefault();
-      e.stopPropagation(); 
+      e.stopPropagation();
       if (window.audioManager) window.audioManager.play('click');
       closeVideo();
     };
-    
+
     closeVideoBtn.addEventListener('click', handleClose);
     closeVideoBtn.addEventListener('touchstart', handleClose, { passive: false });
   }
@@ -2313,4 +2132,6 @@ function setupVideoTutorial() {
   videoModal.addEventListener('click', (e) => {
     if (e.target === videoModal) closeVideo();
   });
+
+  setSpeedActive(document.querySelector('.speed-btn[data-speed="1"]') || speedBtns[0]);
 }

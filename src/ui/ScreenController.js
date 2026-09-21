@@ -16,6 +16,33 @@ export class ScreenController {
   }
 
   switchScreen(screenName) {
+    const safetyBtn = document.getElementById('safety-global-btn');
+    const safetyTip = document.getElementById('safety-tip-text');
+    const helpSection = document.querySelector('.help-section');
+    const gameContainer = document.querySelector('.game-container');
+    const finalScreenActive = screenName === 'final';
+
+    document.body.classList.toggle('final-screen-active', finalScreenActive);
+
+    if (gameContainer) {
+      gameContainer.style.display = finalScreenActive ? 'none' : 'block';
+    }
+
+    if (safetyBtn) {
+      safetyBtn.classList.toggle('hidden', finalScreenActive);
+      safetyBtn.setAttribute('aria-hidden', finalScreenActive ? 'true' : 'false');
+    }
+
+    if (safetyTip) {
+      safetyTip.classList.toggle('hidden', finalScreenActive);
+      safetyTip.setAttribute('aria-hidden', finalScreenActive ? 'true' : 'false');
+    }
+
+    if (helpSection) {
+      helpSection.classList.toggle('hidden', finalScreenActive);
+      helpSection.setAttribute('aria-hidden', finalScreenActive ? 'true' : 'false');
+    }
+
     let screenChanged = false;
     Object.keys(this.screens).forEach(key => {
       if (this.screens[key]) {
@@ -28,7 +55,6 @@ export class ScreenController {
     });
     if (screenChanged) {
       window.scrollTo({ top: 0, behavior: 'instant' });
-      // Delay to ensure DOM has updated
       setTimeout(() => {
         if (typeof updateStatsBarVisibility === 'function') {
           updateStatsBarVisibility();
