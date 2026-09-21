@@ -1581,7 +1581,7 @@ function updateGuesserUI() {
     };
 
     renderAbility(randBtn, 'Random letters', '🎲');
-    renderAbility(lengthBtn, "Word length", '📏');
+    renderAbility(lengthBtn, "Word length & 1st letters", '📏');
 
     const abilitiesContainer = document.querySelector('.abilities-list-vertical');
     if (abilitiesContainer) {
