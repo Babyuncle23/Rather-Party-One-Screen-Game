@@ -734,22 +734,36 @@ function updatePickerHints() {
       }
   });
 
-  // Перемешиваем получившуюся колоду
+  // Перемешиваем получившуюся колоду и оставляем не больше пяти случайных вариантов
   for (let i = allPermutations.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [allPermutations[i], allPermutations[j]] = [allPermutations[j], allPermutations[i]];
   }
 
-  window.promptHistory = allPermutations;
+  window.promptHistory = allPermutations.slice(0, 5);
   window.promptHistoryIndex = 0;
   
 const displayEl = document.getElementById('prompt-display-text');
   const indexEl = document.getElementById('prompt-carousel-index');
 
+  const normalizePromptIndex = () => {
+    if (!window.promptHistory || !window.promptHistory.length) {
+      window.promptHistoryIndex = 0;
+      return;
+    }
+    window.promptHistoryIndex = ((window.promptHistoryIndex % window.promptHistory.length) + window.promptHistory.length) % window.promptHistory.length;
+  };
+
   // Функция отрисовки текста со счетчиком
   window.renderCurrentPrompt = () => {
-    if (!displayEl) return;
-    
+    if (!displayEl || !window.promptHistory || !window.promptHistory.length) {
+      if (indexEl) indexEl.innerText = '0/0';
+      if (displayEl) displayEl.innerHTML = 'Loading...';
+      return;
+    }
+
+    normalizePromptIndex();
+
     const total = window.promptHistory.length;
     const current = window.promptHistoryIndex + 1;
 
@@ -769,42 +783,36 @@ const displayEl = document.getElementById('prompt-display-text');
   // Отрисовываем первый вариант сразу
   window.renderCurrentPrompt();
   
-const nextBtn = document.getElementById('prompt-next-btn');
+  const nextBtn = document.getElementById('prompt-next-btn');
   const prevBtn = document.getElementById('prompt-prev-btn');
   // Ссылки на поле и карусель
   const customInput = document.getElementById('custom-hint-input');
   const carousel = document.querySelector('.prompt-carousel-container');
+  const movePromptIndex = (delta) => {
+      if (!window.promptHistory || !window.promptHistory.length) return;
+      window.promptHistoryIndex = (window.promptHistoryIndex + delta + window.promptHistory.length) % window.promptHistory.length;
+      window.renderCurrentPrompt();
+      
+      // Сбрасываем кастомное поле при клике на стрелки
+      if (customInput && customInput.value !== "") {
+          customInput.value = "";
+          if (carousel) {
+              carousel.style.opacity = '1';
+              carousel.style.pointerEvents = 'auto';
+          }
+      }
+  };
   
   if (nextBtn) {
       nextBtn.onclick = () => {
           if (audioManager) audioManager.play('click');
-          window.promptHistoryIndex = (window.promptHistoryIndex + 1) % window.promptHistory.length;
-          window.renderCurrentPrompt();
-          
-          // Сбрасываем кастомное поле при клике на стрелки
-          if (customInput && customInput.value !== "") {
-              customInput.value = "";
-              if (carousel) {
-                  carousel.style.opacity = '1';
-                  carousel.style.pointerEvents = 'auto';
-              }
-          }
+          movePromptIndex(1);
       };
   }
   if (prevBtn) {
       prevBtn.onclick = () => {
           if (audioManager) audioManager.play('click');
-          window.promptHistoryIndex = (window.promptHistoryIndex - 1 + window.promptHistory.length) % window.promptHistory.length;
-          window.renderCurrentPrompt();
-          
-          // Сбрасываем кастомное поле при клике на стрелки
-          if (customInput && customInput.value !== "") {
-              customInput.value = "";
-              if (carousel) {
-                  carousel.style.opacity = '1';
-                  carousel.style.pointerEvents = 'auto';
-              }
-          }
+          movePromptIndex(-1);
       };
   }
 } // Конец функции updatePickerHints
@@ -825,7 +833,7 @@ function renderInteractiveQuestion() {
   updatePickerHints();
 }
 
-function getCompiledQuestionString(w1 = "[ ... ]", w2 = "[ ... ]", useHtml = false) {
+function getCompiledQuestionString(w1 = "[ ... ]", w2 = "[ ... ]", useHtml = false, chosenWord = null) {
   let str = "";
   if (currentQuestion.customCompiledText) {
       str = currentQuestion.customCompiledText;
@@ -835,9 +843,17 @@ function getCompiledQuestionString(w1 = "[ ... ]", w2 = "[ ... ]", useHtml = fal
         str += frag.options[currentFragmentsState[i]].text + " ";
       });
   }
+
+  const resolvedChosenWord = chosenWord === null || chosenWord === undefined ? w1 : String(chosenWord);
+  const formatAnswer = (word) => {
+    if (!useHtml) return word;
+    const isChosen = String(word).toUpperCase() === String(resolvedChosenWord).toUpperCase();
+    return `<span style="color: ${isChosen ? 'var(--positive)' : 'var(--danger)'}; font-weight: 800;">${word}</span>`;
+  };
+
   if (useHtml) {
-    str = str.replace("[ ... ]", `<span style="color: #00ffb3; font-weight: bold;">${w1}</span>`);
-    str = str.replace("[ ... ]", `<span style="color: #ff4a4a; font-weight: bold;">${w2}</span>`);
+    str = str.replace("[ ... ]", formatAnswer(w1));
+    str = str.replace("[ ... ]", formatAnswer(w2));
   } else {
     str = str.replace("[ ... ]", w1).replace("[ ... ]", w2);
   }
@@ -1335,9 +1351,9 @@ function confirmResponderChoice(w1, w2, choice) {
       game.setQueuedCombo(comboWord, currentQuestion.category);
     }
 
-    const fullQuestionText = getCompiledQuestionString(w1, w2, true);
+    const fullQuestionText = getCompiledQuestionString(w1, w2, true, choice);
     const formattedResultString = `<strong>${responder.name}</strong> chose ` +
-      `<span style="color: #00ffb3; font-weight: bold;">${choice}</span> in the question:<br>` +
+      `<span style="color: var(--positive); font-weight: bold;">${choice}</span> in the question:<br>` +
       `<span style="color: var(--muted); font-style: italic;">"${fullQuestionText}"</span>`;
    
     game.history[game.history.length - 1].resultSentence = formattedResultString;
