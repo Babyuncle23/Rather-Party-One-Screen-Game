@@ -129,6 +129,7 @@ function passPhoneWithSpeech(player, onConfirm, note, speakNote = false, exactSp
 let game = null;
 let screens = null;
 let audioManager = null;
+let advancedModeEnabled = false;
 
 let currentQuestion = null;
 let roundScoresSnapshot = null;
@@ -155,6 +156,58 @@ let currentFragmentsState = [];
 let safetyDelayedTimer = null; 
 let oralHintUsedThisTurn = false;
 
+function setAdvancedMode(enabled) {
+  advancedModeEnabled = !!enabled;
+  window.advancedModeEnabled = advancedModeEnabled;
+
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('advancedModeEnabled', String(advancedModeEnabled));
+  }
+
+  const advancedToggle = document.getElementById('advanced-mode-toggle');
+  if (advancedToggle) {
+    advancedToggle.checked = advancedModeEnabled;
+  }
+
+  const editToggleBtn = document.getElementById('edit-question-toggle-btn');
+  const editBlock = document.getElementById('edit-question-block');
+  const toggleToCustom = document.getElementById('toggle-custom-prompt-btn');
+  const customBlock = document.getElementById('custom-prompt-block');
+  const presetBlock = document.getElementById('preset-prompt-block');
+  const customInput = document.getElementById('custom-hint-input');
+
+  if (editToggleBtn) {
+    editToggleBtn.style.display = advancedModeEnabled ? 'block' : 'none';
+    editToggleBtn.disabled = !advancedModeEnabled;
+    if (!advancedModeEnabled) {
+      editToggleBtn.innerHTML = '✍️ EDIT THE QUESTION';
+    }
+  }
+
+  if (editBlock) {
+    editBlock.style.display = 'none';
+  }
+
+  if (toggleToCustom) {
+    toggleToCustom.style.display = advancedModeEnabled ? 'block' : 'none';
+    toggleToCustom.disabled = !advancedModeEnabled;
+  }
+
+  if (customBlock) {
+    customBlock.style.display = 'none';
+  }
+
+  if (presetBlock) {
+    presetBlock.style.display = 'block';
+  }
+
+  if (customInput) {
+    customInput.value = '';
+  }
+
+  isCustomHintActive = false;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   try {
     if (!document.getElementById('setup-screen')) return;
@@ -180,6 +233,16 @@ document.addEventListener("DOMContentLoaded", () => {
           window.speechSynthesis.getVoices();
         }
       };
+    }
+
+    const advancedToggle = document.getElementById('advanced-mode-toggle');
+    if (advancedToggle) {
+      const savedAdvancedMode = typeof localStorage !== 'undefined' && localStorage.getItem('advancedModeEnabled') === 'true';
+      advancedToggle.checked = false;
+      setAdvancedMode(savedAdvancedMode);
+      advancedToggle.onchange = (e) => setAdvancedMode(e.target.checked);
+    } else {
+      setAdvancedMode(false);
     }
 
     setupInitialEventListeners();
@@ -959,35 +1022,40 @@ function initRound() {
       questionCarouselWrapper.style.display = 'block';
       editToggleBtn.innerHTML = "✍️ EDIT THE QUESTION";
 
-      const toggleEdit = () => {
-        const isEditing = editBlock.style.display === 'block';
-        if (!isEditing) {
-          const rawQuestion = getCompiledQuestionString("[ ... ]", "[ ... ]", false);
-          const parts = rawQuestion.split("[ ... ]");
-          editPart1.value = (parts[0] || "").trim();
-          editPart2.value = (parts[1] || "").trim();
-          editPart3.value = (parts[2] || "").trim();
+      if (!advancedModeEnabled) {
+        editToggleBtn.style.display = 'none';
+        editToggleBtn.disabled = true;
+      } else {
+        const toggleEdit = () => {
+          const isEditing = editBlock.style.display === 'block';
+          if (!isEditing) {
+            const rawQuestion = getCompiledQuestionString("[ ... ]", "[ ... ]", false);
+            const parts = rawQuestion.split("[ ... ]");
+            editPart1.value = (parts[0] || "").trim();
+            editPart2.value = (parts[1] || "").trim();
+            editPart3.value = (parts[2] || "").trim();
 
-          editBlock.style.display = 'block';
-          questionCarouselWrapper.style.display = 'none';
-          editToggleBtn.innerHTML = "← CANCEL EDITING";
-        } else {
-          editBlock.style.display = 'none';
-          questionCarouselWrapper.style.display = 'block';
-          editToggleBtn.innerHTML = "✍️ EDIT THE QUESTION";
-        }
-      };
-
-      editToggleBtn.onclick = () => { if (audioManager) audioManager.play('click'); toggleEdit(); };
-
-      if (editSaveBtn) {
-        editSaveBtn.onclick = () => {
-          if (audioManager) audioManager.play('click');
-          currentQuestion.customCompiledText = `${editPart1.value.trim()} [ ... ] ${editPart2.value.trim()} [ ... ] ${editPart3.value.trim()}`;
-          window.generatedQuestions[window.viewIndex].c = currentQuestion.customCompiledText;
-          renderInteractiveQuestion();
-          toggleEdit();
+            editBlock.style.display = 'block';
+            questionCarouselWrapper.style.display = 'none';
+            editToggleBtn.innerHTML = "← CANCEL EDITING";
+          } else {
+            editBlock.style.display = 'none';
+            questionCarouselWrapper.style.display = 'block';
+            editToggleBtn.innerHTML = "✍️ EDIT THE QUESTION";
+          }
         };
+
+        editToggleBtn.onclick = () => { if (audioManager) audioManager.play('click'); toggleEdit(); };
+
+        if (editSaveBtn) {
+          editSaveBtn.onclick = () => {
+            if (audioManager) audioManager.play('click');
+            currentQuestion.customCompiledText = `${editPart1.value.trim()} [ ... ] ${editPart2.value.trim()} [ ... ] ${editPart3.value.trim()}`;
+            window.generatedQuestions[window.viewIndex].c = currentQuestion.customCompiledText;
+            renderInteractiveQuestion();
+            toggleEdit();
+          };
+        }
       }
     }
 
@@ -1043,7 +1111,18 @@ function initRound() {
         if (customInput) customInput.value = "";
     }
 
-    if (toggleToCustom) {
+    if (!advancedModeEnabled) {
+        if (toggleToCustom) {
+            toggleToCustom.style.display = 'none';
+            toggleToCustom.disabled = true;
+            toggleToCustom.onclick = null;
+        }
+        if (toggleToPreset) {
+            toggleToPreset.onclick = null;
+        }
+    } else if (toggleToCustom) {
+        toggleToCustom.style.display = 'block';
+        toggleToCustom.disabled = false;
         toggleToCustom.onclick = () => {
             if (audioManager) audioManager.play('click');
             presetBlock.style.display = 'none';
