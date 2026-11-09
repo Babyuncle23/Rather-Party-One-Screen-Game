@@ -1,10 +1,15 @@
+import { escapeHTML, escapeRegExp } from '../utils/sanitize.js';
+import { t } from '../i18n/I18nManager.js';
+
 export class ScreenController {
   constructor() {
     this.screens = {
       setup: document.getElementById('setup-screen'),
       pass: document.getElementById('pass-screen'),
+      lobby: document.getElementById('lobby-screen'),
       picker: document.getElementById('picker-screen'),
       responder: document.getElementById('responder-screen'),
+      companion: document.getElementById('companion-screen'),
       guesser: document.getElementById('guesser-screen'),
       final: document.getElementById('final-screen')
     };
@@ -56,9 +61,8 @@ export class ScreenController {
     if (screenChanged) {
       window.scrollTo({ top: 0, behavior: 'instant' });
       setTimeout(() => {
-        if (typeof updateStatsBarVisibility === 'function') {
-          updateStatsBarVisibility();
-        }
+        // updateStatsBarVisibility живёт в module scope main.js — уведомляем через событие
+        window.dispatchEvent(new CustomEvent('screenchange', { detail: { screen: screenName } }));
       }, 10);
     }
   }
@@ -98,25 +102,28 @@ showAlert(title, message, onConfirm = null) {
     };
   }
 
-showPassScreen(player, onConfirm, note = "Only this player should look at the phone. Keep it hidden from others.") {
+showPassScreen(player, onConfirm, note = null) {
+    if (note === null) note = t('pass.defaultNote');
     this.screens.pass.classList.remove('hidden');
     this.screens.pass.style.display = 'flex';
     const message = document.getElementById('pass-message');
     
-    const highlightedTargetName = `<span class="player-name-pass-fade">${player.emoji || ''} ${player.name.toUpperCase()}</span>`;
-    
-    let cleanNote = note;
+    const highlightedTargetName = `<span class="player-name-pass-fade">${player.emoji || ''} ${escapeHTML(player.name.toUpperCase())}</span>`;
+
+    // Экранируем note целиком (в нём могут быть имена игроков — пользовательский ввод)
+    let cleanNote = escapeHTML(note);
     if (window.game) {
       const responder = window.game.players[window.game.getResponderIndex()];
-      // Делаем поиск имени нечувствительным к регистру, чтобы точно подсветить его
-      const regex = new RegExp(responder.name, 'i');
+      // Ищем уже экранированное имя; escapeRegExp защищает от метасимволов regex в имени
+      const escapedName = escapeHTML(responder.name);
+      const regex = new RegExp(escapeRegExp(escapedName), 'i');
       if (regex.test(cleanNote)) {
-        cleanNote = cleanNote.replace(regex, `<span class="player-name-pass-fade">${responder.emoji} ${responder.name.toUpperCase()}</span>`);
+        cleanNote = cleanNote.replace(regex, `<span class="player-name-pass-fade">${responder.emoji} ${escapeHTML(responder.name.toUpperCase())}</span>`);
       }
     }
 
     // Добавили вывод cleanNote с аккуратными стилями под именем
-    message.innerHTML = `PASS THE PHONE TO:<br>${highlightedTargetName}<br><span style="display: block; font-size: 1.05rem; color: var(--muted); margin-top: 24px; font-weight: 600; text-transform: none; line-height: 1.45; letter-spacing: normal;">${cleanNote}</span>`;
+    message.innerHTML = `${escapeHTML(t('pass.title'))}<br>${highlightedTargetName}<br><span style="display: block; font-size: 1.05rem; color: var(--muted); margin-top: 24px; font-weight: 600; text-transform: none; line-height: 1.45; letter-spacing: normal;">${cleanNote}</span>`;
     
     window.scrollTo({ top: 0, behavior: 'instant' });
 

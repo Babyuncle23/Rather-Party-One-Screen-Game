@@ -105,6 +105,7 @@ export const PROMPTS = {
   martialArt: { text: "Martial art", brainstorm: ["Judo", "Karate", "Aikido", "Kung fu", "Sumo", "Brazilian jiu jitsu", "Muay thai", "Mixed martial arts", "Taekwondo", "Krav maga", "Capoeira", "Jeet kune do", "Kendo", "Hapkido", "Wing chun", "Shorinji Kempo"] },
   smallTalkTopic: { text: "Small talk topic", brainstorm: ["Weather", "Travel", "Hobbies", "Movies", "Music", "Weekend plans", "Favorite local restaurants", "Current technology trends", "Recent books read", "Work life balance", "Holiday experiences", "Fitness goals", "Upcoming local events", "Cooking experiments", "Career growth"] },
   movie: { text: "Movie", brainstorm: ["Titanic", "Star Wars", "The Matrix", "Shrek", "Harry Potter", "Jurassic Park", "Avatar", "The Lord of the Rings", "The Avengers", "Spider-Man"] },
+  title: { text: "Famous book or movie title", brainstorm: ["Matrix", "Shrek", "Titanic", "Avatar", "Hamlet", "Dracula"] },
   movieGenre: { text: "Movie genre", brainstorm: ["Horror", "Romantic Comedy", "Sci-Fi", "Musical", "Western", "Silent film", "True crime", "Action", "Fantasy"] },
   musicGenre: { text: "Music genre", brainstorm: ["Heavy metal", "Classical", "K-pop", "Jazz", "Country", "Dubstep", "Opera", "Punk rock", "Techno"] }
 };
@@ -166,7 +167,7 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: "playing", requires: ["time", "compete", "sacrifice", "weekends"], scene: "playing", hints: [PROMPTS.videoGame, PROMPTS.boardGame, PROMPTS.sport, PROMPTS.mobileGame] },
+          { text: "playing", requires: ["time", "compete", "sacrifice", "weekends"], scene: "playing", hints: [PROMPTS.videoGame, PROMPTS.boardGame, PROMPTS.sport, PROMPTS.mobileGame, PROMPTS.instrument] },
           { text: "doing", requires: ["sacrifice", "weekends"], scene: "doing", hints: [PROMPTS.annoyingHabit, PROMPTS.actionChore, PROMPTS.humanActivity, PROMPTS.hobby] },
           { text: "mastering", scene: "mastering", requires: ["future", "sacrifice", "time", "weekends"], hints: [PROMPTS.hobby, PROMPTS.instrument, PROMPTS.foreignLanguage] },
           { text: "watching", requires: ["time", "weekends"], hints: [PROMPTS.tvShow, PROMPTS.sport] },
@@ -320,7 +321,7 @@ export const questionsDatabase = [
           { text: "get nervous?", requires: ["action"] },
           { text: "start eating?", requires: ["action"] },
           { text: "sneeze?", requires: ["action"] },
-          { text: "?", requires: ["none"] }
+          { text: "?" }
         ]
       }
     ],
@@ -539,7 +540,7 @@ export const questionsDatabase = [
           { text: "to every job interview?", requires: ["costume_full", "dress_like"] },
           { text: "on public transport?", requires: ["costume_full", "carry_statue"] },
           { text: "when grocery shopping?", requires: ["carry_statue"] },
-          { text: "whenver you meet your family members?", requires: ["costume_full", "dress_like", "carry_statue"] }
+          { text: "whenever you meet your family members?", requires: ["costume_full", "dress_like", "carry_statue"] }
         ]
       }
     ],
@@ -598,7 +599,7 @@ export const questionsDatabase = [
         ]
       }
     ],
-    hints: [PROMPTS.historical, PROMPTS.singer, PROMPTS.actor, PROMPTS.politician]
+    hints: [PROMPTS.historical, PROMPTS.singer, PROMPTS.actor, PROMPTS.politician, PROMPTS.mediaPersonality]
   },
   {
     id: 16,
@@ -695,7 +696,7 @@ export const questionsDatabase = [
         options: [
           { text: "have everyone insist you look exactly like", type: "look", hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.animalFunny, PROMPTS.cartoonChar] },
           { text: "be treated by society exactly like", type: "status", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.profession, PROMPTS.fictionalChar] },
-          { text: "permamently turn into", type: "morph", hints: [PROMPTS.fictionalChar, PROMPTS.chubbyAnimal, PROMPTS.historical] }
+          { text: "permanently turn into", type: "morph", hints: [PROMPTS.fictionalChar, PROMPTS.chubbyAnimal, PROMPTS.historical] }
         ]
       },
       {
@@ -735,7 +736,7 @@ export const questionsDatabase = [
           { text: "as your butler?", hints: [PROMPTS.actor, PROMPTS.historical, PROMPTS.villain, PROMPTS.fictionalChar] },
           { text: "as your nanny?", hints: [PROMPTS.villain, PROMPTS.politician, PROMPTS.actor, PROMPTS.cartoonChar] },
           { text: "as your math teacher?", scene: "mathTeacher", hints: [PROMPTS.historical, PROMPTS.villain, PROMPTS.singer] },
-          { text: "as your art teacher?", hints: "artTeacher", hints: [PROMPTS.actor, PROMPTS.historical, PROMPTS.villain, PROMPTS.heavyAnimal] },
+          { text: "as your art teacher?", scene: "artTeacher", hints: [PROMPTS.actor, PROMPTS.historical, PROMPTS.villain, PROMPTS.heavyAnimal] },
           { text: "as your dance teacher?", scene: "danceFitness", hints: [PROMPTS.politician, PROMPTS.heavyAnimal, PROMPTS.villain, PROMPTS.cartoonChar] },
           { text: "as your yoga teacher?", scene: "yogaTeacher", hints: [PROMPTS.villain, PROMPTS.dangerousAnimal, PROMPTS.politician, PROMPTS.actor] },
           { text: "as your uber driver?", scene: "uberDriver", hints: [PROMPTS.historical, PROMPTS.villain, PROMPTS.chubbyAnimal, PROMPTS.singer] }
@@ -875,7 +876,7 @@ export const questionsDatabase = [
         ]
       }
     ],
-    hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.historical, PROMPTS.cartoonChar]
+    hints: [PROMPTS.actor, PROMPTS.villain, PROMPTS.historical, PROMPTS.cartoonChar, PROMPTS.fictionalChar]
   },
   {
     id: 102,
@@ -905,7 +906,7 @@ export const questionsDatabase = [
         ]
       }
     ],
-    hints: [PROMPTS.complicatedTopic, PROMPTS.annoyingHabit, PROMPTS.humanActivity]
+    hints: [PROMPTS.complicatedTopic, PROMPTS.annoyingHabit, PROMPTS.humanActivity, PROMPTS.actionIllegal, PROMPTS.schoolSubject, PROMPTS.actionEmbarrassing]
   },
   {
     id: 104,

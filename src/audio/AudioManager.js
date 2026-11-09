@@ -7,6 +7,7 @@ export class AudioManager {
     this.isVoiceWarmedUp = false;    // Прогрев TTS
     this.cancelQueue = false;        // Флаг прерывания очереди TTS
     this.isRallyEnglish = false;     // Режим финского акцента
+    this.locale = 'en';              // Текущая локаль игры ('en'|'ru'|'fi')
     this.resumeBound = false;
     
     this.audioPool.click = this.createAudioPool('./src/audio/click.mp3', 3);
@@ -653,6 +654,30 @@ toFinglish(text) {
     this.isRallyEnglish = isRally;
   }
 
+  // Локаль игры -> голос TTS. Rally English (финглиш) работает
+  // только для английской локали — в остальных это штатный голос.
+  setLocale(locale) {
+    this.locale = ['en', 'ru', 'fi'].includes(locale) ? locale : 'en';
+  }
+
+  getSpeechLang() {
+    if (this.isRallyEnglish && this.locale === 'en') return 'fi-FI';
+    return { en: 'en-US', ru: 'ru-RU', fi: 'fi-FI' }[this.locale] || 'en-US';
+  }
+
+  getSpeechRate() {
+    if (this.isRallyEnglish && this.locale === 'en') return 0.8;
+    return 1.0;
+  }
+
+  prepareSpeechText(text) {
+    // Финглиш — только англ. текст (словарь/правила англоязычные)
+    if (this.isRallyEnglish && this.locale === 'en') {
+      return this.toFinglish(text).toLowerCase();
+    }
+    return text;
+  }
+
   checkFinnishVoiceExists() {
     if (!window.speechSynthesis) return false;
     const voices = window.speechSynthesis.getVoices();
@@ -692,11 +717,11 @@ checkFinnishVoiceExistsAsync() {
       // 3. Принудительно вызываем getVoices(), чтобы "пнуть" движок в iOS/Chrome
       window.speechSynthesis.getVoices();
 
-      // 4. Страховочный таймаут (2.5 секунды). 
+      // 4. Страховочный таймаут (1.5 секунды).
       // Если за это время событие не нашло финский голос, значит его точно нет на устройстве.
       setTimeout(() => {
         resolve(checkForFi());
-      }, 5000);
+      }, 1500);
     });
   }
 
@@ -764,17 +789,15 @@ checkFinnishVoiceExistsAsync() {
     this.cancelQueue = false;
     
     // Принудительно опускаем в нижний регистр для финского, чтобы избежать чтения по буквам
-    const finalVoiceText = this.isRallyEnglish ? this.toFinglish(text).toLowerCase() : text;
+    const finalVoiceText = this.prepareSpeechText(text);
     const utterance = new SpeechSynthesisUtterance(finalVoiceText);
-    if (this.isRallyEnglish) {
+    if (this.isRallyEnglish && this.locale === 'en') {
       utterance.volume = Math.min(this.volume * 1.0, 1.0); // Изменено с 2 на 1.25
-      utterance.lang = 'fi-FI';
-      utterance.rate = 0.8; // На 25% медленнее
     } else {
       utterance.volume = this.volume;
-      utterance.lang = 'en-US';
-      utterance.rate = 1.0;
     }
+    utterance.lang = this.getSpeechLang();
+    utterance.rate = this.getSpeechRate();
     
     if (onStartCallback) {
       let hasFired = false;
@@ -814,17 +837,16 @@ checkFinnishVoiceExistsAsync() {
       }
       
       // Принудительно опускаем в нижний регистр для финского
-      const finalVoiceText = this.isRallyEnglish ? this.toFinglish(text).toLowerCase() : text;
+      const finalVoiceText = this.prepareSpeechText(text);
       const utterance = new SpeechSynthesisUtterance(finalVoiceText);
-      if (this.isRallyEnglish) {
+      if (this.isRallyEnglish && this.locale === 'en') {
         utterance.volume = Math.min(this.volume * 1.25, 1.0); // Изменено с 2 на 1.25
-        utterance.lang = 'fi-FI';
         utterance.rate = 0.75;
       } else {
         utterance.volume = this.volume;
-        utterance.lang = 'en-US';
         utterance.rate = 1.0;
       }
+      utterance.lang = this.getSpeechLang();
       
       utterance.onend = () => resolve();
       utterance.onerror = () => resolve();

@@ -159,6 +159,12 @@
 <body>
 
   <h1>🛠️ QA Tester</h1>
+  <div id="locale-row" style="display:flex; justify-content:center; gap:8px; margin-bottom:14px;">
+    <button class="btn-eval" data-lang="en" style="background:#3a3a52; color:#fff;">🇬🇧 EN</button>
+    <button class="btn-eval" data-lang="ru" style="background:#3a3a52; color:#fff;">🇷🇺 RU</button>
+    <button class="btn-eval" data-lang="fi" style="background:#3a3a52; color:#fff;">🇫🇮 FI</button>
+  </div>
+  <style>#locale-row .active { background: var(--accent) !important; }</style>
   <div class="instruction">
     Выделите любой текст (слово в вопросе или подсказку) и нажмите кнопку оценки.<br>
     Вы также можете вписать свой комментарий перед нажатием кнопки оценки!
@@ -200,7 +206,22 @@
   </div>
 
   <script type="module">
-    import { questionsDatabase } from './src/data/questions.js'; // Убедись, что путь к базе верный
+    import { getQuestionsDB, setLocale, getLocale } from './src/i18n/I18nManager.js';
+    import { detectWordModifier, applyWordModifier } from './src/i18n/morphology.js';
+
+    // Sprint 4: переключатель локали — меняет базу вопросов и превью морфологии
+    const SAMPLE_WORD = { en: 'PIZZA', ru: 'ПИЦЦА', fi: 'SAUNA' };
+    const questionsForLocale = () => getQuestionsDB();
+
+    document.querySelectorAll('#locale-row [data-lang]').forEach(btn => {
+      if (btn.dataset.lang === getLocale()) btn.classList.add('active');
+      btn.onclick = () => {
+        setLocale(btn.dataset.lang);
+        document.querySelectorAll('#locale-row [data-lang]').forEach(b => b.classList.toggle('active', b === btn));
+        renderFilterList();
+        document.getElementById('generate-btn').click();
+      };
+    });
 
     window.qaReportLog = JSON.parse(localStorage.getItem('qaReportLog')) || [];
 
@@ -218,11 +239,11 @@
       const activeCount = document.getElementById('active-q-count');
       const totalCount = document.getElementById('total-q-count');
 
-      totalCount.innerText = questionsDatabase.length;
-      activeCount.innerText = questionsDatabase.length - excludedIds.size;
+      totalCount.innerText = questionsForLocale().length;
+      activeCount.innerText = questionsForLocale().length - excludedIds.size;
 
       list.innerHTML = '';
-      questionsDatabase.forEach(q => {
+      questionsForLocale().forEach(q => {
         let preview = q.text + " ";
         if (q.fragments && q.fragments.length > 0) {
            preview += q.fragments[0].options[0].text + " ...";
@@ -248,7 +269,7 @@
           else excludedIds.add(q.id);
           
           localStorage.setItem('qaExcludedIdsArr', JSON.stringify([...excludedIds]));
-          activeCount.innerText = questionsDatabase.length - excludedIds.size;
+          activeCount.innerText = questionsForLocale().length - excludedIds.size;
         };
 
         list.appendChild(item);
@@ -276,7 +297,7 @@
     };
 
     document.getElementById('btn-deselect-all').onclick = () => {
-      questionsDatabase.forEach(q => excludedIds.add(q.id));
+      questionsForLocale().forEach(q => excludedIds.add(q.id));
       localStorage.setItem('qaExcludedIdsArr', JSON.stringify([...excludedIds]));
       renderFilterList();
     };
@@ -309,11 +330,11 @@
 
 function buildRandomQuestion() {
       // Фильтруем базу, опираясь на Set исключенных ID
-      let availableQuestions = questionsDatabase.filter(q => !excludedIds.has(q.id));
+      let availableQuestions = questionsForLocale().filter(q => !excludedIds.has(q.id));
       
       // Защита: если отключили вообще все вопросы, генерируем из всех (чтобы скрипт не упал)
       if (availableQuestions.length === 0) {
-        availableQuestions = questionsDatabase;
+        availableQuestions = questionsForLocale();
       }
 
       const q = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
@@ -330,7 +351,7 @@ function buildRandomQuestion() {
       if (q.isCombo) {
          let randomPrevWord = "ПРОШЛЫЙ ВЫБОР";
          
-         const triggerQs = questionsDatabase.filter(x => {
+         const triggerQs = questionsForLocale().filter(x => {
              if (Array.isArray(q.triggerCategory)) {
                  return q.triggerCategory.includes(x.category) && !x.isCombo;
              }
@@ -355,14 +376,14 @@ function buildRandomQuestion() {
                  // Если комбо триггерится от создания страны/города, симулируем суффиксы
                  const categories = Array.isArray(q.triggerCategory) ? q.triggerCategory : [q.triggerCategory];
                  if (categories.includes("naming_realm")) {
-                     const formats = [
-                         w => w + "LAND",
-                         w => w + "VILLE",
-                         w => w + "FIELD",
-                         w => "THE REPUBLIC OF " + w
-                     ];
-                     // Выбираем случайный формат для предпросмотра
-                     randomPrevWord = formats[Math.floor(Math.random() * formats.length)](randomPrevWord);
+                     const loc = getLocale();
+                     const modTypes = { en: ['land', 'ville', 'field', 'republic'], ru: ['land', 'grad', 'siti', 'republic'], fi: ['maa', 'kyla', 'tasavalta'] };
+                     const mt = (modTypes[loc] || modTypes.en)[Math.floor(Math.random() * modTypes[loc].length)];
+                     const applied = applyWordModifier(randomPrevWord, mt, loc);
+                     const wrapperFallback = loc === 'ru' ? 'РЕСПУБЛИКА «' + randomPrevWord + '»' : 'THE REPUBLIC OF ' + randomPrevWord;
+                     randomPrevWord = applied && applied.text !== randomPrevWord
+                       ? applied.text
+                       : wrapperFallback;
                  }
                  // ======================================
              }
@@ -397,10 +418,26 @@ function buildRandomQuestion() {
 
       const categoryLabel = q.isCombo ? `COMBO (${q.triggerCategory})` : q.category;
 
+      // Sprint 4: превью морфологии — показываем, во что превратится слово игрока
+      const loc = getLocale();
+      const plainStr = str.replace(/<[^>]+>/g, '');
+      const detected = detectWordModifier(plainStr, loc);
+      let morphLine = null;
+      if (detected) {
+        const sample = SAMPLE_WORD[loc] || 'PIZZA';
+        if (detected.kind === 'suffix') {
+          const applied = applyWordModifier(sample, detected.type, loc);
+          morphLine = `🔤 ${detected.type} (${detected.kind}): ${sample} → ${applied.text}`;
+        } else {
+          morphLine = `🔤 ${detected.type} (${detected.kind}): ${sample} → ${(detected.before || '').toUpperCase()}${sample}${(detected.after || '').toUpperCase()}`;
+        }
+      }
+
       return {
         category: categoryLabel,
         text: str.trim(),
-        hintsRaw: finalHints
+        hintsRaw: finalHints,
+        morph: morphLine
       };
     }
 
@@ -496,6 +533,7 @@ function buildRandomQuestion() {
         out.innerHTML += `
           <div class="q-card" data-q="${data.text}" data-hints="${reportHintsString}">
             <div class="q-text">${data.text}</div>
+            ${data.morph ? `<div class="q-brainstorm" style="color: var(--info);">${data.morph}</div>` : ''}
             <div class="q-hints">💡 Hints: ${displayHintsHtml}</div>
             ${displayBrainstormHtml ? `<div class="q-brainstorm">🧠 Brainstorm Ideas:<br>${displayBrainstormHtml}</div>` : ''}
             

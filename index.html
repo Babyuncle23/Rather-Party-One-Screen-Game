@@ -14,8 +14,25 @@
   <!-- ЭКРАН ЗАГРУЗКИ ГОЛОСА -->
   <div id="loading-screen" class="modal-overlay hidden">
     <div class="modal-content loading-modal-content">
-      <h2 class="loading-message">Loading...</h2>
+      <h2 class="loading-message" data-i18n="misc.loading">Loading...</h2>
     </div>
+  </div>
+
+  <!-- ОВЕРЛЕЙ РЕКОННЕКТА (потерян свой WebSocket) -->
+  <div id="connection-overlay" class="modal-overlay hidden">
+    <div class="modal-content loading-modal-content">
+      <h2 class="loading-message" data-i18n="misc.reconnecting">Reconnecting…</h2>
+      <p class="tap-anywhere-text" data-i18n="misc.reconnectSub">Trying to reach the room server</p>
+    </div>
+  </div>
+
+  <!-- БАННЕР ОЖИДАНИЯ ХОСТА -->
+  <div id="host-wait-banner" class="host-wait-banner hidden" data-i18n="misc.hostWait">⏳ Waiting for the host to reconnect…</div>
+
+  <!-- БАННЕР УСТНОЙ ПОДСКАЗКИ (только на телефоне респондера) -->
+  <div id="oral-hint-banner" class="oral-hint-banner hidden">
+    <span class="oral-hint-banner-text" data-i18n="misc.oralBanner">🗣️ Give an oral hint out loud!</span>
+    <button id="oral-hint-done-btn" class="btn btn-small" data-i18n="misc.oralDone">Done</button>
   </div>
 
   <!-- КАСТОМНОЕ ОКНО ВМЕСТО СИСТЕМНОГО ALERT -->
@@ -23,7 +40,7 @@
     <div class="modal-content">
       <h2 id="custom-alert-title" class="modal-title">Notice</h2>
       <p id="custom-alert-message" class="modal-message"></p>
-      <p class="tap-anywhere-text">👇 Tap to continue</p>
+      <p class="tap-anywhere-text" data-i18n="misc.tapToContinue">👇 Tap to continue</p>
     </div>
   </div>
 
@@ -31,15 +48,15 @@
   <div id="pass-screen" class="modal-overlay hidden" style="cursor: pointer;">
     <div class="modal-content fullscreen-pass-content">
       <h1 id="pass-message">PASS PHONE</h1>
-      <p class="tap-anywhere-text">👇 Tap to continue</p>
+      <p class="tap-anywhere-text" data-i18n="misc.tapToContinue">👇 Tap to continue</p>
     </div>
   </div>
 
   <!-- ОКНО ВЫБОРА ЭМОДЗИ -->
   <div id="emoji-picker-modal" class="modal-overlay hidden">
     <div class="modal-content emoji-picker-content">
-      <h2>Choose an emoji</h2>
-      <p class="emoji-picker-subtitle">Pick an icon that fits your style.</p>
+      <h2 data-i18n="misc.emojiPickerTitle">Choose an emoji</h2>
+      <p class="emoji-picker-subtitle" data-i18n="misc.emojiPickerSub">Pick an icon that fits your style.</p>
       <div id="emoji-picker-grid" class="emoji-picker-grid"></div>
     </div>
   </div>
@@ -51,27 +68,27 @@
     <div class="modal-content safety-modal-content">
       
       <div id="safety-screen-privacy">
-        <h2 class="safety-title">🌱 Safety Timeout</h2>
-        <p class="safety-description">
+        <h2 class="safety-title" data-i18n="safety.privTitle">🌱 Safety Timeout</h2>
+        <p class="safety-description" data-i18n-html="safety.privDesc">
           Nothing happened yet. The game is on pause.<br>Only you can see this screen.
         </p>
         <div class="rules-dropdown-box safety-info-panel">
-          <div class="safety-info-heading">SAFER SPACE PRINCIPLES:</div>
-          • <strong>Right to Stop:</strong> Personal boundaries matter more than game points.<br>
-          • <strong>Respect & Comfort:</strong> Players don't judge or force anyone to view uncomfortable topics.<br>
-          • <strong>Privacy:</strong> You can preview safety options privately.
+          <div class="safety-info-heading" data-i18n="safety.privPanelTitle">SAFER SPACE PRINCIPLES:</div>
+          • <span data-i18n-html="safety.priv1"><strong>Right to Stop:</strong> Personal boundaries matter more than game points.</span><br>
+          • <span data-i18n-html="safety.priv2"><strong>Respect & Comfort:</strong> Players don't judge or force anyone to view uncomfortable topics.</span><br>
+          • <span data-i18n-html="safety.priv3"><strong>Privacy:</strong> You can preview safety options privately.</span>
         </div>
         <div class="safety-actions-row">
-          <button id="safety-close-btn-1" class="btn btn-small">← Return</button>
-          <button id="safety-proceed-btn" class="btn btn-primary">Next ➜</button>
+          <button id="safety-close-btn-1" class="btn btn-small" data-i18n="safety.back">← Return</button>
+          <button id="safety-proceed-btn" class="btn btn-primary" data-i18n="safety.next">Next ➜</button>
         </div>
       </div>
 
 <div id="safety-screen-options" class="hidden">
-        <h2 class="safety-title">Safety Options</h2>
+        <h2 class="safety-title" data-i18n="safety.optsTitle">Safety Options</h2>
         
         <!-- ДОБАВЛЕНА ПОДСКАЗКА -->
-        <p style="text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: -4px; margin-bottom: 16px; line-height: 1.4;">
+        <p style="text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: -4px; margin-bottom: 16px; line-height: 1.4;" data-i18n-html="safety.optsHint">
           Tap an option to expand details.<br>Actions require a 2-second hold.
         </p>
 
@@ -80,67 +97,91 @@
           <div class="safety-option-card">
             <!-- Убрали highlight-gold и добавили стрелочку ▼ -->
             <div class="safety-option-header">
-              <span>🔄 Skip This Round</span>
+              <span data-i18n="safety.opt1">🔄 Skip This Round</span>
               <span style="color: rgba(255,255,255,0.3); font-size: 12px;">▼</span>
             </div>
-            <div class="safety-desc-text">Round is canceled. Game draws a new question.</div>
-            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="skip">Hold 2s to Confirm</button>
+            <div class="safety-desc-text" data-i18n="safety.opt1Desc">Round is canceled. Game draws a new question.</div>
+            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="skip" data-i18n="safety.hold2s">Hold 2s to Confirm</button>
           </div>
 
           <!-- ОПЦИЯ 2 -->
           <div class="safety-option-card">
             <div class="safety-option-header">
-              <span>💬 Open Circle (Let's Talk)</span>
+              <span data-i18n="safety.opt2">💬 Open Circle (Let's Talk)</span>
               <span style="color: rgba(255,255,255,0.3); font-size: 12px;">▼</span>
             </div>
-            <div class="safety-desc-text">Pauses the game and opens a friendly text screen for the whole company.</div>
-            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="talk">Hold 2s to Confirm</button>
+            <div class="safety-desc-text" data-i18n="safety.opt2Desc">Pauses the game and opens a friendly text screen for the whole company.</div>
+            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="talk" data-i18n="safety.hold2s">Hold 2s to Confirm</button>
           </div>
 
           <!-- ОПЦИЯ 3 -->
           <div class="safety-option-card safety-option-card--danger">
             <div class="safety-option-header">
-              <span>🛑 Stop Match & Talk Openly</span>
+              <span data-i18n="safety.opt3">🛑 Stop Match & Talk Openly</span>
               <span style="color: rgba(255,255,255,0.3); font-size: 12px;">▼</span>
             </div>
-            <div class="safety-desc-text">Stops match instantly and saves points.</div>
-            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="stop-direct">Hold 2s to Confirm</button>
+            <div class="safety-desc-text" data-i18n="safety.opt3Desc">Stops match instantly and saves points.</div>
+            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="stop-direct" data-i18n="safety.hold2s">Hold 2s to Confirm</button>
           </div>
 
           <!-- ОПЦИЯ 4 -->
           <div class="safety-option-card safety-option-card--muted">
             <div class="safety-option-header">
-              <span>⏳ Set Anonymous Exit Timer</span>
+              <span data-i18n="safety.opt4">⏳ Set Anonymous Exit Timer</span>
               <span style="color: rgba(255,255,255,0.3); font-size: 12px;">▼</span>
             </div>
             <div class="safety-desc-text">
-              Choose a delay below, and the match will end automatically later.
+              <span data-i18n="safety.opt4Desc">Choose a delay below, and the match will end automatically later.</span>
               <div class="tip-visual safety-timer-box">
-                <div class="safety-timer-label">FLOW CONFIG:</div>
+                <div class="safety-timer-label" data-i18n="safety.flowCfg">FLOW CONFIG:</div>
                 <div class="safety-timer-row">
-                  <button type="button" id="safety-timer-minus" class="btn btn-small safety-timer-button">0 min</button>
-                  <button type="button" id="safety-timer-plus" class="btn btn-small safety-timer-button safety-timer-button--accent">+1 min</button>
+                  <button type="button" id="safety-timer-minus" class="btn btn-small safety-timer-button" data-i18n="safety.min0">0 min</button>
+                  <button type="button" id="safety-timer-plus" class="btn btn-small safety-timer-button safety-timer-button--accent" data-i18n="safety.minPlus">+1 min</button>
                   <span id="safety-timer-display" class="safety-timer-display">Current: 0 min</span>
                 </div>
               </div>
             </div>
-            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="stop-delayed">Hold 2s to Confirm</button>
+            <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="stop-delayed" data-i18n="safety.hold2s">Hold 2s to Confirm</button>
           </div>
         </div>
         
         <div class="safety-close-row">
-          <button id="safety-close-btn-2" class="btn btn-small">← Return to Game</button>
+          <button id="safety-close-btn-2" class="btn btn-small" data-i18n="safety.backToGame">← Return to Game</button>
         </div>
       </div>
 
       <!-- ЭКРАН 3 -->
       <div id="safety-screen-talk" class="hidden">
-        <h2 class="safety-title">Open Circle</h2>
-        <p class="safety-talk-message">This game is made for fun, connection, and good times.</p>
-        <button id="safety-resume-match-btn" class="btn btn-primary btn-success">We Are Ready to Continue</button>
+        <h2 class="safety-title" data-i18n="safety.talkTitle">Open Circle</h2>
+        <p class="safety-talk-message" data-i18n="safety.talkMsg">This game is made for fun, connection, and good times.</p>
+        <button id="safety-resume-match-btn" class="btn btn-primary btn-success" data-i18n="safety.talkResume">We Are Ready to Continue</button>
       </div>
 
     </div> 
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО НАСТРОЕК -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal-content settings-modal-content">
+      <h2 class="safety-title" data-i18n="settings.title">⚙️ Settings</h2>
+      <div class="settings-rows">
+        <div class="sr-access-row">
+          <input type="checkbox" id="sr-mode-toggle">
+          <label for="sr-mode-toggle"><span data-i18n="settings.sr">Screen Reader Compatibility</span><br><span data-i18n="settings.srSub">(Mutes in-game auto-voice)</span></label>
+        </div>
+
+        <div class="sr-access-row">
+          <input type="checkbox" id="rally-english-toggle">
+          <label for="rally-english-toggle"><span data-i18n="settings.rally">Rally English Mode</span><br><span data-i18n="settings.rallySub">(Finnish accent for auto-voice)</span></label>
+        </div>
+
+        <div class="sr-access-row">
+          <input type="checkbox" id="advanced-mode-toggle">
+          <label for="advanced-mode-toggle"><span data-i18n="settings.adv">Advanced Mode</span><br><span data-i18n="settings.advSub">(Unlocks custom prompts and question editing)</span></label>
+        </div>
+      </div>
+      <button id="settings-close-btn" class="btn btn-primary spaced-button" data-i18n="settings.done">Done</button>
+    </div>
   </div>
 
 <!-- ОКНО ТУТОРИАЛА С ВИДЕО -->
@@ -152,7 +193,7 @@
       
       <!-- Шапка окна с крестиком и кнопками скорости -->
       <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: #08080d; position: relative; z-index: 9999; flex-shrink: 0;">
-        <h3 style="margin: 0; color: var(--text); font-size: 1.1rem; white-space: nowrap;">How to play</h3>
+        <h3 style="margin: 0; color: var(--text); font-size: 1.1rem; white-space: nowrap;" data-i18n="misc.videoTitle">How to play</h3>
         
         <!-- ПЕРЕНЕСЕННАЯ ПАНЕЛЬ СКОРОСТИ -->
         <div id="video-speed-controls" style="display: flex; gap: 4px; align-items: center; background: rgba(255,255,255,0.03); padding: 4px; border-radius: 10px;">
@@ -187,67 +228,84 @@
     <!-- ВЕРХНЯЯ СТРОКА УПРАВЛЕНИЯ -->
     <div class="help-section">
       <div class="help-header-row">
-        <button id="safety-global-btn" class="btn btn-small">Safety</button>
+        <button id="safety-global-btn" class="btn btn-small" data-i18n="setup.safetyBtn">Safety</button>
+        <button id="settings-global-btn" class="btn btn-small icon-btn-small" title="Settings" aria-label="Settings">⚙️</button>
       </div>
-      <div id="safety-tip-text" class="safety-tip-text">Recommended to read before starting.</div>
+      <div id="safety-tip-text" class="safety-tip-text" data-i18n="setup.safetyTip">Recommended to read before starting.</div>
     </div>
 
     <!-- НАСТРОЙКА ИГРЫ -->
     <div id="setup-screen">
-      <div class="setup-intro">
-        <div class="creator-badge">Desgned by Human</div>
-        <div class="creator-subtitle">coded by ai 😬</div>
-      </div>
-    <div>
-      <div class="sr-access-row">
-        <input type="checkbox" id="sr-mode-toggle">
-        <label for="sr-mode-toggle">Screen Reader Compatibility<br><span>(Mutes in-game auto-voice)</span></label>
-      </div>
-
-      <div class="sr-access-row">
-        <input type="checkbox" id="rally-english-toggle">
-        <label for="rally-english-toggle">Rally English Mode<br><span>(Finnish accent for auto-voice)</span></label>
-      </div>
-
-      <div class="sr-access-row">
-        <input type="checkbox" id="advanced-mode-toggle">
-        <label for="advanced-mode-toggle">Advanced Mode<br><span>(Unlocks custom prompts and question editing)</span></label>
-      </div>
-    </div>
 <div class="header-container">
-  <h2 class="animated-text-outline" data-text="Rather Party">Rather Party</h2>
-  
-  <!-- Новая строка для ясности формата -->
-  <div style="color: var(--accent); font-weight: 800; font-size: 0.9rem; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px;">
-    📱 1 Device &bull; 2-4 Players
+  <!-- ВЫБОР ЯЗЫКА (EN / RU / FI) -->
+  <div class="lang-pill" id="lang-pill" role="group" aria-label="Language">
+    <button type="button" class="lang-pill-btn" data-lang="en">🇬🇧 EN</button>
+    <button type="button" class="lang-pill-btn" data-lang="ru">🇷🇺 RU</button>
+    <button type="button" class="lang-pill-btn" data-lang="fi">🇫🇮 FI</button>
   </div>
 
-  <p class="setup-lead-text" style="margin-bottom: 16px;">
+  <h2 class="animated-text-outline" data-text="Rather Party">Rather Party</h2>
+  
+  <!-- ПЕРЕКЛЮЧАТЕЛЬ РЕЖИМА ИГРЫ -->
+  <div id="mode-toggle" class="mode-toggle">
+    <button id="mode-solo-btn" type="button" class="mode-card mode-card-active">
+      <span class="mode-card-icon">📱</span>
+      <span class="mode-card-title" data-i18n="setup.modeSoloTitle">1 Phone</span>
+      <span class="mode-card-sub" data-i18n="setup.modeSoloSub">Pass &amp; Play</span>
+    </button>
+    <button id="mode-online-btn" type="button" class="mode-card">
+      <span class="mode-card-icon">🌐</span>
+      <span class="mode-card-title" data-i18n="setup.modeOnlineTitle">2–4 Phones</span>
+      <span class="mode-card-sub" data-i18n="setup.modeOnlineSub">Online Room</span>
+    </button>
+  </div>
+
+  <p class="setup-lead-text" style="margin-bottom: 16px;" data-i18n="setup.lead">
     Choose questions and find out how others have answered them ✨
   </p>
   
   <button id="tutorial-btn" class="btn btn-secondary" style="width: auto; padding: 10px 24px; border-radius: 20px; display: inline-flex; align-items: center; gap: 8px;">
-    <span>🎥</span> How to play (23s)
+    <span>🎥</span> <span data-i18n="setup.tutorial">How to play (23s)</span>
   </button>
 </div>
 
+      <!-- ПАНЕЛЬ ОНЛАЙН-РЕЖИМА (видна при выбранном "2–4 Phones") -->
+      <div id="online-setup-panel" class="hidden">
+        <div class="online-tabs">
+          <button id="online-tab-create" type="button" class="online-tab online-tab-active" data-i18n="setup.tabCreate">Create Room</button>
+          <button id="online-tab-join" type="button" class="online-tab" data-i18n="setup.tabJoin">Join Room</button>
+        </div>
+        <div class="add-player-block online-identity-row">
+          <button id="online-avatar-btn" type="button" class="online-avatar-btn" title="Tap to change avatar" data-i18n-title="setup.avatarTitle">🦊</button>
+          <input id="online-name-input" type="text" placeholder="Your name" class="input-field" maxlength="14" autocomplete="off" data-i18n-placeholder="setup.nameOnlinePh">
+        </div>
+        <div id="join-code-block" class="hidden">
+          <input id="join-code-input" type="text" placeholder="ROOM CODE" class="input-field room-code-input" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" data-i18n-placeholder="setup.roomCodePh">
+        </div>
+        <button id="online-connect-btn" class="btn btn-primary spaced-button" data-i18n="setup.connectCreate">Create Room</button>
+        <p id="online-status-text" class="online-status-text"></p>
+      </div>
+
+      <!-- ПАНЕЛЬ ОДНОГО ТЕЛЕФОНА (режим по умолчанию) -->
+      <div id="solo-setup-panel">
       <div class="add-player-block">
-        <input id="single-player-input" type="text" placeholder="Enter player name" class="input-field">
-        <button id="add-player-btn" class="btn btn-accent spaced-button">+ Add Player</button>
+        <input id="single-player-input" type="text" placeholder="Enter player name" class="input-field" data-i18n-placeholder="setup.nameSoloPh">
+        <button id="add-player-btn" class="btn btn-accent spaced-button" data-i18n="setup.addPlayer">+ Add Player</button>
       </div>
 
       <div id="players-boxes-container" class="boxes-container"></div>
-      <p class="emoji-help-text" style="text-align: center; font-size: 13px; color: var(--muted); margin-top: 8px;">Tap an avatar to change it.</p>
+      <p class="emoji-help-text" style="text-align: center; font-size: 13px; color: var(--muted); margin-top: 8px;" data-i18n="setup.avatarHelp">Tap an avatar to change it.</p>
 
       <div class="spaced-section">
-        <label for="rounds-input" class="field-label">Number of rounds:</label>
+        <label for="rounds-input" class="field-label" data-i18n="setup.roundsLabel">Number of rounds:</label>
         <input id="rounds-input" type="number" value="1" class="input-field">
       </div>
-      
-      <button id="start-game-btn" class="btn btn-primary spaced-button">Start Game</button>
+
+      <button id="start-game-btn" class="btn btn-primary spaced-button" data-i18n="setup.start">Start Game</button>
+      </div>
       
 <!-- Кнопка установки с плавным появлением -->
-      <button id="install-app-btn" class="btn btn-secondary spaced-button" style="margin-bottom: 24px; border-color: var(--accent); color: var(--accent); display: none; opacity: 0; transition: opacity 0.4s ease;">
+      <button id="install-app-btn" class="btn btn-secondary spaced-button" style="margin-bottom: 24px; border-color: var(--accent); color: var(--accent); display: none; opacity: 0; transition: opacity 0.4s ease;" data-i18n="setup.install">
         📱 Install App to Home Screen
       </button>
 
@@ -267,23 +325,51 @@
       </script>
 
       <div class="share-qr-block">
-        <p>Liked this one-screen game? Share the link with others via QR 😊</p>
+        <p data-i18n="misc.shareQr">Liked this one-screen game? Share the link with others via QR 😊</p>
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://babyuncle23.github.io/Rather-Party-One-Screen-Game/" alt="Share Game QR" class="qr-code-image">
       </div>
+
+      <div class="setup-footer">
+        <div class="creator-badge" data-i18n="misc.footerBadge">Designed by Human</div>
+        <div class="creator-subtitle" data-i18n="misc.footerSub">coded by ai 😬</div>
+      </div>
+    </div>
+
+    <!-- ЛОББИ ОНЛАЙН-КОМНАТЫ -->
+    <div id="lobby-screen" class="hidden">
+      <h2 class="animated-text-outline" data-text="Room Lobby" data-i18n="lobby.title">Room Lobby</h2>
+      <p class="setup-lead-text" style="margin-bottom: 4px;" data-i18n="lobby.shareHint">Share this code with friends:</p>
+      <div id="lobby-room-code" class="room-code-display">····</div>
+      <img id="lobby-qr" class="qr-code-image lobby-qr" alt="Scan to join the room">
+      <div class="lang-pill lang-pill-lobby" id="lobby-lang-pill" role="group" aria-label="Language">
+        <button type="button" class="lang-pill-btn" data-lang="en">🇬🇧 EN</button>
+        <button type="button" class="lang-pill-btn" data-lang="ru">🇷🇺 RU</button>
+        <button type="button" class="lang-pill-btn" data-lang="fi">🇫🇮 FI</button>
+      </div>
+      <div id="lobby-players" class="lobby-players"></div>
+      <p id="lobby-status-text" class="online-status-text"></p>
+      <div id="lobby-host-controls" class="hidden">
+        <div class="spaced-section">
+          <label for="lobby-rounds-input" class="field-label" data-i18n="lobby.roundsLabel">Number of rounds:</label>
+          <input id="lobby-rounds-input" type="number" value="1" class="input-field">
+        </div>
+        <button id="lobby-start-btn" class="btn btn-primary spaced-button" data-i18n="lobby.start">Start Game</button>
+      </div>
+      <button id="lobby-leave-btn" class="btn btn-secondary spaced-button" data-i18n="lobby.leave">Leave Room</button>
     </div>
 
     <!-- ХОД ИГРОКА 1 (ВЫБОР ПОДСКАЗКИ) -->
     <div id="picker-screen" class="hidden">
-      <h2><span id="picker-name" class="player-name-game-slow"></span>'s Turn</h2>
+      <h2><span id="picker-name" class="player-name-game-slow"></span><span data-i18n="turn.suffix">'s Turn</span></h2>
       
       <div class="gameplay-zone">
 <div class="card-question">
           <!-- ВЕРХНЯЯ АНИМИРОВАННАЯ ПЛАШКА -->
-          <div class="info-pulse-box" style="background: rgba(55, 255, 226, 0.05); border: 1px dashed rgba(55, 255, 226, 0.3); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; text-align: center;">
-            <p style="color: var(--positive); font-size: 1.05rem; font-weight: 800; margin: 0 0 6px 0; text-transform: uppercase;">
+          <div class="info-pulse-box" id="picker-step1-box" style="background: rgba(55, 255, 226, 0.05); border: 1px dashed rgba(55, 255, 226, 0.3); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; text-align: center;">
+            <p id="picker-step1-title" style="color: var(--positive); font-size: 1.05rem; font-weight: 800; margin: 0 0 6px 0; text-transform: uppercase;">
               👇 Select a question for <span id="top-info-responder"></span>
             </p>
-            <p style="color: var(--muted); font-size: 0.9rem; font-weight: 600; margin: 0; line-height: 1.4;">
+            <p id="picker-step1-sub" style="color: var(--muted); font-size: 0.9rem; font-weight: 600; margin: 0; line-height: 1.4;">
               The blank spaces will be filled in with <span id="top-info-responder-2"></span>'s answers later.
             </p>
           </div>
@@ -304,18 +390,19 @@
           <!-- ПОЛЯ РЕДАКТИРОВАНИЯ (Скрыты по умолчанию) -->
           <div id="edit-question-block" style="display: none; margin-bottom: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px;">
             <textarea id="edit-q-part1" class="input-field" rows="2" style="margin-bottom: 8px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4; text-align: center;"></textarea>
-            <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;">[ ___ ANSWER 1 ___ ]</div>
+            <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;" data-i18n="picker.answerN" data-i18n-params='{"n":1}'>[ ___ ANSWER 1 ___ ]</div>
             <textarea id="edit-q-part2" class="input-field" rows="2" style="margin-bottom: 8px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4; text-align: center;"></textarea>
-            <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;">[ ___ ANSWER 2 ___ ]</div>
+            <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;" data-i18n="picker.answerN" data-i18n-params='{"n":2}'>[ ___ ANSWER 2 ___ ]</div>
             <textarea id="edit-q-part3" class="input-field" rows="2" style="margin-bottom: 12px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4; text-align: center;"></textarea>
-<button id="edit-q-save-btn" class="btn btn-small" style="width: 100%; background: rgba(55,255,226,0.1); color: var(--positive); border: 1px solid rgba(55,255,226,0.2); padding: 12px; font-size: 1rem; border-radius: 12px; font-weight: 700;">Save Changes</button>
+<button id="edit-q-save-btn" class="btn btn-small" style="width: 100%; background: rgba(55,255,226,0.1); color: var(--positive); border: 1px solid rgba(55,255,226,0.2); padding: 12px; font-size: 1rem; border-radius: 12px; font-weight: 700;" data-i18n="picker.editSave">Save Changes</button>
           </div>
 
           <!-- НИЖНЯЯ АНИМИРОВАННАЯ ПЛАШКА (Задача Пикера) -->
-          <div class="info-pulse-box" style="background: rgba(55, 255, 226, 0.05); border: 1px dashed rgba(55, 255, 226, 0.3); border-radius: 12px; padding: 14px; margin: 24px 0 16px 0;">
-            <p style="color: var(--positive); font-size: 1rem; font-weight: 800; margin: 0; text-align: center; text-transform: uppercase;">
+          <div class="info-pulse-box" id="picker-step2-box" style="background: rgba(55, 255, 226, 0.05); border: 1px dashed rgba(55, 255, 226, 0.3); border-radius: 12px; padding: 14px; margin: 24px 0 16px 0;">
+            <p id="picker-step2-title" style="color: var(--positive); font-size: 1rem; font-weight: 800; margin: 0; text-align: center; text-transform: uppercase;">
               👇 Select a topic for <span id="bottom-info-responder"></span>'s answers
             </p>
+            <p id="picker-step2-sub" style="color: var(--muted); font-size: 0.9rem; font-weight: 600; margin: 6px 0 0 0; line-height: 1.4; display: none; text-transform: none;"></p>
           </div>
         </div>
 
@@ -331,13 +418,13 @@
             </div>
           </div>
           <!-- КНОПКА СВОЕГО ПРОМПТА (Серая) -->
-          <button id="toggle-custom-prompt-btn" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: var(--muted); font-size: 0.9rem; font-weight: 700; padding: 12px; margin-bottom: 16px; cursor: pointer; width: 100%; transition: transform 0.2s ease;">✍️ OR WRITE YOUR OWN PROMPT</button>
+          <button id="toggle-custom-prompt-btn" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: var(--muted); font-size: 0.9rem; font-weight: 700; padding: 12px; margin-bottom: 16px; cursor: pointer; width: 100%; transition: transform 0.2s ease;" data-i18n="picker.customToggle">✍️ OR WRITE YOUR OWN PROMPT</button>
         </div>
 
         <!-- БЛОК 2: СВОЙ ПРОМПТ (Скрыт по умолчанию) -->
         <div id="custom-prompt-block" style="display: none; margin-bottom: 8px;">
           <input id="custom-hint-input" type="text" class="input-field" style="margin-bottom: 12px; font-weight: 700; color: var(--positive); text-align: center;">
-          <button id="toggle-preset-prompt-btn" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: var(--muted); font-size: 0.9rem; font-weight: 700; padding: 12px; margin-bottom: 16px; cursor: pointer; width: 100%; transition: transform 0.2s ease;">← BACK TO READY-MADE TOPICS</button>
+          <button id="toggle-preset-prompt-btn" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: var(--muted); font-size: 0.9rem; font-weight: 700; padding: 12px; margin-bottom: 16px; cursor: pointer; width: 100%; transition: transform 0.2s ease;" data-i18n="picker.backToPresets">← BACK TO READY-MADE TOPICS</button>
         </div>
 
         <button id="confirm-prompt-btn" class="btn btn-primary spaced-button" style="box-shadow: 0 12px 30px rgba(93, 75, 255, 0.3); font-size: 1.1rem; padding: 18px;"></button>
@@ -346,40 +433,45 @@
 
 <!-- ХОД ИГРОКА 2 (ВВОД СЛОВ И ВЫБОР) -->
     <div id="responder-screen" class="hidden">
-      <h2><span id="responder-name" class="player-name-game-slow"></span>'s Turn</h2>
+      <h2><span id="responder-name" class="player-name-game-slow"></span><span data-i18n="turn.suffix">'s Turn</span></h2>
       
 <div class="gameplay-zone">
         <p class="prompt-summary text-center" style="margin-bottom: 6px;"><span id="displayed-hint" class="highlight-text" style="color: #ffffff;"></span></p>
-        <p id="responder-plural-warning" style="display: none; text-align: center; color: var(--accent); font-size: 0.85rem; font-weight: 700; margin-top: 0; margin-bottom: 14px; opacity: 0.9;">* Please write both answers in plural (e.g. cats, apples)</p>
+        <p id="responder-plural-warning" style="display: none; text-align: center; color: var(--accent); font-size: 0.85rem; font-weight: 700; margin-top: 0; margin-bottom: 14px; opacity: 0.9;" data-i18n="responder.pluralWarn">* Please write both answers in plural (e.g. cats, apples)</p>
         <!-- ИНТЕРАКТИВНЫЙ СПОЙЛЕР ДЛЯ ШПАРГАЛКИ -->
         <div id="responder-helper-box" style="text-align: center; margin-bottom: 14px;">
-          <button id="responder-helper-toggle" class="btn-small icon-btn-small" style="width: auto; padding: 6px 16px;">💡 Ideas</button>
+          <button id="responder-helper-toggle" class="btn-small icon-btn-small" style="width: auto; padding: 6px 16px;" data-i18n="responder.ideas">💡 Ideas</button>
           <div id="responder-helper-content" class="responder-helper-content hidden" style="margin-top: 8px;">
             <span id="responder-helper-text" class="responder-helper-text"></span>
           </div>
         </div>
 
+        <div id="responder-blind-banner" class="blind-step-banner hidden"></div>
+
         <div class="inputs-combined-wrapper">
 <div class="input-container-with-counter">
-  <input id="word-input-1" type="text" placeholder="First answer" maxlength="25" class="input-field">
+  <input id="word-input-1" type="text" placeholder="First answer" maxlength="35" class="input-field" data-i18n-placeholder="responder.firstPh">
   <span id="word-counter-1" class="floating-counter">
-    <span class="counter-text">0/25</span>
+    <span class="counter-text">0/35</span>
     <span class="lock-icon" style="display: none;">🔒</span>
   </span>
 </div>
 <div class="input-container-with-counter">
-  <input id="word-input-2" type="text" placeholder="First answer" maxlength="25" class="input-field">
+  <input id="word-input-2" type="text" placeholder="Second answer" maxlength="35" class="input-field" data-i18n-placeholder="responder.secondPh">
   <span id="word-counter-2" class="floating-counter">
-    <span class="counter-text">0/25</span>
+    <span class="counter-text">0/35</span>
     <span class="lock-icon" style="display: none;">🔒</span>
   </span>
 </div>
         </div>
 
-        <button id="submit-words-btn" class="btn btn-primary spaced-button">Submit Answers</button>
+        <button id="submit-words-btn" class="btn btn-primary spaced-button" data-i18n="responder.submit">Submit Answers</button>
+
+        <div id="responder-words-badge" class="responder-words-badge hidden"></div>
 
         <div id="responder-choice-block" class="hidden spaced-section">
-          <h3>Now choose:</h3>
+          <div id="responder-blind-banner-2" class="blind-step-banner hidden"></div>
+          <h3 data-i18n="responder.nowChoose">Now choose:</h3>
           <p id="responder-final-question" class="card-question highlight-text"></p>
           <div class="choice-buttons-grid">
             <button id="opt-btn-1" class="btn btn-choice"></button>
@@ -389,17 +481,36 @@
       </div>
     </div>
 
+    <!-- ЭКРАН НАБЛЮДАТЕЛЯ (онлайн-режим: ждём своей роли) -->
+    <div id="companion-screen" class="hidden">
+      <div id="companion-icon" class="companion-icon">🍎</div>
+      <h2 id="companion-status" class="companion-status"></h2>
+      <p id="companion-sub" class="companion-sub"></p>
+      <div id="companion-flip" class="companion-flip hidden">🔄</div>
+      <div id="companion-question-block" class="companion-question-block hidden">
+        <div id="companion-topic" class="guesser-info-title hint-highlight"></div>
+        <div class="integrated-question-flow">
+          <div id="companion-q-part1" class="question-part"></div>
+          <div id="companion-slot1" class="companion-slot guess-answer-block"></div>
+          <div id="companion-q-part2" class="question-part"></div>
+          <div id="companion-slot2" class="companion-slot guess-answer-block"></div>
+          <div id="companion-q-part3" class="question-part"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ЭКРАН УГАДЫВАНИЯ -->
     <div id="guesser-screen" class="hidden">
       <div class="sticky-header" id="sticky-header">
         <div id="guesser-round-progress" class="guesser-progress-row"></div>
       </div>
+      <div id="guesser-spectator-banner" class="spectator-banner hidden"></div>
 
-      <h2><span id="guesser-name" class="player-name-game-slow"></span>, Guess!</h2>
-      <p class="guess-callout">Tap one answer.</p>
+      <h2><span id="guesser-name" class="player-name-game-slow"></span><span data-i18n="turn.guessSuffix">, Guess!</span></h2>
+      <p class="guess-callout" data-i18n="guesser.callout">Tap one answer.</p>
       <div class="gameplay-zone">
         <div class="guesser-info-block">
-          <div class="guesser-info-subtitle">Prompt</div>
+          <div class="guesser-info-subtitle" data-i18n="guesser.prompt">Prompt</div>
           <div id="guesser-displayed-hint" class="guesser-info-title hint-highlight"></div>
         </div>
 
@@ -415,12 +526,14 @@
           <div id="guesser-q-part3" class="question-part"></div>
         </div>
 
+        <p id="mask-hint-caption" class="mask-caption hidden" data-i18n="guesser.maskCaption">••• hides any number of letters</p>
+
         <div class="reveals-section">
           <div class="reveal-wallet-row">
-            <span class="reveal-wallet-label">Wallet</span>
+            <span class="reveal-wallet-label" data-i18n="guesser.wallet">Wallet</span>
             <span id="gold-balance" class="gold-balance"></span>
           </div>
-          <p class="reveals-title">Reveal options</p>
+          <p class="reveals-title" data-i18n="guesser.revealOpts">Reveal options</p>
           <p id="ability-roll-status" class="ability-roll-status" style="display:none;"></p>
           
           <div class="guesser-abilities-row">
@@ -445,25 +558,25 @@
   <div id="final-screen" class="hidden">
     <div class="final-screen-shell">
       <div class="final-header-card">
-        <h2>Game Over!</h2>
+        <h2 data-i18n="final.gameOver">Game Over!</h2>
       </div>
 
       <div class="final-section-panel">
-        <h3>Leaderboard</h3>
+        <h3 data-i18n="final.leaderboard">Leaderboard</h3>
         <ol id="final-scores-list" class="leaderboard-list"></ol>
       </div>
 
       <div class="final-section-panel">
-        <h3>Match History</h3>
-        <button id="stop-voice-btn" class="btn btn-small hidden danger-small-btn">⏹ Stop Voice</button>
+        <h3 data-i18n="final.history">Match History</h3>
+        <button id="stop-voice-btn" class="btn btn-small hidden danger-small-btn" data-i18n="final.stopVoice">⏹ Stop Voice</button>
         <div id="history-player-list" class="history-player-list"></div>
         <div id="final-history-window" class="history-window-container"></div>
       </div>
 
-      <button id="back-to-setup-btn" class="btn btn-primary spaced-button">Play Again (Keep Players)</button>
+      <button id="back-to-setup-btn" class="btn btn-primary spaced-button" data-i18n="final.playAgain">Play Again (Keep Players)</button>
 
       <div class="share-qr-block">
-        <p>Liked this one-screen game? Share the link with others via QR 😊</p>
+        <p data-i18n="misc.shareQr">Liked this one-screen game? Share the link with others via QR 😊</p>
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://babyuncle23.github.io/Rather-Party-One-Screen-Game/" alt="Share Game QR" class="qr-code-image">
       </div>
     </div>

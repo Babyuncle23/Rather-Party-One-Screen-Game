@@ -1,11 +1,12 @@
-import { questionsDatabase } from '../data/questions.js';
+import { getQuestionsDB } from '../i18n/I18nManager.js';
+import { GAME_CONFIG } from './GameConfig.js';
 
 export class Match {
   constructor(playerNames, totalRounds) {
     this.players = playerNames.map((data, index) => {
       const playerName = typeof data === 'string' ? data : data.name;
       const playerEmoji = typeof data === 'string' ? '' : data.emoji;
-      return { id: index + 1, name: playerName.toUpperCase(), emoji: playerEmoji, gold: 50, lastGuessCorrect: true };
+      return { id: index + 1, name: playerName.toUpperCase(), emoji: playerEmoji, gold: GAME_CONFIG.START_GOLD, lastGuessCorrect: true };
     });
     this.totalRounds = totalRounds;
     this.currentRound = 1;
@@ -16,14 +17,14 @@ export class Match {
     this.comboUsedThisGame = false; 
     this.queuedComboWord = null;
     this.queuedComboCategory = null;
-    this.comboDatabase = questionsDatabase.filter(q => q.isCombo);
+    this.comboDatabase = getQuestionsDB().filter(q => q.isCombo);
     
     this.shuffledQuestions = [];
     this.resetAndShuffleQuestions();
   }
 
   resetAndShuffleQuestions() {
-    this.shuffledQuestions = questionsDatabase.filter(q => !q.isCombo);
+    this.shuffledQuestions = getQuestionsDB().filter(q => !q.isCombo);
     for (let i = this.shuffledQuestions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [this.shuffledQuestions[i], this.shuffledQuestions[j]] = [this.shuffledQuestions[j], this.shuffledQuestions[i]];
@@ -32,7 +33,9 @@ export class Match {
 
   setQueuedCombo(chosenWord, category) {
     if (this.comboUsedThisGame) return;
-    if (Math.random() > 0.6) return; 
+    // Комбо не ставим в очередь на первом раунде: никто не видел прошлый ответ кроме Responder'а
+    if (this.currentRound < 2) return;
+    if (Math.random() > 0.6) return;
 
     this.queuedComboWord = chosenWord.toUpperCase();
     this.queuedComboCategory = category;
@@ -48,12 +51,18 @@ export class Match {
         return q.triggerCategory === this.queuedComboCategory;
       });
       
-      let comboQ;
-      if (matchingCombos.length > 0) {
-        comboQ = JSON.parse(JSON.stringify(matchingCombos[Math.floor(Math.random() * matchingCombos.length)]));
-      } else {
-        comboQ = JSON.parse(JSON.stringify(this.comboDatabase[Math.floor(Math.random() * this.comboDatabase.length)]));
+      const comboPool = matchingCombos.length > 0 ? matchingCombos : (this.comboDatabase || []);
+      if (comboPool.length === 0) {
+        // База комбо пуста — сбрасываем очередь и идём за обычным вопросом
+        this.queuedComboWord = null;
+        this.queuedComboCategory = null;
+        if (this.shuffledQuestions.length === 0) {
+          this.resetAndShuffleQuestions();
+        }
+        return this.shuffledQuestions.pop();
       }
+
+      const comboQ = structuredClone(comboPool[Math.floor(Math.random() * comboPool.length)]);
       
       comboQ.text = comboQ.text.replace("[PREV_CHOICE]", this.queuedComboWord);
       
@@ -111,5 +120,36 @@ export class Match {
 
   isGameOver() {
     return this.currentRound > this.totalRounds;
+  }
+
+  serialize() {
+    return {
+      players: this.players,
+      totalRounds: this.totalRounds,
+      currentRound: this.currentRound,
+      pickerIndex: this.pickerIndex,
+      history: this.history,
+      comboUsedThisGame: this.comboUsedThisGame,
+      queuedComboWord: this.queuedComboWord,
+      queuedComboCategory: this.queuedComboCategory,
+      shuffledQuestions: this.shuffledQuestions
+    };
+  }
+
+  static deserialize(data) {
+    const match = Object.create(Match.prototype);
+    Object.assign(match, {
+      players: [],
+      totalRounds: 1,
+      currentRound: 1,
+      pickerIndex: 0,
+      history: [],
+      comboUsedThisGame: false,
+      queuedComboWord: null,
+      queuedComboCategory: null,
+      shuffledQuestions: []
+    }, data);
+    match.comboDatabase = getQuestionsDB().filter(q => q.isCombo);
+    return match;
   }
 }

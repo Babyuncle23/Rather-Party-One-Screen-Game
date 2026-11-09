@@ -312,7 +312,7 @@
         const tokenCount = w1.split(/\s+/).length + w2.split(/\s+/).length;
         const isMulti = tokenCount >= 3; 
 
-        const shifter = new WordShifter(w1, w2, isNerfed);
+        const shifter = new WordShifter(w1, w2, isNerfed, isMulti);
         
         shifter.autoReveal(false); 
         const masksStep1 = shifter.getMaskedWords();

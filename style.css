@@ -2708,3 +2708,545 @@ p {
 .info-pulse-box {
   animation: softPulseGlow 2.5s infinite ease-in-out;
 }
+
+/* =========================================
+   SPRINT 2: FTUE, НАСТРОЙКИ, МАСКА, ONBOARDING
+   ========================================= */
+
+/* Настройки: модалка + шестерёнка в топ-баре */
+#settings-modal {
+  z-index: 1002;
+}
+.settings-modal-content {
+  text-align: left;
+}
+.settings-modal-content .safety-title {
+  text-align: center;
+}
+.settings-rows .sr-access-row:last-child {
+  margin-bottom: 0;
+}
+#settings-global-btn {
+  min-width: 0 !important;
+  width: auto;
+  padding: 8px 14px !important;
+  margin: 0 !important;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Футер сетапа: бейдж "Designed by Human" внизу экрана */
+#setup-screen .setup-footer {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Round-1 onboarding баннеры (responder blind steps) */
+.blind-step-banner {
+  background: rgba(55, 255, 226, 0.05);
+  border: 1px dashed rgba(55, 255, 226, 0.3);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  text-align: center;
+  color: var(--positive);
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.45;
+  animation: softPulseGlow 2.5s infinite ease-in-out;
+}
+.blind-step-banner .blind-step-sub {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Компактный бейдж введённых слов на шаге "Now choose" */
+.responder-words-badge {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.locked-word-chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text);
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+/* Центрирование блока "Now choose" */
+#responder-choice-block {
+  text-align: center;
+}
+#responder-choice-block #responder-final-question {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Маска ответов угадывающего: mystery-chunk вместо вертикальной палки */
+.mystery-chunk {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 10px;
+  margin: 0 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px dashed rgba(255, 255, 255, 0.28);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  line-height: 1.4;
+  animation: mysteryChunkPulse 1.8s ease-in-out infinite;
+}
+@keyframes mysteryChunkPulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+
+/* Точные слоты букв после покупки "Word length & 1st letters" */
+.letter-slot {
+  display: inline-block;
+  margin: 0 3px;
+  color: var(--gap-color-high, rgba(55, 255, 226, 0.65));
+  font-size: 17px;
+  font-weight: 800;
+  text-shadow: 0 0 6px var(--gap-shadow, rgba(55, 255, 226, 0.3));
+}
+
+/* Бейдж с общим числом букв в конце слова */
+.word-length-badge {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Подпись под карточками ответов */
+.mask-caption {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 10px 0 0;
+  opacity: 0.85;
+  width: min(100%, 420px);
+  margin-left: auto;
+  margin-right: auto;
+}
+/* ============ ОНЛАЙН-РЕЖИМ (2–4 телефона) ============ */
+
+/* Переключатель режима на setup-экране */
+.mode-toggle {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  width: 100%;
+}
+
+.mode-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 14px 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-card-active {
+  border-color: var(--accent);
+  background: rgba(140, 108, 255, 0.14);
+  box-shadow: 0 8px 24px rgba(93, 75, 255, 0.25);
+}
+
+.mode-card-icon { font-size: 1.5rem; line-height: 1; }
+.mode-card-title { font-weight: 800; font-size: 0.95rem; }
+.mode-card-sub {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Панель онлайн-настройки */
+.online-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.online-tab {
+  flex: 1;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.online-tab-active {
+  color: var(--text);
+  border-color: var(--accent);
+  background: rgba(140, 108, 255, 0.14);
+}
+
+.online-identity-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.online-identity-row .input-field { flex: 1; }
+
+.online-avatar-btn {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 1.6rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+}
+
+.online-avatar-btn:active { transform: scale(0.92); }
+
+.room-code-input {
+  text-align: center;
+  font-size: 1.6rem !important;
+  font-weight: 800;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.online-status-text {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  min-height: 1.2em;
+  margin: 8px 0 0;
+}
+
+/* Лобби */
+.room-code-display {
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  color: var(--positive);
+  text-shadow: 0 0 24px rgba(55, 255, 226, 0.4);
+  margin: 8px 0 4px;
+  padding-left: 0.3em; /* компенсация letter-spacing */
+}
+
+.lobby-qr {
+  display: block;
+  margin: 12px auto 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 150px;
+  height: 150px;
+}
+
+.lobby-players {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.lobby-player-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 700;
+}
+
+.lobby-player-row .connected-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--positive);
+  flex-shrink: 0;
+}
+
+.lobby-player-row .connected-dot.off { background: rgba(255,255,255,0.2); }
+
+.lobby-player-row .host-crown { margin-left: auto; font-size: 0.8rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Экран наблюдателя */
+#companion-screen {
+  text-align: center;
+  padding-top: 20px;
+}
+
+.companion-icon {
+  font-size: 3.4rem;
+  line-height: 1;
+  margin-bottom: 14px;
+  animation: companionFloat 2.4s ease-in-out infinite;
+}
+
+@keyframes companionFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.companion-status {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 8px;
+  line-height: 1.4;
+}
+
+.companion-sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+.companion-flip {
+  font-size: 2rem;
+  margin: 12px 0;
+  animation: companionFlip 0.5s ease;
+}
+
+@keyframes companionFlip {
+  0% { transform: rotateY(0) scale(1); opacity: 1; }
+  50% { transform: rotateY(90deg) scale(1.15); opacity: 0.7; }
+  100% { transform: rotateY(180deg) scale(1); opacity: 1; }
+}
+
+.companion-question-block {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.companion-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--positive);
+  font-style: italic;
+}
+
+.companion-slot .typing-dots::after {
+  content: '';
+  animation: typingDots 1.2s steps(4) infinite;
+}
+
+@keyframes typingDots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+}
+
+/* Баннер наблюдателя на экране угадывания */
+.spectator-banner {
+  text-align: center;
+  padding: 10px 14px;
+  margin: 0 0 12px;
+  border-radius: 12px;
+  background: rgba(140, 108, 255, 0.12);
+  border: 1px dashed rgba(140, 108, 255, 0.4);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* Режим наблюдателя: гасим интерактивность угадывающего экрана */
+body.spectator-mode #guesser-screen .guess-answer-block,
+body.spectator-mode #guesser-screen .ability-inline-btn,
+body.spectator-mode #guesser-screen #oral-hint-btn {
+  pointer-events: none;
+}
+
+body.spectator-mode #guesser-screen .guess-answer-block {
+  opacity: 0.9;
+}
+
+/* Анимация только что открывшихся букв (одновременно на всех телефонах) */
+.just-revealed {
+  animation: justRevealedPop 0.6s ease;
+}
+
+@keyframes justRevealedPop {
+  0% { transform: scale(0.4); color: var(--positive); text-shadow: 0 0 18px rgba(55,255,226,0.9); }
+  60% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+/* Баннер ожидания хоста (у гостей) */
+.host-wait-banner {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3500;
+  background: rgba(14, 13, 22, 0.97);
+  border: 1px solid var(--accent);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 10px 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  white-space: nowrap;
+}
+
+/* Баннер устной подсказки на телефоне респондера */
+.oral-hint-banner {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(14, 13, 22, 0.97);
+  border: 1px solid var(--positive);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  padding: 10px 18px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  animation: oralBannerFlash 1.2s ease-in-out infinite;
+  max-width: 96vw;
+}
+
+.oral-hint-banner-text {
+  color: var(--positive);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+@keyframes oralBannerFlash {
+  0%, 100% { box-shadow: 0 8px 30px rgba(0,0,0,0.5), 0 0 0 rgba(55,255,226,0); }
+  50% { box-shadow: 0 8px 30px rgba(0,0,0,0.5), 0 0 22px rgba(55,255,226,0.45); }
+}
+
+/* ============================================================
+   SPRINT 4: i18n — языковая пилюля + длинные слова (до 35 + хвост)
+   ============================================================ */
+
+.lang-pill {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 0 auto 16px;
+  padding: 4px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.lang-pill-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 7px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  font-family: inherit;
+}
+
+.lang-pill-btn:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.lang-pill-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.lang-pill-readonly .lang-pill-btn {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.lang-pill-readonly .lang-pill-btn.active {
+  background: rgba(255,255,255,0.14);
+  color: var(--text);
+  opacity: 1;
+}
+
+.lang-pill-lobby {
+  margin: 14px auto 4px;
+}
+
+/* Длинные слова + хвосты модификаторов (PIZZA-ГРАД, SAUNA-TASAVALTA):
+   маска сжимается и может переноситься внутри карточки угадчика. */
+.guess-answer-block .masked-wrapper .revealed-char {
+  font-size: clamp(9px, 3.4vw, 17px);
+}
+
+.guess-answer-block .masked-wrapper .letter-gap {
+  width: clamp(3px, 1.4vw, 6px);
+  height: clamp(10px, 3.8vw, 18px);
+}
+
+.guess-answer-block .word-group {
+  flex-wrap: wrap;
+  white-space: normal;
+  row-gap: 2px;
+}
+
+/* .hidden объявлен в начале файла (стр. 517) — баннеры, определённые ниже,
+   перекрывали его своим display:flex. Повтор объявления в конце возвращает
+   .hidden приоритет по порядку каскада при той же специфичности. */
+.hidden {
+  display: none;
+}
