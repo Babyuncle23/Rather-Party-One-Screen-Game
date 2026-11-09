@@ -15,7 +15,6 @@ import { UI_RU } from './ui.ru.js';
 import { UI_FI } from './ui.fi.js';
 
 export const SUPPORTED_LOCALES = ['en', 'ru', 'fi'];
-export const LOCALE_FLAGS = { en: '🇬🇧', ru: '🇷🇺', fi: '🇫🇮' };
 export const LOCALE_LABELS = { en: 'EN', ru: 'RU', fi: 'FI' };
 
 const DBS = { en: DB_EN, ru: DB_RU, fi: DB_FI };

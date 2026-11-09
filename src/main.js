@@ -1273,8 +1273,10 @@ function renderPickerActive() {
 
     // === ROUND 1 ONBOARDING (FTUE): объясняем "слепой" твист ===
     const step1Title = document.getElementById('picker-step1-title');
+    const step1Sub = document.getElementById('picker-step1-sub');
     const step2Title = document.getElementById('picker-step2-title');
     const step2Sub = document.getElementById('picker-step2-sub');
+    if (step1Sub) step1Sub.innerHTML = t('picker.step1Sub', { name: '<span id="top-info-responder-2"></span>' });
     if (step1Title && step2Title) {
       if (game.currentRound === 1) {
         step1Title.innerHTML = t('picker.step1First', { name: escapeHTML(rName) });
