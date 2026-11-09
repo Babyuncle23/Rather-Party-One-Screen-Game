@@ -28,6 +28,6 @@ export const DEFAULT_WS_URL = serverOverride
   ? normalizeWsUrl(serverOverride)
   : (isLocalhost
       ? 'ws://localhost:3001'
-      : 'wss://rather-party-server.onrender.com'); // TODO: заменить на реальный Render-URL после деплоя
+      : 'wss://rather-party-server.onrender.com');
 
 export const HTTP_SERVER_URL = DEFAULT_WS_URL.replace(/^ws(s?):\/\//i, 'http$1://');
