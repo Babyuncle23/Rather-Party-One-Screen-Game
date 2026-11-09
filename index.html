@@ -35,20 +35,31 @@
     <button id="oral-hint-done-btn" class="btn btn-small" data-i18n="misc.oralDone">Done</button>
   </div>
 
-  <!-- КАСТОМНОЕ ОКНО ВМЕСТО СИСТЕМНОГО ALERT -->
+  <!-- КАСТОМНОЕ ОКНО ВМЕСТО СИСТЕМНОГО ALERT (только текстовые алерты/ошибки) -->
   <div id="custom-alert-modal" class="modal-overlay hidden" style="cursor: pointer;">
     <div class="modal-content">
-      <h2 id="custom-alert-title" class="modal-title">Notice</h2>
+      <h2 id="custom-alert-title" class="modal-title" data-i18n="alerts.notice">Notice</h2>
       <p id="custom-alert-message" class="modal-message"></p>
       <p class="tap-anywhere-text" data-i18n="misc.tapToContinue">👇 Tap to continue</p>
     </div>
   </div>
 
-  <!-- КРАСИВОЕ МОДАЛЬНОЕ ОКНО ПЕРЕДАЧИ ТЕЛЕФОНА -->
-  <div id="pass-screen" class="modal-overlay hidden" style="cursor: pointer;">
+  <!-- ОТДЕЛЬНАЯ МОДАЛКА РЕЗУЛЬТАТА РАУНДА: закрывается только кнопкой -->
+  <div id="result-modal" class="modal-overlay hidden">
+    <div class="modal-content result-modal-content">
+      <h2 id="result-alert-title" class="modal-title" data-i18n="result.title">Result</h2>
+      <div id="result-alert-message" class="modal-message"></div>
+      <button id="result-continue-btn" class="btn btn-primary result-continue-btn" type="button" data-i18n="result.continue">Continue ➜</button>
+    </div>
+  </div>
+
+  <!-- КРАСИВОЕ МОДАЛЬНОЕ ОКНО ПЕРЕДАЧИ ТЕЛЕФОНА: фон не кликабелен, только удержание кнопки -->
+  <div id="pass-screen" class="modal-overlay hidden">
     <div class="modal-content fullscreen-pass-content">
-      <h1 id="pass-message">PASS PHONE</h1>
-      <p class="tap-anywhere-text" data-i18n="misc.tapToContinue">👇 Tap to continue</p>
+      <h1 id="pass-message" data-i18n="pass.title">PASS PHONE</h1>
+      <button id="pass-ready-btn" class="btn btn-primary pass-ready-btn" type="button">
+        <span id="pass-ready-label" data-i18n="pass.readyShort">Hold to confirm</span>
+      </button>
     </div>
   </div>
 
@@ -100,7 +111,7 @@
               <span data-i18n="safety.opt1">🔄 Skip This Round</span>
               <span style="color: rgba(255,255,255,0.3); font-size: 12px;">▼</span>
             </div>
-            <div class="safety-desc-text" data-i18n="safety.opt1Desc">Round is canceled. Game draws a new question.</div>
+            <div class="safety-desc-text hidden" data-i18n="safety.opt1Desc">Round is canceled. Game draws a new question.</div>
             <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="skip" data-i18n="safety.hold2s">Hold 2s to Confirm</button>
           </div>
 
@@ -110,7 +121,7 @@
               <span data-i18n="safety.opt2">💬 Open Circle (Let's Talk)</span>
               <span style="color: rgba(255,255,255,0.3); font-size: 12px;">▼</span>
             </div>
-            <div class="safety-desc-text" data-i18n="safety.opt2Desc">Pauses the game and opens a friendly text screen for the whole company.</div>
+            <div class="safety-desc-text hidden" data-i18n="safety.opt2Desc">Pauses the game and opens a friendly text screen for the whole company.</div>
             <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="talk" data-i18n="safety.hold2s">Hold 2s to Confirm</button>
           </div>
 
@@ -120,7 +131,7 @@
               <span data-i18n="safety.opt3">🛑 Stop Match & Talk Openly</span>
               <span style="color: rgba(255,255,255,0.3); font-size: 12px;">▼</span>
             </div>
-            <div class="safety-desc-text" data-i18n="safety.opt3Desc">Stops match instantly and saves points.</div>
+            <div class="safety-desc-text hidden" data-i18n="safety.opt3Desc">Stops match instantly and saves points.</div>
             <button class="safety-hold-trigger btn btn-small safety-button-full" data-action="stop-direct" data-i18n="safety.hold2s">Hold 2s to Confirm</button>
           </div>
 
@@ -130,14 +141,14 @@
               <span data-i18n="safety.opt4">⏳ Set Anonymous Exit Timer</span>
               <span style="color: rgba(255,255,255,0.3); font-size: 12px;">▼</span>
             </div>
-            <div class="safety-desc-text">
+            <div class="safety-desc-text hidden">
               <span data-i18n="safety.opt4Desc">Choose a delay below, and the match will end automatically later.</span>
               <div class="tip-visual safety-timer-box">
                 <div class="safety-timer-label" data-i18n="safety.flowCfg">FLOW CONFIG:</div>
                 <div class="safety-timer-row">
                   <button type="button" id="safety-timer-minus" class="btn btn-small safety-timer-button" data-i18n="safety.min0">0 min</button>
                   <button type="button" id="safety-timer-plus" class="btn btn-small safety-timer-button safety-timer-button--accent" data-i18n="safety.minPlus">+1 min</button>
-                  <span id="safety-timer-display" class="safety-timer-display">Current: 0 min</span>
+                  <span id="safety-timer-display" class="safety-timer-display" data-i18n="safety.currentMin" data-i18n-params='{"n":0}'>Current: 0 min</span>
                 </div>
               </div>
             </div>
@@ -205,7 +216,7 @@
         </div>
 
         <!-- Секретный UX-трюк: огромная зона для крестика -->
-        <button id="close-video-btn" style="background: none; border: none; color: var(--text); font-size: 36px; cursor: pointer; padding: 15px; margin: -15px; line-height: 1; position: relative; z-index: 9999; pointer-events: auto;">&times;</button>
+        <button id="close-video-btn" aria-label="Close" data-i18n-aria="a11y.close" style="background: none; border: none; color: var(--text); font-size: 36px; cursor: pointer; padding: 15px; margin: -15px; line-height: 1; position: relative; z-index: 9999; pointer-events: auto;">&times;</button>
       </div>
       
       <!-- Контейнер для видео -->
@@ -229,7 +240,7 @@
     <div class="help-section">
       <div class="help-header-row">
         <button id="safety-global-btn" class="btn btn-small" data-i18n="setup.safetyBtn">Safety</button>
-        <button id="settings-global-btn" class="btn btn-small icon-btn-small" title="Settings" aria-label="Settings">⚙️</button>
+        <button id="settings-global-btn" class="btn btn-small icon-btn-small" title="Settings" aria-label="Settings" data-i18n-aria="a11y.settings" data-i18n-title="a11y.settings">⚙️</button>
       </div>
       <div id="safety-tip-text" class="safety-tip-text" data-i18n="setup.safetyTip">Recommended to read before starting.</div>
     </div>
@@ -238,7 +249,7 @@
     <div id="setup-screen">
 <div class="header-container">
   <!-- ВЫБОР ЯЗЫКА (EN / RU / FI) -->
-  <div class="lang-pill" id="lang-pill" role="group" aria-label="Language">
+  <div class="lang-pill" id="lang-pill" role="group" aria-label="Language" data-i18n-aria="a11y.language">
     <button type="button" class="lang-pill-btn" data-lang="en">EN</button>
     <button type="button" class="lang-pill-btn" data-lang="ru">RU</button>
     <button type="button" class="lang-pill-btn" data-lang="fi">FI</button>
@@ -276,7 +287,7 @@
           <button id="online-tab-join" type="button" class="online-tab" data-i18n="setup.tabJoin">Join Room</button>
         </div>
         <div class="add-player-block online-identity-row">
-          <button id="online-avatar-btn" type="button" class="online-avatar-btn" title="Tap to change avatar" data-i18n-title="setup.avatarTitle">🦊</button>
+          <button id="online-avatar-btn" type="button" class="online-avatar-btn" title="Tap to change avatar" data-i18n-title="setup.avatarTitle" aria-label="Tap to change avatar" data-i18n-aria="setup.avatarTitle">🦊</button>
           <input id="online-name-input" type="text" placeholder="Your name" class="input-field" maxlength="14" autocomplete="off" data-i18n-placeholder="setup.nameOnlinePh">
         </div>
         <div id="join-code-block" class="hidden">
@@ -292,6 +303,7 @@
         <input id="single-player-input" type="text" placeholder="Enter player name" class="input-field" data-i18n-placeholder="setup.nameSoloPh">
         <button id="add-player-btn" class="btn btn-accent spaced-button" data-i18n="setup.addPlayer">+ Add Player</button>
       </div>
+      <p class="setup-seat-hint" data-i18n="setup.seatOrder">Add names in the order players are seated around the table.</p>
 
       <div id="players-boxes-container" class="boxes-container"></div>
       <p class="emoji-help-text" style="text-align: center; font-size: 13px; color: var(--muted); margin-top: 8px;" data-i18n="setup.avatarHelp">Tap an avatar to change it.</p>
@@ -300,12 +312,13 @@
         <label for="rounds-input" class="field-label" data-i18n="setup.roundsLabel">Number of rounds:</label>
         <input id="rounds-input" type="number" value="1" class="input-field">
       </div>
-
-      <button id="start-game-btn" class="btn btn-primary spaced-button" data-i18n="setup.start">Start Game</button>
       </div>
-      
+
+      <!-- Вынесена из solo-панели: sticky-пин к низу требует, чтобы родитель тянулся дальше кнопки -->
+      <button id="start-game-btn" class="btn btn-primary spaced-button" data-i18n="setup.start">Start Game</button>
+
 <!-- Кнопка установки с плавным появлением -->
-      <button id="install-app-btn" class="btn btn-secondary spaced-button" style="margin-bottom: 24px; border-color: var(--accent); color: var(--accent); display: none; opacity: 0; transition: opacity 0.4s ease;" data-i18n="setup.install">
+      <button id="install-app-btn" class="btn btn-secondary spaced-button hidden" style="margin-bottom: 24px; border-color: var(--accent); color: var(--accent); opacity: 0; transition: opacity 0.4s ease;" data-i18n="setup.install">
         📱 Install App to Home Screen
       </button>
 
@@ -318,7 +331,7 @@
           
           if (isIOS && !isStandalone) {
             const btn = document.getElementById('install-app-btn');
-            btn.style.display = 'block';
+            btn.classList.remove('hidden');
             setTimeout(() => { btn.style.opacity = '1'; }, 10); // Плавное проявление
           }
         })();
@@ -326,7 +339,7 @@
 
       <div class="share-qr-block">
         <p data-i18n="misc.shareQr">Liked this one-screen game? Share the link with others via QR 😊</p>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://babyuncle23.github.io/Rather-Party-One-Screen-Game/" alt="Share Game QR" class="qr-code-image">
+        <img data-share-qr alt="Share Game QR" class="qr-code-image" data-i18n-alt="misc.shareQrAlt">
       </div>
 
       <div class="setup-footer">
@@ -340,8 +353,8 @@
       <h2 class="animated-text-outline" data-text="Room Lobby" data-i18n="lobby.title">Room Lobby</h2>
       <p class="setup-lead-text" style="margin-bottom: 4px;" data-i18n="lobby.shareHint">Share this code with friends:</p>
       <div id="lobby-room-code" class="room-code-display">····</div>
-      <img id="lobby-qr" class="qr-code-image lobby-qr" alt="Scan to join the room">
-      <div class="lang-pill lang-pill-lobby" id="lobby-lang-pill" role="group" aria-label="Language">
+      <img id="lobby-qr" class="qr-code-image lobby-qr" alt="Scan to join the room" data-i18n-alt="lobby.qrAlt">
+      <div class="lang-pill lang-pill-lobby" id="lobby-lang-pill" role="group" aria-label="Language" data-i18n-aria="a11y.language">
         <button type="button" class="lang-pill-btn" data-lang="en">EN</button>
         <button type="button" class="lang-pill-btn" data-lang="ru">RU</button>
         <button type="button" class="lang-pill-btn" data-lang="fi">FI</button>
@@ -365,69 +378,73 @@
       <div class="gameplay-zone">
 <div class="card-question">
           <!-- ВЕРХНЯЯ АНИМИРОВАННАЯ ПЛАШКА -->
-          <div class="info-pulse-box" id="picker-step1-box" style="background: rgba(55, 255, 226, 0.05); border: 1px dashed rgba(55, 255, 226, 0.3); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; text-align: center;">
-            <p id="picker-step1-title" style="color: var(--positive); font-size: 1.05rem; font-weight: 800; margin: 0 0 6px 0; text-transform: uppercase;">
+          <div class="info-pulse-box" id="picker-step1-box">
+            <p id="picker-step1-title" class="picker-step-title">
               👇 Select a question for <span id="top-info-responder"></span>
             </p>
-            <p id="picker-step1-sub" style="color: var(--muted); font-size: 0.9rem; font-weight: 600; margin: 0; line-height: 1.4;">
+            <p id="picker-step1-sub" class="picker-step-sub">
               The blank spaces will be filled in with <span id="top-info-responder-2"></span>'s answers later.
             </p>
           </div>
-          
+
           <!-- БЛОК ВОПРОСА (Счетчик сверху, текст широкий, стрелки снизу) -->
-          <div id="question-carousel-wrapper" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; margin-bottom: 16px;">
-            <div id="question-carousel-index" style="text-align: center; color: var(--accent); font-weight: 800; font-size: 0.9rem; letter-spacing: 0.05em; margin-bottom: 12px;">1/3</div>
-            <p id="secret-question-text" class="highlight-text text-center" style="margin: 0 0 16px 0; font-size: 1.15rem; line-height: 1.5; width: 100%;"></p>
-            <div style="display: flex; justify-content: center; gap: 16px;">
-              <button id="prev-question-btn" class="carousel-btn" style="font-size: 20px; padding: 6px 24px;">←</button>
-              <button id="next-question-btn" class="carousel-btn" style="font-size: 20px; padding: 6px 24px;">→</button>
+          <div id="question-carousel-wrapper" class="carousel-card">
+            <div id="question-carousel-index" class="carousel-index">1/3</div>
+            <p id="secret-question-text" class="highlight-text text-center"></p>
+            <div class="carousel-arrows">
+              <button id="prev-question-btn" class="carousel-btn" aria-label="Previous question" data-i18n-aria="a11y.prevQuestion">←</button>
+              <button id="next-question-btn" class="carousel-btn" aria-label="Next question" data-i18n-aria="a11y.nextQuestion">→</button>
             </div>
           </div>
           
-          <!-- КНОПКА РЕДАКТИРОВАНИЯ (Серая) -->
-          <button id="edit-question-toggle-btn" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: var(--muted); font-size: 0.9rem; font-weight: 700; padding: 12px; margin-bottom: 16px; cursor: pointer; width: 100%; transition: transform 0.2s ease;">✍️ EDIT THE QUESTION</button>
-          
+          <!-- КНОПКА РЕДАКТИРОВАНИЯ (Акцентная — активная фича Advanced Mode) -->
+          <button id="edit-question-toggle-btn" class="picker-toggle-btn" data-i18n="picker.editStart">✍️ EDIT THE QUESTION</button>
+
           <!-- ПОЛЯ РЕДАКТИРОВАНИЯ (Скрыты по умолчанию) -->
-          <div id="edit-question-block" style="display: none; margin-bottom: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px;">
-            <textarea id="edit-q-part1" class="input-field" rows="2" style="margin-bottom: 8px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4; text-align: center;"></textarea>
-            <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;" data-i18n="picker.answerN" data-i18n-params='{"n":1}'>[ ___ ANSWER 1 ___ ]</div>
-            <textarea id="edit-q-part2" class="input-field" rows="2" style="margin-bottom: 8px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4; text-align: center;"></textarea>
-            <div style="text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 8px;" data-i18n="picker.answerN" data-i18n-params='{"n":2}'>[ ___ ANSWER 2 ___ ]</div>
-            <textarea id="edit-q-part3" class="input-field" rows="2" style="margin-bottom: 12px; font-size: 14px; padding: 12px; resize: vertical; font-family: inherit; line-height: 1.4; text-align: center;"></textarea>
-<button id="edit-q-save-btn" class="btn btn-small" style="width: 100%; background: rgba(55,255,226,0.1); color: var(--positive); border: 1px solid rgba(55,255,226,0.2); padding: 12px; font-size: 1rem; border-radius: 12px; font-weight: 700;" data-i18n="picker.editSave">Save Changes</button>
+          <div id="edit-question-block" class="carousel-card hidden">
+            <textarea id="edit-q-part1" class="input-field edit-q-field" rows="1"></textarea>
+            <div class="edit-answer-sep" data-i18n="picker.answerN" data-i18n-params='{"n":1}'>[ ___ ANSWER 1 ___ ]</div>
+            <textarea id="edit-q-part2" class="input-field edit-q-field" rows="1"></textarea>
+            <div class="edit-answer-sep" data-i18n="picker.answerN" data-i18n-params='{"n":2}'>[ ___ ANSWER 2 ___ ]</div>
+            <textarea id="edit-q-part3" class="input-field edit-q-field" rows="1"></textarea>
+            <div class="edit-preview-block">
+              <div class="edit-preview-label" data-i18n="picker.livePreview">Live Preview</div>
+              <div id="edit-q-preview" class="edit-preview-text"></div>
+            </div>
+<button id="edit-q-save-btn" class="btn btn-small edit-q-save" data-i18n="picker.editSave">Save Changes</button>
           </div>
 
           <!-- НИЖНЯЯ АНИМИРОВАННАЯ ПЛАШКА (Задача Пикера) -->
-          <div class="info-pulse-box" id="picker-step2-box" style="background: rgba(55, 255, 226, 0.05); border: 1px dashed rgba(55, 255, 226, 0.3); border-radius: 12px; padding: 14px; margin: 24px 0 16px 0;">
-            <p id="picker-step2-title" style="color: var(--positive); font-size: 1rem; font-weight: 800; margin: 0; text-align: center; text-transform: uppercase;">
+          <div class="info-pulse-box" id="picker-step2-box">
+            <p id="picker-step2-title" class="picker-step-title">
               👇 Select a topic for <span id="bottom-info-responder"></span>'s answers
             </p>
-            <p id="picker-step2-sub" style="color: var(--muted); font-size: 0.9rem; font-weight: 600; margin: 6px 0 0 0; line-height: 1.4; display: none; text-transform: none;"></p>
+            <p id="picker-step2-sub" class="picker-step-sub hidden"></p>
           </div>
         </div>
 
         <!-- БЛОК 1: ГОТОВЫЕ ПРОМПТЫ (Показываем по умолчанию) -->
         <div id="preset-prompt-block">
           <!-- БЛОК ПРОМПТА (Счетчик сверху, текст широкий, стрелки снизу) -->
-          <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; margin-bottom: 12px;">
-            <div id="prompt-carousel-index" style="text-align: center; color: var(--accent); font-weight: 800; font-size: 0.9rem; letter-spacing: 0.05em; margin-bottom: 12px;">1/X</div>
-            <div id="prompt-display-text" style="text-align: center; font-weight: 700; color: #ffffff; font-size: 1.15rem; line-height: 1.5; margin-bottom: 16px; width: 100%;">Loading...</div>
-            <div style="display: flex; justify-content: center; gap: 16px;">
-              <button id="prompt-prev-btn" class="carousel-btn" style="font-size: 20px; padding: 6px 24px;">←</button>
-              <button id="prompt-next-btn" class="carousel-btn" style="font-size: 20px; padding: 6px 24px;">→</button>
+          <div class="carousel-card">
+            <div id="prompt-carousel-index" class="carousel-index">1/X</div>
+            <div id="prompt-display-text" data-i18n="misc.loading">Loading...</div>
+            <div class="carousel-arrows">
+              <button id="prompt-prev-btn" class="carousel-btn" aria-label="Previous prompt" data-i18n-aria="a11y.prevPrompt">←</button>
+              <button id="prompt-next-btn" class="carousel-btn" aria-label="Next prompt" data-i18n-aria="a11y.nextPrompt">→</button>
             </div>
           </div>
-          <!-- КНОПКА СВОЕГО ПРОМПТА (Серая) -->
-          <button id="toggle-custom-prompt-btn" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: var(--muted); font-size: 0.9rem; font-weight: 700; padding: 12px; margin-bottom: 16px; cursor: pointer; width: 100%; transition: transform 0.2s ease;" data-i18n="picker.customToggle">✍️ OR WRITE YOUR OWN PROMPT</button>
+          <!-- КНОПКА СВОЕГО ПРОМПТА -->
+          <button id="toggle-custom-prompt-btn" class="picker-toggle-btn" data-i18n="picker.customToggle">✍️ OR WRITE YOUR OWN PROMPT</button>
         </div>
 
         <!-- БЛОК 2: СВОЙ ПРОМПТ (Скрыт по умолчанию) -->
-        <div id="custom-prompt-block" style="display: none; margin-bottom: 8px;">
+        <div id="custom-prompt-block" class="hidden" style="margin-bottom: 8px;">
           <input id="custom-hint-input" type="text" class="input-field" style="margin-bottom: 12px; font-weight: 700; color: var(--positive); text-align: center;">
-          <button id="toggle-preset-prompt-btn" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: var(--muted); font-size: 0.9rem; font-weight: 700; padding: 12px; margin-bottom: 16px; cursor: pointer; width: 100%; transition: transform 0.2s ease;" data-i18n="picker.backToPresets">← BACK TO READY-MADE TOPICS</button>
+          <button id="toggle-preset-prompt-btn" class="picker-toggle-btn" data-i18n="picker.backToPresets">← BACK TO READY-MADE TOPICS</button>
         </div>
 
-        <button id="confirm-prompt-btn" class="btn btn-primary spaced-button" style="box-shadow: 0 12px 30px rgba(93, 75, 255, 0.3); font-size: 1.1rem; padding: 18px;"></button>
+        <button id="confirm-prompt-btn" class="btn btn-primary spaced-button"></button>
       </div>
     </div>
 
@@ -437,7 +454,7 @@
       
 <div class="gameplay-zone">
         <p class="prompt-summary text-center" style="margin-bottom: 6px;"><span id="displayed-hint" class="highlight-text" style="color: #ffffff;"></span></p>
-        <p id="responder-plural-warning" style="display: none; text-align: center; color: var(--accent); font-size: 0.85rem; font-weight: 700; margin-top: 0; margin-bottom: 14px; opacity: 0.9;" data-i18n="responder.pluralWarn">* Please write both answers in plural (e.g. cats, apples)</p>
+        <p id="responder-plural-warning" class="hidden" style="text-align: center; color: var(--accent); font-size: 0.85rem; font-weight: 700; margin-top: 0; margin-bottom: 14px; opacity: 0.9;" data-i18n="responder.pluralWarn">* Please write both answers in plural (e.g. cats, apples)</p>
         <!-- ИНТЕРАКТИВНЫЙ СПОЙЛЕР ДЛЯ ШПАРГАЛКИ -->
         <div id="responder-helper-box" style="text-align: center; margin-bottom: 14px;">
           <button id="responder-helper-toggle" class="btn-small icon-btn-small" style="width: auto; padding: 6px 16px;" data-i18n="responder.ideas">💡 Ideas</button>
@@ -453,14 +470,14 @@
   <input id="word-input-1" type="text" placeholder="First answer" maxlength="35" class="input-field" data-i18n-placeholder="responder.firstPh">
   <span id="word-counter-1" class="floating-counter">
     <span class="counter-text">0/35</span>
-    <span class="lock-icon" style="display: none;">🔒</span>
+    <span class="lock-icon hidden">🔒</span>
   </span>
 </div>
 <div class="input-container-with-counter">
   <input id="word-input-2" type="text" placeholder="Second answer" maxlength="35" class="input-field" data-i18n-placeholder="responder.secondPh">
   <span id="word-counter-2" class="floating-counter">
     <span class="counter-text">0/35</span>
-    <span class="lock-icon" style="display: none;">🔒</span>
+    <span class="lock-icon hidden">🔒</span>
   </span>
 </div>
         </div>
@@ -534,7 +551,7 @@
             <span id="gold-balance" class="gold-balance"></span>
           </div>
           <p class="reveals-title" data-i18n="guesser.revealOpts">Reveal options</p>
-          <p id="ability-roll-status" class="ability-roll-status" style="display:none;"></p>
+          <p id="ability-roll-status" class="ability-roll-status hidden"></p>
           
           <div class="guesser-abilities-row">
             <div class="ability-wrapper">
@@ -545,8 +562,8 @@
             </div>
           </div>
 
-          <span id="potential-score" style="display:none;"></span>
-          <button id="oral-hint-btn" class="btn btn-small orally-hint-btn">💬 Ask for oral hint (-10 pts)</button>
+          <span id="potential-score" class="hidden"></span>
+          <button id="oral-hint-btn" class="btn btn-small orally-hint-btn hidden" data-i18n="guesser.oralBtn" data-i18n-params='{"n":10}'>💬 Ask for oral hint (-10 pts)</button>
         </div>
       </div>
     </div>
@@ -577,7 +594,7 @@
 
       <div class="share-qr-block">
         <p data-i18n="misc.shareQr">Liked this one-screen game? Share the link with others via QR 😊</p>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://babyuncle23.github.io/Rather-Party-One-Screen-Game/" alt="Share Game QR" class="qr-code-image">
+        <img data-share-qr alt="Share Game QR" class="qr-code-image" data-i18n-alt="misc.shareQrAlt">
       </div>
     </div>
   </div>

@@ -1,5 +1,5 @@
 import { escapeHTML, escapeRegExp } from '../utils/sanitize.js';
-import { t } from '../i18n/I18nManager.js';
+import { t, applyStaticTexts } from '../i18n/I18nManager.js';
 
 export class ScreenController {
   constructor() {
@@ -26,35 +26,37 @@ export class ScreenController {
     const helpSection = document.querySelector('.help-section');
     const gameContainer = document.querySelector('.game-container');
     const finalScreenActive = screenName === 'final';
+    const gameScreenActive = ['picker', 'responder', 'guesser', 'companion'].includes(screenName);
 
     document.body.classList.toggle('final-screen-active', finalScreenActive);
+    document.body.classList.toggle('game-screen-active', gameScreenActive);
 
     if (gameContainer) {
-      gameContainer.style.display = finalScreenActive ? 'none' : 'block';
+      gameContainer.classList.toggle('hidden', finalScreenActive);
     }
 
     if (safetyBtn) {
       safetyBtn.classList.toggle('hidden', finalScreenActive);
-      safetyBtn.setAttribute('aria-hidden', finalScreenActive ? 'true' : 'false');
+      safetyBtn.setAttribute('aria-hidden', safetyBtn.classList.contains('hidden') ? 'true' : 'false');
     }
 
     if (safetyTip) {
-      safetyTip.classList.toggle('hidden', finalScreenActive);
-      safetyTip.setAttribute('aria-hidden', finalScreenActive ? 'true' : 'false');
+      // На финале прячем подсказку; на остальных экранах видимостью
+      // управляет игровая логика (она скрыта внутри матча).
+      if (finalScreenActive) safetyTip.classList.add('hidden');
+      safetyTip.setAttribute('aria-hidden', safetyTip.classList.contains('hidden') ? 'true' : 'false');
     }
 
     if (helpSection) {
       helpSection.classList.toggle('hidden', finalScreenActive);
-      helpSection.setAttribute('aria-hidden', finalScreenActive ? 'true' : 'false');
+      helpSection.setAttribute('aria-hidden', helpSection.classList.contains('hidden') ? 'true' : 'false');
     }
 
     let screenChanged = false;
     Object.keys(this.screens).forEach(key => {
       if (this.screens[key]) {
         const isTarget = key === screenName;
-        const nextDisplay = key === 'pass' ? (isTarget ? 'flex' : 'none') : (isTarget ? 'block' : 'none');
         this.screens[key].classList.toggle('hidden', !isTarget);
-        this.screens[key].style.display = nextDisplay;
         if (isTarget) screenChanged = true;
       }
     });
@@ -70,13 +72,11 @@ export class ScreenController {
   showLoading() {
     if (this.modals.loading) {
       this.modals.loading.classList.remove('hidden');
-      this.modals.loading.style.display = 'flex';
     }
   }
 
   hideLoading() {
     if (this.modals.loading) {
-      this.modals.loading.style.display = 'none';
       this.modals.loading.classList.add('hidden');
     }
   }
@@ -92,12 +92,11 @@ showAlert(title, message, onConfirm = null) {
     document.getElementById('custom-alert-message').innerHTML = message;
     
     this.modals.customAlert.classList.remove('hidden');
-    this.modals.customAlert.style.display = 'flex';
     
     // Вешаем клик на всю модалку вместо кнопки
     this.modals.customAlert.onclick = null; 
     this.modals.customAlert.onclick = () => {
-      this.modals.customAlert.style.display = 'none';
+      this.modals.customAlert.classList.add('hidden');
       if (onConfirm) onConfirm();
     };
   }
@@ -105,7 +104,6 @@ showAlert(title, message, onConfirm = null) {
 showPassScreen(player, onConfirm, note = null) {
     if (note === null) note = t('pass.defaultNote');
     this.screens.pass.classList.remove('hidden');
-    this.screens.pass.style.display = 'flex';
     const message = document.getElementById('pass-message');
     
     const highlightedTargetName = `<span class="player-name-pass-fade">${player.emoji || ''} ${escapeHTML(player.name.toUpperCase())}</span>`;
@@ -127,11 +125,47 @@ showPassScreen(player, onConfirm, note = null) {
     
     window.scrollTo({ top: 0, behavior: 'instant' });
 
+    // Фон не кликабелен — телефон передают из рук в руки, случайный тап
+    // не должен открывать секретный экран. Только удержание кнопки 0.8с.
     this.screens.pass.onclick = null;
-    this.screens.pass.onclick = () => {
-      this.screens.pass.style.display = 'none';
+
+    const readyBtn = document.getElementById('pass-ready-btn');
+    const readyLabel = document.getElementById('pass-ready-label');
+    if (!readyBtn || !readyLabel) {
+      this.screens.pass.classList.add('hidden');
       onConfirm();
+      return;
+    }
+
+    readyLabel.innerText = t('pass.readyBtn', { name: player.name.toUpperCase() });
+
+    const HOLD_MS = 800;
+    let holdTimer = null;
+    const cancelHold = () => {
+      if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+      readyBtn.classList.remove('holding');
     };
+
+    readyBtn.onpointerdown = (e) => {
+      if (e.button !== undefined && e.button !== 0) return;
+      if (holdTimer) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.pointerId !== undefined && typeof readyBtn.setPointerCapture === 'function') {
+        try { readyBtn.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+      readyBtn.classList.add('holding');
+      holdTimer = setTimeout(() => {
+        holdTimer = null;
+        readyBtn.classList.remove('holding');
+        this.screens.pass.classList.add('hidden');
+        onConfirm();
+      }, HOLD_MS);
+    };
+    readyBtn.onpointerup = cancelHold;
+    readyBtn.onpointercancel = cancelHold;
+    readyBtn.onpointerleave = cancelHold;
+    readyBtn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); };
   }
 
 setupAudioControl(audioManager) {
@@ -140,9 +174,13 @@ setupAudioControl(audioManager) {
     panel.id = 'audio-control-panel';
     // Оставляем только кнопку
     panel.innerHTML = `
-      <button id="audio-toggle-btn" title="Toggle sound" aria-label="Toggle sound"></button>
+      <button id="audio-toggle-btn" title="Toggle sound" aria-label="Toggle sound" data-i18n-aria="a11y.toggleSound" data-i18n-title="a11y.toggleSound"></button>
     `;
-    document.body.appendChild(panel);
+    // Звук сидит в одной строке с Safety и ⚙️ — не перекрывает контент снизу
+    const headerRow = document.querySelector('.help-header-row');
+    (headerRow || document.body).appendChild(panel);
+    // Панель добавлена после первого applyStaticTexts — переводим атрибуты сразу
+    applyStaticTexts(panel);
 
     const toggleBtn = document.getElementById('audio-toggle-btn');
 

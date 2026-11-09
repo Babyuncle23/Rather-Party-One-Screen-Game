@@ -178,6 +178,7 @@ elements: [{type: text|emoji|image, content, x, y, s, r, flipX, anim, color, emo
 - i18n отсутствует; строки разбросаны по HTML/JS; в UI опечатка «Desgned by Human».
 - Внешние зависимости в рантайме: Google Fonts, YouTube iframe, `api.qrserver.com`
   — без сети деградирует молча; для privacy-sensitive party-игры спорно.
+  *(QR исправлен: локальный генератор `src/utils/qrcode.js`, офлайн data-URI.)*
 - Нет автоматических тестов; только ручные tester-страницы. Нет CI, линта, форматтера.
 - `scenes.js` генерируется редактором — ручные правки легко потерять; дубль `"dog"`
   уже демонстрирует проблему.

@@ -18,6 +18,7 @@ export const UI_EN = {
     emojiPickerSub: 'Pick an icon that fits your style.',
     videoTitle: 'How to play',
     shareQr: 'Liked this one-screen game? Share the link with others via QR 😊',
+    shareQrAlt: 'QR code — link to share the game',
     footerBadge: 'Designed by Human',
     footerSub: 'coded by ai 😬',
     iosTitle: '🍏 Install on iPhone'
@@ -41,6 +42,7 @@ export const UI_EN = {
     enterCode: 'Enter the 4-letter room code!',
     nameSoloPh: 'Enter player name',
     addPlayer: '+ Add Player',
+    seatOrder: 'Add names in the order players are seated around the table.',
     avatarHelp: 'Tap an avatar to change it.',
     roundsLabel: 'Number of rounds:',
     start: 'Start Game',
@@ -62,7 +64,8 @@ export const UI_EN = {
     waitMore: 'Waiting for at least one more player…',
     full: 'Room is full — 4 players max',
     connected: '{n} players connected — tap Start!',
-    waitHost: 'Waiting for the host to start the game…'
+    waitHost: 'Waiting for the host to start the game…',
+    qrAlt: 'QR code — scan to join the room'
   },
 
   turn: {
@@ -84,7 +87,9 @@ export const UI_EN = {
     phraseSimple: 'Pass the phone to {emojiName} {name}.',
     responderNote: "Now it's {r}'s turn to answer {p}'s prompt.\nKeep the phone hidden from others!",
     watchNote: 'Only this player should hold the phone, but {name} can watch!',
-    guesserSpeech: 'Pass the phone to {emojiName} {name}, and {responder} can watch.'
+    guesserSpeech: 'Pass the phone to {emojiName} {name}, and {responder} can watch.',
+    readyBtn: 'I am {name} — hold ✋',
+    readyShort: 'Hold to confirm'
   },
 
   picker: {
@@ -98,6 +103,7 @@ export const UI_EN = {
     editStart: '✍️ EDIT THE QUESTION',
     editStop: '← CANCEL EDITING',
     editSave: 'Save Changes',
+    livePreview: 'Live Preview',
     answerN: '[ ___ ANSWER {n} ___ ]',
     customToggle: '✍️ OR WRITE YOUR OWN PROMPT',
     backToPresets: '← BACK TO READY-MADE TOPICS',
@@ -155,11 +161,13 @@ export const UI_EN = {
   },
 
   result: {
+    title: 'Result',
     correct: '🎉 CORRECT!',
     wrong: '❌ WRONG!',
     yourGuess: 'Your guess',
     score: 'Score',
-    sentence: 'chose {word} in the question:'
+    sentence: 'chose {word} in the question:',
+    continue: 'Continue ➜'
   },
 
   final: {
@@ -226,6 +234,18 @@ export const UI_EN = {
     stoppedBody: 'The session has been explicitly halted. Current player scores have been preserved successfully:\n\n{scores}\n\nReturning to the lobby.',
     sessionBodyFull: 'To ensure session health and automatic player background anonymization, this match has been finalized by the system.\n\nFINAL MATCH SCORES:\n{scores}\n\nThe lobby is now closed. Please recreate players or take a routine break.',
     rollback: 'A safety option was used — the round was canceled, scores rolled back, and a new question is loaded.'
+  },
+
+  a11y: {
+    prevQuestion: 'Previous question',
+    nextQuestion: 'Next question',
+    prevPrompt: 'Previous prompt',
+    nextPrompt: 'Next prompt',
+    removePlayer: 'Remove {name}',
+    settings: 'Settings',
+    toggleSound: 'Toggle sound',
+    language: 'Language',
+    close: 'Close'
   },
 
   settings: {

@@ -60,7 +60,8 @@ export function t(key, params) {
 
 // Переводит статический DOM: [data-i18n] -> textContent,
 // [data-i18n-html] -> innerHTML, [data-i18n-placeholder] -> placeholder,
-// [data-i18n-title] -> title.
+// [data-i18n-title] -> title, [data-i18n-aria] -> aria-label,
+// [data-i18n-alt] -> alt.
 export function applyStaticTexts(root) {
   if (typeof document === 'undefined') return;
   const scope = root || document;
@@ -82,6 +83,14 @@ export function applyStaticTexts(root) {
   scope.querySelectorAll('[data-i18n-title]').forEach(el => {
     const v = t(el.getAttribute('data-i18n-title'));
     if (typeof v === 'string') el.setAttribute('title', v);
+  });
+  scope.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    const v = t(el.getAttribute('data-i18n-aria'));
+    if (typeof v === 'string') el.setAttribute('aria-label', v);
+  });
+  scope.querySelectorAll('[data-i18n-alt]').forEach(el => {
+    const v = t(el.getAttribute('data-i18n-alt'));
+    if (typeof v === 'string') el.setAttribute('alt', v);
   });
 }
 

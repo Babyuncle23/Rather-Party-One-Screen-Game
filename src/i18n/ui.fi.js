@@ -19,6 +19,7 @@ export const UI_FI = {
     emojiPickerSub: 'Valitse tyyliisi sopiva kuvake.',
     videoTitle: 'Näin pelataan',
     shareQr: 'Pitikö yhden näytön pelistä? Jaa linkki muille QR:lla 😊',
+    shareQrAlt: 'QR-koodi — linkki peliin',
     footerBadge: 'Designed by Human',
     footerSub: 'coded by ai 😬',
     iosTitle: '🍏 Asenna iPhoneen'
@@ -42,6 +43,7 @@ export const UI_FI = {
     enterCode: 'Syötä 4-kirjaiminen huonekoodi!',
     nameSoloPh: 'Pelaajan nimi',
     addPlayer: '+ Lisää',
+    seatOrder: 'Lisää nimet siinä järjestyksessä, jossa pelaajat istuvat pöydän ääressä.',
     avatarHelp: 'Vaihda avatari napauttamalla.',
     roundsLabel: 'Kierrosten määrä:',
     start: 'Aloita peli',
@@ -63,7 +65,8 @@ export const UI_FI = {
     waitMore: 'Odotetaan vähintään yhtä pelaajaa lisää…',
     full: 'Huone on täynnä — enintään 4 pelaajaa',
     connected: '{n} pelaajaa yhdistetty — paina Aloita!',
-    waitHost: 'Odotetaan, että isäntä aloittaa pelin…'
+    waitHost: 'Odotetaan, että isäntä aloittaa pelin…',
+    qrAlt: 'QR-koodi — skannaa liittyäksesi huoneeseen'
   },
 
   turn: {
@@ -85,7 +88,9 @@ export const UI_FI = {
     phraseSimple: 'Anna puhelin pelaajalle {emojiName} {name}.',
     responderNote: 'Nyt on pelaajan {r} vuoro vastata pelaajan {p} aiheeseen.\nPidä puhelin muilta piilossa!',
     watchNote: 'Vain tämä pelaaja saa pitää puhelinta, mutta {name} saa katsoa!',
-    guesserSpeech: 'Anna puhelin pelaajalle {emojiName} {name}, ja {responder} saa katsoa.'
+    guesserSpeech: 'Anna puhelin pelaajalle {emojiName} {name}, ja {responder} saa katsoa.',
+    readyBtn: 'Olen {name} — pidä ✋',
+    readyShort: 'Pidä painettuna vahvistaaksesi'
   },
 
   picker: {
@@ -99,6 +104,7 @@ export const UI_FI = {
     editStart: '✍️ MUOKKAA KYSYMYSTÄ',
     editStop: '← PERUUTA MUOKKAUS',
     editSave: 'Tallenna muokat',
+    livePreview: 'Esikatselu',
     answerN: '[ ___ VASTAUS {n} ___ ]',
     customToggle: '✍️ TAI KIRJOITA OMA AIHEESI',
     backToPresets: '← TAKAISIN VALMISIIN AIHEISIIN',
@@ -156,11 +162,13 @@ export const UI_FI = {
   },
 
   result: {
+    title: 'Tulos',
     correct: '🎉 OIKEIN!',
     wrong: '❌ VÄÄRIN!',
     yourGuess: 'Arvauksesi',
     score: 'Pisteet',
-    sentence: 'valitsi {word} kysymyksessä:'
+    sentence: 'valitsi {word} kysymyksessä:',
+    continue: 'Jatka ➜'
   },
 
   final: {
@@ -227,6 +235,18 @@ export const UI_FI = {
     stoppedBody: 'Istunto lopetettiin erikseen. Pelaajien pisteet tallennettiin:\n\n{scores}\n\nPalataan aloitusnäyttöön.',
     sessionBodyFull: 'Istunnon terveyden ja automaattisen anonymisoinnin vuoksi peli päätettiin järjestelmän toimesta.\n\nLOPPUPISTEET:\n{scores}\n\nAula on suljettu. Luo pelaajat uudelleen tai pidä tauko.',
     rollback: 'Turvavaihtoehtoa käytettiin — kierros peruttiin, pisteet palautettiin ja uusi kysymys ladattiin.'
+  },
+
+  a11y: {
+    prevQuestion: 'Edellinen kysymys',
+    nextQuestion: 'Seuraava kysymys',
+    prevPrompt: 'Edellinen aihe',
+    nextPrompt: 'Seuraava aihe',
+    removePlayer: 'Poista {name}',
+    settings: 'Asetukset',
+    toggleSound: 'Ääni päälle/pois',
+    language: 'Kieli',
+    close: 'Sulje'
   },
 
   settings: {

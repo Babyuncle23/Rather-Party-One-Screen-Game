@@ -493,6 +493,7 @@ p {
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   background: rgba(3, 3, 8, 0.86);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -515,7 +516,7 @@ p {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 #loading-screen {
@@ -627,7 +628,6 @@ p {
 }
 
 .safety-desc-text {
-  display: none;
   font-size: 0.85rem;
   color: var(--muted);
   margin-top: 6px;
@@ -848,11 +848,6 @@ p {
   opacity: 0.7;
 }
 
-.lock-icon {
-  display: none;
-}
-
-
 .guesser-progress-row,
 .stats-bar {
   display: flex;
@@ -888,7 +883,6 @@ p {
 }
 
 .orally-hint-btn {
-  display: none;
   margin-top: 12px;
   margin-bottom: 4px;
   border-radius: 14px;
@@ -1017,7 +1011,6 @@ p {
 }
 
 .responder-helper-content {
-  display: none;
   background: rgba(255,255,255,0.03);
   border: 1px dashed rgba(140, 108, 255, 0.25);
   border-radius: 14px;
@@ -1067,7 +1060,6 @@ p {
 }
 
 .danger-small-btn {
-  display: none;
   margin-bottom: 16px;
   background: rgba(255,111,122,0.1);
   color: var(--danger);
@@ -1075,7 +1067,6 @@ p {
 }
 
 #final-screen {
-  display: none;
   width: 100%;
 }
 
@@ -1211,8 +1202,8 @@ p {
 .boxes-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 18px;
+  gap: 8px;
+  margin-top: 10px;
   width: 100%;
 }
 
@@ -1241,14 +1232,14 @@ p {
   width: 100%;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(140, 108, 255, 0.18);
-  border-radius: 18px;
-  padding: 14px 16px;
+  border-radius: 14px;
+  padding: 8px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
-  min-height: 58px;
+  min-height: 48px;
   color: var(--text);
   font-weight: 700;
   font-size: 0.95rem;
@@ -1359,37 +1350,6 @@ p {
 }
 .word-color-1 .revealed-char {
   color: var(--positive);
-}
-
-/* Универсальный прочерк (Фиолетовый удален, по умолчанию теперь Бирюзовый) */
-.letter-gap {
-  display: inline-block;
-  width: 6px;
-  height: 18px;
-  border-radius: 2px;
-  margin: 0 4px;
-  background: var(--gap-color-low, rgba(55, 255, 226, 0.2));
-  box-shadow: 0 0 6px var(--gap-shadow, rgba(55, 255, 226, 0.3));
-  animation: smoothPulseGapDynamic 1.8s ease-in-out infinite;
-}
-
-/* ДОБАВЬ ЭТО: Статичный прочерк, который показывает длину слова */
-.letter-dash {
-  display: inline-block;
-  width: 10px;
-  height: 4px; 
-  border-radius: 2px;
-  margin: 0 3px;
-  background: var(--gap-color-high, rgba(55, 255, 226, 0.65));
-  box-shadow: 0 0 6px var(--gap-shadow, rgba(55, 255, 226, 0.3));
-  vertical-align: bottom; 
-  transform: translateY(-4px); 
-  height: 3px; border-radius: 1px;
-}
-
-@keyframes smoothPulseGapDynamic {
-  0%, 100% { opacity: 0.3; background: var(--gap-color-low, rgba(55, 255, 226, 0.2)); }
-  50% { opacity: 0.9; background: var(--gap-color-high, rgba(55, 255, 226, 0.65)); }
 }
 
 .ability-inline-label {
@@ -1785,6 +1745,16 @@ p {
 }
 
 /* Анимация полосы прогресса при удержании кнопки безопасности */
+.safety-hold-trigger {
+  --hold-fill: rgba(255, 255, 255, 0.3);
+  touch-action: none; /* микро-сдвиг пальца не должен срывать удержание скроллом */
+}
+
+.safety-hold-trigger[data-action="skip"] { --hold-fill: rgba(255, 213, 107, 0.45); }
+.safety-hold-trigger[data-action="talk"] { --hold-fill: rgba(55, 255, 226, 0.4); }
+.safety-hold-trigger[data-action="stop-direct"] { --hold-fill: rgba(255, 111, 122, 0.45); }
+.safety-hold-trigger[data-action="stop-delayed"] { --hold-fill: rgba(168, 168, 255, 0.42); }
+
 .safety-hold-trigger::before {
   content: '';
   position: absolute;
@@ -1792,16 +1762,17 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--hold-fill);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 2s linear;
+  transition: transform 0.2s ease-out;
   z-index: 1;
   pointer-events: none;
 }
 
 .safety-hold-trigger.holding::before {
   transform: scaleX(1);
+  transition: transform 2s linear;
 }
 
 /* Стили для плавного раскрытия спойлеров опций */
@@ -1915,7 +1886,7 @@ p {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 18px rgba(20, 12, 34, 0.14);
 }
 .emoji-help-text {
-  margin: 0 0 18px;
+  margin: 0 0 12px;
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.95rem;
 }
@@ -2255,9 +2226,67 @@ p {
   width: 100%;
 }
 
-#pass-screen, 
 #custom-alert-modal {
   cursor: pointer;
+}
+
+/* #result-modal: закрывается ТОЛЬКО кнопкой Continue — тап по оверлею ничего не делает */
+#result-modal {
+  z-index: 2000;
+  cursor: default;
+}
+
+.result-modal-content {
+  max-height: 92dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#result-modal .modal-message {
+  overflow-wrap: break-word;
+  margin-bottom: 18px;
+}
+
+/* Сцена SCENE_REGISTRY жёстко обрезана границами карточки даже на 390px */
+#result-modal .alert-visual-scene {
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.result-continue-btn {
+  margin-top: 4px;
+}
+
+/* #pass-screen: фон мёртвый, продолжение — только удержанием кнопки 0.8с */
+.pass-ready-btn {
+  position: relative;
+  overflow: hidden;
+  max-width: 360px;
+  margin: 10px auto 0;
+  font-size: 17px;
+  touch-action: none;
+}
+
+.pass-ready-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.32);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease-out;
+  pointer-events: none;
+}
+
+.pass-ready-btn.holding::before {
+  transform: scaleX(1);
+  transition: transform 0.8s linear;
+}
+
+.pass-ready-btn > span {
+  position: relative;
+  z-index: 1;
 }
 
 .tap-anywhere-text {
@@ -2459,24 +2488,10 @@ p {
     width: 100% !important;
 }
 
-.letter-dash {
-    vertical-align: bottom !important;
-    transform: translateY(-4px) !important;
-    height: 3px !important;
-    border-radius: 1px !important;
-}
-
 .word-group:not(:only-child) {
     border: 1px dashed rgba(255, 255, 255, 0.25) !important;
     padding: 4px 8px !important;
     border-radius: 8px !important;
-}
-
-.word-group .letter-gap,
-.word-group .letter-dash {
-    align-self: flex-end !important;
-    margin-bottom: 2px !important;
-    transform: none !important;
 }
 
 #final-screen #final-history-window {
@@ -2567,9 +2582,14 @@ p {
     margin-bottom: 0;
 }
 
-/* Возвращаем отступ между кнопкой Add Player и списком игроков */
+/* Компактный скролл-список игроков: кнопка старта не уезжает за экран */
 #setup-screen #players-boxes-container {
-    margin-top: 20px !important;
+    margin-top: 10px !important;
+    max-height: 182px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 4px;
 }
 
 /* =========================================
@@ -2843,10 +2863,12 @@ p {
 /* Подпись под карточками ответов */
 .mask-caption {
   text-align: center;
-  font-size: 12px;
-  color: var(--muted);
-  margin: 10px 0 0;
-  opacity: 0.85;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 12px 0 0;
+  opacity: 0.95;
+  letter-spacing: 0.02em;
   width: min(100%, 420px);
   margin-left: auto;
   margin-right: auto;
@@ -3231,11 +3253,13 @@ body.spectator-mode #guesser-screen .guess-answer-block {
    маска сжимается и может переноситься внутри карточки угадчика. */
 .guess-answer-block .masked-wrapper .revealed-char {
   font-size: clamp(9px, 3.4vw, 17px);
-}
-
-.guess-answer-block .masked-wrapper .letter-gap {
-  width: clamp(3px, 1.4vw, 6px);
-  height: clamp(10px, 3.8vw, 18px);
+  padding: 1px 6px 3px;
+  margin: 0 2px;
+  min-width: 14px;
+  text-align: center;
+  border-radius: 6px;
+  background: rgba(55, 255, 226, 0.08);
+  box-shadow: inset 0 -2px 0 rgba(55, 255, 226, 0.4);
 }
 
 .guess-answer-block .word-group {
@@ -3244,9 +3268,293 @@ body.spectator-mode #guesser-screen .guess-answer-block {
   row-gap: 2px;
 }
 
+/* =========================================
+   МОБИЛЬНАЯ КОМПОНОВКА 390x844
+   ========================================= */
+
+/* Звук живёт в шапке рядом с Safety и ⚙️ — больше не перекрывает контент снизу */
+.help-header-row .audio-control-panel {
+  position: static;
+  flex: 0 0 auto;
+  padding: 0;
+  z-index: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* --- Компактный топ-бар на игровых экранах (48–52px) --- */
+body.game-screen-active .help-section {
+  margin: 0 0 6px;
+}
+body.game-screen-active .safety-tip-text {
+  display: none !important;
+}
+body.game-screen-active .help-header-row .btn-small {
+  min-height: 36px;
+  padding: 4px 14px;
+  font-size: 0.82rem;
+  border-radius: 12px;
+}
+body.game-screen-active .help-header-row .audio-control-panel {
+  width: 36px;
+  height: 36px;
+}
+body.game-screen-active h2 {
+  margin-bottom: 6px;
+  font-size: clamp(1.5rem, 5.5vw, 2rem);
+}
+body.game-screen-active .gameplay-zone {
+  margin-top: 8px;
+}
+body.game-screen-active #picker-screen .info-pulse-box {
+  padding: 8px 12px;
+}
+body.game-screen-active #picker-step1-box { margin-bottom: 8px; }
+body.game-screen-active #picker-step2-box { margin: 8px 0; }
+body.game-screen-active .picker-step-title {
+  font-size: 0.92rem;
+  margin-bottom: 4px;
+}
+body.game-screen-active .picker-step-sub { font-size: 0.82rem; }
+body.game-screen-active #secret-question-text,
+body.game-screen-active #prompt-display-text {
+  font-size: 1.05rem;
+  line-height: 1.45;
+  margin-bottom: 10px;
+}
+body.game-screen-active #picker-screen .carousel-card {
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+body.game-screen-active #picker-screen .card-question { margin: 4px 0 !important; }
+body.game-screen-active #picker-screen .picker-toggle-btn {
+  padding: 8px;
+  margin-bottom: 8px;
+}
+body.game-screen-active #picker-screen .gameplay-zone {
+  padding-bottom: 14px !important;
+}
+body.game-screen-active #picker-screen h2 {
+  font-size: clamp(1.3rem, 5vw, 1.7rem);
+  margin-bottom: 4px;
+}
+body.game-screen-active #confirm-prompt-btn {
+  padding: 12px;
+}
+@media (max-width: 620px) {
+  body.game-screen-active #picker-screen .gameplay-zone {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
+
+/* --- Плотный пикер: инфобоксы, карусели, тоглы --- */
+#picker-step1-box,
+#picker-step2-box {
+  background: rgba(55, 255, 226, 0.05);
+  border: 1px dashed rgba(55, 255, 226, 0.3);
+  border-radius: 12px;
+  text-align: center;
+  padding: 10px 14px;
+}
+#picker-step1-box { margin-bottom: 10px; }
+#picker-step2-box { margin: 12px 0 10px; }
+
+.picker-step-title {
+  color: var(--positive);
+  font-weight: 800;
+  font-size: 1rem;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0 0 6px;
+}
+.picker-step-sub {
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-transform: none;
+  margin: 0;
+}
+#picker-step2-sub { margin-top: 6px; }
+
+.carousel-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+.carousel-index {
+  text-align: center;
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.carousel-arrows {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+#secret-question-text {
+  margin: 0 0 12px;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  width: 100%;
+}
+#prompt-display-text {
+  text-align: center;
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  width: 100%;
+}
+#picker-screen .carousel-arrows .carousel-btn {
+  font-size: 18px;
+  padding: 4px 20px;
+}
+.picker-toggle-btn {
+  display: block;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+/* EDIT THE QUESTION — акцентная кнопка активной фичи, а не disabled */
+#edit-question-toggle-btn {
+  border-color: rgba(140, 108, 255, 0.6);
+  color: var(--accent);
+  background: rgba(140, 108, 255, 0.1);
+  box-shadow: 0 6px 18px rgba(140, 108, 255, 0.18);
+}
+#confirm-prompt-btn {
+  box-shadow: 0 12px 30px rgba(93, 75, 255, 0.3);
+  font-size: 1.05rem;
+  padding: 14px;
+}
+
+/* --- Сетап: подсказка порядка имён + закреплённая кнопка старта --- */
+.setup-seat-hint {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.35;
+}
+#setup-screen #start-game-btn {
+  position: sticky;
+  bottom: 12px;
+  z-index: 50;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+}
+
+/* --- Модалки: центр без лишнего верхнего смещения --- */
+#settings-modal {
+  justify-content: center;
+  padding: 16px;
+}
+
+/* =========================================
+   ТИПОГРАФИКА / GUESSER КАРТОЧКИ / РЕДАКТОР
+   ========================================= */
+
+/* --- Карточки ответов угадывающего: явные кликабельные кнопки --- */
+#guesser-screen button.guess-answer-block {
+  background: linear-gradient(180deg, #17171f 0%, #222130 100%) !important;
+  border: 2px solid rgba(88, 255, 194, 0.38) !important;
+  cursor: pointer !important;
+  transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+#guesser-screen button.guess-answer-block:active {
+  transform: scale(0.97);
+  border-color: var(--positive) !important;
+  box-shadow: 0 0 16px rgba(55, 255, 226, 0.28) !important;
+}
+body.spectator-mode #guesser-screen button.guess-answer-block {
+  cursor: default !important;
+}
+
+/* --- Кнопки подсказок угадывающего: читаемые подписи --- */
+#guesser-screen .ability-inline-btn {
+  color: var(--text);
+  border-color: rgba(140, 108, 255, 0.45);
+}
+#guesser-screen .ability-inline-btn .ability-main-line strong {
+  color: #f4f5fc;
+}
+
+/* --- Редактор вопроса: компактные поля + живой предпросмотр --- */
+.edit-q-field {
+  resize: none !important;
+  field-sizing: content;
+  min-height: 0;
+  max-height: 132px;
+  padding: 9px 12px !important;
+  font-size: 14px !important;
+  line-height: 1.35;
+  text-align: center;
+  font-family: inherit;
+  margin-bottom: 6px !important;
+}
+.edit-answer-sep {
+  text-align: center;
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+.edit-preview-block {
+  margin: 2px 0 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(140, 108, 255, 0.08);
+  border: 1px dashed rgba(140, 108, 255, 0.35);
+  text-align: center;
+}
+.edit-preview-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+.edit-preview-text {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text);
+  overflow-wrap: break-word;
+}
+.edit-preview-slot {
+  color: var(--accent);
+  font-weight: 800;
+}
+.edit-q-save {
+  width: 100%;
+  background: rgba(55, 255, 226, 0.1) !important;
+  color: var(--positive) !important;
+  border: 1px solid rgba(55, 255, 226, 0.2) !important;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
 /* .hidden объявлен в начале файла (стр. 517) — баннеры, определённые ниже,
    перекрывали его своим display:flex. Повтор объявления в конце возвращает
    .hidden приоритет по порядку каскада при той же специфичности. */
 .hidden {
-  display: none;
+  display: none !important;
 }

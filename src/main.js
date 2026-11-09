@@ -10,7 +10,11 @@ import { escapeHTML } from './utils/sanitize.js';
 import { getNerfVocab } from './data/nerfWords.js';
 import { SCENE_REGISTRY } from './data/scenes.js';
 import { getLocale, setLocale, t, applyStaticTexts, emojiNameFor, SUPPORTED_LOCALES } from './i18n/I18nManager.js';
+import { qrSvgDataUri } from './utils/qrcode.js';
 import { detectWordModifier, applyWordModifier, stripSuffixMarker } from './i18n/morphology.js';
+
+// Публичная ссылка на игру — кодируется в «поделиться» QR на Setup и Final
+const GAME_SHARE_URL = 'https://babyuncle23.github.io/Rather-Party-One-Screen-Game/';
 
 export const PLAYER_EMOJIS = [
   "🔥", "⚠️", "🦊", "🐼", "🐱", "🐶", "🐰", "🐯", "🐨", "🐷", "🐮", "🐵", "🐺", "🦁", "🐸", 
@@ -277,7 +281,7 @@ function setAdvancedMode(enabled) {
   const customInput = document.getElementById('custom-hint-input');
 
   if (editToggleBtn) {
-    editToggleBtn.style.display = advancedModeEnabled ? 'block' : 'none';
+    editToggleBtn.classList.toggle('hidden', !advancedModeEnabled);
     editToggleBtn.disabled = !advancedModeEnabled;
     if (!advancedModeEnabled) {
       editToggleBtn.innerHTML = t('picker.editStart');
@@ -285,20 +289,25 @@ function setAdvancedMode(enabled) {
   }
 
   if (editBlock) {
-    editBlock.style.display = 'none';
+    editBlock.classList.add('hidden');
+  }
+
+  const questionCarouselWrapper = document.getElementById('question-carousel-wrapper');
+  if (questionCarouselWrapper) {
+    questionCarouselWrapper.classList.remove('hidden');
   }
 
   if (toggleToCustom) {
-    toggleToCustom.style.display = advancedModeEnabled ? 'block' : 'none';
+    toggleToCustom.classList.toggle('hidden', !advancedModeEnabled);
     toggleToCustom.disabled = !advancedModeEnabled;
   }
 
   if (customBlock) {
-    customBlock.style.display = 'none';
+    customBlock.classList.add('hidden');
   }
 
   if (presetBlock) {
-    presetBlock.style.display = 'block';
+    presetBlock.classList.remove('hidden');
   }
 
   if (customInput) {
@@ -306,6 +315,11 @@ function setAdvancedMode(enabled) {
   }
 
   S.picker.isCustomHintActive = false;
+  S.picker.isEditingQuestion = false;
+
+  if (S.phase === GamePhase.PICKING) {
+    renderLocalView();
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -361,6 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateStatsBarVisibility();
     window.addEventListener('screenchange', updateStatsBarVisibility);
     setupVideoTutorial();
+    initShareQRCodes();
 
     // Единый рендер-путь: любое изменение состояния → ролевой рендер экрана.
     store.subscribe(() => renderLocalView());
@@ -413,22 +428,17 @@ function updateStatsBarVisibility() {
     const hasAnyContent = Array.from(spans).some(span => span.textContent.trim().length > 0);
     if (hasAnyContent) {
       bar.classList.remove('stats-bar-empty');
-      bar.style.display = 'flex';
-      bar.style.margin = '4px 0'; 
+      bar.classList.remove('hidden');
+      bar.style.margin = '4px 0';
       bar.style.visibility = 'visible';
     } else {
       bar.classList.add('stats-bar-empty');
-      bar.style.display = 'none';
     }
   });
 
   const rollStatus = document.getElementById('ability-roll-status');
   if (rollStatus) {
-    if (rollStatus.textContent.trim().length === 0) {
-      rollStatus.style.display = 'none';
-    } else {
-      rollStatus.style.display = 'block';
-    }
+    rollStatus.classList.toggle('hidden', rollStatus.textContent.trim().length === 0);
   }
 }
 
@@ -479,10 +489,10 @@ function setupInitialEventListeners() {
     S.lobby.roundsInput = roundsInput;
 
     const safetyBtn = document.getElementById('safety-global-btn');
-    if (safetyBtn) safetyBtn.style.display = 'block';
+    if (safetyBtn) safetyBtn.classList.remove('hidden');
 
     const safetyTip = document.getElementById('safety-tip-text');
-    if (safetyTip) safetyTip.style.display = 'none';
+    if (safetyTip) safetyTip.classList.add('hidden');
 
     dispatchAction({ type: 'START_GAME', rounds: roundsInput });
   };
@@ -498,10 +508,10 @@ function resetToSetupState() {
   if (audioManager) audioManager.stopSpeech();
   releaseWakeLock();
   const stopVoiceBtn = document.getElementById('stop-voice-btn');
-  if (stopVoiceBtn) stopVoiceBtn.style.display = 'none';
+  if (stopVoiceBtn) stopVoiceBtn.classList.add('hidden');
 
   const helpSection = document.querySelector('.help-section');
-  if (helpSection) helpSection.style.display = 'block';
+  if (helpSection) helpSection.classList.remove('hidden');
 
   // Выход из онлайн-комнаты: сокет закрываем, сессию стираем.
   if (isOnlineMode()) online.leaveRoom();
@@ -532,7 +542,7 @@ function renderPlayerBoxes() {
           <span>${escapeHTML(player.name)}</span>
         </div>
       </div>
-      <button class="delete-box-btn">✕</button>
+      <button class="delete-box-btn" aria-label="${escapeHTML(t('a11y.removePlayer', { name: player.name }))}">✕</button>
     `;
     box.querySelector('.delete-box-btn').onclick = () => {
       S.lobby.players.splice(index, 1);
@@ -590,7 +600,6 @@ function openEmojiPicker(index) {
   if (!modal || !player) return;
   renderEmojiPickerGrid(player.emoji);
   modal.classList.remove('hidden');
-  modal.style.display = 'flex';
 }
 
 function openEmojiPickerForSelf() {
@@ -600,14 +609,12 @@ function openEmojiPickerForSelf() {
   if (!modal) return;
   renderEmojiPickerGrid(onlineAvatar);
   modal.classList.remove('hidden');
-  modal.style.display = 'flex';
 }
 
 function closeEmojiPicker() {
   const modal = document.getElementById('emoji-picker-modal');
   if (!modal) return;
   modal.classList.add('hidden');
-  modal.style.display = 'none';
   activeEmojiPickerIndex = null;
   emojiPickerKind = 'player';
 }
@@ -615,7 +622,7 @@ function closeEmojiPicker() {
 function setupGlobalButtonSounds() {
   document.addEventListener('click', (e) => {
     const button = e.target.closest('button');
-    const isTapScreen = e.target.closest('#pass-screen') || e.target.closest('#custom-alert-modal');
+    const isTapScreen = e.target.closest('#custom-alert-modal');
     
     if (button || isTapScreen) {
       if (button && (button.id === 'safety-global-btn' || button.closest('#safety-modal'))) return;
@@ -643,21 +650,21 @@ function setupPsychologicalSafetySystem() {
     // В онлайне SAFETY_PAUSE — чисто локальная штука: фазу не трогаем,
     // чтобы она не утекла в STATE_SYNC другим телефонам.
     if (!isOnlineMode()) store.setPhase(GamePhase.SAFETY_PAUSE);
-    if (scrPrivacy) scrPrivacy.style.display = 'block';
-    if (scrOptions) scrOptions.style.display = 'none';
-    if (scrTalk) scrTalk.style.display = 'none';
-    modal.style.display = 'flex';
+    if (scrPrivacy) scrPrivacy.classList.remove('hidden');
+    if (scrOptions) scrOptions.classList.add('hidden');
+    if (scrTalk) scrTalk.classList.add('hidden');
+    modal.classList.remove('hidden');
   };
 
   if (proceedBtn) {
     proceedBtn.onclick = () => {
-      if (scrPrivacy) scrPrivacy.style.display = 'none';
-      if (scrOptions) scrOptions.style.display = 'block';
+      if (scrPrivacy) scrPrivacy.classList.add('hidden');
+      if (scrOptions) scrOptions.classList.remove('hidden');
     };
   }
 
   const closeSafety = () => {
-    modal.style.display = 'none';
+    modal.classList.add('hidden');
     if (S.phase === GamePhase.SAFETY_PAUSE) {
       store.setState({ phase: S.prevPhase || GamePhase.SETUP });
     }
@@ -701,19 +708,19 @@ function setupPsychologicalSafetySystem() {
       const desc = card.querySelector('.safety-desc-text');
       const trigger = card.querySelector('.safety-hold-trigger');
       const badge = card.querySelector('.safe-preview-badge');
-      const isOpen = desc.style.display === 'block';
+      const isOpen = !desc.classList.contains('hidden');
 
       optionCards.forEach(c => {
-        c.querySelector('.safety-desc-text').style.display = 'none';
-        c.querySelector('.safety-hold-trigger').style.display = 'none';
+        c.querySelector('.safety-desc-text').classList.add('hidden');
+        c.querySelector('.safety-hold-trigger').classList.add('hidden');
         const b = c.querySelector('.safe-preview-badge');
-        if (b) b.style.display = 'inline';
+        if (b) b.classList.remove('hidden');
       });
 
       if (!isOpen) {
-        desc.style.display = 'block';
-        trigger.style.display = 'block';
-        if (badge) badge.style.display = 'none';
+        desc.classList.remove('hidden');
+        trigger.classList.remove('hidden');
+        if (badge) badge.classList.add('hidden');
       }
     };
   });
@@ -724,10 +731,10 @@ function setupPsychologicalSafetySystem() {
 function resetSafetyButtonsState(scrOptions) {
   const cards = scrOptions.querySelectorAll('.safety-option-card');
   cards.forEach(c => {
-    c.querySelector('.safety-desc-text').style.display = 'none';
-    c.querySelector('.safety-hold-trigger').style.display = 'none';
+    c.querySelector('.safety-desc-text').classList.add('hidden');
+    c.querySelector('.safety-hold-trigger').classList.add('hidden');
     const b = c.querySelector('.safe-preview-badge');
-    if (b) b.style.display = 'inline';
+    if (b) b.classList.remove('hidden');
   });
   const display = document.getElementById('safety-timer-display');
   if (display) display.innerText = t('safety.currentMin', { n: 0 });
@@ -802,7 +809,7 @@ function executeSafetyAction(action, scrOptions, scrTalk, modal, minutes) {
   // эффекты по игре идут через TRIGGER_SAFETY → applySafety на хосте
   // (в соло — на этом же устройстве).
   if (action === 'skip') {
-    modal.style.display = 'none';
+    modal.classList.add('hidden');
     if (!game) {
       screens.showAlert(t('alerts.safetyTitle'), t('safety.noMatch'));
       return;
@@ -814,7 +821,7 @@ function executeSafetyAction(action, scrOptions, scrTalk, modal, minutes) {
     dispatchAction({ type: 'TRIGGER_SAFETY', action: 'talk' });
 
   } else if (action === 'stop-direct') {
-    modal.style.display = 'none';
+    modal.classList.add('hidden');
     if (safetyDelayedTimer) clearTimeout(safetyDelayedTimer);
     const progressReport = (game && Array.isArray(game.players))
       ? game.players.map(p => `${escapeHTML(p.name)}: ${p.gold} pts`).join('\n')
@@ -826,7 +833,7 @@ function executeSafetyAction(action, scrOptions, scrTalk, modal, minutes) {
       () => {
         const safetyTip = document.getElementById('safety-tip-text');
         if (safetyTip) {
-            safetyTip.style.display = 'block';
+            safetyTip.classList.remove('hidden');
             safetyTip.innerText = t('setup.safetyTip');
         }
         dispatchAction({ type: 'TRIGGER_SAFETY', action: 'stop-direct' });
@@ -834,7 +841,7 @@ function executeSafetyAction(action, scrOptions, scrTalk, modal, minutes) {
     );
 
   } else if (action === 'stop-delayed') {
-    modal.style.display = 'none';
+    modal.classList.add('hidden');
 
     if (isOnlineMode()) {
       // Таймер живёт на хосте — сработает даже если этот телефон уйдёт в сон.
@@ -1122,8 +1129,16 @@ function renderInteractiveQuestion() {
         container.appendChild(span);
       });
   }
+  container.innerHTML = cleanQuestionPunctuation(container.innerHTML);
   updatePickerHints();
 }
+
+// Типографика: убираем пробел перед знаками препинания ("SUSHI ?" -> "SUSHI?").
+// Плейсхолдер "[ ... ]" содержит точки — маскируем его на время чистки.
+const cleanQuestionPunctuation = (text) => String(text)
+  .replace(/\[ \.\.\. \]/g, '\u0001')
+  .replace(/\s+([?.,!;:])/g, '$1')
+  .replace(/\u0001/g, '[ ... ]');
 
 function getCompiledQuestionString(w1 = "[ ... ]", w2 = "[ ... ]", useHtml = false, chosenWord = null) {
   let str = "";
@@ -1135,6 +1150,7 @@ function getCompiledQuestionString(w1 = "[ ... ]", w2 = "[ ... ]", useHtml = fal
         str += frag.options[S.picker.currentFragmentsState[i]].text + " ";
       });
   }
+  str = cleanQuestionPunctuation(str);
 
   const resolvedChosenWord = chosenWord === null || chosenWord === undefined ? w1 : String(chosenWord);
   const formatAnswer = (word) => {
@@ -1223,6 +1239,7 @@ function applyInitRound() {
   S.picker.generatedQuestions = [];
   S.picker.viewIndex = 0;
   S.picker.isCustomHintActive = false;
+  S.picker.isEditingQuestion = false;
 
   for (let i = 0; i < 3; i++) {
     let q = game.getRandomQuestion();
@@ -1283,12 +1300,12 @@ function renderPickerActive() {
         step2Title.innerHTML = t('picker.step2First');
         if (step2Sub) {
           step2Sub.innerHTML = t('picker.step2SubFirst', { name: escapeHTML(rName) });
-          step2Sub.style.display = 'block';
+          step2Sub.classList.remove('hidden');
         }
       } else {
         step1Title.innerHTML = t('picker.step1', { name: '<span id="top-info-responder"></span>' });
         step2Title.innerHTML = t('picker.step2', { name: '<span id="bottom-info-responder"></span>' });
-        if (step2Sub) step2Sub.style.display = 'none';
+        if (step2Sub) step2Sub.classList.add('hidden');
       }
     }
     const elTop1 = document.getElementById('top-info-responder');
@@ -1313,39 +1330,62 @@ function renderPickerActive() {
     const editSaveBtn = document.getElementById('edit-q-save-btn');
 
     if (editToggleBtn && editBlock && questionCarouselWrapper) {
-      editBlock.style.display = 'none';
-      questionCarouselWrapper.style.display = 'block';
-      editToggleBtn.innerHTML = t('picker.editStart');
+      // Открытость редактора живёт в S.picker — ре-рендер по setState её не сбрасывает.
+      const isEditing = S.picker.isEditingQuestion === true && advancedModeEnabled;
+      S.picker.isEditingQuestion = isEditing;
+      editBlock.classList.toggle('hidden', !isEditing);
+      questionCarouselWrapper.classList.toggle('hidden', isEditing);
+      editToggleBtn.innerHTML = isEditing ? t('picker.editStop') : t('picker.editStart');
 
       if (!advancedModeEnabled) {
-        editToggleBtn.style.display = 'none';
+        editToggleBtn.classList.add('hidden');
         editToggleBtn.disabled = true;
       } else {
+        editToggleBtn.classList.remove('hidden');
+        editToggleBtn.disabled = false;
         const toggleEdit = () => {
-          const isEditing = editBlock.style.display === 'block';
-          if (!isEditing) {
+          if (!S.picker.isEditingQuestion) {
             const rawQuestion = getCompiledQuestionString("[ ... ]", "[ ... ]", false);
             const parts = rawQuestion.split("[ ... ]");
             editPart1.value = (parts[0] || "").trim();
             editPart2.value = (parts[1] || "").trim();
             editPart3.value = (parts[2] || "").trim();
+            updateEditPreview();
 
-            editBlock.style.display = 'block';
-            questionCarouselWrapper.style.display = 'none';
+            S.picker.isEditingQuestion = true;
+            editBlock.classList.remove('hidden');
+            questionCarouselWrapper.classList.add('hidden');
             editToggleBtn.innerHTML = t('picker.editStop');
           } else {
-            editBlock.style.display = 'none';
-            questionCarouselWrapper.style.display = 'block';
+            S.picker.isEditingQuestion = false;
+            editBlock.classList.add('hidden');
+            questionCarouselWrapper.classList.remove('hidden');
             editToggleBtn.innerHTML = t('picker.editStart');
           }
         };
 
         editToggleBtn.onclick = () => { if (audioManager) audioManager.play('click'); toggleEdit(); };
 
+        const editPreview = document.getElementById('edit-q-preview');
+        const updateEditPreview = () => {
+          if (!editPreview) return;
+          const slot = (n) => `<span class="edit-preview-slot">${escapeHTML(t('picker.answerN', { n }))}</span>`;
+          const html = `${escapeHTML(editPart1.value.trim())} ${slot(1)} ${escapeHTML(editPart2.value.trim())} ${slot(2)} ${escapeHTML(editPart3.value.trim())}`;
+          editPreview.innerHTML = cleanQuestionPunctuation(html)
+            .replace(/\s{2,}/g, ' ')
+            .trim();
+        };
+        if (editPart1) editPart1.oninput = updateEditPreview;
+        if (editPart2) editPart2.oninput = updateEditPreview;
+        if (editPart3) editPart3.oninput = updateEditPreview;
+        updateEditPreview();
+
         if (editSaveBtn) {
           editSaveBtn.onclick = () => {
             if (audioManager) audioManager.play('click');
-            const compiled = `${editPart1.value.trim()} [ ... ] ${editPart2.value.trim()} [ ... ] ${editPart3.value.trim()}`;
+            const compiled = cleanQuestionPunctuation(
+              `${editPart1.value.trim()} [ ... ] ${editPart2.value.trim()} [ ... ] ${editPart3.value.trim()}`
+            ).replace(/\s{2,}/g, ' ');
             dispatchAction({ type: 'EDIT_QUESTION', customCompiledText: compiled });
             renderInteractiveQuestion();
             toggleEdit();
@@ -1361,6 +1401,7 @@ function renderPickerActive() {
 
     const applyHistoryState = (index) => {
       const state = S.picker.generatedQuestions[index];
+      if (!state) return;
       S.picker.currentQuestion = state.q;
       S.picker.currentFragmentsState = [...state.f];
       S.picker.currentQuestion.customCompiledText = state.c;
@@ -1372,7 +1413,8 @@ function renderPickerActive() {
     };
 
     const swipeQuestionCarousel = (newIndex, dir) => {
-      S.picker.generatedQuestions[S.picker.viewIndex].c = S.picker.currentQuestion.customCompiledText;
+      const prevState = S.picker.generatedQuestions[S.picker.viewIndex];
+      if (prevState && S.picker.currentQuestion) prevState.c = S.picker.currentQuestion.customCompiledText;
       S.picker.viewIndex = newIndex;
       applyHistoryState(S.picker.viewIndex);
       if (audioManager) audioManager.play('click');
@@ -1394,8 +1436,9 @@ function renderPickerActive() {
       };
     }
 
-    // Применяем первый вопрос при старте
-    applyHistoryState(0);
+    // Восстанавливаем выбранный вопрос карусели — ре-рендер по setState
+    // не должен сбрасывать ни его, ни счётчик n/3.
+    applyHistoryState(S.picker.viewIndex || 0);
 
     // Логика кастомного и готового промпта
     const presetBlock = document.getElementById('preset-prompt-block');
@@ -1405,15 +1448,17 @@ function renderPickerActive() {
     const customInput = document.getElementById('custom-hint-input');
 
     if (presetBlock && customBlock) {
-        presetBlock.style.display = 'block';
-        customBlock.style.display = 'none';
-        S.picker.isCustomHintActive = false;
-        if (customInput) customInput.value = "";
+        // Открытость кастом-промпта — тоже состояние (S.picker.isCustomHintActive):
+        // при ре-рендере блок остаётся открытым, введённый текст не затирается.
+        const customOpen = S.picker.isCustomHintActive === true;
+        presetBlock.classList.toggle('hidden', customOpen);
+        customBlock.classList.toggle('hidden', !customOpen);
+        if (!customOpen && customInput) customInput.value = "";
     }
 
     if (!advancedModeEnabled) {
         if (toggleToCustom) {
-            toggleToCustom.style.display = 'none';
+            toggleToCustom.classList.add('hidden');
             toggleToCustom.disabled = true;
             toggleToCustom.onclick = null;
         }
@@ -1421,12 +1466,12 @@ function renderPickerActive() {
             toggleToPreset.onclick = null;
         }
     } else if (toggleToCustom) {
-        toggleToCustom.style.display = 'block';
+        toggleToCustom.classList.remove('hidden');
         toggleToCustom.disabled = false;
         toggleToCustom.onclick = () => {
             if (audioManager) audioManager.play('click');
-            presetBlock.style.display = 'none';
-            customBlock.style.display = 'block';
+            presetBlock.classList.add('hidden');
+            customBlock.classList.remove('hidden');
             S.picker.isCustomHintActive = true;
             
             if (customInput) {
@@ -1442,8 +1487,8 @@ function renderPickerActive() {
     if (toggleToPreset) {
         toggleToPreset.onclick = () => {
             if (audioManager) audioManager.play('click');
-            customBlock.style.display = 'none';
-            presetBlock.style.display = 'block';
+            customBlock.classList.add('hidden');
+            presetBlock.classList.remove('hidden');
             S.picker.isCustomHintActive = false;
             if (customInput) customInput.value = "";
         };
@@ -1510,11 +1555,8 @@ document.getElementById('displayed-hint').innerHTML = S.hint.html;
     const pluralWarning = document.getElementById('responder-plural-warning');
     if (pluralWarning) {
         // Если Пикер отредактировал секретный вопрос или написал свой промпт — скрываем подсказку
-        if (S.picker.currentQuestion.customCompiledText || S.picker.isCustomHintActive) {
-            pluralWarning.style.display = 'none';
-        } else {
-            pluralWarning.style.display = S.hint.requiresPlural ? 'block' : 'none';
-        }
+        const showPluralWarning = !S.picker.currentQuestion.customCompiledText && !S.picker.isCustomHintActive && S.hint.requiresPlural;
+        pluralWarning.classList.toggle('hidden', !showPluralWarning);
     }
 
     // Сброс элементов шага "Now choose" — DOM переиспользуется между раундами
@@ -1551,8 +1593,8 @@ document.getElementById('displayed-hint').innerHTML = S.hint.html;
     const helperText = document.getElementById('responder-helper-text');
    
     if (helperToggle && helperContent && helperText) {
-      if (helperBox) helperBox.style.display = 'none';
-      helperContent.style.display = 'none';
+      if (helperBox) helperBox.classList.add('hidden');
+      helperContent.classList.add('hidden');
       helperToggle.innerText = t('responder.ideas'); 
      
       let ideas = [];
@@ -1564,16 +1606,16 @@ document.getElementById('displayed-hint').innerHTML = S.hint.html;
         const randomIdeas = [...ideas].sort(() => Math.random() - 0.5).slice(0, 4);
         helperText.innerText = randomIdeas.join(', ');
         
-        if (helperBox) helperBox.style.display = 'block';
+        if (helperBox) helperBox.classList.remove('hidden');
        
         helperToggle.onclick = (e) => {
           e.stopPropagation();
-          const isCollapsed = helperContent.style.display === 'none';
+          const isCollapsed = helperContent.classList.contains('hidden');
           if (isCollapsed) {
-            helperContent.style.display = 'block';
+            helperContent.classList.remove('hidden');
             helperToggle.innerText = t('responder.hideIdeas');
           } else {
-            helperContent.style.display = 'none';
+            helperContent.classList.add('hidden');
             helperToggle.innerText = t('responder.ideas');
           }
           if (audioManager) audioManager.play('click');
@@ -1598,8 +1640,8 @@ document.getElementById('displayed-hint').innerHTML = S.hint.html;
       const lock = counterEl.querySelector('.lock-icon');
       if (txt && lock) {
         txt.innerText = "0/35";
-        txt.style.display = "inline";
-        lock.style.display = "none";
+        txt.classList.remove('hidden');
+        lock.classList.add('hidden');
       } else {
         counterEl.innerText = "0/35";
       }
@@ -1620,7 +1662,7 @@ document.getElementById('displayed-hint').innerHTML = S.hint.html;
    
     const submitWordsBtn = document.getElementById('submit-words-btn');
     const choiceBlock = document.getElementById('responder-choice-block');
-    choiceBlock.style.display = 'none';
+    choiceBlock.classList.add('hidden');
    
     submitWordsBtn.onclick = () => {
       const w1 = in1.value.trim().toUpperCase();
@@ -1742,8 +1784,8 @@ function renderResponderChoiceActive() {
       const txt = counterEl.querySelector('.counter-text');
       const lock = counterEl.querySelector('.lock-icon');
       if (txt && lock) {
-        txt.style.display = "none";
-        lock.style.display = "inline";
+        txt.classList.add('hidden');
+        lock.classList.remove('hidden');
       }
     };
     updateCounterToLocked(counter1);
@@ -1753,7 +1795,7 @@ function renderResponderChoiceActive() {
     if (inputsWrapper) inputsWrapper.classList.add('hidden');
     if (helperBox) helperBox.classList.add('hidden');
     if (submitWordsBtn) submitWordsBtn.classList.add('hidden');
-    if (pluralWarning) pluralWarning.style.display = 'none';
+    if (pluralWarning) pluralWarning.classList.add('hidden');
     if (blindBanner) blindBanner.classList.add('hidden');
 
     if (wordsBadge) {
@@ -1769,7 +1811,7 @@ function renderResponderChoiceActive() {
     }
 
     if (choiceBlock) {
-      choiceBlock.style.display = 'block';
+      choiceBlock.classList.remove('hidden');
 
       const finalQ = getCompiledQuestionString(finalW1, finalW2, false);
       document.getElementById('responder-final-question').innerText = finalQ;
@@ -2041,10 +2083,10 @@ function updateGuesserUI() {
       
       if (elements.length > 0) {
         progressEl.innerHTML = elements.join(' <span style="color: rgba(255,255,255,0.15)">|</span> ');
-        progressEl.style.display = 'flex';
+        progressEl.classList.remove('hidden');
       } else {
         progressEl.innerHTML = '';
-        progressEl.style.display = 'none';
+        progressEl.classList.add('hidden');
       }
     }
 
@@ -2095,10 +2137,10 @@ function updateGuesserUI() {
     const rollStatusEl = document.getElementById('ability-roll-status');
     if (rollStatusEl) {
       if (S.guess.revealCount === 1) {
-        rollStatusEl.style.display = 'block';
+        rollStatusEl.classList.remove('hidden');
         rollStatusEl.innerHTML = t('guesser.rollStatus', { a: GAME_CONFIG.REVEAL_RANDOM_COST, b: GAME_CONFIG.REVEAL_LENGTH_COST });
       } else {
-        rollStatusEl.style.display = 'block';
+        rollStatusEl.classList.remove('hidden');
         rollStatusEl.innerHTML = t('guesser.rollSpent');
       }
     }
@@ -2122,7 +2164,7 @@ function updateGuesserUI() {
             row.classList.add('burned');
             setTimeout(() => {
               if (row.classList.contains('burned')) {
-                row.style.setProperty('display', 'none', 'important');
+                row.classList.add('hidden');
                 row.style.marginBottom = '0';
               }
             }, 350);
@@ -2131,7 +2173,7 @@ function updateGuesserUI() {
       } else {
         if (row) {
           row.classList.remove('burned');
-          row.style.setProperty('display', 'flex', 'important');
+          row.classList.remove('hidden');
           row.style.marginBottom = '10px';
         }
       }
@@ -2143,9 +2185,9 @@ function updateGuesserUI() {
     const abilitiesContainer = document.querySelector('.abilities-list-vertical');
     if (abilitiesContainer) {
       if (S.guess.revealCount >= 2) {
-        setTimeout(() => { abilitiesContainer.style.display = 'none'; }, 400);
+        setTimeout(() => { abilitiesContainer.classList.add('hidden'); }, 400);
       } else {
-        abilitiesContainer.style.display = 'flex';
+        abilitiesContainer.classList.remove('hidden');
       }
     }
 
@@ -2154,7 +2196,7 @@ function updateGuesserUI() {
       oralBtn.innerHTML = t('guesser.oralBtn', { n: GAME_CONFIG.ORAL_HINT_COST });
       const showOral = game && game.players.length === 2 && S.guess.revealCount >= 2 && !S.guess.oralHintUsed && isActiveGuesser();
       if (showOral) {
-        oralBtn.style.setProperty('display', 'block', 'important');
+        oralBtn.classList.remove('hidden');
         oralBtn.onclick = (e) => {
           e.stopPropagation();
           const guesser = game.players[S.guess.currentGuesserIndex];
@@ -2165,7 +2207,7 @@ function updateGuesserUI() {
           dispatchAction({ type: 'BUY_HINT', kind: 'oral' });
         };
       } else {
-        oralBtn.style.setProperty('display', 'none', 'important');
+        oralBtn.classList.add('hidden');
       }
     }
   } catch (err) {
@@ -2405,21 +2447,24 @@ function playSceneSfx(sfxFile) {
   return handle;
 }
 
-// Модалка результата: тап принимается у любого игрока, но не раньше чем через
-// 1.5с после открытия — случайный дабл-тап не должен скипать сцену
+// Модалка результата: переход только по кнопке Continue, тап по оверлею игнорируется.
+// Кнопка не принимает нажатия в первые 1.5с — случайный дабл-тап не должен скипать сцену.
 function showResultAlert(title, message, onConfirm) {
-  const modal = document.getElementById('custom-alert-modal');
+  const modal = document.getElementById('result-modal');
   if (!modal) return;
-  document.getElementById('custom-alert-title').innerHTML = title;
-  document.getElementById('custom-alert-message').innerHTML = message;
+  document.getElementById('result-alert-title').innerHTML = title;
+  document.getElementById('result-alert-message').innerHTML = message;
   modal.classList.remove('hidden');
-  modal.style.display = 'flex';
   resultShownAt = Date.now();
-  modal.onclick = () => {
-    if (Date.now() - resultShownAt < 1500) return;
-    modal.style.display = 'none';
-    if (onConfirm) onConfirm();
-  };
+  const btn = document.getElementById('result-continue-btn');
+  if (btn) {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      if (Date.now() - resultShownAt < 1500) return;
+      modal.classList.add('hidden');
+      if (onConfirm) onConfirm();
+    };
+  }
 }
 
 // === renderRoundResult: одна и та же сцена результата на всех телефонах ===
@@ -2543,10 +2588,10 @@ async function renderFinalScores() {
       audioManager.stopSpeech();
       audioManager.cancelQueue = false;
       
-      stopVoiceBtn.style.display = 'inline-block';
+      stopVoiceBtn.classList.remove('hidden');
       stopVoiceBtn.onclick = () => {
         audioManager.stopSpeech();
-        stopVoiceBtn.style.display = 'none';
+        stopVoiceBtn.classList.add('hidden');
       };
 
       const topScore = leaderboard[0].gold;
@@ -2607,7 +2652,7 @@ async function renderFinalScores() {
         console.debug("Speech queue interrupted:", e);
       }
     } else if (stopVoiceBtn) {
-      stopVoiceBtn.style.display = 'none';
+      stopVoiceBtn.classList.add('hidden');
     }
 
     const backBtn = document.getElementById('back-to-setup-btn');
@@ -2656,7 +2701,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
   if (installBtn && !isIOS && !isStandalone) { 
-    installBtn.style.display = 'block';
+    installBtn.classList.remove('hidden');
     setTimeout(() => installBtn.style.opacity = '1', 50); 
   }
 });
@@ -2673,7 +2718,7 @@ if (installBtn) {
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
         installBtn.style.opacity = '0';
-        setTimeout(() => installBtn.style.display = 'none', 400);
+        setTimeout(() => installBtn.classList.add('hidden'), 400);
       }
       deferredPrompt = null;
     }
@@ -2690,11 +2735,9 @@ function setupSettingsModal() {
   const openSettings = (e) => {
     e.stopPropagation();
     modal.classList.remove('hidden');
-    modal.style.display = 'flex';
   };
 
   const closeSettings = () => {
-    modal.style.display = 'none';
     modal.classList.add('hidden');
   };
 
@@ -2756,7 +2799,6 @@ function setupVideoTutorial() {
   });
 
   const closeVideo = () => {
-    videoModal.style.display = 'none';
     videoModal.classList.add('hidden');
 
     if (document.fullscreenElement || document.webkitFullscreenElement) {
@@ -2785,7 +2827,6 @@ function setupVideoTutorial() {
 
     tutorialVideo.src = defaultVideoSrc + '&autoplay=1';
     videoModal.classList.remove('hidden');
-    videoModal.style.display = 'flex';
     setTimeout(() => applyVideoSpeed(1), 250);
   };
 
@@ -2875,10 +2916,17 @@ function renderSetup() {
   document.body.classList.remove('spectator-mode');
   const safetyTip = document.getElementById('safety-tip-text');
   if (safetyTip) {
-    safetyTip.style.display = 'block';
+    safetyTip.classList.remove('hidden');
     safetyTip.innerText = t('setup.safetyTip');
   }
   updateLangPills();
+}
+
+// Статические «поделиться» QR на экранах Setup и Final — генерируем локально,
+// без обращения к api.qrserver.com (работает офлайн и без сторонних запросов).
+function initShareQRCodes() {
+  const uri = qrSvgDataUri(GAME_SHARE_URL);
+  document.querySelectorAll('img[data-share-qr]').forEach(img => { img.src = uri; });
 }
 
 function renderLobby() {
@@ -2889,9 +2937,16 @@ function renderLobby() {
   const codeEl = document.getElementById('lobby-room-code');
   if (codeEl) codeEl.innerText = code ? code.split('').join(' ') : '····';
   const qr = document.getElementById('lobby-qr');
-  if (qr && code) {
-    const joinUrl = `${location.origin}${location.pathname}?room=${code}`;
-    qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(joinUrl)}`;
+  if (qr) {
+    // Локальный QR — работает офлайн, без внешних запросов
+    if (code) {
+      const joinUrl = `${location.origin}${location.pathname}?room=${code}`;
+      qr.src = qrSvgDataUri(joinUrl);
+      qr.classList.remove('hidden');
+    } else {
+      qr.removeAttribute('src');
+      qr.classList.add('hidden');
+    }
   }
   renderLobbyRoster();
   updateLangPills();
@@ -3025,18 +3080,16 @@ function updateTalkOverlay() {
   const scrTalk = document.getElementById('safety-screen-talk');
   if (S.safety.talkOpen) {
     talkOverlayActive = true;
-    if (scrPrivacy) scrPrivacy.style.display = 'none';
-    if (scrOptions) scrOptions.style.display = 'none';
-    if (scrTalk) scrTalk.style.display = 'block';
+    if (scrPrivacy) scrPrivacy.classList.add('hidden');
+    if (scrOptions) scrOptions.classList.add('hidden');
+    if (scrTalk) scrTalk.classList.remove('hidden');
     modal.classList.remove('hidden');
-    modal.style.display = 'flex';
   } else if (talkOverlayActive) {
     talkOverlayActive = false;
-    modal.style.display = 'none';
     modal.classList.add('hidden');
-    if (scrTalk) scrTalk.style.display = 'none';
-    if (scrOptions) scrOptions.style.display = 'none';
-    if (scrPrivacy) scrPrivacy.style.display = 'block';
+    if (scrTalk) scrTalk.classList.add('hidden');
+    if (scrOptions) scrOptions.classList.add('hidden');
+    if (scrPrivacy) scrPrivacy.classList.remove('hidden');
   }
 }
 
@@ -3061,7 +3114,6 @@ function updateConnBanner(status) {
   if (!overlay) return;
   const show = isOnlineMode() && status !== 'open' && (pendingJoin || !!S.online.roomCode);
   overlay.classList.toggle('hidden', !show);
-  overlay.style.display = show ? 'flex' : 'none';
 }
 
 // Респондер печатает: шлём только длины слов (debounced), буквы — никогда
@@ -3127,6 +3179,13 @@ function restoreRuntimeFromState(remoteState) {
   shifter = next.guess && next.guess.mask ? WordShifter.fromJSON(next.guess.mask) : null;
   // Не затираем наш онлайн-контекст (roster/roomCode) снапшотом хоста
   const myOnline = { ...S.online };
+  // UI-состояние пикера (позиция карусели, открытый редактор/кастом-промпт)
+  // живёт на его устройстве — входящий STATE_SYNC не должен его стирать.
+  if (next.picker && isActivePicker()) {
+    next.picker.viewIndex = S.picker.viewIndex;
+    next.picker.isCustomHintActive = S.picker.isCustomHintActive;
+    next.picker.isEditingQuestion = S.picker.isEditingQuestion;
+  }
   store.applyRemoteState(next);
   S.online = myOnline;
 }
@@ -3324,11 +3383,14 @@ function setSetupMode(mode) {
   const onlineBtn = document.getElementById('mode-online-btn');
   const soloPanel = document.getElementById('solo-setup-panel');
   const onlinePanel = document.getElementById('online-setup-panel');
+  const startBtn = document.getElementById('start-game-btn');
   const isOnline = mode === 'online';
   if (soloBtn) soloBtn.classList.toggle('mode-card-active', !isOnline);
   if (onlineBtn) onlineBtn.classList.toggle('mode-card-active', isOnline);
   if (soloPanel) soloPanel.classList.toggle('hidden', isOnline);
   if (onlinePanel) onlinePanel.classList.toggle('hidden', !isOnline);
+  // start-кнопка живёт вне solo-панели (для sticky-пина) — прячем вместе с ней
+  if (startBtn) startBtn.classList.toggle('hidden', isOnline);
 }
 
 function setOnlineTab(tab) {

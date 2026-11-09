@@ -20,6 +20,7 @@ export const UI_RU = {
     emojiPickerSub: 'Подбери иконку под свой стиль.',
     videoTitle: 'Как играть',
     shareQr: 'Понравилась игра на одном экране? Поделись ссылкой через QR 😊',
+    shareQrAlt: 'QR-код — ссылка на игру',
     footerBadge: 'Designed by Human',
     footerSub: 'coded by ai 😬',
     iosTitle: '🍏 Установка на iPhone'
@@ -43,6 +44,7 @@ export const UI_RU = {
     enterCode: 'Введи 4-буквенный код комнаты!',
     nameSoloPh: 'Имя игрока',
     addPlayer: '+ Добавить',
+    seatOrder: 'Вводите имена в порядке рассадки за столом — телефон пойдёт по кругу.',
     avatarHelp: 'Тапни по аватару, чтобы сменить его.',
     roundsLabel: 'Количество раундов:',
     start: 'Начать игру',
@@ -64,7 +66,8 @@ export const UI_RU = {
     waitMore: 'Ждём ещё хотя бы одного игрока…',
     full: 'Комната заполнена — максимум 4 игрока',
     connected: 'Подключено игроков: {n} — жми «Старт»!',
-    waitHost: 'Ждём, когда хост начнёт игру…'
+    waitHost: 'Ждём, когда хост начнёт игру…',
+    qrAlt: 'QR-код — сканируй, чтобы войти в комнату'
   },
 
   turn: {
@@ -86,7 +89,9 @@ export const UI_RU = {
     phraseSimple: 'Передай телефон: {emojiName} {name}.',
     responderNote: 'Теперь ход игрока {r} — ответь на тему от игрока {p}.\nНе показывай телефон другим!',
     watchNote: 'Держать телефон должен только этот игрок, но {name} может смотреть!',
-    guesserSpeech: 'Передай телефон: {emojiName} {name}, а {responder} может смотреть.'
+    guesserSpeech: 'Передай телефон: {emojiName} {name}, а {responder} может смотреть.',
+    readyBtn: 'Я {name} — держи ✋',
+    readyShort: 'Удерживай для подтверждения'
   },
 
   picker: {
@@ -100,6 +105,7 @@ export const UI_RU = {
     editStart: '✍️ ИЗМЕНИТЬ ВОПРОС',
     editStop: '← ОТМЕНИТЬ ИЗМЕНЕНИЯ',
     editSave: 'Сохранить изменения',
+    livePreview: 'Предпросмотр',
     answerN: '[ ___ ОТВЕТ {n} ___ ]',
     customToggle: '✍️ ИЛИ НАПИШИ СВОЮ ТЕМУ',
     backToPresets: '← НАЗАД К ГОТОВЫМ ТЕМАМ',
@@ -157,11 +163,13 @@ export const UI_RU = {
   },
 
   result: {
+    title: 'Результат',
     correct: '🎉 ВЕРНО!',
     wrong: '❌ МИМО!',
     yourGuess: 'Твой ответ',
     score: 'Счёт',
-    sentence: 'выбрал {word} в вопросе:'
+    sentence: 'выбрал {word} в вопросе:',
+    continue: 'Продолжить ➜'
   },
 
   final: {
@@ -228,6 +236,18 @@ export const UI_RU = {
     stoppedBody: 'Игра была явно остановлена. Текущие очки игроков сохранены:\n\n{scores}\n\nВозврат на стартовый экран.',
     sessionBodyFull: 'Для здоровья сессии и автоматической анонимизации игроков этот матч был завершён системой.\n\nИТОГОВЫЕ ОЧКИ:\n{scores}\n\nЛобби закрыто. Создайте игроков заново или сделайте перерыв.',
     rollback: 'Сработала опция безопасности — раунд отменён, очки возвращены, загружен новый вопрос.'
+  },
+
+  a11y: {
+    prevQuestion: 'Предыдущий вопрос',
+    nextQuestion: 'Следующий вопрос',
+    prevPrompt: 'Предыдущая тема',
+    nextPrompt: 'Следующая тема',
+    removePlayer: 'Удалить {name}',
+    settings: 'Настройки',
+    toggleSound: 'Звук вкл/выкл',
+    language: 'Язык',
+    close: 'Закрыть'
   },
 
   settings: {

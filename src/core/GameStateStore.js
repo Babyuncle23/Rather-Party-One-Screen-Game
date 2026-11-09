@@ -44,6 +44,7 @@ export class GameStateStore {
         promptHistoryIndex: 0,
         questionRequiresPlural: false,
         isCustomHintActive: false,
+        isEditingQuestion: false,
         currentFragmentsState: [],
         currentQuestion: null
       },
