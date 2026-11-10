@@ -9,17 +9,17 @@
 // or subject position.
 // =====================================================================
 
-const MOD_SUBJECTS = ['josta nautit', 'jonka kanssa kamppailit', 'johon olisit pitänyt kiinnittää enemmän huomiota'];
+const MOD_SUBJECTS = ['josta nautit', 'jonka kanssa kamppailit', 'johon olisi pitänyt kiinnittää enemmän huomiota'];
 
 export const PROMPTS = {
   // TEKEMISET
-  actionWork: { text: 'Sopimaton teko töissä', brainstorm: ['torkut pöydällä', 'aikainen poistuminen', 'pomon sivuuttaminen', 'pelaaminen töissä', 'sarjojen katselu', 'laulaminen taukotilassa', 'kahvin pönkkiminen', 'riidan aloittaminen', 'töihin tuleminen humalassa', 'tiktokin selailu', 'itkeminen vessassa', 'tietokannan poistaminen', 'pääasiakkaan haukkuminen', 'pyjamassa kokouksessa', 'nukkuminen esityksen aikana', 'firman omaisuuden myynti'] },
-  actionIllegal: { text: 'Pieni rikos', brainstorm: ['elokuvan pirateeraus', 'punaisia päin kävely', 'kynän pönkkiminen', 'konserttiin ilman lippua', 'karkin pönkkiminen', 'seinän töhertäminen', 'ylikirpeä koulualueella', 'lippu matkustaminen', 'väärä nimi', 'hätäjarrun vetäminen', 'parkkivartijan lahjonta', 'naapurin wifin kaappaus', 'lääkärintodistuksen väärennys'] },
+  actionWork: { text: 'Sopimaton teko töissä', brainstorm: ['torkut pöydällä', 'aikainen poistuminen', 'pomon sivuuttaminen', 'pelaaminen töissä', 'sarjojen katselu', 'laulaminen taukotilassa', 'kahvin pölliminen', 'riidan aloittaminen', 'töihin tuleminen humalassa', 'tiktokin selailu', 'itkeminen vessassa', 'tietokannan poistaminen', 'pääasiakkaan haukkuminen', 'pyjamassa kokouksessa', 'nukkuminen esityksen aikana', 'firman omaisuuden myynti'] },
+  actionIllegal: { text: 'Pieni rikos', brainstorm: ['elokuvan piratointi', 'punaisia päin kävely', 'kynän pölliminen', 'konserttiin ilman lippua', 'karkin näpistäminen', 'seinän töhertäminen', 'ylinopeus koulualueella', 'pummilla matkustaminen', 'väärän nimen käyttö', 'hätäjarrun vetäminen', 'parkkivartijan lahjonta', 'naapurin wifin kaappaus', 'lääkärintodistuksen väärennys'] },
   actionEmbarrassing: { text: 'Nolotus', brainstorm: ['nimen unohtaminen', 'niiskaus nauraessa', 'heilautus muukalaiselle', 'vastaus väärään viestiin', 'vessapaperia kengässä', 'vetoketju auki', 'opettajan kutsuminen äidiksi', 'vanhan postauksen tykkäys', 'pinaattia hampaissa', 'lasioveen kävely', 'oman salasanan unohtaminen'] },
-  actionParty: { text: 'Hauska juhlatemppu', brainstorm: ['miekan nieminen', 'omenoiden jongleeraus', 'voltti taaksepäin', 'lasin syöminen', 'hengityksen pidätys 2 min', 'rubikin kuutio sokkona', 'banaanin kuorinta jaloilla', 'salaisen aineen arvaus drinkissä', 'laulun laulaminen takaperin', 'puun rikkominen päällä', 'kahdella äänellä puhuminen', 'silmien pyöritys eri suuntiin', 'kirsikan varren solmu', 'neulan löytö heinäsuovasta'] },
-  actionChore: { text: 'Tavallinen kotityösi (esim. tiskaus)', brainstorm: ['imurointi', 'roskien vieminen', 'pyykin viikkaus', 'sängyn pedaaminen', 'pölyjen pyyhintä', 'vessan puhdistus', 'kierrätyksen lajittelu', 'lakanoien vaihto', 'tiskikoneen tyhjennys', 'ikkunoiden pesu'] },
-  actionRelax: { text: 'Rentouttava tekeminen', brainstorm: ['10h nukkuminen', 'kuuma kylpy', 'kirjan lukeminen', 'seinään tuijottaminen', 'auringonlaskun katselu', 'kävelyllä käynti', 'meditointi', 'yrttitee', 'ihan ei-mitään tekeminen', 'rannalla makaaminen', 'pilvien katselu', 'porekylpy', 'meren kuuntelu', 'hieronta', 'syvään hengittäminen', 'sateen katselu', 'maalaaminen'] },
-  actionExtreme: { text: 'Extremelaji jota et koskaan kokeilisi', brainstorm: ['jättiaallon surffaus', 'laskuvarjohyppy', 'enduro-ajelu', 'kalliokiipeily', 'wingsuit-lento', 'voltti', 'ultramaratooni', 'hyppy kahden talon välillä', 'mäkelasku skeitillä'] },
+  actionParty: { text: 'Hauska juhlatemppu', brainstorm: ['miekan nieleminen', 'omenoiden jongleeraus', 'voltti taaksepäin', 'lasin syöminen', 'hengityksen pidätys 2 min', 'rubikin kuutio sokkona', 'banaanin kuorinta jaloilla', 'salaisen aineen arvaus drinkissä', 'laulun laulaminen takaperin', 'puulaudan rikkominen päällä', 'kahdella äänellä puhuminen', 'silmien pyöritys eri suuntiin', 'kirsikan varren solmu', 'neulan löytö heinäsuovasta'] },
+  actionChore: { text: 'Tavallinen kotityösi (esim. tiskaus)', brainstorm: ['imurointi', 'roskien vieminen', 'pyykin viikkaus', 'sängyn petaaminen', 'pölyjen pyyhintä', 'vessan puhdistus', 'kierrätyksen lajittelu', 'lakanoiden vaihto', 'tiskikoneen tyhjennys', 'ikkunoiden pesu'] },
+  actionRelax: { text: 'Rentouttava tekeminen', brainstorm: ['10h nukkuminen', 'kuuma kylpy', 'kirjan lukeminen', 'seinään tuijottaminen', 'auringonlaskun katselu', 'kävelyllä käynti', 'meditointi', 'yrttitee', 'pelkkä joutenolo', 'rannalla makaaminen', 'pilvien katselu', 'porekylpy', 'meren kuuntelu', 'hieronta', 'syvään hengittäminen', 'sateen katselu', 'maalaaminen'] },
+  actionExtreme: { text: 'Extremelaji jota et koskaan kokeilisi', brainstorm: ['jättiaallon surffaus', 'laskuvarjohyppy', 'enduro-ajelu', 'kalliokiipeily', 'wingsuit-lento', 'voltti', 'ultramaraton', 'hyppy kahden talon välillä', 'mäenlasku skeitillä'] },
   humanActivity: { text: 'Tekeminen', modifiers: ['josta nautit', 'josta et nauti'] },
   hobby: { text: 'Harrastus', modifiers: ['jonka haluaisit aloittaa', 'joka kiinnostaa', 'jota et koskaan tekisi'] },
   annoyingHabit: { text: 'Tapa', modifiers: ['hyvä', 'huono'] },
@@ -29,7 +29,7 @@ export const PROMPTS = {
   personalInterest: { text: 'Aiheet jotka kiinnostavat' },
   letterM: { text: 'M-kirjaimella alkavat sanat' },
   madeUpCompound: { text: 'Keksitty yhdyssana (kaksi lempiasiaasi yhdessä, esim. herkkupelit)' },
-  madeUpHyphenated: { text: 'Keksitty väliviivasana (sisältää lempiasiasi, esim. halauskone)' },
+  madeUpHyphenated: { text: 'Keksitty väliviivasana (sisältää lempiasiasi, esim. halaus-kone, herkku-show)' },
   abstractMood: { text: 'Abstrakti tunne tai käsite', modifiers: ['jonka koit äskettäin', 'jota et ole kokenut vähään aikaan'], brainstorm: ['Ilo', 'Epätoivo', 'Hämmennys', 'Apatia', 'Paniikki', 'Melankolia', 'Euforia', 'Tylsyys', 'Nostalgia'] },
 
   // PAIKAT
@@ -39,7 +39,7 @@ export const PROMPTS = {
   publicPlace: { text: 'Julkinen paikka jossa viihdyt' },
 
   // IHMISET JA ROOLIT
-  fictionalChar: { text: 'Keksin hahmo' },
+  fictionalChar: { text: 'Kuvitteellinen hahmo' },
   villain: { text: 'Kauhuelokuvan pahis', brainstorm: ['Dracula', 'Pennywise', 'Chucky', 'Hannibal', 'Muumio', 'Alien', 'Freddy Krueger', 'Michael Myers', 'Predator', 'Jigsaw'] },
   politician: { text: 'Poliitikko', brainstorm: ['Putin', 'Macron', 'Merkel', 'Stalin', 'Lenin', 'Nixon', 'Trump', 'Biden', 'Boris Johnson', 'Kim Jong Un', 'Obama', 'Churchill', 'Mandela', 'Gandhi', 'Lincoln', 'Franklin', 'Kuningatar Elisabet', 'Thatcher', 'Kamala Harris'] },
   historical: { text: 'Historiallinen hahmo', brainstorm: ['Nero', 'Platon', 'Dante', 'Galilei', 'Mozart', 'Lincoln', 'Kleopatra', 'Napoleon', 'Julius Caesar', 'Newton', 'Einstein', 'Jeanne d\'Arc', 'MLK', 'Marco Polo', 'Aleksanteri Suuri', 'Tšingis-kaani', 'Marie Curie'] },
@@ -53,47 +53,47 @@ export const PROMPTS = {
   // RUOKA JA JUOMAT
   fastFood: { text: 'Pikaruoka', brainstorm: ['hampurilainen', 'pizza', 'ranskalaiset', 'hodari', 'paistettu kana', 'taco', 'burrito', 'sipulirenkaat'] },
   snack: { text: 'Naposteltava', brainstorm: ['skittles', 'doritos', 'cheetos', 'popcorn', 'pretzelit', 'pähkinät', 'keksit', 'kuivaliha'] },
-  sweetLiquid: { text: 'Makea neste', brainstorm: ['hunaja', 'siirappi', 'mehu', 'limppari', 'maito', 'nektari', 'vaahterasiirappi', 'sulatettu suklaa', 'omenasmehu', 'appelsiinimehu', 'viinirypälelimppari', 'kondensoitu maito'] },
-  strongFood: { text: 'Vahvatuoksuinen ruoka', brainstorm: ['sipuli', 'valkosipuli', 'kala', 'tonnikala', 'kimchi', 'curry', 'sinihomejuusto', 'silli', 'mätä munat', 'sardiinit', 'durian'] },
+  sweetLiquid: { text: 'Makea neste', brainstorm: ['hunaja', 'siirappi', 'mehu', 'limppari', 'maito', 'nektari', 'vaahterasiirappi', 'sulatettu suklaa', 'omenamehu', 'appelsiinimehu', 'viinirypälelimppari', 'kondensoitu maito'] },
+  strongFood: { text: 'Vahvatuoksuinen ruoka', brainstorm: ['sipuli', 'valkosipuli', 'kala', 'tonnikala', 'kimchi', 'curry', 'sinihomejuusto', 'silli', 'mädät munat', 'sardiinit', 'durian'] },
   sauce: { text: 'Kastike', brainstorm: ['Pesto', 'Salsa', 'Kermakastike', 'Tahini', 'Hummus', 'Tomaattikastike', 'Sienikastike', 'BBQ', 'Teriyaki', 'Valkosipuliaioli', 'Hunajasinappi', 'Hollandaise', 'Buffalo', 'Sweet chili', 'Aura'] },
-  hotDrink: { text: 'Kuuma juoma', brainstorm: ['Tee', 'Kahvi', 'Kaakao', 'Latte', 'Chai', 'Kuuma suklaa', 'Yrttitee', 'Earl Grey', 'Vihreä tee', 'Cappuccino', 'Espresso', 'Matcha latte', 'Mintutee', 'Flat white', 'Lämminsimi'] },
-  popularDrink: { text: 'Juoma', brainstorm: ['Vesi', 'Kahvi', 'Tee', 'Olut', 'Limppari', 'Omppumehu', 'Kokis', 'Punaviini', 'Jäätee', 'Limsa', 'Kaakao', 'Omenasmehu', 'Pienpanimo-olut', 'Energiajuoma', 'Kivennäisvesi'] },
+  hotDrink: { text: 'Kuuma juoma', brainstorm: ['Tee', 'Kahvi', 'Kaakao', 'Latte', 'Chai', 'Kuuma suklaa', 'Yrttitee', 'Earl Grey', 'Vihreä tee', 'Cappuccino', 'Espresso', 'Matcha latte', 'Minttutee', 'Flat white', 'Lämmin omenasiideri'] },
+  popularDrink: { text: 'Juoma', brainstorm: ['Vesi', 'Kahvi', 'Tee', 'Olut', 'Limppari', 'Omppumehu', 'Kokis', 'Punaviini', 'Jäätee', 'Limsa', 'Kaakao', 'Omenamehu', 'Pienpanimo-olut', 'Energiajuoma', 'Kivennäisvesi'] },
   candyType: { text: 'Karkkityyppi', brainstorm: ['Nallekarkit', 'Suklaa', 'Tikkari', 'Skittles', 'Vaahtokarkki', 'Lakritsi', 'Tumma suklaa', 'Hattara'] },
   fruit: { text: 'Hedelmä', brainstorm: ['Omena', 'Päärynä', 'Persikka', 'Luumu', 'Rypäleet', 'Vesimeloni', 'Mansikka', 'Ananas', 'Granaattiomena', 'Greippi', 'Mustikka', 'Vadelma', 'Passio', 'Kiivi', 'Lohikäärmehedelmä'] },
   foodItem: { text: 'Ruoka', modifiers: ['jota voisit syödä joka päivä', 'josta pidät', 'jota et syö'], brainstorm: ['Pizza', 'Juusto', 'Kakku', 'Suklaa'] },
 
   // ELÄIMET
   animalFunny: { text: 'Hassun näköinen eläin', brainstorm: ['laiskiainen', 'mopsi', 'sammakko', 'laama', 'koala', 'apina', 'vesinokkaeläin', 'kapibaara', 'hedelmälepakko', 'emu'] },
-  animalFarm: { text: 'Maatilan eläin', brainstorm: ['lehmä', 'possu', 'hevonen', 'vuohi', 'lammas', 'ankka', 'kana', 'sonni', 'pässi', 'kananpoika', 'kukko', 'aasi', 'muuliaasi', 'kalkkuna'] },
+  animalFarm: { text: 'Maatilan eläin', brainstorm: ['lehmä', 'possu', 'hevonen', 'vuohi', 'lammas', 'ankka', 'kana', 'sonni', 'pässi', 'kananpoika', 'kukko', 'aasi', 'muuli', 'kalkkuna'] },
   chubbyAnimal: { text: 'Pullukka eläin', brainstorm: ['Hylje', 'Panda', 'Hamsteri', 'Pingviini', 'Karhu', 'Kultapanda', 'Marsu', 'Virtahepo', 'Murmelli', 'Siili'] },
   fastAnimal: { text: 'Nopea eläin', brainstorm: ['Leijona', 'Jänis', 'Haukka', 'Hai', 'Kotka', 'Muuttohaukka', 'Gepardi', 'Purjekala', 'Marliini', 'Sarviantilooppi', 'Gaselli', 'Gnu', 'Kilparatsu', 'Strutsi', 'Vinttikoira'] },
-  angryAnimal: { text: 'Vihan näköinen eläin', brainstorm: ['Ampia', 'Härkä', 'Mäyrä', 'Villisika', 'Käärme', 'Grizzly', 'Silverback', 'Puhveli', 'Hunajamäyrä', 'Virtahepo', 'Ahma', 'Sarvinen', 'Chihuahua', 'Villisika'] },
+  angryAnimal: { text: 'Vihaisen näköinen eläin', brainstorm: ['Ampiainen', 'Härkä', 'Mäyrä', 'Villisika', 'Käärme', 'Grizzly', 'Hopeaselkägorilla', 'Puhveli', 'Hunajamäyrä', 'Virtahepo', 'Ahma', 'Sarvikuono', 'Chihuahua', 'Karju'] },
   loudAnimal: { text: 'Äänekäs eläin', brainstorm: ['Leijona', 'Susi', 'Varis', 'Hyeena', 'Hanhet', 'Sinivalas', 'Riikinkukko', 'Aasi', 'Merileijona', 'Sammakko'] },
-  dangerousAnimal: { text: 'Vaarallinen eläin', brainstorm: ['Leijona', 'Hai', 'Kobra', 'Susi', 'Karhu', 'Tiikeri', 'Krokotiili', 'Musta mamba', 'Laimuryppy', 'Komodovaraani', 'Nuolimyrkkysammakko', 'Virtahepo'] },
-  insect: { text: 'Hyönteinen', brainstorm: ['Muurahainen', 'Mehiläinen', 'Kärpänen', 'Ampia', 'Kirppu', 'Hunajamehiläinen', 'Sudenkorento', 'Perhonen', 'Leppäkerttu', 'Heinäsirkka', 'Torakka', 'Hyttynen', 'Kimalainen', 'Rukoileva mantis'] },
-  heavyAnimal: { text: 'Raskas eläin', brainstorm: ['Lehmä', 'Karhu', 'Härkä', 'Hylje', 'Hevonen', 'Sinivalas', 'Norsu', 'Valkosarvikuono', 'Virtahepo', 'Mursu', 'Kirahvi', 'Biison', 'Gaur', 'Merinorsu', 'Aasian norsu'] },
-  bitingAnimal: { text: 'Pureva eläin', brainstorm: ['Koira', 'Kissa', 'Muurahainen', 'Ampia', 'Rotta', 'Saksanpaimenkoira', 'Alligaattorikilpikonna', 'Musta mamba', 'Komodovaraani', 'Hedelmälepakko', 'Grizzly', 'Villisika', 'Tulimuurahainen', 'Hyttynen', 'Valkohai'] },
+  dangerousAnimal: { text: 'Vaarallinen eläin', brainstorm: ['Leijona', 'Hai', 'Kobra', 'Susi', 'Karhu', 'Tiikeri', 'Krokotiili', 'Musta mamba', 'Kuutiomeduusa', 'Komodonvaraani', 'Nuolimyrkkysammakko', 'Virtahepo'] },
+  insect: { text: 'Hyönteinen', brainstorm: ['Muurahainen', 'Mehiläinen', 'Kärpänen', 'Ampiainen', 'Kirppu', 'Hunajamehiläinen', 'Sudenkorento', 'Perhonen', 'Leppäkerttu', 'Heinäsirkka', 'Torakka', 'Hyttynen', 'Kimalainen', 'Rukoilijasirkka'] },
+  heavyAnimal: { text: 'Raskas eläin', brainstorm: ['Lehmä', 'Karhu', 'Härkä', 'Hylje', 'Hevonen', 'Sinivalas', 'Norsu', 'Leveähuulisarvikuono', 'Virtahepo', 'Mursu', 'Kirahvi', 'Biisoni', 'Gaur', 'Merinorsu', 'Aasian norsu'] },
+  bitingAnimal: { text: 'Pureva eläin', brainstorm: ['Koira', 'Kissa', 'Muurahainen', 'Ampiainen', 'Rotta', 'Saksanpaimenkoira', 'Alligaattorikilpikonna', 'Musta mamba', 'Komodonvaraani', 'Hedelmälepakko', 'Grizzly', 'Villisika', 'Tulimuurahainen', 'Hyttynen', 'Valkohai'] },
   nocturnalAnimal: { text: 'Yöeläin', brainstorm: ['Pöllö', 'Lepakko', 'Kettu', 'Susi', 'Myyrä', 'Supikoira', 'Siili', 'Liito-orava', 'Mäyrä', 'Opossumi', 'Lemuri', 'Ai-ai', 'Hedelmälepakko', 'Kehrääjä'] },
   wildAnimal: { text: 'Villi eläin', brainstorm: ['Susi', 'Karhu', 'Leijona', 'Peura', 'Kettu', 'Bengalintiikeri', 'Norsu', 'Grizzly', 'Punakenguru', 'Lumileopardi', 'Jääkarhu', 'Merikotka', 'Harmaasusi', 'Vuorigorilla', 'Afrikan leijona'] },
-  dogBreed: { text: 'Koirarotu', brainstorm: ['Mopsi', 'Bokseri', 'Husky', 'Beagle', 'Collie', 'Villakoira', 'Akita', 'Corgi', 'Chow', 'Vizsla', 'Saksanpaimenkoira', 'Kultainennoutaja', 'Ranskanbulldoggi', 'Bordercollie', 'Labradori', 'Siperianhusky', 'Tanskandoggi', 'Australianpaimenkoira', 'Berninpaimenkoira', 'Kavaljeeri', 'Dobermanni', 'Rottweiler', 'Malamuutti', 'Newfoundlandinkoira', 'Bernhardinkoira'] },
+  dogBreed: { text: 'Koirarotu', brainstorm: ['Mopsi', 'Bokseri', 'Husky', 'Beagle', 'Collie', 'Villakoira', 'Akita', 'Corgi', 'Chow-chow', 'Vizsla', 'Saksanpaimenkoira', 'Kultainennoutaja', 'Ranskanbulldoggi', 'Bordercollie', 'Labradorinnoutaja', 'Siperianhusky', 'Tanskandoggi', 'Australianpaimenkoira', 'Berninpaimenkoira', 'Kavaljeeri', 'Dobermanni', 'Rottweiler', 'Malamuutti', 'Newfoundlandinkoira', 'Bernhardinkoira'] },
   exoticAnimal: { text: 'Eksoottinen eläin', brainstorm: ['Panda', 'Koala', 'Iguana', 'Tukaani'] },
 
   // ESINEET
   everyday: { text: 'Aineellinen esine/esineet', modifiers: ['joita käytät usein', 'joita haluat lisää'] },
   expensive: { text: 'Kallis esine' },
   gadget: { text: 'Elektroniikkalaite', brainstorm: ['iPad', 'iPod', 'Kindle', 'Walkman', 'Hakulaite', 'Kamera', 'iPhone', 'Game Boy', 'Sähköparranajokone', 'Älykaiutin', 'Langaton hiiri', 'Pelikonsoli', 'Polaroid', 'Tietokone'] },
-  smallObj: { text: 'Pienet esineet', isPlural: true, brainstorm: ['Kolikot', 'Nastat', 'Nopat', 'Avaimet', 'Sormukset', 'Siemenet', 'Pullonkorkit', 'Nippusiteet', 'Napit', 'Kumilenksut', 'Neulat', 'Korunapit', 'Kahvipavut', 'Hakaneulat', 'Tulitikut', 'Plekrat', 'Muistikortit'] },
-  stickyThing: { text: 'Tahmea juttu', brainstorm: ['Liima', 'Hunaja', 'Teippi', 'Purukumi', 'Pihka', 'Kaksipuolinen teippi', 'Muistilappu', 'Melassi', 'Vaahterasiirappi', 'Superliima', 'Purukumi', 'Pihka', 'Karamelli', 'Maalarinteippi', 'Liimapuikko'] },
+  smallObj: { text: 'Pienet esineet', isPlural: true, brainstorm: ['Kolikot', 'Nastat', 'Nopat', 'Avaimet', 'Sormukset', 'Siemenet', 'Pullonkorkit', 'Nippusiteet', 'Napit', 'Kumilenksut', 'Neulat', 'Korunapit', 'Kahvipavut', 'Hakaneulat', 'Tulitikut', 'Plektrat', 'Muistikortit'] },
+  stickyThing: { text: 'Tahmea juttu', brainstorm: ['Liima', 'Hunaja', 'Teippi', 'Purukumi', 'Pihka', 'Kaksipuolinen teippi', 'Muistilappu', 'Melassi', 'Vaahterasiirappi', 'Superliima', 'Karamelli', 'Maalarinteippi', 'Liimapuikko'] },
   kitchenItem: { text: 'Keittiöesineet', isPlural: true, brainstorm: ['Lusikat', 'Lautaset', 'Tehosekoittimet', 'Veitset', 'Haarukat', 'Leikkuulaudat', 'Mittakupit', 'Paistinpannut', 'Kulhot', 'Kahvinkeittimet', 'Leivänpaahdimet', 'Uunipellit', 'Puulusikat', 'Astiankuivaustelineet', 'Monitoimikoneet'] },
   householdItem: { text: 'Kodin esine jota käytät usein', brainstorm: ['Leivänpaahdin', 'Lamppu', 'Sieni', 'Luuta', 'Tuoli', 'Imuri', 'Kahvinkeitin', 'Seinäkello', 'Pyykkikori', 'Leikkuulauta', 'Kaukosäädin', 'Lakana', 'Suihkuverho', 'Roskis', 'Pyykinpesukone'] },
   clothingItem: { text: 'Vaate', brainstorm: ['Paita', 'Farkut', 'Hame', 'Mekko', 'Pipo', 'Talvitakki', 'Nahkavyö', 'Neule', 'T-paita', 'Sadetakki'] },
-  survivalTool: { text: 'Selviytymisväline', brainstorm: ['Veitsi', 'Kirves', 'Saha', 'Sytkäri', 'Köysi', 'Multitool', 'Ensiapulaukku', 'Taskulamppu', 'Makuupussi', 'Kompassi'] },
+  survivalTool: { text: 'Selviytymisväline', brainstorm: ['Veitsi', 'Kirves', 'Saha', 'Sytkäri', 'Köysi', 'Monitoimityökalu', 'Ensiapulaukku', 'Taskulamppu', 'Makuupussi', 'Kompassi'] },
   shape: { text: 'Muoto / tunnistettava esine', brainstorm: ['Kuutio', 'Kolmio', 'Pähkinä', 'Ilmapallo', 'Lamppu', 'Päärynä', 'Muna', 'Tiili', 'Sydän', 'Timantti', 'Sylinteri', 'Kartio', 'Donitsi', 'Banaani', 'Pyramidi', 'Tähti', 'Nuoli', 'Pilleri'] },
   hygieneProduct: { text: 'Hygieniatuote', brainstorm: ['Saippua', 'Hammastahna', 'Shampoo', 'Deo'] },
   badSmellingThing: { text: 'Pahanhajuinen juttu', brainstorm: ['Roskat', 'Haisunäätä', 'Mätä muna', 'Muta'] },
   cheapItem: { text: 'Halvat pikkuesineet', isPlural: true, brainstorm: ['Nippusiteet', 'Kumilenksut', 'Kynät', 'Tulitikut'] },
   roomItem: { text: 'Esineet olohuoneessasi', isPlural: true, brainstorm: ['Kirjat', 'Kaapelit', 'Tyynyt', 'Mukit'] },
-  minorInconvenience: { text: 'Pikkuinharmi', brainstorm: ['Hidas wifi', 'Varpaan iskeytyminen', 'Liikennevalot', 'Paperihaava'] },
+  minorInconvenience: { text: 'Pieni arjen harmi', brainstorm: ['Hidas wifi', 'Varpaan iskeytyminen', 'Liikennevalot', 'Paperihaava'] },
   fragileObject: { text: 'Hauras esine', brainstorm: ['Raaka muna', 'Lasikuppi', 'Kukka', 'Pahvikuppi'] },
   inanimateObject: { text: 'Eloton esine', brainstorm: ['Tuoli', 'Lamppu', 'Auto', 'Puu'] },
   stickySubstance: { text: 'Tahmea aine', brainstorm: ['Hunaja', 'Muta', 'Lima', 'Liima'] },
@@ -103,19 +103,19 @@ export const PROMPTS = {
   company: { text: 'Firma', brainstorm: ['Sony', 'Apple', 'Nokia', 'Yahoo', 'Tesla', 'SpaceX', 'Intel', 'Meta', 'Blockbuster', 'Netflix', 'Google', 'Amazon', 'Microsoft', 'Samsung', 'Toyota', 'General Electric', 'Coca Cola'] },
   app: { text: 'Sovellus', brainstorm: ['Zoom', 'Uber', 'Slack', 'Tinder', 'Discord', 'Reddit', 'BeReal', 'TikTok', 'Instagram', 'Google Maps', 'Spotify', 'YouTube', 'WhatsApp', 'Twitter', 'Apple Music', 'Netflix', 'Facebook', 'Snapchat'] },
   website: { text: 'Nettisivu', brainstorm: ['eBay', 'Bing', 'Twitch', 'Reddit', 'Tumblr', 'Github', 'YouTube', 'Wikipedia', 'Amazon', 'Google', 'Facebook', 'Instagram', 'Pinterest', 'LinkedIn', 'Netflix', 'SoundCloud'] },
-  videoGame: { text: 'videopeli', brainstorm: ['Doom', 'Halo', 'Tetris', 'Portal', 'Skyrim', 'Fortnite', 'GTA', 'World of Warcraft', 'The Witcher', 'RDR', 'Mario', 'Minecraft', 'Elden Ring', 'Call of Duty', 'Final Fantasy', 'League of Legends'] },
-  boardGame: { text: 'lautapeli', brainstorm: ['Monopoli', 'Uno', 'Shakki', 'Twister', 'Jenga', 'Alfapet', 'Catan'] },
-  sport: { text: 'Laji', brainstorm: ['Golf', 'Rugby', 'Tennis', 'Jalkapallo', 'Nyrkkeily', 'Koripallo', 'Lentopallo', 'Jääkiekko', 'Pingis', 'Amerikkalainen jalkapallo', 'Formula 1', 'Kalliokiipeily', 'Taitoluistelu', 'Laukat', 'Ultimate'] },
+  videoGame: { text: 'Videopeli', brainstorm: ['Doom', 'Halo', 'Tetris', 'Portal', 'Skyrim', 'Fortnite', 'GTA', 'World of Warcraft', 'The Witcher', 'RDR', 'Mario', 'Minecraft', 'Elden Ring', 'Call of Duty', 'Final Fantasy', 'League of Legends'] },
+  boardGame: { text: 'Lautapeli', brainstorm: ['Monopoli', 'Uno', 'Shakki', 'Twister', 'Jenga', 'Alfapet', 'Catan'] },
+  sport: { text: 'Laji', brainstorm: ['Golf', 'Rugby', 'Tennis', 'Jalkapallo', 'Nyrkkeily', 'Koripallo', 'Lentopallo', 'Jääkiekko', 'Pingis', 'Amerikkalainen jalkapallo', 'Formula 1', 'Kalliokiipeily', 'Taitoluistelu', 'Ravit', 'Ultimate'] },
   mobileGame: { text: 'Mobiilipeli', brainstorm: ['Alto', 'Snake', 'Plague', 'Threes', 'Monument', 'Candy Crush', 'Clash of Clans', 'Subway Surfers', 'Angry Birds', 'Temple Run', 'Among Us', 'Genshin Impact', 'Pokémon GO', 'PUBG Mobile', 'Plants vs Zombies'] },
   instrument: { text: 'Soitin', brainstorm: ['Piano', 'Rummut', 'Harppu', 'Huilu', 'Sello', 'Kitara', 'Sähkökitara', 'Flyygeli', 'Viulu', 'Saksofoni', 'Trumpetti', 'Klarinetti', 'Pasuuna', 'Basso', 'Syntetisaattori'] },
   tvShow: { text: 'Sarja josta pidät', brainstorm: ['Lost', 'Fargo', 'Friends', 'The Wire', 'Succession', 'Breaking Bad', 'Game of Thrones', 'Sopranos', 'Stranger Things', 'The Office', 'Better Call Saul', 'Black Mirror', 'Chernobyl', 'The Crown', 'House of the Dragon'] },
   schoolSubject: { text: 'Kouluaine', modifiers: MOD_SUBJECTS, brainstorm: ['Matikka', 'Kuvataide', 'Musiikki', 'Historia', 'Fysiikka', 'Tietotekniikka', 'Liikunta', 'Vieras kieli', 'Yhteiskuntaoppi', 'Politiikka', 'Ympäristöoppi', 'Äidinkieli', 'Graafinen suunnittelu', 'Uskonto', 'Taloustieto'] },
   complicatedTopic: { text: 'Monimutkainen aihe', brainstorm: ['Kryptovaluutat', 'Verot', 'Tekoäly', 'Astrologia', 'Kvanttifysiikka', 'Matrix', 'NFT'] },
   foreignLanguage: { text: 'Vieras kieli', modifiers: ['jonka haluaisit oppia', 'joka olisi hyödyllistä osata'], brainstorm: ['Ranska', 'Saksa', 'Espanja', 'Italia', 'Arabia', 'Mandariinikiina', 'Japani', 'Portugali', 'Venäjä', 'Korea', 'Hindi', 'Hollanti', 'Turkki', 'Ruotsi', 'Vietnam'] },
-  professionalField: { text: 'Ammattialue (esim. lääketiede, koodaus)', brainstorm: ['Lääketiede', 'Laki', 'Insinööri', 'Rahoitus', 'Suunnittelu', 'Koodaus', 'Projektijohto', 'Data-analytiikka', 'Markkinointi', 'Liikkeenjohto', 'HR', 'Ympäristötiede', 'Graafinen suunnittelu', 'Tekoäly', 'PR'] },
+  professionalField: { text: 'Ammattiala (esim. lääketiede, koodaus)', brainstorm: ['Lääketiede', 'Oikeustiede', 'Tekniikka', 'Rahoitus', 'Suunnittelu', 'Koodaus', 'Projektijohto', 'Data-analytiikka', 'Markkinointi', 'Liikkeenjohto', 'HR', 'Ympäristötiede', 'Graafinen suunnittelu', 'Tekoäly', 'PR'] },
   martialArt: { text: 'Kamppailulaji', brainstorm: ['Judo', 'Karate', 'Aikido', 'Kung fu', 'Sumo', 'Bjj', 'Muay thai', 'MMA', 'Taekwondo', 'Krav maga', 'Capoeira', 'Jeet kune do', 'Kendo', 'Hapkido', 'Wing chun', 'Kempo'] },
   smallTalkTopic: { text: 'Smalltalk-aihe', brainstorm: ['Sää', 'Matkailu', 'Harrastukset', 'Elokuvat', 'Musiikki', 'Viikonloppusuunnitelmat', 'Lempiravintolat', 'Teknotrendit', 'Luetut kirjat', 'Työelämä', 'Lomakokemukset', 'Kuntotavoitteet', 'Tapahtumat', 'Kokkailu', 'Ura'] },
-  movie: { text: 'Elokuva', brainstorm: ['Titanic', 'Star Wars', 'Matrix', 'Shrek', 'Harry Potter', 'Jurassic Park', 'Avatar', 'Tarun sormusten herrasta', 'Avengers', 'Spiderman'] },
+  movie: { text: 'Elokuva', brainstorm: ['Titanic', 'Star Wars', 'Matrix', 'Shrek', 'Harry Potter', 'Jurassic Park', 'Avatar', 'Taru sormusten herrasta', 'Avengers', 'Spiderman'] },
   title: { text: 'Kuuluisa kirja- tai elokuvanimi', brainstorm: ['Matrix', 'Shrek', 'Titanic', 'Avatar', 'Hamlet', 'Dracula'] },
   movieGenre: { text: 'Elokuvagenre', brainstorm: ['Kauhu', 'Romcom', 'Scifi', 'Musikaali', 'Länkkäri', 'Mykkäelokuva', 'True crime', 'Toiminta', 'Fantasia'] },
   musicGenre: { text: 'Musiikkityyli', brainstorm: ['Heavy metal', 'Klassinen', 'K-pop', 'Jazz', 'Country', 'Dubstep', 'Ooppera', 'Punk', 'Tekno'] }
@@ -143,7 +143,7 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: 'lopuksi elämäksesi' },
+          { text: 'loppuelämäksesi' },
           { text: '5 vuodeksi' },
           { text: '10 vuodeksi' },
           { text: 'yhdeksi päiväksi' },
@@ -172,18 +172,18 @@ export const questionsDatabase = [
         options: [
           { text: 'viettää 1000 tuntia', type: 'time' },
           { text: 'osallistua mestaruuskisaan', type: 'compete' },
-          { text: 'omistaa koko tulevaisuutesi tekemiselle', type: 'future' },
-          { text: 'uhrata kaiken vapaa-aikasi tekemiselle', type: 'sacrifice' },
-          { text: 'viettää kaikki viikonloppusi tekemiselle', type: 'weekends' }
+          { text: 'omistaa koko tulevaisuutesi', type: 'future' },
+          { text: 'uhrata kaiken vapaa-aikasi', type: 'sacrifice' },
+          { text: 'viettää kaikki viikonloppusi', type: 'weekends' }
         ]
       },
       {
         options: [
           { text: 'pelaten peliä', requires: ['time', 'compete', 'sacrifice', 'weekends'], scene: 'playing', hints: [PROMPTS.videoGame, PROMPTS.boardGame, PROMPTS.sport, PROMPTS.mobileGame, PROMPTS.instrument] },
-          { text: 'tehden tekemistä', requires: ['sacrifice', 'weekends'], scene: 'doing', hints: [PROMPTS.annoyingHabit, PROMPTS.actionChore, PROMPTS.humanActivity, PROMPTS.hobby] },
+          { text: 'harrastaen tekemistä', requires: ['sacrifice', 'weekends'], scene: 'doing', hints: [PROMPTS.annoyingHabit, PROMPTS.actionChore, PROMPTS.humanActivity, PROMPTS.hobby] },
           { text: 'opetellen taitoa', scene: 'mastering', requires: ['future', 'sacrifice', 'time', 'weekends'], hints: [PROMPTS.hobby, PROMPTS.instrument, PROMPTS.foreignLanguage] },
           { text: 'katsoen sarjaa', requires: ['time', 'weekends'], hints: [PROMPTS.tvShow, PROMPTS.sport] },
-          { text: 'ahmien analysoiden aihetta', requires: ['future', 'time'], scene: 'report', hints: [PROMPTS.complicatedTopic, PROMPTS.historical, PROMPTS.country, PROMPTS.mediaPersonality, PROMPTS.personalInterest, PROMPTS.movieGenre, PROMPTS.musicGenre] },
+          { text: 'analysoiden pakkomielteisesti aihetta', requires: ['future', 'time'], scene: 'report', hints: [PROMPTS.complicatedTopic, PROMPTS.historical, PROMPTS.country, PROMPTS.mediaPersonality, PROMPTS.personalInterest, PROMPTS.movieGenre, PROMPTS.musicGenre] },
           { text: 'aggressiivisesti opettaen ihmisille aihetta', requires: ['future', 'weekends'], scene: 'report', hints: [PROMPTS.schoolSubject, PROMPTS.complicatedTopic, PROMPTS.historical] }
         ]
       },
@@ -258,7 +258,7 @@ export const questionsDatabase = [
           { text: 'vanhempiisi?', requires: ['context'] },
           { text: 'puoliunessa?', requires: ['condition'] },
           { text: 'saunassa?', requires: ['condition'] },
-          { text: 'huonona hiustenpäivänä?', requires: ['condition'] }
+          { text: 'tukka pystyssä?', requires: ['condition'] }
         ]
       }
     ],
@@ -300,8 +300,8 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: 'hikoilla lätäkköä, joka', type: 'sweat' },
-          { text: 'hengittää ulos pilveä, joka', type: 'breath' },
+          { text: 'hikoilla lätäkön, joka', type: 'sweat' },
+          { text: 'hengittää ulos pilven, joka', type: 'breath' },
           { text: 'erittää sylkeä, joka', type: 'saliva' }
         ]
       },
@@ -326,12 +326,12 @@ export const questionsDatabase = [
         options: [
           { text: 'huonolla tuulella?', requires: ['condition'] },
           { text: 'hyvällä tuulella?', requires: ['condition'] },
-          { text: 'tunnet syyllisyyttä?', requires: ['condition'] },
-          { text: 'yrität nukkua?', requires: ['condition'] },
+          { text: 'syyllisyydentuskissa?', requires: ['condition'] },
+          { text: 'yrittämässä nukahtaa?', requires: ['condition'] },
           { text: 'istut paikoillasi?', requires: ['action'] },
-          { text: 'aloitat nauraa?', requires: ['action'] },
+          { text: 'alat nauraa?', requires: ['action'] },
           { text: 'hermostut?', requires: ['action'] },
-          { text: 'aloitat syödä?', requires: ['action'] },
+          { text: 'alat syödä?', requires: ['action'] },
           { text: 'aivastat?', requires: ['action'] },
           { text: '?' }
         ]
@@ -359,7 +359,7 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: 'lopuksi elämäksesi' },
+          { text: 'loppuelämäksesi' },
           { text: '5 vuodeksi' },
           { text: '10 vuodeksi' },
           { text: 'yhdeksi päiväksi' },
@@ -404,7 +404,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: '— mutta se katoaa viikonloppuisin?', requires: ['recurring'] },
-          { text: '— mutta se haisee aina kauheasta?', requires: ['recurring'] },
+          { text: '— mutta se haisee aina kauhealta?', requires: ['recurring'] },
           { text: '— mutta joudut jakamaan sen muukalaisen kanssa?' },
           { text: '?' }
         ]
@@ -420,10 +420,10 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: 'joutua perheen adoptoimaksi, joka on', type: 'adopted', hints: [PROMPTS.wildAnimal, PROMPTS.animalFunny] },
-          { text: 'perustaa kultti aiheen ympärille:', type: 'cult', scene: 'spiritual', hints: [PROMPTS.actionChore, PROMPTS.personalLike] },
+          { text: 'kasvaa perheessä, jonka jäsenet ovat:', type: 'adopted', hints: [PROMPTS.wildAnimal, PROMPTS.animalFunny] },
+          { text: 'perustaa kultin aiheen ympärille:', type: 'cult', scene: 'spiritual', hints: [PROMPTS.actionChore, PROMPTS.personalLike] },
           { text: 'kasvaa lauman jäsenenä:', type: 'raised', hints: [PROMPTS.wildAnimal, PROMPTS.angryAnimal, PROMPTS.animalFunny] },
-          { text: 'päästä taikakouluun, jossa voi kutsua vain', type: 'society', hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
+          { text: 'päästä taikakouluun, jossa voi loitsia esiin vain asian:', type: 'society', hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
           { text: 'pystyä muuttamaan kullan aineeksi', type: 'society', hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.snack, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
           { text: 'pystyä muuttamaan veden aineeksi', type: 'society', hints: [PROMPTS.sweetLiquid, PROMPTS.sauce, PROMPTS.hotDrink, PROMPTS.abstractMood] },
           { text: 'pystyä muuttamaan lian aineeksi', type: 'society', hints: [PROMPTS.expensive, PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.abstractMood] }
@@ -445,14 +445,14 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: 'perustaa yrityksen, joka myy vain', type: 'business', hints: [PROMPTS.cheapItem, PROMPTS.expensive, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
-          { text: 'perustaa kultti aiheen ympärille:', type: 'cult', hints: [PROMPTS.everyday, PROMPTS.annoyingHabit, PROMPTS.roomItem] },
-          { text: 'käynnistää protestiliikkeen, joka vastustaa', type: 'movement', hints: [PROMPTS.minorInconvenience, PROMPTS.annoyingHabit, PROMPTS.roomItem, PROMPTS.vegetable] },
+          { text: 'perustaa yrityksen, joka myy vain tuotetta', type: 'business', hints: [PROMPTS.cheapItem, PROMPTS.expensive, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
+          { text: 'perustaa kultin aiheen ympärille:', type: 'cult', hints: [PROMPTS.everyday, PROMPTS.annoyingHabit, PROMPTS.roomItem] },
+          { text: 'käynnistää protestiliikkeen, joka vastustaa asiaa', type: 'movement', hints: [PROMPTS.minorInconvenience, PROMPTS.annoyingHabit, PROMPTS.roomItem, PROMPTS.vegetable] },
           { text: 'avata ravintolan, jossa kaikki maistuu kuin', type: 'restaurant', hints: [PROMPTS.strongFood, PROMPTS.abstractMood] },
           { text: 'pitää podcastia aiheesta', type: 'podcast', scene: 'report', hints: [PROMPTS.humanActivity, PROMPTS.minorInconvenience, PROMPTS.personalInterest, PROMPTS.movieGenre, PROMPTS.musicGenre] },
           { text: 'pitää YouTube-kanavaa aiheesta', type: 'podcast', scene: 'report', hints: [PROMPTS.humanActivity, PROMPTS.annoyingHabit, PROMPTS.tvShow, PROMPTS.personalInterest] },
-          { text: 'tulla yrityksen CEO:ksi, joka valmistaa', type: 'business', hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive] },
-          { text: 'perustaa katujengin, joka varastaa vain', type: 'gang', hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.gadget] }
+          { text: 'tulla toimitusjohtajaksi yritykseen, joka valmistaa tuotetta', type: 'business', hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive] },
+          { text: 'perustaa katujengin, joka varastaa vain esinettä', type: 'gang', hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.gadget] }
         ]
       },
       {
@@ -507,7 +507,7 @@ export const questionsDatabase = [
         options: [
           { text: 'pystyä muuttamaan minkä tahansa esineen esineeksi', type: 'clean_power', hints: [PROMPTS.foodItem, PROMPTS.animalFunny, PROMPTS.fragileObject] },
           { text: 'pystyä muuttumaan olennoksi', type: 'clean_power_self', hints: [PROMPTS.animalFunny, PROMPTS.exoticAnimal, PROMPTS.inanimateObject] },
-          { text: 'pystyä teleportaamaan, mutta saapua aina aineen peitossa:', type: 'has_condition', hints: [PROMPTS.stickySubstance, PROMPTS.sauce, PROMPTS.strongFood] },
+          { text: 'pystyä teleporttaamaan, mutta saapua aina aineen peitossa:', type: 'has_condition', hints: [PROMPTS.stickySubstance, PROMPTS.sauce, PROMPTS.strongFood] },
           { text: 'tulla näkymättömäksi, mutta vain pitäessäsi esinettä', type: 'has_condition', hints: [PROMPTS.everyday, PROMPTS.fragileObject, PROMPTS.foodItem] },
           { text: 'olla supervahva, mutta vain laulaessasi aiheesta', type: 'has_condition', scene: 'songResponder', hints: [PROMPTS.schoolSubject, PROMPTS.vegetable, PROMPTS.abstractMood, PROMPTS.actionChore, PROMPTS.personalLike] },
           { text: 'olla supervahva, mutta vain laulaessasi kappaleita esiintyjältä', type: 'has_condition', scene: 'songResponder', hints: [PROMPTS.singer, PROMPTS.band] },
@@ -631,7 +631,7 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: 'lopuksi elämäksenne?' },
+          { text: 'loppuelämäksenne?' },
           { text: 'joka ikinen maanantai loppuelämäksi?' },
           { text: 'joka viikonloppu seuraavat 10 vuotta?' },
           { text: 'yhdeksi satunnaispäiväksi joka kuussa?' },
@@ -650,8 +650,8 @@ export const questionsDatabase = [
         options: [
           { text: 'järjestää 12 tunnin katselumaratonin aiheesta', type: 'watch', hints: [PROMPTS.movie, PROMPTS.tvShow, PROMPTS.sport, PROMPTS.actionEmbarrassing] },
           { text: 'esiintyä pikkubudjettimusikaalissa aiheesta', type: 'musical', hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame, PROMPTS.actionChore, PROMPTS.personalInterest] },
-          { text: 'kirjoittaa 100-sivuisen fanifiktiota aiheesta', type: 'fanfic', hints: [PROMPTS.movie, PROMPTS.tvShow, PROMPTS.videoGame, PROMPTS.politician, PROMPTS.abstractMood] },
-          { text: 'nauhoittaa 3 tunnin raivon aiheesta', type: 'rant', scene: 'report', hints: [PROMPTS.movie, PROMPTS.videoGame, PROMPTS.tvShow, PROMPTS.annoyingHabit] }
+          { text: 'kirjoittaa 100-sivuisen fanifiktion aiheesta', type: 'fanfic', hints: [PROMPTS.movie, PROMPTS.tvShow, PROMPTS.videoGame, PROMPTS.politician, PROMPTS.abstractMood] },
+          { text: 'nauhoittaa 3 tunnin vuodatuksen aiheesta', type: 'rant', scene: 'report', hints: [PROMPTS.movie, PROMPTS.videoGame, PROMPTS.tvShow, PROMPTS.annoyingHabit] }
         ]
       },
       {
@@ -690,7 +690,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: 'tasan 24 tunniksi?' },
-          { text: 'lopuksi elämäksesi?', requires: ['location', 'place'] },
+          { text: 'loppuelämäksesi?', requires: ['location', 'place'] },
           { text: 'ilman paluutietä?' },
           { text: 'mutta saapuisit klovnina?' }
         ]
@@ -788,7 +788,7 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: 'että lempisananlauseesi olisi', type: 'catchphrase' },
+          { text: 'että vakiohokemasi olisi', type: 'catchphrase' },
           { text: 'että joudut huutamaan ääneen', type: 'yell' }
         ]
       },
@@ -797,7 +797,7 @@ export const questionsDatabase = [
           { text: '”Pyhä [ ... ]!” vai ”Pyhä [ ... ]!”' },
           { text: '”Voi [ ... ]!” vai ”Voi [ ... ]!”' },
           { text: '”[ ... ] voittaa!” vai ”[ ... ] voittaa!”' },
-          { text: '”Mitä ihmeen [ ... ]?” vai ”Mitä ihmeen [ ... ]?”' }
+          { text: '”Mitä ihmettä, [ ... ]?!” vai ”Mitä ihmettä, [ ... ]?!”' }
         ]
       },
       {
@@ -828,7 +828,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: 'tulla suuntauksen henkiseksi johtajaksi:', scene: 'spiritual' },
-          { text: 'kirjoittaa 1000-sivuinen manifesti suuntauksesta', type: 'manifesto', scene: 'fanfic' },
+          { text: 'kirjoittaa 1000-sivuisen manifestin suuntauksesta', type: 'manifesto', scene: 'fanfic' },
           { text: 'elää tiukasti suuntauksen mukaan:', scene: 'report' },
           { text: 'saada hallituksesi ottamaan käyttöön suuntauksen', scene: 'ideology' },
           { text: 'saada vanhempasi seuraamaan suuntausta', scene: 'report' },
@@ -895,7 +895,7 @@ export const questionsDatabase = [
     isCombo: true,
     triggerCategory: ['animals', 'survival', 'lifestyle', 'social', 'mind', 'identity'],
     category: 'combo',
-    text: 'Jos olet vihamielisen ”[PREV_CHOICE]” kanssa samassa huoneessa, kumpi olisi tukenasi:',
+    text: 'Jos olet samassa huoneessa vihamielisen olennon ”[PREV_CHOICE]” kanssa, kumpi olisi tukenasi:',
     fragments: [
       {
         options: [
@@ -959,7 +959,7 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: 'jättimäisen ”[ ... ]” vai ”[ ... ]” lippuunne?' },
+          { text: 'jättimäisen kuvan aiheesta ”[ ... ]” vai ”[ ... ]” lippuunne?' },
           { text: 'kuvan aiheesta ”[ ... ]” vai ”[ ... ]” kansalliseen valuuttaanne?', scene: 'money' }
         ]
       }

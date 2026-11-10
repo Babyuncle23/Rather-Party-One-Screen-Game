@@ -70,7 +70,12 @@ export function applyStaticTexts(root) {
     const rawParams = el.getAttribute('data-i18n-params');
     if (rawParams) { try { params = JSON.parse(rawParams); } catch (e) { params = undefined; } }
     const v = t(el.getAttribute('data-i18n'), params);
-    if (typeof v === 'string') el.textContent = v;
+    if (typeof v === 'string') {
+      el.textContent = v;
+      // Контурный слой animated-text-outline рисуется из data-text —
+      // без синхронизации поверх перевода остаётся английский «призрак»
+      if (el.hasAttribute('data-text')) el.setAttribute('data-text', v);
+    }
   });
   scope.querySelectorAll('[data-i18n-html]').forEach(el => {
     const v = t(el.getAttribute('data-i18n-html'));

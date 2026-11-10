@@ -9,16 +9,16 @@
 // (существо «X», персона «X», тема «X»), двоеточие или позиция подлежащего.
 // =====================================================================
 
-const MOD_SUBJECTS = ['которое тебе нравилось', 'с которым ты мучился', 'которому стоило уделять больше внимания'];
+const MOD_SUBJECTS = ['который тебе нравился', 'с которым ты мучился', 'которому стоило уделять больше внимания'];
 
 export const PROMPTS = {
   // ДЕЙСТВИЯ
-  actionWork: { text: 'Неуместное действие на работе', brainstorm: ['дремота на месте', 'ранний уход домой', 'игнор босса', 'игра в игры', 'просмотр сериалов', 'пение в подсобке', 'воровство кофе', 'ссора с коллегой', 'выход на смену пьяным', 'скроллинг тиктока', 'рыдание в туалете', 'удаление главной базы', 'оскорбление главного клиента', 'пижама на совещании', 'сон на презентации', 'продажа активов компании'] },
-  actionIllegal: { text: 'Мелкое нарушение закона', brainstorm: ['пиратская качка фильма', 'переход в неположенном месте', 'кража ручки', 'проход на концерт без билета', 'кража конфеты', 'граффити на стене', 'превышение у школы', 'езда зайцем', 'выдуманное имя', 'дёрганье стоп-крана', 'взятка парковщику', 'воровство чужого вайфая', 'подделка справки от врача'] },
+  actionWork: { text: 'Неуместное действие на работе', brainstorm: ['сон на рабочем месте', 'ранний уход домой', 'игнор босса', 'видеоигры в рабочее время', 'просмотр сериалов', 'пение в подсобке', 'воровство кофе', 'ссора с коллегой', 'выход на смену пьяным', 'скроллинг тиктока', 'рыдание в туалете', 'удаление главной базы', 'оскорбление главного клиента', 'пижама на совещании', 'сон на презентации', 'продажа активов компании'] },
+  actionIllegal: { text: 'Мелкое нарушение закона', brainstorm: ['пиратское скачивание фильма', 'переход в неположенном месте', 'кража ручки', 'проход на концерт без билета', 'кража конфеты', 'граффити на стене', 'превышение у школы', 'езда зайцем', 'выдуманное имя', 'дёрганье стоп-крана', 'взятка парковщику', 'воровство чужого вайфая', 'подделка справки от врача'] },
   actionEmbarrassing: { text: 'Стыдное действие', brainstorm: ['забыть имя человека', 'фыркнуть от смеха', 'помахать незнакомцу', 'ответить не в тот чат', 'туалетная бумага на ботинке', 'расстёгнутая ширинка', 'назвать учителя мамой', 'лайкнуть старый пост', 'шпинат в зубах', 'врезаться в стеклянную дверь', 'забыть свой пароль'] },
   actionParty: { text: 'Весёлый фокус для вечеринки', brainstorm: ['проглотить меч', 'жонглировать яблоками', 'сальто назад', 'съесть стакан', 'не дышать две минуты', 'собрать кубик вслепую', 'почистить банан ногами', 'угадать тайный ингредиент в коктейле', 'спеть песню задом наперёд', 'разбить доску головой', 'говорить двумя голосами', 'крутить глазами в разные стороны', 'завязать черешню языком', 'найти иголку в стоге сена'] },
-  actionChore: { text: 'Твоя обычная обязанность (напр. мыть посуду)', brainstorm: ['пылесосить', 'выносить мусор', 'складывать стирку', 'заправлять кровать', 'вытирать пыль', 'мыть унитаз', 'сортировать мусор', 'менять постельное', 'разгружать посудомойку', 'мыть все окна'] },
-  actionRelax: { text: 'Расслабляющее занятие', brainstorm: ['спать 10 часов', 'принять горячую ванну', 'читать книгу', 'пялиться в стену', 'смотреть закат', 'гулять', 'медитировать', 'пить травяной чай', 'вообще ничего не делать', 'лежать на пляже', 'смотреть на облака', 'принимать пенную ванну', 'слушать океан', 'получать массаж', 'глубоко дышать', 'смотреть на дождь', 'рисовать картину'] },
+  actionChore: { text: 'Твоя обычная обязанность (напр. мыть посуду)', brainstorm: ['пылесосить', 'выносить мусор', 'складывать чистое бельё', 'заправлять кровать', 'вытирать пыль', 'мыть унитаз', 'сортировать мусор', 'менять постельное', 'разгружать посудомойку', 'мыть все окна'] },
+  actionRelax: { text: 'Расслабляющее занятие', brainstorm: ['спать 10 часов', 'принять горячую ванну', 'читать книгу', 'пялиться в стену', 'смотреть закат', 'гулять', 'медитировать', 'пить травяной чай', 'вообще ничего не делать', 'лежать на пляже', 'смотреть на облака', 'принимать пенную ванну', 'слушать океан', 'ходить на массаж', 'глубоко дышать', 'смотреть на дождь', 'рисовать картину'] },
   actionExtreme: { text: 'Экстремальный спорт, который ты не осмелишься попробовать', brainstorm: ['сёрфинг на гигантской волне', 'прыжок с парашютом', 'эндуро', 'скалолазание', 'полёт в вингсьюте', 'сальто назад', 'ультрамарафон', 'прыжок между крышами', 'скоростной спуск на скейте'] },
   humanActivity: { text: 'Занятие', modifiers: ['которое тебе нравится', 'которое тебе не нравится'] },
   hobby: { text: 'Хобби', modifiers: ['которым хочешь начать заниматься', 'которое тебя интересует', 'которым ты никогда не займёшься'] },
@@ -68,7 +68,7 @@ export const PROMPTS = {
   chubbyAnimal: { text: 'Пухлое животное', brainstorm: ['Тюлень', 'Панда', 'Хомяк', 'Пингвин', 'Медведь', 'Красная панда', 'Морская свинка', 'Бегемот', 'Сурок', 'Ёжик'] },
   fastAnimal: { text: 'Быстрое животное', brainstorm: ['Лев', 'Заяц', 'Ястреб', 'Акула', 'Орёл', 'Сапсан', 'Гепард', 'Парусник', 'Чёрный марлин', 'Вилорог', 'Спрингбок', 'Гну', 'Скаковая лошадь', 'Страус', 'Борзая'] },
   angryAnimal: { text: 'Злое на вид животное', brainstorm: ['Оса', 'Бык', 'Барсук', 'Кабан', 'Змея', 'Гризли', 'Горилла', 'Кафрский буйвол', 'Медоед', 'Бегемот', 'Росомаха', 'Носорог', 'Чихуахуа', 'Дикий вепрь'] },
-  loudAnimal: { text: 'Громкое животное', brainstorm: ['Лев', 'Волк', 'Ворона', 'Гиена', 'Гуси', 'Синий кит', 'Павлин', 'Осёл', 'Морской лев', 'Бык-лягушка'] },
+  loudAnimal: { text: 'Громкое животное', brainstorm: ['Лев', 'Волк', 'Ворона', 'Гиена', 'Гуси', 'Синий кит', 'Павлин', 'Осёл', 'Морской лев', 'Лягушка-бык'] },
   dangerousAnimal: { text: 'Опасное животное', brainstorm: ['Лев', 'Акула', 'Кобра', 'Волк', 'Медведь', 'Тигр', 'Крокодил', 'Чёрная мамба', 'Медуза', 'Комодский варан', 'Древолаз', 'Бегемот'] },
   insect: { text: 'Насекомое', brainstorm: ['Муравей', 'Пчела', 'Муха', 'Оса', 'Блоха', 'Медоносная пчела', 'Комнатная муха', 'Стрекоза', 'Бабочка', 'Божья коровка', 'Кузнечик', 'Таракан', 'Комар', 'Шмель', 'Богомол'] },
   heavyAnimal: { text: 'Тяжёлое животное', brainstorm: ['Корова', 'Медведь', 'Бык', 'Тюлень', 'Лошадь', 'Синий кит', 'Африканский слон', 'Белый носорог', 'Бегемот', 'Морж', 'Жираф', 'Бизон', 'Гаур', 'Морской слон', 'Азиатский слон'] },
@@ -172,17 +172,17 @@ export const questionsDatabase = [
         options: [
           { text: 'провести 1000 часов,', type: 'time' },
           { text: 'участвовать в чемпионате,', type: 'compete' },
-          { text: 'посвятить всё своё будущее занятию', type: 'future' },
-          { text: 'пожертвовать всем свободным временем ради занятия', type: 'sacrifice' },
-          { text: 'проводить все выходные за занятием', type: 'weekends' }
+          { text: 'посвятить всё своё будущее тому, чтобы жить,', type: 'future' },
+          { text: 'тратить всё свободное время,', type: 'sacrifice' },
+          { text: 'проводить все выходные,', type: 'weekends' }
         ]
       },
       {
         options: [
           { text: 'играя в игру', requires: ['time', 'compete', 'sacrifice', 'weekends'], scene: 'playing', hints: [PROMPTS.videoGame, PROMPTS.boardGame, PROMPTS.sport, PROMPTS.mobileGame, PROMPTS.instrument] },
-          { text: 'занимаясь делом', requires: ['sacrifice', 'weekends'], scene: 'doing', hints: [PROMPTS.annoyingHabit, PROMPTS.actionChore, PROMPTS.humanActivity, PROMPTS.hobby] },
+          { text: 'занимаясь практикой', requires: ['sacrifice', 'weekends'], scene: 'doing', hints: [PROMPTS.annoyingHabit, PROMPTS.actionChore, PROMPTS.humanActivity, PROMPTS.hobby] },
           { text: 'осваивая навык', scene: 'mastering', requires: ['future', 'sacrifice', 'time', 'weekends'], hints: [PROMPTS.hobby, PROMPTS.instrument, PROMPTS.foreignLanguage] },
-          { text: 'просматривая', requires: ['time', 'weekends'], hints: [PROMPTS.tvShow, PROMPTS.sport] },
+          { text: 'смотря шоу', requires: ['time', 'weekends'], hints: [PROMPTS.tvShow, PROMPTS.sport] },
           { text: 'зацикленно анализируя тему', requires: ['future', 'time'], scene: 'report', hints: [PROMPTS.complicatedTopic, PROMPTS.historical, PROMPTS.country, PROMPTS.mediaPersonality, PROMPTS.personalInterest, PROMPTS.movieGenre, PROMPTS.musicGenre] },
           { text: 'агрессивно обучая людей теме', requires: ['future', 'weekends'], scene: 'report', hints: [PROMPTS.schoolSubject, PROMPTS.complicatedTopic, PROMPTS.historical] }
         ]
@@ -272,7 +272,7 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: 'чистить зубы субстанцией', type: 'hygiene', hints: [PROMPTS.sauce, PROMPTS.stickyThing, PROMPTS.sweetLiquid, PROMPTS.badSmellingThing] },
+          { text: 'чистить зубы массой', type: 'hygiene', hints: [PROMPTS.sauce, PROMPTS.stickyThing, PROMPTS.sweetLiquid, PROMPTS.badSmellingThing] },
           { text: 'стирать одежду жидкостью', type: 'hygiene', hints: [PROMPTS.sauce, PROMPTS.sweetLiquid, PROMPTS.hotDrink, PROMPTS.popularDrink] },
           { text: 'выпивать полный стакан жидкости', type: 'drink', scene: 'drink', hints: [PROMPTS.sauce, PROMPTS.sweetLiquid, PROMPTS.hotDrink] }
         ]
@@ -391,8 +391,8 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: 'получать бесконечный запас субстанции', type: 'recurring', hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive, PROMPTS.candyType] },
-          { text: 'получать ежедневную посылку, содержащую', type: 'recurring', hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive, PROMPTS.candyType, PROMPTS.personalLike, PROMPTS.letterM] },
+          { text: 'получить бесконечный запас вещей:', type: 'recurring', hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive, PROMPTS.candyType] },
+          { text: 'получать ежедневную посылку, где внутри', type: 'recurring', hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive, PROMPTS.candyType, PROMPTS.personalLike, PROMPTS.letterM] },
           { text: 'просыпаться каждое утро рядом с кучей вещей под названием', type: 'recurring', hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.strongFood] }
         ]
       },
@@ -403,8 +403,8 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: '— но оно исчезает по выходным?', requires: ['recurring'] },
-          { text: '— но оно всегда ужасно пахнет?', requires: ['recurring'] },
+          { text: '— но всё это исчезает по выходным?', requires: ['recurring'] },
+          { text: '— но всё это всегда ужасно пахнет?', requires: ['recurring'] },
           { text: '— но придётся делиться с незнакомцем?' },
           { text: '?' }
         ]
@@ -420,13 +420,13 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: 'быть усыновлённым семьёй', type: 'adopted', hints: [PROMPTS.wildAnimal, PROMPTS.animalFunny] },
+          { text: 'попасть на воспитание в семью существ вида', type: 'adopted', hints: [PROMPTS.wildAnimal, PROMPTS.animalFunny] },
           { text: 'создать культ вокруг темы', type: 'cult', scene: 'spiritual', hints: [PROMPTS.actionChore, PROMPTS.personalLike] },
-          { text: 'быть воспитанным стаей', type: 'raised', hints: [PROMPTS.wildAnimal, PROMPTS.angryAnimal, PROMPTS.animalFunny] },
-          { text: 'поступить в магическую школу, где можно призывать только', type: 'society', hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
-          { text: 'иметь силу превращать золото в субстанцию', type: 'society', hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.snack, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
-          { text: 'иметь силу превращать воду в субстанцию', type: 'society', hints: [PROMPTS.sweetLiquid, PROMPTS.sauce, PROMPTS.hotDrink, PROMPTS.abstractMood] },
-          { text: 'иметь силу превращать грязь в субстанцию', type: 'society', hints: [PROMPTS.expensive, PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.abstractMood] }
+          { text: 'вырасти в стае существ вида', type: 'raised', hints: [PROMPTS.wildAnimal, PROMPTS.angryAnimal, PROMPTS.animalFunny] },
+          { text: 'поступить в магическую школу, где можно призывать только предмет', type: 'society', hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
+          { text: 'уметь превращать золото в:', type: 'society', hints: [PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.snack, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
+          { text: 'уметь превращать воду в:', type: 'society', hints: [PROMPTS.sweetLiquid, PROMPTS.sauce, PROMPTS.hotDrink, PROMPTS.abstractMood] },
+          { text: 'уметь превращать грязь в:', type: 'society', hints: [PROMPTS.expensive, PROMPTS.fastFood, PROMPTS.candyType, PROMPTS.abstractMood] }
         ]
       },
       {
@@ -445,14 +445,14 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: 'открыть бизнес, который продаёт только', type: 'business', hints: [PROMPTS.cheapItem, PROMPTS.expensive, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
+          { text: 'открыть бизнес, который продаёт только товар', type: 'business', hints: [PROMPTS.cheapItem, PROMPTS.expensive, PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.householdItem] },
           { text: 'создать культ вокруг темы', type: 'cult', hints: [PROMPTS.everyday, PROMPTS.annoyingHabit, PROMPTS.roomItem] },
-          { text: 'начать протестное движение против', type: 'movement', hints: [PROMPTS.minorInconvenience, PROMPTS.annoyingHabit, PROMPTS.roomItem, PROMPTS.vegetable] },
+          { text: 'начать протестное движение против явления', type: 'movement', hints: [PROMPTS.minorInconvenience, PROMPTS.annoyingHabit, PROMPTS.roomItem, PROMPTS.vegetable] },
           { text: 'открыть ресторан, где всё на вкус как', type: 'restaurant', hints: [PROMPTS.strongFood, PROMPTS.abstractMood] },
           { text: 'вести подкаст на тему', type: 'podcast', scene: 'report', hints: [PROMPTS.humanActivity, PROMPTS.minorInconvenience, PROMPTS.personalInterest, PROMPTS.movieGenre, PROMPTS.musicGenre] },
           { text: 'вести ютуб-канал на тему', type: 'podcast', scene: 'report', hints: [PROMPTS.humanActivity, PROMPTS.annoyingHabit, PROMPTS.tvShow, PROMPTS.personalInterest] },
-          { text: 'стать СЕО компании, производящей', type: 'business', hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive] },
-          { text: 'собрать уличную банду, которая крадёт только', type: 'gang', hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.gadget] }
+          { text: 'стать главой компании, производящей продукт', type: 'business', hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.expensive] },
+          { text: 'собрать уличную банду, которая крадёт только предмет', type: 'gang', hints: [PROMPTS.everyday, PROMPTS.smallObj, PROMPTS.gadget] }
         ]
       },
       {
@@ -477,8 +477,8 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: 'сделает маленькую татуировку', type: 'tattoo', scene: 'tattoo', hints: [PROMPTS.fastFood, PROMPTS.animalFunny, PROMPTS.politician, PROMPTS.actor] },
-          { text: 'даст часовую презентацию «Я и', type: 'presentation', scene: 'report', hints: [PROMPTS.actionChore, PROMPTS.everyday, PROMPTS.animalFunny, PROMPTS.snack] },
+          { text: 'сделает маленькую татуировку с изображением', type: 'tattoo', scene: 'tattoo', hints: [PROMPTS.fastFood, PROMPTS.animalFunny, PROMPTS.politician, PROMPTS.actor] },
+          { text: 'проведёт часовую презентацию на тему: Я и', type: 'presentation', scene: 'report', hints: [PROMPTS.actionChore, PROMPTS.everyday, PROMPTS.animalFunny, PROMPTS.snack] },
           { text: 'напишет душевную песню на тему', type: 'song', scene: 'song', hints: [PROMPTS.actionChore, PROMPTS.annoyingHabit, PROMPTS.everyday, PROMPTS.candyType] },
           { text: 'сыграет в низкобюджетном мюзикле под названием', type: 'musical', scene: 'song', hints: [PROMPTS.cartoonChar, PROMPTS.movie, PROMPTS.videoGame] }
         ]
@@ -491,7 +491,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: 'на спине?', requires: ['tattoo'] },
-          { text: '»?', requires: ['presentation'] },
+          { text: '?', requires: ['presentation'] },
           { text: 'и исполнит это на твоём дне рождения?', requires: ['song', 'musical'] }
         ]
       }
@@ -566,7 +566,7 @@ export const questionsDatabase = [
       {
         options: [
           { text: 'заставлять всех в комнате внезапно начать заниматься делом', type: 'start', hints: [PROMPTS.actionChore, PROMPTS.annoyingHabit, PROMPTS.humanActivity, PROMPTS.hobby] },
-          { text: 'мгновенно останавливать любого от занятия', type: 'stop', hints: [PROMPTS.actionChore, PROMPTS.annoyingHabit, PROMPTS.humanActivity] },
+          { text: 'мгновенно отучать кого угодно от дела', type: 'stop', hints: [PROMPTS.actionChore, PROMPTS.annoyingHabit, PROMPTS.humanActivity] },
           { text: 'зарабатывать $10 каждый раз, когда заканчиваешь дело', type: 'earn', scene: 'money', hints: [PROMPTS.actionChore, PROMPTS.humanActivity] }
         ]
       },
@@ -605,8 +605,8 @@ export const questionsDatabase = [
       },
       {
         options: [
-          { text: '— но навсегда заговорить их точным голосом?' },
-          { text: '— но при гневе выглядеть в точности как они?' },
+          { text: '— но навсегда заговорить голосом этого человека?' },
+          { text: '— но в моменты гнева выглядеть точь-в-точь как этот человек?' },
           { text: '?' }
         ]
       }
@@ -677,9 +677,9 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: 'быть случайно телепортированным в локацию', type: 'location', scene: 'welcomeTo', hints: [PROMPTS.country, PROMPTS.famousCity] },
+          { text: 'случайно телепортироваться в локацию', type: 'location', scene: 'welcomeTo', hints: [PROMPTS.country, PROMPTS.famousCity] },
           { text: 'мгновенно телепортироваться в дом персоны', scene: 'welcomeTo', type: 'person', hints: [PROMPTS.actor, PROMPTS.singer, PROMPTS.politician, PROMPTS.historical] },
-          { text: 'быть магически телепортированным в место', type: 'place', scene: 'welcomeTo', hints: [PROMPTS.specificLocation, PROMPTS.publicPlace] }
+          { text: 'магически перенестись в место', type: 'place', scene: 'welcomeTo', hints: [PROMPTS.specificLocation, PROMPTS.publicPlace] }
         ]
       },
       {
@@ -692,7 +692,7 @@ export const questionsDatabase = [
           { text: 'ровно на 24 часа?' },
           { text: 'до конца жизни?', requires: ['location', 'place'] },
           { text: 'без обратного пути?' },
-          { text: 'но прибываешь в костюме клоуна?' }
+          { text: '— но оказаться там в костюме клоуна?' }
         ]
       }
     ],
@@ -788,14 +788,14 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: 'чтобы твоей коронной фразой была фраза', type: 'catchphrase' },
+          { text: 'чтобы твоей коронной фразой было выражение', type: 'catchphrase' },
           { text: 'чтобы приходилось громко орать фразу', type: 'yell' }
         ]
       },
       {
         options: [
-          { text: '«Святая мать [ ... ]!» или «Святая мать [ ... ]!»' },
-          { text: '«Во имя силы [ ... ]!» или «Во имя силы [ ... ]!»' },
+          { text: '«Святые угодники, это же [ ... ]!» или «Святые угодники, это же [ ... ]!»' },
+          { text: '«Да пребудет с нами [ ... ]!» или «Да пребудет с нами [ ... ]!»' },
           { text: '«Ей-богу, [ ... ]!» или «Ей-богу, [ ... ]!»' },
           { text: '«Что за [ ... ]?» или «Что за [ ... ]?»' }
         ]
@@ -861,15 +861,15 @@ export const questionsDatabase = [
     fragments: [
       {
         options: [
-          { text: 'сменить фамилию на фамилию', type: 'own_name', hints: [PROMPTS.title, PROMPTS.app, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.letterM] },
-          { text: 'учредить национальный праздник День', type: 'holiday', hints: [PROMPTS.actionChore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday, PROMPTS.personalInterest, PROMPTS.personalLike] },
+          { text: 'сменить свою фамилию на', type: 'own_name', hints: [PROMPTS.title, PROMPTS.app, PROMPTS.animalFunny, PROMPTS.everyday, PROMPTS.letterM] },
+          { text: 'учредить национальный праздник в честь явления', type: 'holiday', hints: [PROMPTS.actionChore, PROMPTS.annoyingHabit, PROMPTS.fastFood, PROMPTS.humanActivity, PROMPTS.everyday, PROMPTS.personalInterest, PROMPTS.personalLike] },
           { text: 'завести собаку и дать ей кличку', type: 'dog', scene: 'dog', hints: [PROMPTS.title, PROMPTS.politician, PROMPTS.company, PROMPTS.app, PROMPTS.personalLike, PROMPTS.letterM] },
           { text: 'завести кота и дать ему кличку', type: 'cat', scene: 'cat', hints: [PROMPTS.villain, PROMPTS.company, PROMPTS.app, PROMPTS.personalLike, PROMPTS.letterM] }
         ]
       },
       {
         options: [
-          { text: '[ ... ] или [ ... ]?' }
+          { text: '«[ ... ]» или «[ ... ]»?' }
         ]
       }
     ],
@@ -910,7 +910,7 @@ export const questionsDatabase = [
     isCombo: true,
     triggerCategory: ['career', 'superpowers'],
     category: 'combo',
-    text: 'Чтобы убедить босса, что «[PREV_CHOICE]» критически важна для компании, какой доклад представишь:',
+    text: 'Чтобы убедить босса, что «[PREV_CHOICE]» имеет критическое значение для компании, какой доклад представишь:',
     fragments: [
       {
         options: [
@@ -940,7 +940,7 @@ export const questionsDatabase = [
     isCombo: true,
     triggerCategory: ['naming_realm'],
     category: 'combo',
-    text: 'Как верховный лидер государства «[PREV_CHOICE]», установил бы национальный праздник:',
+    text: 'Как верховный лидер государства «[PREV_CHOICE]», какой национальный праздник ты учредишь:',
     fragments: [
       {
         options: [
@@ -955,7 +955,7 @@ export const questionsDatabase = [
     isCombo: true,
     triggerCategory: ['naming_realm'],
     category: 'combo',
-    text: 'Как лидер государства «[PREV_CHOICE]», что поместишь',
+    text: 'Как лидер государства «[PREV_CHOICE]», что ты решишь поместить:',
     fragments: [
       {
         options: [

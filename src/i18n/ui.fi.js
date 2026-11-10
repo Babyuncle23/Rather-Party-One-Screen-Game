@@ -18,7 +18,7 @@ export const UI_FI = {
     emojiPickerTitle: 'Valitse emoji',
     emojiPickerSub: 'Valitse tyyliisi sopiva kuvake.',
     videoTitle: 'Näin pelataan',
-    shareQr: 'Pitikö yhden näytön pelistä? Jaa linkki muille QR:lla 😊',
+    shareQr: 'Piditkö tästä pelistä? Jaa linkki muille QR-koodilla 😊',
     shareQrAlt: 'QR-koodi — linkki peliin',
     footerBadge: 'Designed by Human',
     footerSub: 'coded by ai 😬',
@@ -27,9 +27,9 @@ export const UI_FI = {
 
   setup: {
     modeSoloTitle: '1 puhelin',
-    modeSoloSub: 'Välitä vuorossa',
+    modeSoloSub: 'Vuorotellen',
     modeOnlineTitle: '2–4 puhelinta',
-    modeOnlineSub: 'Verkkihuone',
+    modeOnlineSub: 'Verkkohuone',
     lead: 'Valitse kysymykset ja näe, miten muut ovat vastanneet ✨',
     tutorial: 'Näin pelataan (23s)',
     tabCreate: 'Luo huone',
@@ -44,7 +44,7 @@ export const UI_FI = {
     nameSoloPh: 'Pelaajan nimi',
     addPlayer: '+ Lisää',
     seatOrder: 'Lisää nimet siinä järjestyksessä, jossa pelaajat istuvat pöydän ääressä.',
-    avatarHelp: 'Vaihda avatari napauttamalla.',
+    avatarHelp: 'Vaihda avatar napauttamalla.',
     roundsLabel: 'Kierrosten määrä:',
     start: 'Aloita peli',
     install: '📱 Asenna aloitusnäytölle',
@@ -103,7 +103,7 @@ export const UI_FI = {
     sendTo: 'Lähetä pelaajalle {name} ➜',
     editStart: '✍️ MUOKKAA KYSYMYSTÄ',
     editStop: '← PERUUTA MUOKKAUS',
-    editSave: 'Tallenna muokat',
+    editSave: 'Tallenna muokkaukset',
     livePreview: 'Esikatselu',
     answerN: '[ ___ VASTAUS {n} ___ ]',
     customToggle: '✍️ TAI KIRJOITA OMA AIHEESI',
@@ -167,7 +167,7 @@ export const UI_FI = {
     wrong: '❌ VÄÄRIN!',
     yourGuess: 'Arvauksesi',
     score: 'Pisteet',
-    sentence: 'valitsi {word} kysymyksessä:',
+    sentence: 'valitsi vaihtoehdon {word} kysymyksessä:',
     continue: 'Jatka ➜'
   },
 
@@ -277,7 +277,7 @@ export const UI_FI = {
 
   prompts: {
     nameTwo: 'Nimeä kaksi: ',
-    nameTwoStem: 'nime',
+    nameTwoStem: 'nimeä',
     fallback: 'kiinnostavia asioita'
   },
 
@@ -290,6 +290,6 @@ export const UI_FI = {
     '💀': 'Luuranko', '👽': 'Alien', '🤖': 'Robo',
     '🍉': 'Vesimeloni', '🍓': 'Mansikka', '🥑': 'Avokado', '🍍': 'Ananas', '🥝': 'Kiivi',
     '🍊': 'Mandariini', '🍋': 'Sitruuna', '🍎': 'Omena', '🥭': 'Mango', '🥥': 'Kookos',
-    '🌸': 'Kukka', '🍄': 'Sieni', '🌹': 'Ruusu', '🌝': 'Kuunas'
+    '🌸': 'Kukka', '🍄': 'Sieni', '🌹': 'Ruusu', '🌝': 'Kuukasvo'
   }
 };
