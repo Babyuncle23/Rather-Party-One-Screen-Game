@@ -783,6 +783,11 @@ function setupSafetyHoldTriggers(scrOptions, scrTalk, modal, getMinutesFn) {
         if (hasTriggered) return;
         hasTriggered = true;
         const minutes = typeof getMinutesFn === 'function' ? getMinutesFn() : 0;
+        // Щит до закрытия модалки: палец может быть ещё прижат,
+        // и его touchend/click не должен «прострелить» в игровой экран.
+        if (screens && typeof screens.suppressInputUntilRelease === 'function') {
+          screens.suppressInputUntilRelease(pointerId);
+        }
         executeSafetyAction(btn.dataset.action, scrOptions, scrTalk, modal, minutes);
         resetHoldState();
       }, 2000);
@@ -1198,14 +1203,30 @@ function applySubmitPick(action) {
 
   S.hint.object = hintObj;
 
-  let str = escapeHTML(hintObj.text);
-  if (!str.toLowerCase().startsWith(t('prompts.nameTwoStem'))) {
-      str = `${escapeHTML(t('prompts.nameTwo').trim())} ${str}`;
+  // Делим промпт на приглушённый label («Nimeä kaksi:») и саму тему —
+  // тема должна читаться раньше blind-баннера на экране респондера.
+  const rawText = String(hintObj.text);
+  const nameTwo = t('prompts.nameTwo').trim();
+  let label = '', topic = rawText;
+  if (rawText.toLowerCase().startsWith(nameTwo.toLowerCase())) {
+    // Кастомный промпт уже содержит префикс — отделяем его в label
+    label = nameTwo;
+    topic = rawText.slice(nameTwo.length).trim();
+  } else if (!rawText.toLowerCase().startsWith(t('prompts.nameTwoStem'))) {
+    // Пресетный промпт — добавляем label, как раньше
+    label = nameTwo;
   }
+  // Иначе текст начинается со стема вольно («nimeä kolme asiaa») —
+  // оставляем целиком в topic, чтобы не менять смысл пользовательского промпта
+
+  let str = (label ? `<span class="hint-label">${escapeHTML(label)}</span> ` : '')
+          + `<span class="hint-topic">${escapeHTML(topic)}</span>`;
   if (hintObj.modifier) {
       str += ` <span style="font-weight: 400; opacity: 0.65;">(${escapeHTML(hintObj.modifier)})</span>`;
   }
   S.hint.html = str;
+  // Голая тема для вставки в blind-баннер («…aiheeseen: {topic}.»)
+  S.hint.topicHtml = escapeHTML(topic) + (hintObj.modifier ? ` (${escapeHTML(hintObj.modifier)})` : '');
   S.hint.requiresPlural = !!hintObj.isPlural;
 
   store.setPhase(GamePhase.RESPONDING_WORDS);
@@ -1577,7 +1598,7 @@ document.getElementById('displayed-hint').innerHTML = S.hint.html;
     if (blindBanner2) blindBanner2.classList.add('hidden');
     if (blindBanner) {
       if (game.currentRound === 1) {
-        blindBanner.innerHTML = t('responder.blind1', { name: escapeHTML(picker.name) });
+        blindBanner.innerHTML = t('responder.blind1', { name: escapeHTML(picker.name), topic: S.hint.topicHtml || '' });
         blindBanner.classList.remove('hidden');
       } else {
         blindBanner.classList.add('hidden');

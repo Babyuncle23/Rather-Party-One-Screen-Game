@@ -119,7 +119,7 @@ export const UI_FI = {
     firstPh: 'Ensimmäinen vastaus',
     secondPh: 'Toinen vastaus',
     submit: 'Lähetä vastaukset',
-    blind1: 'SOKEA VAIHE 1/2: Kirjoita kaksi eri vastausta tähän aiheeseen.<span class="blind-step-sub">Näet heti perään, minkä hullun kysymyksen pelaaja {name} valmisti!</span>',
+    blind1: 'SOKEA VAIHE 1/2: Kirjoita kaksi eri vastausta tähän aiheeseen: {topic}.<span class="blind-step-sub">Näet heti perään, minkä hullun kysymyksen pelaaja {name} valmisti!</span>',
     blind2: 'SOKEA VAIHE 2/2: Valitse kumpi vastauksistasi voittaa — muut yrittävät arvata sen!',
     diffWords: 'Syötä 2 eri sanaa!'
   },

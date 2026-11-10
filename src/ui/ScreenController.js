@@ -141,6 +141,7 @@ showPassScreen(player, onConfirm, note = null) {
 
     const HOLD_MS = 800;
     let holdTimer = null;
+    let activePointerId = null;
     const cancelHold = () => {
       if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
       readyBtn.classList.remove('holding');
@@ -151,6 +152,7 @@ showPassScreen(player, onConfirm, note = null) {
       if (holdTimer) return;
       e.preventDefault();
       e.stopPropagation();
+      activePointerId = e.pointerId ?? null;
       if (e.pointerId !== undefined && typeof readyBtn.setPointerCapture === 'function') {
         try { readyBtn.setPointerCapture(e.pointerId); } catch (err) {}
       }
@@ -158,6 +160,9 @@ showPassScreen(player, onConfirm, note = null) {
       holdTimer = setTimeout(() => {
         holdTimer = null;
         readyBtn.classList.remove('holding');
+        // Щит ставим ДО смены экрана: палец может быть ещё прижат,
+        // и его touchend/click не должен «прострелить» в новый экран.
+        this.suppressInputUntilRelease(activePointerId);
         this.screens.pass.classList.add('hidden');
         onConfirm();
       }, HOLD_MS);
@@ -166,6 +171,44 @@ showPassScreen(player, onConfirm, note = null) {
     readyBtn.onpointercancel = cancelHold;
     readyBtn.onpointerleave = cancelHold;
     readyBtn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); };
+  }
+
+  // Защита от «тапа насквозь»: пока палец, зажавший hold-кнопку, не оторвался
+  // от экрана (+ короткий хвост), прозрачный щит глушит любой ввод — иначе
+  // touchend/click может упасть на кнопку уже нового экрана (ghost click, iOS).
+  suppressInputUntilRelease(pointerId, { tailMs = 300, maxMs = 1600 } = {}) {
+    if (typeof document === 'undefined') return;
+    if (this._inputGuardCleanup) this._inputGuardCleanup();
+
+    const guard = document.createElement('div');
+    guard.id = 'input-guard';
+    guard.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(guard);
+
+    const swallow = (e) => { e.preventDefault(); e.stopPropagation(); };
+    ['pointerdown', 'pointerup', 'pointercancel', 'mousedown', 'mouseup', 'click',
+     'dblclick', 'touchstart', 'touchmove', 'touchend', 'contextmenu']
+      .forEach(type => guard.addEventListener(type, swallow, { passive: false }));
+
+    let tailTimer = null, removed = false;
+    const cleanup = () => {
+      if (removed) return;
+      removed = true;
+      if (tailTimer) { clearTimeout(tailTimer); tailTimer = null; }
+      window.removeEventListener('pointerup', onRelease, true);
+      window.removeEventListener('pointercancel', onRelease, true);
+      if (guard.parentNode) guard.parentNode.removeChild(guard);
+      if (this._inputGuardCleanup === cleanup) this._inputGuardCleanup = null;
+    };
+    const onRelease = (e) => {
+      if (pointerId == null || e.pointerId === undefined || e.pointerId === pointerId) {
+        if (!tailTimer) tailTimer = setTimeout(cleanup, tailMs);
+      }
+    };
+    window.addEventListener('pointerup', onRelease, true);
+    window.addEventListener('pointercancel', onRelease, true);
+    setTimeout(cleanup, maxMs); // failsafe
+    this._inputGuardCleanup = cleanup;
   }
 
 setupAudioControl(audioManager) {

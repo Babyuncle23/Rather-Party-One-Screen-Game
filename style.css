@@ -519,6 +519,19 @@ p {
   display: none !important;
 }
 
+/* Невидимый щит: глушит ввод, пока палец hold-кнопки не оторвался после
+   перехода — иначе touchend/click «простреливает» в новый экран (iOS) */
+#input-guard {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  background: transparent;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
 #loading-screen {
   z-index: 9999;
 }
@@ -823,6 +836,30 @@ p {
 .prompt-summary {
   margin-bottom: 8px;
   color: #c0bfe2;
+}
+
+/* Тема на экране респондера — должна читаться раньше blind-баннера */
+#responder-screen .responder-topic {
+  background: rgba(140, 108, 255, 0.10);
+  border: 1px solid rgba(140, 108, 255, 0.40);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 0 0 14px;
+}
+#responder-screen .responder-topic .highlight-text {
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+#responder-screen .hint-label {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
 }
 
 .input-container-with-counter {

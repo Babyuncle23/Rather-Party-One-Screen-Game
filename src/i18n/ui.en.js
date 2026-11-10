@@ -118,7 +118,7 @@ export const UI_EN = {
     firstPh: 'First answer',
     secondPh: 'Second answer',
     submit: 'Submit Answers',
-    blind1: 'BLIND STEP 1/2: Enter two different answers for this topic.<span class="blind-step-sub">You\'ll see what crazy question {name} prepared right after!</span>',
+    blind1: 'BLIND STEP 1/2: Enter two different answers for this topic: {topic}.<span class="blind-step-sub">You\'ll see what crazy question {name} prepared right after!</span>',
     blind2: 'BLIND STEP 2/2: Pick which of your answers wins — the others will try to guess it!',
     diffWords: 'Enter 2 different words!'
   },

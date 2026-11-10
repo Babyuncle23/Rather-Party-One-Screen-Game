@@ -1,7 +1,7 @@
 // Rather Party — Service Worker
 // Стратегия: cache-first для статики, network-fallback + ленивое кэширование.
 // Версию кэша бампаем при каждом обновлении ассетов — старые кэши удаляются на activate.
-const CACHE_NAME = 'rather-party-v8';
+const CACHE_NAME = 'rather-party-v9';
 
 const CORE_ASSETS = [
   './',
@@ -35,9 +35,12 @@ const CORE_ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  // cache: 'reload' — precache не должен складывать протухшие ответы из
+  // HTTP-кэша, иначе новый SW заново закэширует старые файлы (баг «verkkihuone»)
+  const fresh = CORE_ASSETS.map((u) => new Request(u, { cache: 'reload' }));
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(CORE_ASSETS))
+      .then((cache) => cache.addAll(fresh))
       .then(() => self.skipWaiting())
   );
 });
