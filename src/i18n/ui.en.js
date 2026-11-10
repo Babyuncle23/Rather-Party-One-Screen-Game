@@ -21,7 +21,12 @@ export const UI_EN = {
     shareQrAlt: 'QR code — link to share the game',
     footerBadge: 'Designed by Human',
     footerSub: 'coded by ai 😬',
-    iosTitle: '🍏 Install on iPhone'
+    iosTitle: '🍏 Install on iPhone',
+    awayWait: '⏳ Waiting for {name} to reconnect…',
+    leaveRoom: 'Leave room',
+    roomCode: 'Room: {code}',
+    copied: '✓ Copied',
+    hostWaitLeft: 'closes in {left}'
   },
 
   setup: {
@@ -66,6 +71,18 @@ export const UI_EN = {
     connected: '{n} players connected — tap Start!',
     waitHost: 'Waiting for the host to start the game…',
     qrAlt: 'QR code — scan to join the room'
+  },
+
+  rejoin: {
+    title: 'Back to your room',
+    asPlayer: 'as {avatar} {name}',
+    btn: 'Rejoin',
+    dismiss: 'Dismiss'
+  },
+
+  claim: {
+    title: 'Game already started — rejoin as:',
+    cancel: 'Cancel'
   },
 
   turn: {
@@ -267,6 +284,10 @@ export const UI_EN = {
     minPlayers: 'Please add at least 2 players to start!',
     roomClosed: '🚪 Room closed',
     roomClosedBody: 'The room was closed or expired. You are back at the start screen.',
+    hostLeft: '🚪 Host left',
+    hostLeftBody: 'The host left the room, so the game ended. You are back at the start screen.',
+    hostGone: '⏳ Host never returned',
+    hostGoneBody: 'The host was away too long and the room was closed. You are back at the start screen.',
     nextInOrder: 'the next player in order',
     otherPlayer: 'the other player',
     nextPlayer: 'the next player',

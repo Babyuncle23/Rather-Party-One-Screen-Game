@@ -5,7 +5,7 @@ import { AudioManager } from './audio/AudioManager.js';
 import { GAME_CONFIG } from './core/GameConfig.js';
 import { GameStateStore, GamePhase } from './core/GameStateStore.js';
 import { OnlineSession } from './net/OnlineSession.js';
-import { pingServerHealth, acquireWakeLock, releaseWakeLock } from './net/NetworkManager.js';
+import { pingServerHealth, acquireWakeLock, releaseWakeLock, clearSession } from './net/NetworkManager.js';
 import { escapeHTML } from './utils/sanitize.js';
 import { getNerfVocab } from './data/nerfWords.js';
 import { SCENE_REGISTRY } from './data/scenes.js';
@@ -159,6 +159,10 @@ let prevOpened2 = new Set();
 let onlineAvatar = '🦊';
 let pendingJoin = false;        // идёт попытка create/join — показываем оверлей
 let talkOverlayActive = false;  // safety "Open Circle" открыт на ЭТОМ устройстве
+let hostWaitDeadline = 0;       // ts конца ожидания хоста (отсчёт на баннере)
+let hostWaitTimer = null;       // 1с-тик обновления отсчёта
+const HOST_GRACE_MS = 120000;   // зеркало HOST_GRACE_MS на сервере (~2 мин)
+let guestSoundDefaulted = false; // звук в онлайне: дефолт применён/юзер трогал — не перещёлкивать
 
 function isOnlineMode() {
   return !!online && online.isOnline();
@@ -334,6 +338,9 @@ document.addEventListener("DOMContentLoaded", () => {
     window.store = store;
     screens = new ScreenController();
     screens.setupAudioControl(audioManager);
+    // Любое ручное переключение звука = «выбор сделан» — гостевой
+    // авто-мьют больше не трогаем (в т.ч. на реконнектах).
+    audioManager.onEnabledChange(() => { guestSoundDefaulted = true; });
 
     // Sprint 4: локаль из localStorage / S.lobby.locale → UI + вопросы + TTS
     S.lobby.locale = getLocale();
@@ -399,12 +406,12 @@ document.addEventListener("DOMContentLoaded", () => {
       pendingJoin = true;
       online.resume();
     }
+    // Карточка возврата — fallback, если авто-resume не взлетит.
+    updateRejoinCard();
 
     // Wake Lock при игре: возобновляем после разблокировки экрана.
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && isOnlineMode() && S.phase !== GamePhase.SETUP && S.phase !== GamePhase.LOBBY) {
-        acquireWakeLock();
-      }
+      if (!document.hidden) syncWakeLock();
     });
 
     const initAudioPreload = () => {
@@ -2899,12 +2906,24 @@ function isActiveGuesser() { return !!game && resolveMyIndex() === S.guess.curre
 
 // Единая точка рендера: подписка на store + после каждого STATE_SYNC.
 // Рисует экран под РОЛЬ этого устройства (в соло роль = текущая фаза).
+// Wake lock в онлайн-режиме на ВСЕХ устройствах (не только хосте): гаснущий
+// экран убивает WebSocket и выбивает игрока из комнаты. Держим пока в комнате
+// (лобби + матч), отпускаем в SETUP/соло/при скрытой вкладке.
+function syncWakeLock() {
+  if (isOnlineMode() && S.phase !== GamePhase.SETUP && !document.hidden) acquireWakeLock();
+  else releaseWakeLock();
+}
+
 function renderLocalView() {
   if (!screens) return;
   try {
+    syncWakeLock();
     updateOralHintBanner();
     updateTalkOverlay();
     updateNotice();
+    updateAwayBanner();
+    updateRoomCodeChip();
+    updateRejoinCard();
 
     // SAFETY_PAUSE — только соло: модалка поверх, экран под ней не трогаем
     if (S.phase === GamePhase.SAFETY_PAUSE) return;
@@ -3141,11 +3160,140 @@ function updateNotice() {
   screens.showAlert(n.icon || 'ℹ️', n.text || '');
 }
 
+// netId игрока, от которого сейчас ждут действие (по фазе).
+// null — фаза не зависит от конкретного телефона.
+function awaitedNetId() {
+  if (!game || !isOnlineMode()) return null;
+  let idx = null;
+  if (S.phase === GamePhase.PICKING) idx = game.pickerIndex;
+  else if (S.phase === GamePhase.RESPONDING_WORDS || S.phase === GamePhase.RESPONDING_CHOICE) idx = game.getResponderIndex();
+  else if (S.phase === GamePhase.GUESSING) idx = S.guess.currentGuesserIndex;
+  if (idx === null || idx === undefined) return null;
+  const p = game.players[idx];
+  return p ? p.netId : null;
+}
+
+// «⏳ Waiting for {name}» — отключился игрок, чей ход сейчас.
+// Хост покрывается host-wait-баннером, себя — conn-оверлеем.
+function updateAwayBanner() {
+  const banner = document.getElementById('away-banner');
+  if (!banner) return;
+  const netId = awaitedNetId();
+  const entry = netId && S.online.roster.find(p => p.playerId === netId);
+  const show = !!(entry && entry.connected === false
+    && netId !== online.ctx.myPlayerId
+    && netId !== S.online.hostPlayerId);
+  if (show) banner.innerText = t('misc.awayWait', { name: entry.name || 'PLAYER' });
+  banner.classList.toggle('hidden', !show);
+}
+
+// Код комнаты в игре: тап — копировать, чтобы вернуться/поделиться.
+function updateRoomCodeChip() {
+  const chip = document.getElementById('room-code-chip');
+  if (!chip) return;
+  const code = S.online.roomCode;
+  const show = isOnlineMode() && !!code && S.phase !== GamePhase.SETUP && S.phase !== GamePhase.LOBBY;
+  chip.classList.toggle('hidden', !show);
+  if (show && chip.dataset.code !== code) {
+    chip.dataset.code = code;
+    chip.innerText = code.split('').join(' ');
+    chip.classList.remove('copied');
+  }
+}
+
+// Карточка «вернуться в комнату» на Setup — есть сохранённая сессия,
+// а мы не в комнате (авто-resume не сработал или был отменён).
+function updateRejoinCard() {
+  const card = document.getElementById('rejoin-card');
+  if (!card || !online) return;
+  const info = online.getResumeInfo();
+  const show = !!(info && !isOnlineMode() && S.phase === GamePhase.SETUP);
+  card.classList.toggle('hidden', !show);
+  if (show) {
+    const codeEl = document.getElementById('rejoin-card-code');
+    const playerEl = document.getElementById('rejoin-card-player');
+    if (codeEl) codeEl.innerText = info.roomCode.split('').join(' ');
+    if (playerEl) playerEl.innerText = t('rejoin.asPlayer', { avatar: info.avatar || '🎮', name: info.name || 'PLAYER' });
+  }
+}
+
+// Игра уже началась, но есть offline-места — выбрать своё место по имени.
+function showClaimSeats(claimable, roomCode) {
+  const block = document.getElementById('claim-seats-block');
+  const list = document.getElementById('claim-seats-list');
+  if (!block || !list) return;
+  list.innerHTML = '';
+  claimable.forEach(seat => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'claim-seat-btn';
+    btn.innerText = `${seat.avatar || '🎮'} ${seat.name || 'PLAYER'}`;
+    btn.onclick = () => {
+      if (audioManager) audioManager.play('click');
+      pendingJoin = true;
+      updateConnBanner('connecting');
+      online.claimSeat(roomCode, seat);
+    };
+    list.appendChild(btn);
+  });
+  block.classList.remove('hidden');
+}
+
+function hideClaimSeats() {
+  const block = document.getElementById('claim-seats-block');
+  if (block) block.classList.add('hidden');
+}
+
+// Полный выход из онлайн-комнаты в меню (кнопки Leave на баннерах/оверлеях).
+function leaveRoomToSetup() {
+  if (audioManager) audioManager.play('click');
+  online.leaveRoom();
+  pendingJoin = false;
+  S.online.roomCode = null;
+  S.online.roster = [];
+  audioManager.restoreEnabled(); // вернуть личную настройку звука
+  guestSoundDefaulted = false;   // после restore (он поднимает флаг)
+  updateConnBanner('open');
+  updateHostBanner(true);
+  hideClaimSeats();
+  document.body.classList.remove('spectator-mode');
+  game = null;
+  window.game = null;
+  shifter = null;
+  store.reset();
+  setSetupMode('solo');
+  store.setPhase(GamePhase.SETUP);
+  updateRejoinCard();
+}
+
 function updateHostBanner(present) {
   const banner = document.getElementById('host-wait-banner');
   if (!banner) return;
   const show = isOnlineMode() && !online.isHost() && !present;
   banner.classList.toggle('hidden', !show);
+  if (show) {
+    if (!hostWaitDeadline) hostWaitDeadline = Date.now() + HOST_GRACE_MS;
+    if (!hostWaitTimer) hostWaitTimer = setInterval(tickHostWait, 1000);
+    tickHostWait();
+  } else {
+    hostWaitDeadline = 0;
+    if (hostWaitTimer) { clearInterval(hostWaitTimer); hostWaitTimer = null; }
+  }
+}
+
+// Отсчёт до закрытия комнаты на баннере ожидания хоста (+ код комнаты).
+function tickHostWait() {
+  const textEl = document.getElementById('host-wait-text');
+  const extraEl = document.getElementById('host-wait-extra');
+  if (!textEl || !extraEl) return;
+  const left = Math.max(0, hostWaitDeadline - Date.now());
+  const mm = Math.floor(left / 60000);
+  const ss = String(Math.floor((left % 60000) / 1000)).padStart(2, '0');
+  textEl.innerText = t('misc.hostWait');
+  const parts = [];
+  if (S.online.roomCode) parts.push(S.online.roomCode.split('').join(' '));
+  if (left > 0) parts.push(t('misc.hostWaitLeft', { left: `${mm}:${ss}` }));
+  extraEl.innerText = parts.join(' · ');
 }
 
 // Оверлей реконнекта: только когда мы в комнате и сокет не открыт
@@ -3154,6 +3302,18 @@ function updateConnBanner(status) {
   if (!overlay) return;
   const show = isOnlineMode() && status !== 'open' && (pendingJoin || !!S.online.roomCode);
   overlay.classList.toggle('hidden', !show);
+  if (show) {
+    const roomEl = document.getElementById('conn-overlay-room');
+    const leaveBtn = document.getElementById('conn-overlay-leave-btn');
+    const code = S.online.roomCode;
+    if (roomEl) {
+      roomEl.classList.toggle('hidden', !code);
+      if (code) roomEl.innerText = t('misc.roomCode', { code: code.split('').join(' ') });
+    }
+    // Leave имеет смысл только внутри комнаты; во время join-attempt
+    // выход — тап по оверлею (pendingJoin).
+    if (leaveBtn) leaveBtn.classList.toggle('hidden', !code);
+  }
 }
 
 // Респондер печатает: шлём только длины слов (debounced), буквы — никогда
@@ -3268,6 +3428,7 @@ function setupOnlineMode() {
     renderLocalView: () => renderLocalView(),
     restoreRuntimeFromState: (state) => restoreRuntimeFromState(state),
     renderEphemeral: (action, from) => renderEphemeral(action, from),
+    hasActiveMatch: () => !!game,
     onLobbyUpdate: (players) => {
       S.online.roster = players;
       S.online.hostPlayerId = (players.find(p => p.isHost) || {}).playerId || S.online.hostPlayerId;
@@ -3277,39 +3438,73 @@ function setupOnlineMode() {
         online.sendEphemeral({ type: 'SET_LOCALE', locale: getLocale() });
       }
       updateLangPills();
+      updateAwayBanner();
     },
     onConnectionChange: (status) => updateConnBanner(status),
-    onHostPresence: (present) => updateHostBanner(present),
+    onHostPresence: (present) => {
+      updateHostBanner(present);
+      updateAwayBanner();
+    },
     onRoomEntered: ({ roomCode }) => {
       pendingJoin = false;
       S.online.roomCode = roomCode;
+      hideClaimSeats();
+      // По умолчанию звук в сетевой игре только у хоста — гостя глушим
+      // один раз (не перезаписывая его личную настройку). Включить можно
+      // вручную кнопкой 🔊 — флаг уже стоит, реконнекты не переглушат.
+      if (!online.isHost() && !guestSoundDefaulted) {
+        audioManager.setEnabled(false, false);
+        guestSoundDefaulted = true;
+      }
       // У хоста локаль комнаты = его локальный выбор; у гостя придёт SET_LOCALE/snapshot.
       if (online.isHost()) S.lobby.locale = getLocale();
       updateConnBanner('open');
       updateHostBanner(true);
+      updateRejoinCard();
       // Свежее вступление — в лобби; при реконнекте с cached state
       // restoreRuntimeFromState сразу после этого вернёт настоящую фазу.
       if (S.phase === GamePhase.SETUP) store.setPhase(GamePhase.LOBBY);
     },
-    onSessionError: ({ message }) => {
+    onSessionError: ({ code, message, claimable, roomCode }) => {
       pendingJoin = false;
       updateConnBanner('open');
       const statusEl = document.getElementById('online-status-text');
+      // Игра идёт, но есть offline-места — предлагаем занять своё по имени.
+      if (claimable && claimable.length) {
+        setSetupMode('online');
+        setOnlineTab('join');
+        showClaimSeats(claimable, roomCode);
+        if (statusEl) statusEl.innerText = message || t('alerts.sessionErr');
+        return;
+      }
+      hideClaimSeats();
+      // Мёртвая/чужая комната — сессию не держим, иначе авто-resume
+      // будет долбить её при каждой загрузке страницы.
+      if (['ROOM_NOT_FOUND', 'GAME_IN_PROGRESS', 'ROOM_FULL'].includes(code)) {
+        clearSession();
+        updateRejoinCard();
+      }
       if (statusEl) statusEl.innerText = message || t('alerts.sessionErr');
     },
-    onSessionEnd: () => {
+    onSessionEnd: (reason) => {
       pendingJoin = false;
       S.online.roomCode = null;
       S.online.roster = [];
+      audioManager.restoreEnabled(); // личная настройка звука после гостевого авто-мьюта
+      guestSoundDefaulted = false;   // сбрасываем ПОСЛЕ restore (он сам поднимает флаг)
       updateHostBanner(true);
       updateConnBanner('open');
+      hideClaimSeats();
       releaseWakeLock();
       document.body.classList.remove('spectator-mode');
       game = null; window.game = null; shifter = null;
       store.reset();
       setSetupMode('solo');
       store.setPhase(GamePhase.SETUP);
-      screens.showAlert(t('alerts.roomClosed'), t('alerts.roomClosedBody'));
+      updateRejoinCard();
+      if (reason === 'host_left') screens.showAlert(t('alerts.hostLeft'), t('alerts.hostLeftBody'));
+      else if (reason === 'host_gone') screens.showAlert(t('alerts.hostGone'), t('alerts.hostGoneBody'));
+      else screens.showAlert(t('alerts.roomClosed'), t('alerts.roomClosedBody'));
     }
   });
 
@@ -3380,13 +3575,63 @@ function setupOnlineMode() {
   }
   const lobbyLeave = document.getElementById('lobby-leave-btn');
   if (lobbyLeave) {
-    lobbyLeave.onclick = () => {
+    lobbyLeave.onclick = () => leaveRoomToSetup();
+  }
+
+  // --- Кнопки аварийного выхода на оверлее реконнекта и host-баннере ---
+  const connLeave = document.getElementById('conn-overlay-leave-btn');
+  if (connLeave) connLeave.onclick = (e) => { e.stopPropagation(); leaveRoomToSetup(); };
+  const hostWaitLeave = document.getElementById('host-wait-leave-btn');
+  if (hostWaitLeave) hostWaitLeave.onclick = (e) => { e.stopPropagation(); leaveRoomToSetup(); };
+
+  // --- Код комнаты: тап = копировать ---
+  const codeChip = document.getElementById('room-code-chip');
+  if (codeChip) {
+    codeChip.onclick = (e) => {
+      e.stopPropagation();
+      const code = S.online.roomCode;
+      if (!code) return;
+      try { navigator.clipboard.writeText(code).catch(() => {}); } catch (err) {}
+      codeChip.innerText = t('misc.copied');
+      codeChip.classList.add('copied');
+      setTimeout(() => {
+        codeChip.innerText = code.split('').join(' ');
+        codeChip.classList.remove('copied');
+      }, 1200);
+    };
+  }
+
+  // --- Карточка «вернуться в комнату» на Setup ---
+  const rejoinBtn = document.getElementById('rejoin-card-btn');
+  if (rejoinBtn) {
+    rejoinBtn.onclick = () => {
       if (audioManager) audioManager.play('click');
+      pendingJoin = true;
+      updateConnBanner('connecting');
+      online.resume();
+    };
+  }
+  const rejoinDismiss = document.getElementById('rejoin-card-dismiss');
+  if (rejoinDismiss) {
+    rejoinDismiss.onclick = (e) => {
+      e.stopPropagation();
+      if (audioManager) audioManager.play('click');
+      // «Скрыть» = забыть комнату: отменяет и летящий авто-resume.
       online.leaveRoom();
-      S.online.roomCode = null;
-      S.online.roster = [];
-      setSetupMode('solo');
-      store.setPhase(GamePhase.SETUP);
+      pendingJoin = false;
+      updateConnBanner('open');
+      updateRejoinCard();
+    };
+  }
+
+  // --- Отмена выбора места для reclaim'а ---
+  const claimCancel = document.getElementById('claim-cancel-btn');
+  if (claimCancel) {
+    claimCancel.onclick = () => {
+      if (audioManager) audioManager.play('click');
+      hideClaimSeats();
+      clearSession();
+      updateRejoinCard();
     };
   }
 

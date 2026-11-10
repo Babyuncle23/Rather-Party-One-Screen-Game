@@ -23,11 +23,23 @@
     <div class="modal-content loading-modal-content">
       <h2 class="loading-message" data-i18n="misc.reconnecting">Reconnecting…</h2>
       <p class="tap-anywhere-text" data-i18n="misc.reconnectSub">Trying to reach the room server</p>
+      <p id="conn-overlay-room" class="conn-room-line hidden"></p>
+      <button id="conn-overlay-leave-btn" class="btn btn-small banner-leave-btn hidden" data-i18n="misc.leaveRoom">Leave room</button>
     </div>
   </div>
 
-  <!-- БАННЕР ОЖИДАНИЯ ХОСТА -->
-  <div id="host-wait-banner" class="host-wait-banner hidden" data-i18n="misc.hostWait">⏳ Waiting for the host to reconnect…</div>
+  <!-- БАННЕР ОЖИДАНИЯ ХОСТА (+ код комнаты, отсчёт, выход) -->
+  <div id="host-wait-banner" class="host-wait-banner hidden">
+    <span id="host-wait-text" data-i18n="misc.hostWait">⏳ Waiting for the host to reconnect…</span>
+    <span id="host-wait-extra" class="host-wait-extra"></span>
+    <button id="host-wait-leave-btn" class="btn btn-small banner-leave-btn" data-i18n="misc.leaveRoom">Leave</button>
+  </div>
+
+  <!-- БАННЕР ОЖИДАНИЯ ОТКЛЮЧИВШЕГОСЯ АКТИВНОГО ИГРОКА -->
+  <div id="away-banner" class="away-banner hidden">⏳ Waiting…</div>
+
+  <!-- КОД КОМНАТЫ В ИГРЕ: тап = копировать -->
+  <button id="room-code-chip" class="room-code-chip hidden" type="button">WXYZ</button>
 
   <!-- БАННЕР УСТНОЙ ПОДСКАЗКИ (только на телефоне респондера) -->
   <div id="oral-hint-banner" class="oral-hint-banner hidden">
@@ -256,7 +268,22 @@
   </div>
 
   <h2 class="animated-text-outline" data-text="Rather Party">Rather Party</h2>
-  
+
+  <!-- КАРТОЧКА ВОЗВРАТА В КОМНАТУ (живая сохранённая сессия) -->
+  <div id="rejoin-card" class="rejoin-card hidden">
+    <div class="rejoin-card-text">
+      <div class="rejoin-card-title" data-i18n="rejoin.title">Back to room</div>
+      <div class="rejoin-card-sub">
+        <span id="rejoin-card-code" class="rejoin-code">W X Y Z</span>
+        <span id="rejoin-card-player" class="rejoin-player"></span>
+      </div>
+    </div>
+    <div class="rejoin-card-actions">
+      <button id="rejoin-card-btn" class="btn btn-primary" data-i18n="rejoin.btn">Rejoin</button>
+      <button id="rejoin-card-dismiss" class="btn btn-small" data-i18n="rejoin.dismiss" aria-label="Dismiss">✕</button>
+    </div>
+  </div>
+
   <!-- ПЕРЕКЛЮЧАТЕЛЬ РЕЖИМА ИГРЫ -->
   <div id="mode-toggle" class="mode-toggle">
     <button id="mode-solo-btn" type="button" class="mode-card mode-card-active">
@@ -295,6 +322,12 @@
         </div>
         <button id="online-connect-btn" class="btn btn-primary spaced-button" data-i18n="setup.connectCreate">Create Room</button>
         <p id="online-status-text" class="online-status-text"></p>
+        <!-- ВОЗВРАТ НА СВОЁ МЕСТО: игра уже идёт, но есть offline-места -->
+        <div id="claim-seats-block" class="claim-seats-block hidden">
+          <p class="claim-seats-title" data-i18n="claim.title">Game already started — rejoin as:</p>
+          <div id="claim-seats-list" class="claim-seats-list"></div>
+          <button id="claim-cancel-btn" class="btn btn-small" data-i18n="claim.cancel">Cancel</button>
+        </div>
       </div>
 
       <!-- ПАНЕЛЬ ОДНОГО ТЕЛЕФОНА (режим по умолчанию) -->

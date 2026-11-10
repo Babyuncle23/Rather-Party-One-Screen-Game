@@ -22,7 +22,12 @@ export const UI_FI = {
     shareQrAlt: 'QR-koodi — linkki peliin',
     footerBadge: 'Designed by Human',
     footerSub: 'coded by ai 😬',
-    iosTitle: '🍏 Asenna iPhoneen'
+    iosTitle: '🍏 Asenna iPhoneen',
+    awayWait: '⏳ Odotetaan pelaajan {name} paluuta…',
+    leaveRoom: 'Poistu huoneesta',
+    roomCode: 'Huone: {code}',
+    copied: '✓ Kopioitu',
+    hostWaitLeft: 'sulkeutuu {left} päästä'
   },
 
   setup: {
@@ -67,6 +72,18 @@ export const UI_FI = {
     connected: '{n} pelaajaa yhdistetty — paina Aloita!',
     waitHost: 'Odotetaan, että isäntä aloittaa pelin…',
     qrAlt: 'QR-koodi — skannaa liittyäksesi huoneeseen'
+  },
+
+  rejoin: {
+    title: 'Takaisin huoneeseen',
+    asPlayer: 'pelaajana {avatar} {name}',
+    btn: 'Palaa',
+    dismiss: 'Piilota'
+  },
+
+  claim: {
+    title: 'Peli on jo alkanut — palaa paikallesi:',
+    cancel: 'Peruuta'
   },
 
   turn: {
@@ -268,6 +285,10 @@ export const UI_FI = {
     minPlayers: 'Lisää vähintään 2 pelaajaa aloittaaksesi!',
     roomClosed: '🚪 Huone suljettu',
     roomClosedBody: 'Huone suljettiin tai vanhentui. Olet takaisin aloitusnäytöllä.',
+    hostLeft: '🚪 Isäntä poistui',
+    hostLeftBody: 'Isäntä poistui huoneesta, joten peli päättyi. Olet takaisin aloitusnäytöllä.',
+    hostGone: '⏳ Isäntä ei palannut',
+    hostGoneBody: 'Isäntä oli poissa liian kauan, joten huone suljettiin. Olet takaisin aloitusnäytöllä.',
     nextInOrder: 'seuraava pelaaja',
     otherPlayer: 'toinen pelaaja',
     nextPlayer: 'seuraava pelaaja',

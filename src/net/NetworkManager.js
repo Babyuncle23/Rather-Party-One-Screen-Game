@@ -8,48 +8,78 @@ const SESSION_KEYS = {
   playerId: 'rp.playerId',
   roomCode: 'rp.roomCode',
   name: 'rp.name',
-  avatar: 'rp.avatar'
+  avatar: 'rp.avatar',
+  savedAt: 'rp.savedAt'
 };
 
+// localStorage, а не sessionStorage: сессия должна переживать убийство
+// вкладки/браузера (свайп-закрытие на телефоне) — иначе rejoin невозможен.
+// Старые значения из sessionStorage мигрируем при первом чтении.
+function storageGet(key) {
+  try {
+    const v = localStorage.getItem(key);
+    if (v !== null) return v;
+  } catch (e) {}
+  try {
+    const v = sessionStorage.getItem(key);
+    if (v !== null) {
+      try { localStorage.setItem(key, v); } catch (e) {}
+      try { sessionStorage.removeItem(key); } catch (e) {}
+      return v;
+    }
+  } catch (e) {}
+  return null;
+}
+
+function storageSet(key, value) {
+  try { localStorage.setItem(key, value); } catch (e) {}
+}
+
+function storageRemove(key) {
+  try { localStorage.removeItem(key); } catch (e) {}
+  try { sessionStorage.removeItem(key); } catch (e) {}
+}
+
 export function getOrCreatePlayerId() {
-  let id = sessionStorage.getItem(SESSION_KEYS.playerId);
+  let id = storageGet(SESSION_KEYS.playerId);
   if (!id) {
     id = (typeof crypto !== 'undefined' && crypto.randomUUID)
       ? crypto.randomUUID()
       : 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2);
-    sessionStorage.setItem(SESSION_KEYS.playerId, id);
+    storageSet(SESSION_KEYS.playerId, id);
   }
   return id;
 }
 
 export function saveSession(partial) {
   try {
-    if (partial.playerId) sessionStorage.setItem(SESSION_KEYS.playerId, partial.playerId);
-    if (partial.roomCode) sessionStorage.setItem(SESSION_KEYS.roomCode, partial.roomCode);
-    if (partial.name) sessionStorage.setItem(SESSION_KEYS.name, partial.name);
-    if (partial.avatar) sessionStorage.setItem(SESSION_KEYS.avatar, partial.avatar);
+    if (partial.playerId) storageSet(SESSION_KEYS.playerId, partial.playerId);
+    if (partial.roomCode) storageSet(SESSION_KEYS.roomCode, partial.roomCode);
+    if (partial.name) storageSet(SESSION_KEYS.name, partial.name);
+    if (partial.avatar) storageSet(SESSION_KEYS.avatar, partial.avatar);
+    storageSet(SESSION_KEYS.savedAt, String(Date.now()));
   } catch (e) {}
 }
 
 export function loadSession() {
   try {
     return {
-      playerId: sessionStorage.getItem(SESSION_KEYS.playerId),
-      roomCode: sessionStorage.getItem(SESSION_KEYS.roomCode),
-      name: sessionStorage.getItem(SESSION_KEYS.name),
-      avatar: sessionStorage.getItem(SESSION_KEYS.avatar)
+      playerId: storageGet(SESSION_KEYS.playerId),
+      roomCode: storageGet(SESSION_KEYS.roomCode),
+      name: storageGet(SESSION_KEYS.name),
+      avatar: storageGet(SESSION_KEYS.avatar),
+      savedAt: parseInt(storageGet(SESSION_KEYS.savedAt), 10) || 0
     };
   } catch (e) {
-    return { playerId: null, roomCode: null, name: null, avatar: null };
+    return { playerId: null, roomCode: null, name: null, avatar: null, savedAt: 0 };
   }
 }
 
 export function clearSession() {
-  try {
-    sessionStorage.removeItem(SESSION_KEYS.roomCode);
-    sessionStorage.removeItem(SESSION_KEYS.name);
-    sessionStorage.removeItem(SESSION_KEYS.avatar);
-  } catch (e) {}
+  storageRemove(SESSION_KEYS.roomCode);
+  storageRemove(SESSION_KEYS.name);
+  storageRemove(SESSION_KEYS.avatar);
+  storageRemove(SESSION_KEYS.savedAt);
 }
 
 // Тихий пинг /health при загрузке страницы — будим спящий Render free tier,
@@ -89,16 +119,22 @@ export class NetworkManager {
     this._manualClose = false;
     this._openedOnce = false;
 
-    document.addEventListener('visibilitychange', () => {
-      // iOS Safari убивает сокет при блокировке экрана — при возврате
-      // сразу пытаемся переподключиться, не дожидаясь backoff-таймера.
-      if (!document.hidden && this._openedOnce && !this._manualClose) {
-        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-          this._clearReconnectTimer();
-          this._open();
-        }
+    // iOS Safari убивает сокет при блокировке экрана — при возврате сразу
+    // пытаемся переподключиться, не дожидаясь backoff-таймера. visibilitychange
+    // — основной сигнал; focus/pageshow/online — страховка на случай, когда
+    // браузер не прислал visibilitychange (iOS quirks, возврат сети).
+    const tryFastReconnect = () => {
+      if (document.hidden) return;
+      if (!this._openedOnce || this._manualClose) return;
+      if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+        this._clearReconnectTimer();
+        this._open();
       }
-    });
+    };
+    document.addEventListener('visibilitychange', tryFastReconnect);
+    window.addEventListener('focus', tryFastReconnect);
+    window.addEventListener('pageshow', tryFastReconnect);
+    window.addEventListener('online', tryFastReconnect);
   }
 
   onMessage(cb) { this._messageHandlers.add(cb); return () => this._messageHandlers.delete(cb); }

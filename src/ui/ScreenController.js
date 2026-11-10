@@ -233,6 +233,8 @@ setupAudioControl(audioManager) {
       toggleBtn.textContent = enabled ? '🔊' : '🔇';
       toggleBtn.style.opacity = enabled ? '1' : '0.5';
     };
+    // Программные изменения (авто-мьют гостя в онлайне) тоже крутят иконку
+    audioManager.onEnabledChange(updateIcon);
 
     // Обычный клик для вкл/выкл
     toggleBtn.onclick = (e) => {

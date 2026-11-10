@@ -12,6 +12,8 @@ const MAX_PLAYERS = 4;
 const ROOM_TTL_MS = 2 * 60 * 60 * 1000; // авто-удаление комнаты после 2ч неактивности
 const HEARTBEAT_MS = 25000;
 const SWEEP_MS = 60000;
+// ~2 мин: хост не вернулся — комната закрывается (env — для smoke-теста)
+const HOST_GRACE_MS = parseInt(process.env.HOST_GRACE_MS, 10) || 120000;
 const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ'; // без I/L/O — меньше путаницы при вводе
 
 // rooms: Map<code, {
@@ -19,7 +21,9 @@ const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ'; // без I/L/O — меньш�
 //   hostId: string,
 //   state: object|null,      // последний снапшот GameStateStore от хоста
 //   started: boolean,
-//   lastActivity: number
+//   lastActivity: number,
+//   hostGraceTimer: Timeout|null, // отложенное закрытие комнаты без хоста
+//   pendingHostId: string|null    // ушедший хост, которого ещё ждём
 // }>
 const rooms = new Map();
 
@@ -71,6 +75,22 @@ function touch(room) {
   room.lastActivity = Date.now();
 }
 
+function deleteRoom(code) {
+  const room = rooms.get(code);
+  if (!room) return;
+  if (room.hostGraceTimer) clearTimeout(room.hostGraceTimer);
+  rooms.delete(code);
+}
+
+// Комната умирает для всех: гостям ROOM_CLOSED с причиной, хост при
+// позднем возврате получит ROOM_NOT_FOUND и чисто вернётся в меню.
+function closeRoom(code, reason) {
+  const room = rooms.get(code);
+  if (!room) return;
+  broadcast(room, { type: 'ROOM_CLOSED', reason });
+  deleteRoom(code);
+}
+
 function handleMessage(ws, msg) {
   switch (msg.type) {
     case 'PING':
@@ -84,7 +104,9 @@ function handleMessage(ws, msg) {
         hostId: msg.playerId,
         state: null,
         started: false,
-        lastActivity: Date.now()
+        lastActivity: Date.now(),
+        hostGraceTimer: null,
+        pendingHostId: null
       };
       room.clients.set(msg.playerId, {
         ws,
@@ -108,12 +130,22 @@ function handleMessage(ws, msg) {
       }
       const existing = room.clients.get(msg.playerId);
       if (!existing) {
-        if (room.clients.size >= MAX_PLAYERS) {
-          send(ws, { type: 'ERROR', code: 'ROOM_FULL', message: 'Room is full (4 players max).' });
+        // Сначала started-проверка: в начатую комнату пускаем только на
+        // своё старое место; claimable — список offline-мест для reclaim'а.
+        if (room.started) {
+          const claimable = [...room.clients.entries()]
+            .filter(([, c]) => !c.connected)
+            .map(([playerId, c]) => ({ playerId, name: c.name, avatar: c.avatar }));
+          send(ws, {
+            type: 'ERROR',
+            code: 'GAME_IN_PROGRESS',
+            message: 'This game already started.',
+            claimable
+          });
           return;
         }
-        if (room.started) {
-          send(ws, { type: 'ERROR', code: 'GAME_IN_PROGRESS', message: 'This game already started.' });
+        if (room.clients.size >= MAX_PLAYERS) {
+          send(ws, { type: 'ERROR', code: 'ROOM_FULL', message: 'Room is full (4 players max).' });
           return;
         }
       }
@@ -124,6 +156,12 @@ function handleMessage(ws, msg) {
         existing.connected = true;
         if (msg.name) existing.name = String(msg.name).slice(0, 24);
         if (msg.avatar) existing.avatar = String(msg.avatar).slice(0, 8);
+        // Ушедший хост успел вернуться до конца grace-периода — закрытие отменяется
+        if (msg.playerId === room.pendingHostId) {
+          clearTimeout(room.hostGraceTimer);
+          room.hostGraceTimer = null;
+          room.pendingHostId = null;
+        }
       } else {
         room.clients.set(msg.playerId, {
           ws,
@@ -153,14 +191,15 @@ function handleMessage(ws, msg) {
     case 'LEAVE_ROOM': {
       const room = rooms.get(ws.roomCode);
       if (!room) return;
+      const wasHost = ws.playerId === room.hostId;
       room.clients.delete(ws.playerId);
       touch(room);
       broadcast(room, { type: 'PLAYER_LEFT', playerId: ws.playerId, players: roomPlayers(room) });
-      if (ws.playerId === room.hostId) {
-        broadcast(room, { type: 'HOST_LEFT' });
-      }
-      if (room.clients.size === 0) {
-        rooms.delete(ws.roomCode);
+      // Явный выход хоста = конец игры сразу, без grace-паузы
+      if (wasHost) {
+        closeRoom(ws.roomCode, 'host_left');
+      } else if (room.clients.size === 0) {
+        deleteRoom(ws.roomCode);
       }
       ws.roomCode = null;
       return;
@@ -197,6 +236,10 @@ function handleDisconnect(ws) {
   touch(room);
   if (ws.playerId === room.hostId) {
     broadcast(room, { type: 'HOST_LEFT' });
+    // Игра встаёт на паузу: ~2 минуты ждём возврата хоста, потом комната умирает
+    room.pendingHostId = ws.playerId;
+    if (room.hostGraceTimer) clearTimeout(room.hostGraceTimer);
+    room.hostGraceTimer = setTimeout(() => closeRoom(ws.roomCode, 'host_gone'), HOST_GRACE_MS);
   } else {
     broadcast(room, { type: 'PLAYER_LEFT', playerId: ws.playerId, players: roomPlayers(room) });
   }
@@ -230,8 +273,7 @@ setInterval(() => {
   const now = Date.now();
   for (const [code, room] of rooms) {
     if (now - room.lastActivity > ROOM_TTL_MS) {
-      broadcast(room, { type: 'ROOM_CLOSED', reason: 'expired' });
-      rooms.delete(code);
+      closeRoom(code, 'expired');
     }
   }
 }, SWEEP_MS);

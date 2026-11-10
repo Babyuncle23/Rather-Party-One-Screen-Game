@@ -3232,6 +3232,205 @@ body.spectator-mode #guesser-screen .guess-answer-block {
   50% { box-shadow: 0 8px 30px rgba(0,0,0,0.5), 0 0 22px rgba(55,255,226,0.45); }
 }
 
+/* === Reconnect UX: away-баннер, код комнаты, rejoin-карточка, claim === */
+
+/* Баннер «ждём отключившегося игрока» — чуть ниже host-баннера */
+.away-banner {
+  position: fixed;
+  top: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3400;
+  background: rgba(14, 13, 22, 0.95);
+  border: 1px solid rgba(255, 213, 107, 0.55);
+  border-radius: 20px;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  white-space: nowrap;
+  max-width: 92vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.host-wait-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 96vw;
+}
+
+#host-wait-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.host-wait-extra {
+  flex-shrink: 0;
+}
+
+.host-wait-extra {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+.banner-leave-btn {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.banner-leave-btn:hover {
+  color: var(--text);
+  border-color: var(--danger);
+}
+
+.conn-room-line {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 12px;
+  letter-spacing: 2px;
+}
+
+#conn-overlay-leave-btn {
+  margin-top: 16px;
+}
+
+/* Код комнаты в игре: полупрозрачная пилюля снизу слева */
+.room-code-chip {
+  position: fixed;
+  bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  left: 10px;
+  z-index: 1500;
+  background: rgba(14, 13, 22, 0.72);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 14px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  padding: 6px 12px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.room-code-chip:hover, .room-code-chip:active {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.room-code-chip.copied {
+  color: var(--positive);
+  border-color: var(--positive);
+}
+
+/* Карточка возврата в комнату на setup-экране */
+.rejoin-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  max-width: 420px;
+  margin: 6px auto 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(140,108,255,0.16), rgba(55,255,226,0.08));
+  border: 1px solid rgba(140,108,255,0.45);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+}
+
+.rejoin-card-text {
+  text-align: left;
+  min-width: 0;
+}
+
+.rejoin-card-title {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.rejoin-card-sub {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rejoin-code {
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #ffd56b;
+}
+
+.rejoin-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.rejoin-card-actions .btn-primary {
+  padding: 10px 20px;
+  margin: 0;
+}
+
+/* Выбор offline-места для reclaim'а */
+.claim-seats-block {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px dashed rgba(255,213,107,0.5);
+  background: rgba(255,213,107,0.06);
+}
+
+.claim-seats-title {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.claim-seats-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.claim-seat-btn {
+  padding: 8px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.claim-seat-btn:hover {
+  border-color: var(--accent);
+  background: rgba(140,108,255,0.15);
+}
+
 /* ============================================================
    SPRINT 4: i18n — языковая пилюля + длинные слова (до 35 + хвост)
    ============================================================ */

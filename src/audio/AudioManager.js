@@ -9,6 +9,7 @@ export class AudioManager {
     this.isRallyEnglish = false;     // Режим финского акцента
     this.locale = 'en';              // Текущая локаль игры ('en'|'ru'|'fi')
     this.resumeBound = false;
+    this._enabledListeners = new Set(); // подписчики смены звука (иконка, main.js)
     
     this.audioPool.click = this.createAudioPool('./src/audio/click.mp3', 3);
     this.audioPool.win = this.createAudioPool('./src/audio/win.mp3', 2);
@@ -153,10 +154,26 @@ export class AudioManager {
 
   getVolume() { return this.volume; }
 
-  toggleEnabled() {
-    this.enabled = !this.enabled;
-    this.saveSettings();
+  onEnabledChange(cb) { this._enabledListeners.add(cb); return () => this._enabledListeners.delete(cb); }
+  _emitEnabled() { this._enabledListeners.forEach(cb => { try { cb(this.enabled); } catch (e) {} }); }
+
+  // persist=false — программное глушение без перезаписи выбора пользователя
+  // (онлайн: гостям звук выключен по умолчанию, их настройка не трогается).
+  setEnabled(value, persist = true) {
+    this.enabled = !!value;
+    if (persist) this.saveSettings();
+    this._emitEnabled();
     return this.enabled;
+  }
+
+  // Перечитать сохранённый выбор пользователя — после не-persist глушения.
+  restoreEnabled() {
+    const saved = localStorage.getItem('audioEnabled');
+    return this.setEnabled(saved === null ? true : saved === 'true', false);
+  }
+
+  toggleEnabled() {
+    return this.setEnabled(!this.enabled);
   }
 
   isEnabled() { return this.enabled; }

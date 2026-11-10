@@ -29,8 +29,12 @@ export class OnlineSession {
    *  onConnectionChange(status) — 'connecting' | 'open' | 'closed'
    *  onHostPresence(present)  — хост ушёл/вернулся (для баннера у гостей)
    *  onRoomEntered({roomCode,isHost,players,resumed}) — успешный create/join
-   *  onSessionEnd(reason)     — ROOM_CLOSED / выход — сброс в setup
-   *  onSessionError({code,message}) — ERROR от сервера
+   *  onSessionEnd(reason)     — ROOM_CLOSED / выход — сброс в setup;
+   *                            reason: 'expired' | 'host_left' | 'host_gone'
+   *  onSessionError({code,message,claimable}) — ERROR от сервера;
+   *                            claimable — offline-места для reclaim'а
+   *  hasActiveMatch()         — есть ли живой runtime матча (для гарда от
+   *                            затирания состояния хоста стейл-снапшотом)
    */
   constructor(deps) {
     this.deps = deps;
@@ -131,17 +135,41 @@ export class OnlineSession {
   }
 
   // Тихое переподключение к комнате после обновления страницы.
-  // Возвращает {roomCode, name, avatar} если релеевантная сессия есть.
+  // Возвращает {roomCode, name, avatar, savedAt} если релеевантная сессия есть.
+  // Сессии старше ~6ч не имеет смысла будить — комната гарантированно мертва
+  // по TTL (2ч неактивности), так что сразу чистим.
   getResumeInfo() {
     const s = loadSession();
-    if (s.roomCode && s.playerId) return s;
-    return null;
+    if (!s.roomCode || !s.playerId) return null;
+    // Чистку делаем только вне активной комнаты — иначе при >6ч матче
+    // посреди игры потерли бы свою же рабочую сессию.
+    if (!this.isOnline() && s.savedAt && Date.now() - s.savedAt > 6 * 60 * 60 * 1000) {
+      clearSession();
+      return null;
+    }
+    return s;
   }
 
   resume() {
     const s = this.getResumeInfo();
     if (!s) return false;
     this._pendingIntent = { kind: 'join', roomCode: s.roomCode, name: s.name || 'PLAYER', avatar: s.avatar || '🎮' };
+    this._ensureConnected();
+    return true;
+  }
+
+  // Reclaim своего места после полной потери хранилища: сервер в
+  // GAME_IN_PROGRESS отдаёт claimable-список offline-мест — входим под
+  // старым playerId этого места, дальше штатный rejoin-путь.
+  claimSeat(roomCode, seat) {
+    if (!roomCode || !seat || !seat.playerId) return false;
+    this.ctx.myPlayerId = seat.playerId;
+    this._pendingIntent = {
+      kind: 'join',
+      roomCode: String(roomCode).toUpperCase().trim(),
+      name: seat.name || 'PLAYER',
+      avatar: seat.avatar || '🎮'
+    };
     this._ensureConnected();
     return true;
   }
@@ -168,6 +196,12 @@ export class OnlineSession {
   }
 
   _route(msg) {
+    // Комнатный трафик вне комнаты игнорируем: после своего leaveRoom() свой
+    // ещё не закрывшийся сокет может получить broadcast ROOM_CLOSED и
+    // показать фантомный «комната закрыта» алерт самому вышедшему.
+    const ROOM_SCOPED = ['LOBBY_UPDATE', 'PLAYER_LEFT', 'STATE_SYNC', 'CLIENT_ACTION', 'HOST_LEFT', 'HOST_BACK', 'ROOM_CLOSED'];
+    if (ROOM_SCOPED.includes(msg.type) && !this.isOnline()) return;
+
     switch (msg.type) {
       case 'PONG':
         return;
@@ -207,9 +241,20 @@ export class OnlineSession {
         this.deps.onSessionEnd(msg.reason || 'closed');
         return;
 
-      case 'ERROR':
-        this.deps.onSessionError({ code: msg.code, message: msg.message });
+      case 'ERROR': {
+        // Код комнаты из неудавшегося интента — нужен для claimSeat.
+        const triedCode = (this._pendingIntent && this._pendingIntent.roomCode) || this.ctx.roomCode || null;
+        // ERROR терминальная для интента: не сбрасывая его, каждый реконнект
+        // сокета перешлёпнул бы JOIN и спамил ошибкой.
+        this._pendingIntent = null;
+        this.deps.onSessionError({
+          code: msg.code,
+          message: msg.message,
+          claimable: msg.claimable,
+          roomCode: triedCode
+        });
         return;
+      }
     }
   }
 
@@ -234,7 +279,11 @@ export class OnlineSession {
       resumed
     });
     if (resumed) {
-      this.deps.restoreRuntimeFromState(msg.state);
+      // Хост — писатель состояния: если его локальный матч жив (socket-blip
+      // без перезагрузки страницы), кэшированный снапшот не новее его стора —
+      // не затираем. Restore нужен хосту только после reload (runtime пуст).
+      const keepLocal = this.ctx.isHost && this.deps.hasActiveMatch && this.deps.hasActiveMatch();
+      if (!keepLocal) this.deps.restoreRuntimeFromState(msg.state);
       this.deps.renderLocalView();
       // Вернувшийся хост сразу делится актуальным состоянием с остальными.
       if (this.ctx.isHost) this.broadcastState();

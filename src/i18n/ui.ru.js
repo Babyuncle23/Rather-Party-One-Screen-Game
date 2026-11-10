@@ -23,7 +23,12 @@ export const UI_RU = {
     shareQrAlt: 'QR-код — ссылка на игру',
     footerBadge: 'Designed by Human',
     footerSub: 'coded by ai 😬',
-    iosTitle: '🍏 Установка на iPhone'
+    iosTitle: '🍏 Установка на iPhone',
+    awayWait: '⏳ Ждём переподключения игрока {name}…',
+    leaveRoom: 'Выйти из комнаты',
+    roomCode: 'Комната: {code}',
+    copied: '✓ Скопировано',
+    hostWaitLeft: 'закроется через {left}'
   },
 
   setup: {
@@ -68,6 +73,18 @@ export const UI_RU = {
     connected: 'Подключено игроков: {n} — жми «Старт»!',
     waitHost: 'Ждём, когда хост начнёт игру…',
     qrAlt: 'QR-код — сканируй, чтобы войти в комнату'
+  },
+
+  rejoin: {
+    title: 'Вернуться в комнату',
+    asPlayer: 'как {avatar} {name}',
+    btn: 'Вернуться',
+    dismiss: 'Скрыть'
+  },
+
+  claim: {
+    title: 'Игра уже началась — вернись на своё место:',
+    cancel: 'Отмена'
   },
 
   turn: {
@@ -269,6 +286,10 @@ export const UI_RU = {
     minPlayers: 'Добавь как минимум 2 игроков, чтобы начать!',
     roomClosed: '🚪 Комната закрыта',
     roomClosedBody: 'Комната закрыта или истекла. Ты вернулся на стартовый экран.',
+    hostLeft: '🚪 Хост вышел',
+    hostLeftBody: 'Хост покинул комнату, игра завершена. Ты на стартовом экране.',
+    hostGone: '⏳ Хост не вернулся',
+    hostGoneBody: 'Хост отсутствовал слишком долго, комната закрыта. Ты на стартовом экране.',
     nextInOrder: 'следующий по порядку игрок',
     otherPlayer: 'другой игрок',
     nextPlayer: 'следующий игрок',
