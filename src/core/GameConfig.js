@@ -1,9 +1,9 @@
 export const GAME_CONFIG = {
   START_GOLD: 50,
   FIXED_REWARD: 50,
-  REVEAL_RANDOM_COST: 15,
+  REVEAL_RANDOM_COST: 10, // уравнено с length: выбор тактический, а не ценовой
   REVEAL_LENGTH_COST: 10,
-  ORAL_HINT_COST: 10
+  ORAL_HINT_COST: 5       // снижено: подсказка зависит от человека напротив (2P)
 };
 
 // --- Online mode: адрес relay-сервера ---

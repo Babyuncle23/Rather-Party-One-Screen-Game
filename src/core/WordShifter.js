@@ -7,29 +7,51 @@ import { t } from '../i18n/I18nManager.js';
 const STRUCT_CHARS = new Set("-'«»„“”\"?!.,:;()…/+*".split(''));
 
 export class WordShifter {
+  // isNerfed / isMultiWord принимают либо boolean (legacy, общий на пару),
+  // либо { w1, w2 } — per-word флаги. Сводные boolean-свойства сохранены
+  // для обратной совместимости сериализации и старых вызовов.
   constructor(word1, word2, isNerfed = false, isMultiWord = false) {
     this.orig1 = word1.trim();
     this.orig2 = word2.trim();
     this.openedIndices1 = new Set();
     this.openedIndices2 = new Set();
-    this.isNerfed = isNerfed;
-    this.isMultiWord = isMultiWord;
+
+    if (typeof isNerfed === 'object' && isNerfed !== null) {
+      this.isNerfed1 = !!isNerfed.w1;
+      this.isNerfed2 = !!isNerfed.w2;
+    } else {
+      this.isNerfed1 = !!isNerfed;
+      this.isNerfed2 = !!isNerfed;
+    }
+    this.isNerfed = this.isNerfed1 || this.isNerfed2;
+
+    const autoMulti1 = this.orig1.split(/\s+/).filter(Boolean).length > 1;
+    const autoMulti2 = this.orig2.split(/\s+/).filter(Boolean).length > 1;
+    if (typeof isMultiWord === 'object' && isMultiWord !== null) {
+      this.isMultiWord1 = !!isMultiWord.w1;
+      this.isMultiWord2 = !!isMultiWord.w2;
+    } else {
+      this.isMultiWord1 = isMultiWord && autoMulti1;
+      this.isMultiWord2 = isMultiWord && autoMulti2;
+    }
+    this.isMultiWord = this.isMultiWord1 || this.isMultiWord2;
+
     this.isLengthRevealed = false;
 
     // Автоматически открываем знаки препинания со старта
-    const revealPunctuation = (word, openedSet) => {
+    const revealPunctuation = (word, openedSet, multiFlag) => {
       for (let i = 0; i < word.length; i++) {
         if (STRUCT_CHARS.has(word[i])) openedSet.add(i);
-        // Многословные ответы: пробелы остаются видимыми структурными разделителями
-        if (this.isMultiWord && word[i] === ' ') openedSet.add(i);
+        // Многословные ответы: пробелы остаются видимыми разделителями
+        if (multiFlag && word[i] === ' ') openedSet.add(i);
       }
     };
-    revealPunctuation(this.orig1, this.openedIndices1);
-    revealPunctuation(this.orig2, this.openedIndices2);
+    revealPunctuation(this.orig1, this.openedIndices1, this.isMultiWord1);
+    revealPunctuation(this.orig2, this.openedIndices2, this.isMultiWord2);
   }
 
   getTotalLength() { return this.orig1.length + this.orig2.length; }
-  
+
   // Для UI оставляем разделение только по пробелам, чтобы "T-SHIRT" считалось 1 словом визуально
   getWordCount1() { return this.orig1.split(/\s+/).filter(Boolean).length; }
   getWordCount2() { return this.orig2.split(/\s+/).filter(Boolean).length; }
@@ -66,9 +88,9 @@ export class WordShifter {
           }
         }
       }
-      
+
       html += '</span>';
-      
+
       if (this.isLengthRevealed) {
         // Unicode-безопасный подсчёт: только буквы/цифры (\p{L}\p{N}),
         // чтобы Ё, Ä, Ö считались корректно, а пунктуация — нет.
@@ -85,12 +107,17 @@ export class WordShifter {
   }
 
   autoReveal(isCatchUp = false) {
-    // Нёрф для простых слов: бесплатно открываем только 25% вместо 40%
-    this._applyRevealLogic(this.isNerfed ? 0.25 : 0.40, true, isCatchUp);
+    // Нёрф для простых слов — per-word: одно «простое» слово не душит пару
+    const pct1 = this.isNerfed1 ? 0.25 : 0.40;
+    const pct2 = this.isNerfed2 ? 0.25 : 0.40;
+    this._applyRevealLogicToWord(this.orig1, this.openedIndices1, pct1, true, isCatchUp);
+    this._applyRevealLogicToWord(this.orig2, this.openedIndices2, pct2, true, isCatchUp);
   }
 
   revealExtraRandom() {
-    this._applyRevealLogic(0.40, false, false);
+    // 50% оставшегося пула + минимум 2 буквы на словах 5+ — ощутимый бёрст
+    this._applyRevealLogicToWord(this.orig1, this.openedIndices1, 0.50, false, false);
+    this._applyRevealLogicToWord(this.orig2, this.openedIndices2, 0.50, false, false);
   }
 
   toJSON() {
@@ -100,13 +127,23 @@ export class WordShifter {
       openedIndices1: [...this.openedIndices1],
       openedIndices2: [...this.openedIndices2],
       isNerfed: this.isNerfed,
+      isNerfed1: this.isNerfed1,
+      isNerfed2: this.isNerfed2,
       isMultiWord: this.isMultiWord,
+      isMultiWord1: this.isMultiWord1,
+      isMultiWord2: this.isMultiWord2,
       isLengthRevealed: this.isLengthRevealed
     };
   }
 
   static fromJSON(data) {
-    const shifter = new WordShifter(data.orig1 || '', data.orig2 || '', !!data.isNerfed, !!data.isMultiWord);
+    const nerfArg = (typeof data.isNerfed1 === 'boolean' || typeof data.isNerfed2 === 'boolean')
+      ? { w1: !!data.isNerfed1, w2: !!data.isNerfed2 }
+      : !!data.isNerfed;
+    const multiArg = (typeof data.isMultiWord1 === 'boolean' || typeof data.isMultiWord2 === 'boolean')
+      ? { w1: !!data.isMultiWord1, w2: !!data.isMultiWord2 }
+      : !!data.isMultiWord;
+    const shifter = new WordShifter(data.orig1 || '', data.orig2 || '', nerfArg, multiArg);
     shifter.openedIndices1 = new Set(data.openedIndices1 || []);
     shifter.openedIndices2 = new Set(data.openedIndices2 || []);
     shifter.isLengthRevealed = !!data.isLengthRevealed;
@@ -115,7 +152,7 @@ export class WordShifter {
 
   revealLength() {
     this.isLengthRevealed = true;
-    
+
     // Открываем первую БУКВУ каждого слова (не кавычку/скобку)
     const openFirst = (wordStr, openedSet) => {
       let isNewWord = true;
@@ -131,67 +168,80 @@ export class WordShifter {
         }
       }
     };
-    
+
     openFirst(this.orig1, this.openedIndices1);
     openFirst(this.orig2, this.openedIndices2);
   }
 
+  // Общий проход по обоим словам — сохранён для совместимости вызовов
   _applyRevealLogic(basePercentage, isFirstStep, isCatchUp) {
-    const processWord = (wordStr, openedSet) => {
-      // Разбиваем строку на слова, разделяя по пробелам и структурным знакам
-      let words = [];
-      let currentWord = { start: -1, text: "" };
-      
-      for (let i = 0; i < wordStr.length; i++) {
-        let char = wordStr[i];
-        if (char === ' ' || STRUCT_CHARS.has(char)) {
-          if (currentWord.text.length > 0) {
-            words.push(currentWord);
-            currentWord = { start: -1, text: "" };
-          }
-        } else {
-          if (currentWord.start === -1) currentWord.start = i;
-          currentWord.text += char;
+    this._applyRevealLogicToWord(this.orig1, this.openedIndices1, basePercentage, isFirstStep, isCatchUp);
+    this._applyRevealLogicToWord(this.orig2, this.openedIndices2, basePercentage, isFirstStep, isCatchUp);
+  }
+
+  _applyRevealLogicToWord(wordStr, openedSet, basePercentage, isFirstStep, isCatchUp) {
+    // Разбиваем строку на слова, разделяя по пробелам и структурным знакам
+    let words = [];
+    let currentWord = { start: -1, text: "" };
+
+    for (let i = 0; i < wordStr.length; i++) {
+      let char = wordStr[i];
+      if (char === ' ' || STRUCT_CHARS.has(char)) {
+        if (currentWord.text.length > 0) {
+          words.push(currentWord);
+          currentWord = { start: -1, text: "" };
         }
+      } else {
+        if (currentWord.start === -1) currentWord.start = i;
+        currentWord.text += char;
       }
-      if (currentWord.text.length > 0) words.push(currentWord);
+    }
+    if (currentWord.text.length > 0) words.push(currentWord);
 
-      // Применяем логику к каждому отдельному слову
-      words.forEach(w => {
-        let len = w.text.length;
-        let pool = [];
-        let localPercentage = basePercentage;
+    // Применяем логику к каждому отдельному слову
+    words.forEach(w => {
+      let len = w.text.length;
+      let pool = [];
+      let localPercentage = basePercentage;
 
-        if (isFirstStep && isCatchUp) localPercentage += 0.10;
+      if (isFirstStep && isCatchUp) localPercentage += 0.10;
 
-        const endsWithIng = w.text.toUpperCase().endsWith("ING");
-        const ingStartIdx = w.start + len - 3;
+      // Защита суффикса только при реальном корне слова —
+      // иначе KING/WING/THING теряли весь пул бесплатного ревила
+      const upper = w.text.toUpperCase();
+      let protectedTailLen = 0;
+      if (len >= 6 && upper.endsWith("ING")) protectedTailLen = 3;
+      else if (len >= 8 && upper.endsWith("MINEN")) protectedTailLen = 5;
+      else if (len >= 7 && upper.endsWith("ТЬСЯ")) protectedTailLen = 4;
+      else if (len >= 6 && (upper.endsWith("НИЕ") || upper.endsWith("ТИЕ"))) protectedTailLen = 3;
 
-        // Собираем доступный пул индексов
-        for (let i = 0; i < len; i++) {
-          let globalIdx = w.start + i;
+      const tailStartIdx = w.start + len - protectedTailLen;
 
-          if (openedSet.has(globalIdx)) continue;
-          if (i === 0) continue; // ЖЕЛЕЗНО прячем первую букву слова
-          if (isFirstStep && endsWithIng && globalIdx >= ingStartIdx) continue;
+      // Собираем доступный пул индексов
+      for (let i = 0; i < len; i++) {
+        let globalIdx = w.start + i;
 
-          pool.push(globalIdx);
-        }
+        if (openedSet.has(globalIdx)) continue;
+        if (i === 0) continue; // ЖЕЛЕЗНО прячем первую букву слова
+        if (isFirstStep && protectedTailLen > 0 && globalIdx >= tailStartIdx) continue;
 
-        if (pool.length === 0) return; 
+        pool.push(globalIdx);
+      }
 
-        let toReveal = Math.ceil(pool.length * localPercentage);
-        toReveal = Math.min(pool.length, Math.max(1, toReveal));
+      if (pool.length === 0) return;
 
-        for (let k = 0; k < toReveal && pool.length > 0; k++) {
-          let rand = Math.floor(Math.random() * pool.length);
-          openedSet.add(pool[rand]);
-          pool.splice(rand, 1);
-        }
-      });
-    };
+      let toReveal = Math.ceil(pool.length * localPercentage);
+      // Платный 🎲: минимум +2 буквы на словах 5+, если пул позволяет
+      if (!isFirstStep && len >= 5 && pool.length >= 2) {
+        toReveal = Math.max(2, toReveal);
+      }
+      toReveal = Math.min(pool.length, Math.max(1, toReveal));
 
-    processWord(this.orig1, this.openedIndices1);
-    processWord(this.orig2, this.openedIndices2);
+      for (let k = 0; k < toReveal && pool.length > 0; k++) {
+        let rand = Math.floor(Math.random() * pool.length);
+        openedSet.add(pool[rand]);
+        pool.splice(rand, 1);
+      }
+    });
   }
 }

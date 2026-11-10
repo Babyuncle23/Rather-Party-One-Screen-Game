@@ -1713,32 +1713,45 @@ function applySubmitWords(action) {
   }
   S.responder.wordMod = wordMod;
 
-  const tokens1 = finalW1.split(/\s+/).filter(Boolean);
-  const tokens2 = finalW2.split(/\s+/).filter(Boolean);
-  const isMultiWord = tokens1.length > 1 || tokens2.length > 1;
+  // Нёрф считаем по RAW-словам до морфологических суффиксов,
+  // чтобы «PIZZALAND» ловил «PIZZA»; флаги — per-word, иначе
+  // многословный ответ в одном слоте отключал нёрф пары целиком
+  const rawTokens1 = w1.trim().split(/[\s-]+/).filter(Boolean);
+  const rawTokens2 = w2.trim().split(/[\s-]+/).filter(Boolean);
+  const isMultiWord1 = w1.trim().split(/\s+/).filter(Boolean).length > 1;
+  const isMultiWord2 = w2.trim().split(/\s+/).filter(Boolean).length > 1;
 
   const NV = getNerfVocab(getLocale());
-  const hasSimpleColor = tokens1.some(t => NV.COLORS.includes(t)) || tokens2.some(t => NV.COLORS.includes(t));
-  const hasSimpleMaterialBoth = tokens1.some(t => NV.MATERIALS.includes(t)) && tokens2.some(t => NV.MATERIALS.includes(t));
-  const hasSimpleMoodBoth = tokens1.some(t => NV.MOODS.includes(t)) && tokens2.some(t => NV.MOODS.includes(t));
-  const hasSimpleEra = tokens1.some(t => NV.ERAS.includes(t)) || tokens2.some(t => NV.ERAS.includes(t));
-  const fullWord1 = w1.trim();
-  const fullWord2 = w2.trim();
-  const hasSimpleCountry = tokens1.some(t => NV.COUNTRIES.includes(t)) || tokens2.some(t => NV.COUNTRIES.includes(t));
-  const hasSimpleCity = NV.CITIES.includes(fullWord1) || NV.CITIES.includes(fullWord2);
-  const hasSimpleFood = tokens1.some(t => NV.FOODS.includes(t)) || tokens2.some(t => NV.FOODS.includes(t));
+  const normToken = tok => (tok.length > 3 && tok.endsWith('S')) ? tok.slice(0, -1) : tok;
+  const matchesNerfList = (tokens, list) =>
+    tokens.some(tok => list.includes(tok) || list.includes(normToken(tok)));
 
-  const hasSimpleSport = tokens1.some(t => NV.SPORTS.includes(t)) || tokens2.some(t => NV.SPORTS.includes(t));
-  const hasSimpleProf = tokens1.some(t => NV.PROFESSIONS.includes(t)) || tokens2.some(t => NV.PROFESSIONS.includes(t));
-  const hasSimpleVeggie = tokens1.some(t => NV.VEGETABLES.includes(t)) || tokens2.some(t => NV.VEGETABLES.includes(t));
-  const hasSimpleFruit = tokens1.some(t => NV.FRUITS.includes(t)) || tokens2.some(t => NV.FRUITS.includes(t));
-  const hasSimpleClothes = tokens1.some(t => NV.CLOTHES.includes(t)) || tokens2.some(t => NV.CLOTHES.includes(t));
+  const isWordNerfed = (tokens, rawWord, multiFlag) => {
+    if (multiFlag) return false;
+    return (
+      matchesNerfList(tokens, NV.COLORS) ||
+      matchesNerfList(tokens, NV.MATERIALS) ||
+      matchesNerfList(tokens, NV.MOODS) ||
+      matchesNerfList(tokens, NV.ERAS) ||
+      matchesNerfList(tokens, NV.COUNTRIES) ||
+      matchesNerfList(tokens, NV.CITIES) ||
+      matchesNerfList(tokens, NV.FOODS) ||
+      matchesNerfList(tokens, NV.SPORTS) ||
+      matchesNerfList(tokens, NV.PROFESSIONS) ||
+      matchesNerfList(tokens, NV.VEGETABLES) ||
+      matchesNerfList(tokens, NV.FRUITS) ||
+      matchesNerfList(tokens, NV.CLOTHES) ||
+      NV.COUNTRIES.includes(rawWord) ||
+      NV.CITIES.includes(rawWord) ||
+      NV.CLOTHES.includes(rawWord)
+    );
+  };
 
-  let shouldNerf = hasSimpleColor || hasSimpleMaterialBoth || hasSimpleMoodBoth || hasSimpleEra || hasSimpleCountry || hasSimpleCity || hasSimpleFood || hasSimpleSport || hasSimpleProf || hasSimpleVeggie || hasSimpleFruit || hasSimpleClothes;
-
-  if (isMultiWord) {
-    shouldNerf = false;
-  }
+  const shouldNerf = {
+    w1: isWordNerfed(rawTokens1, w1.trim(), isMultiWord1),
+    w2: isWordNerfed(rawTokens2, w2.trim(), isMultiWord2)
+  };
+  const isMultiWord = { w1: isMultiWord1, w2: isMultiWord2 };
 
   shifter = new WordShifter(finalW1, finalW2, shouldNerf, isMultiWord);
 
@@ -1898,7 +1911,12 @@ function applyAdvanceGuesser() {
 
     S.guess.currentGuesserIndex = S.guess.remainingGuessers.shift();
     S.guess.oralHintUsed = false;
-    shifter = new WordShifter(shifter.orig1, shifter.orig2, shifter.isNerfed, shifter.isMultiWord);
+    shifter = new WordShifter(
+      shifter.orig1,
+      shifter.orig2,
+      { w1: shifter.isNerfed1, w2: shifter.isNerfed2 },
+      { w1: shifter.isMultiWord1, w2: shifter.isMultiWord2 }
+    );
 
     const wm = S.responder.wordMod;
     if (wm && wm.kind === 'suffix') {
@@ -2036,7 +2054,8 @@ function applyBuyHint(action) {
   const guesser = game.players[S.guess.currentGuesserIndex];
 
   if (action.kind === 'oral') {
-    if (S.guess.oralHintUsed || game.players.length !== 2) return;
+    if (effectivePhase() !== GamePhase.GUESSING) return;
+    if (S.guess.oralHintUsed || game.players.length !== 2 || S.guess.revealCount < 1) return;
     if (guesser.gold < GAME_CONFIG.ORAL_HINT_COST) return;
     guesser.gold -= GAME_CONFIG.ORAL_HINT_COST;
     S.guess.oralHintUsed = true;
@@ -2194,7 +2213,7 @@ function updateGuesserUI() {
     const oralBtn = document.getElementById('oral-hint-btn');
     if (oralBtn) {
       oralBtn.innerHTML = t('guesser.oralBtn', { n: GAME_CONFIG.ORAL_HINT_COST });
-      const showOral = game && game.players.length === 2 && S.guess.revealCount >= 2 && !S.guess.oralHintUsed && isActiveGuesser();
+      const showOral = game && game.players.length === 2 && S.guess.revealCount >= 1 && !S.guess.oralHintUsed && isActiveGuesser();
       if (showOral) {
         oralBtn.classList.remove('hidden');
         oralBtn.onclick = (e) => {
@@ -3040,13 +3059,13 @@ function updateCompanionTypingSlots(withTyping = (S.phase === GamePhase.RESPONDI
   const s1 = document.getElementById('companion-slot1');
   const s2 = document.getElementById('companion-slot2');
   if (!s1 || !s2) return;
-  const t = S.live.typing || { w1: 0, w2: 0 };
+  const typingState = S.live.typing || { w1: 0, w2: 0 };
   const slotHtml = (len) => len > 0
     ? `<span class="typing-indicator">${t('companion.typingInd', { n: len, max: 35 })}</span>`
     : '<span class="companion-blank">[ … ]</span>';
   if (withTyping) {
-    s1.innerHTML = slotHtml(t.w1);
-    s2.innerHTML = slotHtml(t.w2);
+    s1.innerHTML = slotHtml(typingState.w1);
+    s2.innerHTML = slotHtml(typingState.w2);
   } else {
     s1.innerHTML = '<span class="companion-blank">[ … ]</span>';
     s2.innerHTML = '<span class="companion-blank">[ … ]</span>';
