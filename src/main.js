@@ -5,7 +5,7 @@ import { AudioManager } from './audio/AudioManager.js';
 import { GAME_CONFIG } from './core/GameConfig.js';
 import { GameStateStore, GamePhase } from './core/GameStateStore.js';
 import { OnlineSession } from './net/OnlineSession.js';
-import { pingServerHealth, acquireWakeLock, releaseWakeLock, clearSession } from './net/NetworkManager.js';
+import { pingServerHealth, acquireWakeLock, releaseWakeLock, clearSession, loadSession } from './net/NetworkManager.js';
 import { escapeHTML } from './utils/sanitize.js';
 import { getNerfVocab } from './data/nerfWords.js';
 import { SCENE_REGISTRY } from './data/scenes.js';
@@ -156,7 +156,12 @@ let lastWordsPhaseKey = '';     // ключ "раунд:пикер" — сбро
 let finalScoresSpoken = false;  // TTS финала играем только один раз
 let prevOpened1 = new Set();    // diff маски для .just-revealed
 let prevOpened2 = new Set();
-let onlineAvatar = '🦊';
+// Дефолтный аватар в онлайне — случайный (не лиса у всех). avatarAuto=true
+// пока юзер сам не выбрал эмодзи: сервер гарантирует уникальность только
+// авто-дефолтам, ручные совпадения разрешены.
+const savedAvatar = loadSession().avatar;
+let onlineAvatar = savedAvatar || PLAYER_EMOJIS[Math.floor(Math.random() * PLAYER_EMOJIS.length)];
+let onlineAvatarAuto = !savedAvatar;
 let pendingJoin = false;        // идёт попытка create/join — показываем оверлей
 let talkOverlayActive = false;  // safety "Open Circle" открыт на ЭТОМ устройстве
 let hostWaitDeadline = 0;       // ts конца ожидания хоста (отсчёт на баннере)
@@ -338,9 +343,10 @@ document.addEventListener("DOMContentLoaded", () => {
     window.store = store;
     screens = new ScreenController();
     screens.setupAudioControl(audioManager);
-    // Любое ручное переключение звука = «выбор сделан» — гостевой
-    // авто-мьют больше не трогаем (в т.ч. на реконнектах).
-    audioManager.onEnabledChange(() => { guestSoundDefaulted = true; });
+    // Ручное переключение звука В КОМНАТЕ = «выбор сделан» — гостевой
+    // авто-мьют больше не трогаем (в т.ч. на реконнектах). Переключения
+    // на сетапе до входа флаг не ставят — дефолт-мьют должен сработать.
+    audioManager.onEnabledChange(() => { if (isOnlineMode()) guestSoundDefaulted = true; });
 
     // Sprint 4: локаль из localStorage / S.lobby.locale → UI + вопросы + TTS
     S.lobby.locale = getLocale();
@@ -585,6 +591,7 @@ function renderEmojiPickerGrid(selectedEmoji) {
       e.stopPropagation();
       if (emojiPickerKind === 'self') {
         onlineAvatar = emoji;
+        onlineAvatarAuto = false; // ручной выбор — сервер не разруливает дубли
         const selfBtn = document.getElementById('online-avatar-btn');
         if (selfBtn) selfBtn.innerText = emoji;
       } else {
@@ -2449,6 +2456,9 @@ function applyAckResult(action) {
 
 // Сцена-звук с fade-in/fade-out как раньше, но управляемая через handle
 function playSceneSfx(sfxFile) {
+  // Замьюченные (гости онлайна / выкл. звук) сцену не слышат — raw Audio
+  // обходит audioManager.play, поэтому гейтим явно.
+  if (!audioManager || !audioManager.isEnabled()) return null;
   const handle = { audio: null, fadeOut: null, stopped: false };
   setTimeout(() => {
     if (handle.stopped) return;
@@ -3252,7 +3262,7 @@ function leaveRoomToSetup() {
   S.online.roomCode = null;
   S.online.roster = [];
   audioManager.restoreEnabled(); // вернуть личную настройку звука
-  guestSoundDefaulted = false;   // после restore (он поднимает флаг)
+  guestSoundDefaulted = false;   // новая комната — гостю снова дефолт-мьют
   updateConnBanner('open');
   updateHostBanner(true);
   hideClaimSeats();
@@ -3432,6 +3442,14 @@ function setupOnlineMode() {
     onLobbyUpdate: (players) => {
       S.online.roster = players;
       S.online.hostPlayerId = (players.find(p => p.isHost) || {}).playerId || S.online.hostPlayerId;
+      // Сервер мог поменять наш авто-аватар при дубле — подтягиваем решённый.
+      const me = players.find(p => p.playerId === online.myPlayerId());
+      if (me && me.avatar && me.avatar !== onlineAvatar) {
+        onlineAvatar = me.avatar;
+        onlineAvatarAuto = false;
+        const selfBtn = document.getElementById('online-avatar-btn');
+        if (selfBtn) selfBtn.innerText = me.avatar;
+      }
       if (S.phase === GamePhase.LOBBY) renderLobbyRoster();
       // Гость только что зашёл: хост шлёт локаль комнаты эфемером (без STATE_SYNC).
       if (online.isHost() && S.phase === GamePhase.LOBBY) {
@@ -3491,7 +3509,7 @@ function setupOnlineMode() {
       S.online.roomCode = null;
       S.online.roster = [];
       audioManager.restoreEnabled(); // личная настройка звука после гостевого авто-мьюта
-      guestSoundDefaulted = false;   // сбрасываем ПОСЛЕ restore (он сам поднимает флаг)
+      guestSoundDefaulted = false;   // новая комната — гостю снова дефолт-мьют
       updateHostBanner(true);
       updateConnBanner('open');
       hideClaimSeats();
@@ -3548,7 +3566,7 @@ function setupOnlineMode() {
       pendingJoin = true;
       updateConnBanner('connecting');
       if (onlineTab === 'create') {
-        online.createRoom({ name, avatar: onlineAvatar });
+        online.createRoom({ name, avatar: onlineAvatar, avatarAuto: onlineAvatarAuto });
       } else {
         const code = codeInput ? codeInput.value.trim() : '';
         if (code.length !== 4) {
@@ -3558,7 +3576,7 @@ function setupOnlineMode() {
           if (statusEl) statusEl.innerText = t('setup.enterCode');
           return;
         }
-        online.joinRoom(code, { name, avatar: onlineAvatar });
+        online.joinRoom(code, { name, avatar: onlineAvatar, avatarAuto: onlineAvatarAuto });
       }
     };
   }

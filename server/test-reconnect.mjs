@@ -4,7 +4,8 @@
 //   node test-reconnect.mjs               # терминал 2
 // Проверяет: rejoin по playerId, кэш state, PLAYER_LEFT/HOST_LEFT,
 // закрытие комнаты после grace и по явному выходу хоста,
-// GAME_IN_PROGRESS + claimable и вход на своё место (claimSeat-путь).
+// GAME_IN_PROGRESS + claimable и вход на своё место (claimSeat-путь),
+// разруливание дублей аватаров для авто-дефолтов (avatarAuto).
 
 import WebSocket from 'ws';
 
@@ -118,6 +119,43 @@ async function scenarioGuestReconnect() {
   return { code, hostWs: host };
 }
 
+async function scenarioAvatarDedup() {
+  console.log('— avatar dedup on join (avatarAuto) —');
+  const host = client('host');
+  await open(host);
+  send(host, { type: 'CREATE_ROOM', playerId: 'ahost', name: 'HOST', avatar: '🦊', avatarAuto: true });
+  const created = await waitFor(host, 'ROOM_CREATED');
+  const code = created.roomCode;
+  const hostEntry = created.players.find(p => p.playerId === 'ahost');
+  ok(hostEntry && hostEntry.avatar === '🦊', 'host keeps free auto avatar');
+
+  // Гость с тем же авто-дефолтом — сервер подменяет на свободный.
+  const g1 = client('g1');
+  await open(g1);
+  send(g1, { type: 'JOIN_ROOM', roomCode: code, playerId: 'ag1', name: 'G1', avatar: '🦊', avatarAuto: true });
+  const joined1 = await waitFor(g1, 'ROOM_JOINED');
+  const e1 = joined1 && joined1.players.find(p => p.playerId === 'ag1');
+  ok(e1 && e1.avatar && e1.avatar !== '🦊', 'auto guest: avatar deduped', JSON.stringify(e1));
+
+  // Ручной выбор занятого эмодзи (без avatarAuto) — дубль разрешён.
+  const g2 = client('g2');
+  await open(g2);
+  send(g2, { type: 'JOIN_ROOM', roomCode: code, playerId: 'ag2', name: 'G2', avatar: '🦊' });
+  const joined2 = await waitFor(g2, 'ROOM_JOINED');
+  const e2 = joined2 && joined2.players.find(p => p.playerId === 'ag2');
+  ok(e2 && e2.avatar === '🦊', 'manual dup allowed without avatarAuto');
+
+  // Реконнект со стейл-аватаром (занят g2) — сервер держит своё решение.
+  g1.ws.terminate();
+  await waitFor(host, 'PLAYER_LEFT');
+  const g1r = client('g1r');
+  await open(g1r);
+  send(g1r, { type: 'JOIN_ROOM', roomCode: code, playerId: 'ag1', name: 'G1', avatar: '🦊' });
+  const rejoined = await waitFor(g1r, 'ROOM_JOINED');
+  const e1r = rejoined && rejoined.players.find(p => p.playerId === 'ag1');
+  ok(e1r && e1 && e1r.avatar === e1.avatar, 'reconnect keeps server-resolved avatar', JSON.stringify(e1r));
+}
+
 async function scenarioHostGone() {
   console.log('— host gone: pause then ROOM_CLOSED —');
   const host = client('host');
@@ -172,6 +210,7 @@ async function scenarioHostLeave() {
     await scenarioGuestReconnect();
     await scenarioHostGone();
     await scenarioHostLeave();
+    await scenarioAvatarDedup();
   } catch (e) {
     fail++;
     console.error('Scenario crashed:', e);

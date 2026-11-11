@@ -27,6 +27,34 @@ const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ'; // без I/L/O — меньш�
 // }>
 const rooms = new Map();
 
+// Пул аватаров для разруливания дублей — копия PLAYER_EMOJIS из src/main.js
+// (сервер деплоится standalone из server/, импорт клиентских файлов невозможен;
+// при изменении списка там — синхронизировать тут).
+const AVATAR_POOL = [
+  "🔥", "⚠️", "🦊", "🐼", "🐱", "🐶", "🐰", "🐯", "🐨", "🐷", "🐮", "🐵", "🐺", "🦁", "🐸",
+  "👽", "🤖", "👶", "👴", "😎", "🥳", "🤡",
+  "😡", "👺", "👹", "💀", "🍉", "🍓", "🥑", "🍍", "🥝", "🍊", "🍋", "🍎", "🥭",
+  "🥥", "🌸", "🍄", "🌹", "🌝"
+];
+const AVATAR_FALLBACK = '🎮';
+
+// Аватар для нового места в комнате:
+// — запрошенный свободен → берём его;
+// — занят и клиент просил авто-дефолт (avatarAuto) → первый свободный из пула;
+// — занят и выбран вручную → оставляем (игроки могут осознанно совпадать).
+function resolveAvatar(room, requested, auto, selfId) {
+  const taken = new Set([...room.clients.entries()]
+    .filter(([pid]) => pid !== selfId)
+    .map(([, c]) => c.avatar));
+  const req = String(requested || '').slice(0, 8) || null;
+  if (req && !taken.has(req)) return req;
+  if (auto || !req) {
+    const free = AVATAR_POOL.find(e => !taken.has(e));
+    if (free) return free;
+  }
+  return req || AVATAR_FALLBACK;
+}
+
 const app = express();
 app.use(cors());
 app.get('/health', (req, res) => {
@@ -111,7 +139,7 @@ function handleMessage(ws, msg) {
       room.clients.set(msg.playerId, {
         ws,
         name: String(msg.name || 'PLAYER').slice(0, 24),
-        avatar: String(msg.avatar || '🎮').slice(0, 8),
+        avatar: resolveAvatar(room, msg.avatar, msg.avatarAuto === true, msg.playerId),
         connected: true
       });
       rooms.set(code, room);
@@ -155,7 +183,14 @@ function handleMessage(ws, msg) {
         existing.ws = ws;
         existing.connected = true;
         if (msg.name) existing.name = String(msg.name).slice(0, 24);
-        if (msg.avatar) existing.avatar = String(msg.avatar).slice(0, 8);
+        // Аватар обновляем, только если присланный свободен: старые клиенты/
+        // сессии могут слать занятое значение и вернуть дубль в ростер.
+        if (msg.avatar) {
+          const av = String(msg.avatar).slice(0, 8);
+          const takenByOther = [...room.clients.entries()]
+            .some(([pid, c]) => pid !== msg.playerId && c.avatar === av);
+          if (!takenByOther) existing.avatar = av;
+        }
         // Ушедший хост успел вернуться до конца grace-периода — закрытие отменяется
         if (msg.playerId === room.pendingHostId) {
           clearTimeout(room.hostGraceTimer);
@@ -166,7 +201,7 @@ function handleMessage(ws, msg) {
         room.clients.set(msg.playerId, {
           ws,
           name: String(msg.name || 'PLAYER').slice(0, 24),
-          avatar: String(msg.avatar || '🎮').slice(0, 8),
+          avatar: resolveAvatar(room, msg.avatar, msg.avatarAuto === true, msg.playerId),
           connected: true
         });
       }

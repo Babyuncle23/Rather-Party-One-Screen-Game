@@ -55,13 +55,13 @@ export class OnlineSession {
 
   // --- Публичные операции лобби ---
 
-  createRoom({ name, avatar }) {
-    this._pendingIntent = { kind: 'create', name, avatar };
+  createRoom({ name, avatar, avatarAuto }) {
+    this._pendingIntent = { kind: 'create', name, avatar, avatarAuto };
     this._ensureConnected();
   }
 
-  joinRoom(roomCode, { name, avatar }) {
-    this._pendingIntent = { kind: 'join', roomCode: String(roomCode).toUpperCase().trim(), name, avatar };
+  joinRoom(roomCode, { name, avatar, avatarAuto }) {
+    this._pendingIntent = { kind: 'join', roomCode: String(roomCode).toUpperCase().trim(), name, avatar, avatarAuto };
     this._ensureConnected();
   }
 
@@ -76,7 +76,14 @@ export class OnlineSession {
   _sendIntent() {
     const intent = this._pendingIntent;
     if (!intent) return;
-    const base = { playerId: this.ctx.myPlayerId, name: intent.name, avatar: intent.avatar };
+    // avatarAuto: сервер разруливает дубли только авто-дефолтам;
+    // ручной выбор юзера может осознанно совпадать — не трогаем.
+    const base = {
+      playerId: this.ctx.myPlayerId,
+      name: intent.name,
+      avatar: intent.avatar,
+      avatarAuto: !!intent.avatarAuto
+    };
     if (intent.kind === 'create') {
       this.net.send({ type: 'CREATE_ROOM', ...base });
     } else {
@@ -153,7 +160,8 @@ export class OnlineSession {
   resume() {
     const s = this.getResumeInfo();
     if (!s) return false;
-    this._pendingIntent = { kind: 'join', roomCode: s.roomCode, name: s.name || 'PLAYER', avatar: s.avatar || '🎮' };
+    // Сохранённый аватар — уже решённый сервером → avatarAuto: false.
+    this._pendingIntent = { kind: 'join', roomCode: s.roomCode, name: s.name || 'PLAYER', avatar: s.avatar || '🎮', avatarAuto: false };
     this._ensureConnected();
     return true;
   }
@@ -168,7 +176,8 @@ export class OnlineSession {
       kind: 'join',
       roomCode: String(roomCode).toUpperCase().trim(),
       name: seat.name || 'PLAYER',
-      avatar: seat.avatar || '🎮'
+      avatar: seat.avatar || '🎮',
+      avatarAuto: false
     };
     this._ensureConnected();
     return true;
@@ -264,11 +273,14 @@ export class OnlineSession {
     this.ctx.isHost = !!msg.isHost;
     this.ctx.roomCode = msg.roomCode;
     const s = this._pendingIntent || {};
+    // В сессию — аватар, РЕШЁННЫЙ сервером (при дубле авто-дефолт меняется):
+    // реконнект не должен заново слать старое занятое значение.
+    const selfEntry = (msg.players || []).find(p => p.playerId === this.ctx.myPlayerId);
     saveSession({
       playerId: this.ctx.myPlayerId,
       roomCode: msg.roomCode,
       name: s.name,
-      avatar: s.avatar
+      avatar: (selfEntry && selfEntry.avatar) || s.avatar
     });
     this._pendingIntent = null;
     this.deps.onLobbyUpdate(msg.players || []);

@@ -1,7 +1,7 @@
 // Rather Party — Service Worker
 // Стратегия: cache-first для статики, network-fallback + ленивое кэширование.
 // Версию кэша бампаем при каждом обновлении ассетов — старые кэши удаляются на activate.
-const CACHE_NAME = 'rather-party-v10';
+const CACHE_NAME = 'rather-party-v11';
 
 const CORE_ASSETS = [
   './',
