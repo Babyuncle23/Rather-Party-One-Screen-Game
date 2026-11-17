@@ -3402,7 +3402,7 @@ function applyStartGame(action) {
   finalScoresSpoken = false;
   syncMatch();
   acquireWakeLock();
-  applyInitRound();
+  step(game.players[game.pickerIndex], applyInitRound);
 }
 
 // === Оркестрация онлайн-режима: UI панели + депсы сессии ===
