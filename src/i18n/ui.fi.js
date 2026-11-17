@@ -127,6 +127,7 @@ export const UI_FI = {
   },
 
   responder: {
+    topicLabel: 'Aiheesi',
     nowChoose: 'Valitse nyt:',
     pluralWarn: '* Kirjoita molemmat vastaukset monikossa (esim. kissat, omenat)',
     ideas: '💡 Ideoita',

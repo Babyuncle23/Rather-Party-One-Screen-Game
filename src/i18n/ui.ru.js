@@ -128,6 +128,7 @@ export const UI_RU = {
   },
 
   responder: {
+    topicLabel: 'Твоя тема',
     nowChoose: 'Теперь выбирай:',
     pluralWarn: '* Напиши оба ответа во множественном числе (напр.: коты, яблоки)',
     ideas: '💡 Идеи',

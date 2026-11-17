@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#08080d">
   <title>Rather Party — One Screen Game</title>
   <link rel="icon" href="icon-192.png?v=2" type="image/png">
   <link rel="manifest" href="manifest.json?v=3">
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=12">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -207,32 +208,29 @@
 
 <!-- ОКНО ТУТОРИАЛА С ВИДЕО -->
   <!-- padding: 0 убирает рамки вокруг окна -->
-  <div id="video-modal" class="modal-overlay hidden" style="z-index: 2000; padding: 0; height: 100dvh;">
-    
+  <div id="video-modal" class="modal-overlay hidden">
+
     <!-- Сбрасываем ограничения ширины, делаем окно 100% на 100% и убираем скругления -->
-    <div class="modal-content" style="padding: 0; width: 100%; height: 100%; max-width: 100%; max-height: 100%; border-radius: 0; border: none; background: #08080d; display: flex; flex-direction: column; overflow: hidden;">
-      
+    <div class="modal-content video-modal-content">
+
       <!-- Шапка окна с крестиком и кнопками скорости -->
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: #08080d; position: relative; z-index: 9999; flex-shrink: 0;">
-        <h3 style="margin: 0; color: var(--text); font-size: 1.1rem; white-space: nowrap;" data-i18n="misc.videoTitle">How to play</h3>
-        
+      <div class="video-modal-header">
+        <h3 class="video-modal-title" data-i18n="misc.videoTitle">How to play</h3>
+
         <!-- ПЕРЕНЕСЕННАЯ ПАНЕЛЬ СКОРОСТИ -->
-        <div id="video-speed-controls" style="display: flex; gap: 4px; align-items: center; background: rgba(255,255,255,0.03); padding: 4px; border-radius: 10px;">
-          <button class="speed-btn" data-speed="0.5" style="background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid rgba(255,255,255,0.1); padding: 6px 10px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s;">0.5x</button>
-          
-          <button class="speed-btn" data-speed="0.75" style="background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid rgba(255,255,255,0.1); padding: 6px 10px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s;">0.75x</button>
-          
-          <button class="speed-btn" data-speed="1" style="background: var(--accent); color: #fff; border: 1px solid var(--accent); padding: 6px 10px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s;">1x</button>
+        <div id="video-speed-controls" class="video-speed-controls">
+          <button class="speed-btn" data-speed="0.5">0.5x</button>
+          <button class="speed-btn" data-speed="0.75">0.75x</button>
+          <button class="speed-btn speed-btn-active" data-speed="1">1x</button>
         </div>
 
         <!-- Секретный UX-трюк: огромная зона для крестика -->
-        <button id="close-video-btn" aria-label="Close" data-i18n-aria="a11y.close" style="background: none; border: none; color: var(--text); font-size: 36px; cursor: pointer; padding: 15px; margin: -15px; line-height: 1; position: relative; z-index: 9999; pointer-events: auto;">&times;</button>
+        <button id="close-video-btn" class="video-close-btn" aria-label="Close" data-i18n-aria="a11y.close">&times;</button>
       </div>
-      
+
       <!-- Контейнер для видео -->
-      <div style="flex-grow: 1; width: 100%; display: flex; justify-content: center; align-items: center; background: #000;">
-        <iframe id="tutorial-video" 
-          style="width: 100%; height: 100%; max-width: 65vh; border: none;"
+      <div class="video-wrap">
+        <iframe id="tutorial-video" class="video-element"
           src="https://www.youtube.com/embed/TU6HCiXeL0A?rel=0&playsinline=1&enablejsapi=1" 
           title="Rather Party Tutorial"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -331,17 +329,17 @@
       <!-- ПАНЕЛЬ ОДНОГО ТЕЛЕФОНА (режим по умолчанию) -->
       <div id="solo-setup-panel">
       <div class="add-player-block">
-        <input id="single-player-input" type="text" placeholder="Enter player name" class="input-field" data-i18n-placeholder="setup.nameSoloPh">
+        <input id="single-player-input" type="text" placeholder="Enter player name" class="input-field" maxlength="14" autocomplete="off" data-i18n-placeholder="setup.nameSoloPh">
         <button id="add-player-btn" class="btn btn-accent spaced-button" data-i18n="setup.addPlayer">+ Add Player</button>
       </div>
       <p class="setup-seat-hint" data-i18n="setup.seatOrder">Add names in the order players are seated around the table.</p>
 
       <div id="players-boxes-container" class="boxes-container"></div>
-      <p class="emoji-help-text" style="text-align: center; font-size: 13px; color: var(--muted); margin-top: 8px;" data-i18n="setup.avatarHelp">Tap an avatar to change it.</p>
+      <p class="emoji-help-text" data-i18n="setup.avatarHelp">Tap an avatar to change it.</p>
 
       <div class="spaced-section">
         <label for="rounds-input" class="field-label" data-i18n="setup.roundsLabel">Number of rounds:</label>
-        <input id="rounds-input" type="number" value="1" class="input-field">
+        <input id="rounds-input" type="number" value="1" min="1" max="10" inputmode="numeric" class="input-field">
       </div>
       </div>
 
@@ -484,12 +482,12 @@
       <h2><span id="responder-name" class="player-name-game-slow"></span><span data-i18n="turn.suffix">'s Turn</span></h2>
       
 <div class="gameplay-zone">
-        <p class="prompt-summary responder-topic text-center"><span id="displayed-hint" class="highlight-text"></span></p>
-        <p id="responder-plural-warning" class="hidden" style="text-align: center; color: var(--accent); font-size: 0.85rem; font-weight: 700; margin-top: 0; margin-bottom: 14px; opacity: 0.9;" data-i18n="responder.pluralWarn">* Please write both answers in plural (e.g. cats, apples)</p>
+        <p class="prompt-summary responder-topic text-center"><span class="hint-label" data-i18n="responder.topicLabel">Your topic</span><span id="displayed-hint" class="highlight-text"></span></p>
+        <p id="responder-plural-warning" class="responder-plural-warning hidden" data-i18n="responder.pluralWarn">* Please write both answers in plural (e.g. cats, apples)</p>
         <!-- ИНТЕРАКТИВНЫЙ СПОЙЛЕР ДЛЯ ШПАРГАЛКИ -->
-        <div id="responder-helper-box" style="text-align: center; margin-bottom: 14px;">
-          <button id="responder-helper-toggle" class="btn-small icon-btn-small" style="width: auto; padding: 6px 16px;" data-i18n="responder.ideas">💡 Ideas</button>
-          <div id="responder-helper-content" class="responder-helper-content hidden" style="margin-top: 8px;">
+        <div id="responder-helper-box">
+          <button id="responder-helper-toggle" class="btn-small icon-btn-small responder-helper-toggle-btn" data-i18n="responder.ideas">💡 Ideas</button>
+          <div id="responder-helper-content" class="responder-helper-content hidden">
             <span id="responder-helper-text" class="responder-helper-text"></span>
           </div>
         </div>
@@ -498,14 +496,14 @@
 
         <div class="inputs-combined-wrapper">
 <div class="input-container-with-counter">
-  <input id="word-input-1" type="text" placeholder="First answer" maxlength="35" class="input-field" data-i18n-placeholder="responder.firstPh">
+  <input id="word-input-1" type="text" placeholder="First answer" maxlength="35" class="input-field" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="characters" enterkeyhint="next" data-i18n-placeholder="responder.firstPh">
   <span id="word-counter-1" class="floating-counter">
     <span class="counter-text">0/35</span>
     <span class="lock-icon hidden">🔒</span>
   </span>
 </div>
 <div class="input-container-with-counter">
-  <input id="word-input-2" type="text" placeholder="Second answer" maxlength="35" class="input-field" data-i18n-placeholder="responder.secondPh">
+  <input id="word-input-2" type="text" placeholder="Second answer" maxlength="35" class="input-field" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="characters" enterkeyhint="done" data-i18n-placeholder="responder.secondPh">
   <span id="word-counter-2" class="floating-counter">
     <span class="counter-text">0/35</span>
     <span class="lock-icon hidden">🔒</span>
@@ -549,9 +547,7 @@
 
     <!-- ЭКРАН УГАДЫВАНИЯ -->
     <div id="guesser-screen" class="hidden">
-      <div class="sticky-header" id="sticky-header">
-        <div id="guesser-round-progress" class="guesser-progress-row"></div>
-      </div>
+      <div id="guesser-round-progress" class="guesser-progress-row"></div>
       <div id="guesser-spectator-banner" class="spectator-banner hidden"></div>
 
       <h2><span id="guesser-name" class="player-name-game-slow"></span><span data-i18n="turn.guessSuffix">, Guess!</span></h2>
@@ -593,7 +589,6 @@
             </div>
           </div>
 
-          <span id="potential-score" class="hidden"></span>
           <button id="oral-hint-btn" class="btn btn-small orally-hint-btn hidden" data-i18n="guesser.oralBtn" data-i18n-params='{"n":5}'>💬 Ask for oral hint (-5 pts)</button>
         </div>
       </div>

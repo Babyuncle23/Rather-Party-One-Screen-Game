@@ -435,20 +435,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function updateStatsBarVisibility() {
-  const statsBars = document.querySelectorAll('.stats-bar');
-  statsBars.forEach(bar => {
-    const spans = bar.querySelectorAll('span');
-    const hasAnyContent = Array.from(spans).some(span => span.textContent.trim().length > 0);
-    if (hasAnyContent) {
-      bar.classList.remove('stats-bar-empty');
-      bar.classList.remove('hidden');
-      bar.style.margin = '4px 0';
-      bar.style.visibility = 'visible';
-    } else {
-      bar.classList.add('stats-bar-empty');
-    }
-  });
-
   const rollStatus = document.getElementById('ability-roll-status');
   if (rollStatus) {
     rollStatus.classList.toggle('hidden', rollStatus.textContent.trim().length === 0);
@@ -1103,21 +1089,16 @@ const displayEl = document.getElementById('prompt-display-text');
   
   const nextBtn = document.getElementById('prompt-next-btn');
   const prevBtn = document.getElementById('prompt-prev-btn');
-  // Ссылки на поле и карусель
+  // Ссылка на поле кастомного промпта
   const customInput = document.getElementById('custom-hint-input');
-  const carousel = document.querySelector('.prompt-carousel-container');
   const movePromptIndex = (delta) => {
       if (!S.picker.promptHistory || !S.picker.promptHistory.length) return;
       S.picker.promptHistoryIndex = (S.picker.promptHistoryIndex + delta + S.picker.promptHistory.length) % S.picker.promptHistory.length;
       renderCurrentPrompt();
-      
+
       // Сбрасываем кастомное поле при клике на стрелки
       if (customInput && customInput.value !== "") {
           customInput.value = "";
-          if (carousel) {
-              carousel.style.opacity = '1';
-              carousel.style.pointerEvents = 'auto';
-          }
       }
   };
   
@@ -1709,6 +1690,14 @@ document.getElementById('displayed-hint').innerHTML = S.hint.html;
       }
       dispatchAction({ type: 'SUBMIT_WORDS', w1, w2 });
     };
+
+    // Enter в первом поле ведёт во второе, во втором — отправляет
+    in1.onkeydown = (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); in2.focus(); }
+    };
+    in2.onkeydown = (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); submitWordsBtn.click(); }
+    };
   } catch (err) {
     screens.showAlert(t('alerts.error'), "Error inside renderResponderWordsActive: " + err.message);
   }
@@ -2157,13 +2146,11 @@ function updateGuesserUI() {
     const masks = shifter.getMaskedWords(diff1, diff2);
     prevOpened1 = opened1; prevOpened2 = opened2;
     const hintEl = document.getElementById('guesser-displayed-hint');
-    const scoreEl = document.getElementById('potential-score');
     const balanceEl = document.getElementById('gold-balance');
     const guess1Btn = document.getElementById('guess-word-1');
     const guess2Btn = document.getElementById('guess-word-2');
 
     if (hintEl) hintEl.innerHTML = S.hint.html;
-    if (scoreEl) scoreEl.innerText = t('guesser.winPts', { n: GAME_CONFIG.FIXED_REWARD });
     if (balanceEl) balanceEl.innerText = t('guesser.scoreLine', { name: game.players[S.guess.currentGuesserIndex].name, n: game.players[S.guess.currentGuesserIndex].gold });
 
     const maskCaption = document.getElementById('mask-hint-caption');
@@ -2203,7 +2190,7 @@ function updateGuesserUI() {
 
     const renderAbility = (btn, label, icon, cost) => {
       if (!btn) return;
-      const row = btn.closest('.ability-row');
+      const row = btn.closest('.ability-wrapper');
 
       btn.innerHTML = `
         <div class="ability-main-line">
@@ -2235,15 +2222,6 @@ function updateGuesserUI() {
 
     renderAbility(randBtn, t('guesser.revealRand'), '🎲', GAME_CONFIG.REVEAL_RANDOM_COST);
     renderAbility(lengthBtn, t('guesser.revealLen'), '📏', GAME_CONFIG.REVEAL_LENGTH_COST);
-
-    const abilitiesContainer = document.querySelector('.abilities-list-vertical');
-    if (abilitiesContainer) {
-      if (S.guess.revealCount >= 2) {
-        setTimeout(() => { abilitiesContainer.classList.add('hidden'); }, 400);
-      } else {
-        abilitiesContainer.classList.remove('hidden');
-      }
-    }
 
     const oralBtn = document.getElementById('oral-hint-btn');
     if (oralBtn) {
@@ -2515,6 +2493,8 @@ function showResultAlert(title, message, onConfirm) {
   resultShownAt = Date.now();
   const btn = document.getElementById('result-continue-btn');
   if (btn) {
+    btn.disabled = true;
+    setTimeout(() => { btn.disabled = false; }, 1500);
     btn.onclick = (e) => {
       e.stopPropagation();
       if (Date.now() - resultShownAt < 1500) return;
@@ -2818,12 +2798,7 @@ function setupVideoTutorial() {
   tutorialVideo.removeAttribute('src');
 
   const setSpeedActive = (targetBtn) => {
-    speedBtns.forEach(btn => {
-      const active = btn === targetBtn;
-      btn.style.background = active ? 'var(--accent)' : 'rgba(255,255,255,0.05)';
-      btn.style.borderColor = active ? 'var(--accent)' : 'rgba(255,255,255,0.1)';
-      btn.style.color = active ? '#fff' : 'var(--text)';
-    });
+    speedBtns.forEach(btn => btn.classList.toggle('speed-btn-active', btn === targetBtn));
   };
 
   const applyVideoSpeed = (speed) => {

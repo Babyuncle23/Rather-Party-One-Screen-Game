@@ -126,6 +126,7 @@ export const UI_EN = {
   },
 
   responder: {
+    topicLabel: 'Your topic',
     nowChoose: 'Now choose:',
     pluralWarn: '* Please write both answers in plural (e.g. cats, apples)',
     ideas: '💡 Ideas',
