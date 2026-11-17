@@ -106,9 +106,7 @@ export const UI_RU = {
     phraseSimple: 'Передай телефон: {emojiName} {name}.',
     responderNote: 'Теперь ход игрока {r} — ответь на тему от игрока {p}.\nНе показывай телефон другим!',
     watchNote: 'Держать телефон должен только этот игрок, но {name} может смотреть!',
-    guesserSpeech: 'Передай телефон: {emojiName} {name}, а {responder} может смотреть.',
-    readyBtn: 'Я {name} — держи ✋',
-    readyShort: 'Удерживай для подтверждения'
+    guesserSpeech: 'Передай телефон: {emojiName} {name}, а {responder} может смотреть.'
   },
 
   picker: {

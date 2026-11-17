@@ -125,52 +125,11 @@ showPassScreen(player, onConfirm, note = null) {
     
     window.scrollTo({ top: 0, behavior: 'instant' });
 
-    // Фон не кликабелен — телефон передают из рук в руки, случайный тап
-    // не должен открывать секретный экран. Только удержание кнопки 0.8с.
     this.screens.pass.onclick = null;
-
-    const readyBtn = document.getElementById('pass-ready-btn');
-    const readyLabel = document.getElementById('pass-ready-label');
-    if (!readyBtn || !readyLabel) {
+    this.screens.pass.onclick = () => {
       this.screens.pass.classList.add('hidden');
       onConfirm();
-      return;
-    }
-
-    readyLabel.innerText = t('pass.readyBtn', { name: player.name.toUpperCase() });
-
-    const HOLD_MS = 800;
-    let holdTimer = null;
-    let activePointerId = null;
-    const cancelHold = () => {
-      if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
-      readyBtn.classList.remove('holding');
     };
-
-    readyBtn.onpointerdown = (e) => {
-      if (e.button !== undefined && e.button !== 0) return;
-      if (holdTimer) return;
-      e.preventDefault();
-      e.stopPropagation();
-      activePointerId = e.pointerId ?? null;
-      if (e.pointerId !== undefined && typeof readyBtn.setPointerCapture === 'function') {
-        try { readyBtn.setPointerCapture(e.pointerId); } catch (err) {}
-      }
-      readyBtn.classList.add('holding');
-      holdTimer = setTimeout(() => {
-        holdTimer = null;
-        readyBtn.classList.remove('holding');
-        // Щит ставим ДО смены экрана: палец может быть ещё прижат,
-        // и его touchend/click не должен «прострелить» в новый экран.
-        this.suppressInputUntilRelease(activePointerId);
-        this.screens.pass.classList.add('hidden');
-        onConfirm();
-      }, HOLD_MS);
-    };
-    readyBtn.onpointerup = cancelHold;
-    readyBtn.onpointercancel = cancelHold;
-    readyBtn.onpointerleave = cancelHold;
-    readyBtn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); };
   }
 
   // Защита от «тапа насквозь»: пока палец, зажавший hold-кнопку, не оторвался

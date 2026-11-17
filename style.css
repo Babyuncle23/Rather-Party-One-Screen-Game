@@ -2295,37 +2295,6 @@ p {
   margin-top: 4px;
 }
 
-/* #pass-screen: фон мёртвый, продолжение — только удержанием кнопки 0.8с */
-.pass-ready-btn {
-  position: relative;
-  overflow: hidden;
-  max-width: 360px;
-  margin: 10px auto 0;
-  font-size: 17px;
-  touch-action: none;
-}
-
-.pass-ready-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.32);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.2s ease-out;
-  pointer-events: none;
-}
-
-.pass-ready-btn.holding::before {
-  transform: scaleX(1);
-  transition: transform 0.8s linear;
-}
-
-.pass-ready-btn > span {
-  position: relative;
-  z-index: 1;
-}
-
 .tap-anywhere-text {
   color: var(--muted);
   font-size: 0.95rem;

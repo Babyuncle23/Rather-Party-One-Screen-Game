@@ -105,9 +105,7 @@ export const UI_FI = {
     phraseSimple: 'Anna puhelin pelaajalle {emojiName} {name}.',
     responderNote: 'Nyt on pelaajan {r} vuoro vastata pelaajan {p} aiheeseen.\nPidä puhelin muilta piilossa!',
     watchNote: 'Vain tämä pelaaja saa pitää puhelinta, mutta {name} saa katsoa!',
-    guesserSpeech: 'Anna puhelin pelaajalle {emojiName} {name}, ja {responder} saa katsoa.',
-    readyBtn: 'Olen {name} — pidä ✋',
-    readyShort: 'Pidä painettuna vahvistaaksesi'
+    guesserSpeech: 'Anna puhelin pelaajalle {emojiName} {name}, ja {responder} saa katsoa.'
   },
 
   picker: {

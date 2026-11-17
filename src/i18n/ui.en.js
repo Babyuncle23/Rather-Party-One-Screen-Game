@@ -104,9 +104,7 @@ export const UI_EN = {
     phraseSimple: 'Pass the phone to {emojiName} {name}.',
     responderNote: "Now it's {r}'s turn to answer {p}'s prompt.\nKeep the phone hidden from others!",
     watchNote: 'Only this player should hold the phone, but {name} can watch!',
-    guesserSpeech: 'Pass the phone to {emojiName} {name}, and {responder} can watch.',
-    readyBtn: 'I am {name} — hold ✋',
-    readyShort: 'Hold to confirm'
+    guesserSpeech: 'Pass the phone to {emojiName} {name}, and {responder} can watch.'
   },
 
   picker: {
