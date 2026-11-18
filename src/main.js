@@ -1593,7 +1593,7 @@ document.getElementById('displayed-hint').innerHTML = S.hint.html;
     if (blindBanner2) blindBanner2.classList.add('hidden');
     if (blindBanner) {
       if (game.currentRound === 1) {
-        blindBanner.innerHTML = t('responder.blind1', { name: escapeHTML(picker.name), topic: S.hint.topicHtml || '' });
+        blindBanner.innerHTML = t('responder.blind1', { name: escapeHTML(picker.name) });
         blindBanner.classList.remove('hidden');
       } else {
         blindBanner.classList.add('hidden');

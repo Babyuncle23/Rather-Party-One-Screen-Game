@@ -2534,6 +2534,18 @@ p {
   font-weight: 700;
   line-height: 1.45;
 }
+.blind-step-banner .blind-step-tag {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 255, 226, 0.45);
+  background: rgba(55, 255, 226, 0.12);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
 .blind-step-banner .blind-step-sub {
   display: block;
   margin-top: 6px;
